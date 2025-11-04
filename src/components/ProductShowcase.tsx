@@ -1,55 +1,75 @@
 import ProductCard from "./ProductCard";
+import nmnImage from "@/assets/products/nmn-capsules.jpg";
+import arthroxtraImage from "@/assets/products/arthroxtra.jpg";
+import xPowerManImage from "@/assets/products/x-power-man.jpg";
+import ganodermaImage from "@/assets/products/ganoderma-spores.jpg";
+import youthEssenceImage from "@/assets/products/youth-essence.jpg";
+import ezXlimImage from "@/assets/products/ez-xlim.jpg";
+import yunzhiImage from "@/assets/products/yunzhi-capsules.jpg";
+import gluzojointImage from "@/assets/products/gluzojoint.jpg";
+import feminiegyImage from "@/assets/products/feminegy.jpg";
+import sumaGrandImage from "@/assets/products/suma-grand.jpg";
 
 const products = [
   {
     name: "NMN Capsules",
     price: "KSh 13,165",
-    benefit: "Supports cellular energy, anti-aging, and longevity enhancement"
+    benefit: "Supports cellular energy, anti-aging, and longevity enhancement",
+    image: nmnImage
   },
   {
     name: "ArthroXtra Tablets",
     price: "KSh 7,020",
-    benefit: "Joint health support with natural inflammation relief"
+    benefit: "Joint health support with natural inflammation relief",
+    image: arthroxtraImage
   },
   {
     name: "X Power Man Capsules",
     price: "KSh 7,371",
-    benefit: "Enhanced vitality and male wellness support"
+    benefit: "Enhanced vitality and male wellness support",
+    image: xPowerManImage
   },
   {
     name: "Pure & Broken Ganoderma Spores",
     price: "KSh 19,305",
-    benefit: "Premium immunity booster with powerful antioxidants"
+    benefit: "Premium immunity booster with powerful antioxidants",
+    image: ganodermaImage
   },
   {
     name: "Youth Essence Cream",
     price: "KSh 5,967",
-    benefit: "Anti-aging skincare for radiant, youthful complexion"
+    benefit: "Anti-aging skincare for radiant, youthful complexion",
+    image: youthEssenceImage
   },
   {
     name: "Ez-Xlim Capsule",
     price: "KSh 9,126",
-    benefit: "Natural weight management and metabolism support"
+    benefit: "Natural weight management and metabolism support",
+    image: ezXlimImage
   },
   {
     name: "Refined Yunzhi Capsules",
     price: "KSh 5,089.50",
-    benefit: "Immune system enhancement and digestive wellness"
+    benefit: "Immune system enhancement and digestive wellness",
+    image: yunzhiImage
   },
   {
     name: "GluzoJoint-F Capsules",
     price: "KSh 4,914",
-    benefit: "Joint flexibility and cartilage health support"
+    benefit: "Joint flexibility and cartilage health support",
+    image: gluzojointImage
   },
   {
     name: "Feminegy Capsules",
     price: "KSh 5,265",
-    benefit: "Women's hormonal balance and vitality enhancement"
+    benefit: "Women's hormonal balance and vitality enhancement",
+    image: feminiegyImage
   },
   {
     name: "SUMA GRAND 2",
     price: "KSh 22,113",
-    benefit: "Premium comprehensive wellness package"
+    benefit: "Premium comprehensive wellness package",
+    image: sumaGrandImage
   }
 ];
 
