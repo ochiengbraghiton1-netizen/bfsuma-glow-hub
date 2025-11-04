@@ -9,6 +9,9 @@ import yunzhiImage from "@/assets/products/yunzhi-capsules.jpg";
 import gluzojointImage from "@/assets/products/gluzojoint.jpg";
 import feminiegyImage from "@/assets/products/feminegy.jpg";
 import sumaGrandImage from "@/assets/products/suma-grand.jpg";
+import femiCalciumImage from "@/assets/products/femi-calcium.jpg";
+import detoxiliveImage from "@/assets/products/detoxilive.jpg";
+import vitaminCImage from "@/assets/products/vitamin-c.jpg";
 
 const products = [
   {
@@ -70,6 +73,24 @@ const products = [
     price: "KSh 22,113",
     benefit: "Premium comprehensive wellness package",
     image: sumaGrandImage
+  },
+  {
+    name: "FemiCalcium D3",
+    price: "KSh 5,500",
+    benefit: "Prenatal calcium potency for bone health and pregnancy support",
+    image: femiCalciumImage
+  },
+  {
+    name: "Detoxilive Soft Gels",
+    price: "KSh 3,000",
+    benefit: "Liver detoxification and natural body cleansing support",
+    image: detoxiliveImage
+  },
+  {
+    name: "Vitamin C Chewable Tablets",
+    price: "KSh 3,600",
+    benefit: "Immune system enhancement and antioxidant protection",
+    image: vitaminCImage
   }
 ];
 
