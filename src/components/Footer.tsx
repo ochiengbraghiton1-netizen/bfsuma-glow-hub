@@ -31,11 +31,6 @@ const Footer = () => {
                   Join & Earn
                 </a>
               </li>
-              <li>
-                <a href="https://www.bfsumaproducts.co.ke" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-accent transition-colors">
-                  Official Website
-                </a>
-              </li>
             </ul>
           </div>
 
