@@ -1,4 +1,5 @@
 import Hero from "@/components/Hero";
+import DoctorConsultation from "@/components/DoctorConsultation";
 import ProductShowcase from "@/components/ProductShowcase";
 import JoinEarn from "@/components/JoinEarn";
 import Community from "@/components/Community";
@@ -11,6 +12,7 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <Hero />
+      <DoctorConsultation />
       <ProductShowcase />
       <JoinEarn />
       <Community />

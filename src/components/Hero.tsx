@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
-import heroBg from "@/assets/hero-bg.jpg";
+import heroBg from "@/assets/wellness-hero.jpg";
 
 const Hero = () => {
   const scrollToProducts = () => {
@@ -53,15 +53,15 @@ const Hero = () => {
         </div>
         
         <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-          Empowering Health.
+          Empowering Your Health.
           <br />
           <span className="bg-gradient-to-r from-accent to-accent-glow bg-clip-text text-transparent">
-            Enhancing Wealth.
+            Enhancing Your Wealth.
           </span>
         </h1>
         
         <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
-          Discover premium natural supplements that transform lives and create financial freedom
+          Discover premium natural supplements that transform lives — and your financial future.
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
