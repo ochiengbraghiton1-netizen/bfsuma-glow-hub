@@ -99,6 +99,48 @@ export default {
         "scale-in": {
           "0%": { transform: "scale(0.9)", opacity: "0" },
           "100%": { transform: "scale(1)", opacity: "1" }
+        },
+        // Premium product animations
+        "product-image-enter": {
+          "0%": { opacity: "0", transform: "translateY(16px) scale(0.95)" },
+          "100%": { opacity: "1", transform: "translateY(0) scale(1)" }
+        },
+        "product-name-enter": {
+          "0%": { opacity: "0", transform: "translateY(8px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" }
+        },
+        "product-benefit-enter": {
+          "0%": { opacity: "0", transform: "translateX(-12px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" }
+        },
+        "product-price-enter": {
+          "0%": { opacity: "0", transform: "translateY(6px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" }
+        },
+        "product-image-spin": {
+          "0%": { transform: "perspective(800px) rotateY(0deg) scale(1)" },
+          "50%": { transform: "perspective(800px) rotateY(10deg) scale(1.03)" },
+          "100%": { transform: "perspective(800px) rotateY(0deg) scale(1)" }
+        },
+        "modal-backdrop": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" }
+        },
+        "modal-content": {
+          "0%": { opacity: "0", transform: "scale(0.96) translateY(10px)" },
+          "100%": { opacity: "1", transform: "scale(1) translateY(0)" }
+        },
+        "modal-image-focus": {
+          "0%": { transform: "scale(1)" },
+          "100%": { transform: "scale(1.05)" }
+        },
+        "stagger-fade": {
+          "0%": { opacity: "0", transform: "translateY(8px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" }
+        },
+        "cta-enter": {
+          "0%": { opacity: "0", transform: "scale(0.96)" },
+          "100%": { opacity: "1", transform: "scale(1)" }
         }
       },
       animation: {
@@ -108,7 +150,18 @@ export default {
         "glow": "glow 3s ease-in-out infinite",
         "shimmer": "shimmer 3s linear infinite",
         "fade-in": "fade-in 0.6s ease-out",
-        "scale-in": "scale-in 0.4s ease-out"
+        "scale-in": "scale-in 0.4s ease-out",
+        // Premium product animations
+        "product-image-enter": "product-image-enter 400ms ease-out forwards",
+        "product-name-enter": "product-name-enter 300ms ease-out forwards",
+        "product-benefit-enter": "product-benefit-enter 280ms ease-out forwards",
+        "product-price-enter": "product-price-enter 220ms ease-out forwards",
+        "product-image-spin": "product-image-spin 700ms ease-in-out",
+        "modal-backdrop": "modal-backdrop 200ms ease-out",
+        "modal-content": "modal-content 400ms ease-out",
+        "modal-image-focus": "modal-image-focus 600ms ease-out forwards",
+        "stagger-fade": "stagger-fade 250ms ease-out forwards",
+        "cta-enter": "cta-enter 200ms ease-out forwards"
       },
     },
   },
