@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
+import { productSchema } from '@/lib/validations';
 
 interface Product {
   id: string;
@@ -84,12 +85,21 @@ const Products = () => {
     e.preventDefault();
     setSubmitting(true);
 
+    // Validate form data
+    const validation = productSchema.safeParse(formData);
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
+      toast({ title: 'Validation Error', description: firstError.message, variant: 'destructive' });
+      setSubmitting(false);
+      return;
+    }
+
     const productData = {
-      name: formData.name,
+      name: formData.name.trim(),
       price: parseFloat(formData.price),
-      benefit: formData.benefit || null,
-      description: formData.description || null,
-      image_url: formData.image_url || null,
+      benefit: formData.benefit?.trim() || null,
+      description: formData.description?.trim() || null,
+      image_url: formData.image_url?.trim() || null,
       is_active: formData.is_active,
     };
 
@@ -106,7 +116,7 @@ const Products = () => {
     }
 
     if (error) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      toast({ title: 'Error', description: 'Failed to save product. Please try again.', variant: 'destructive' });
     } else {
       toast({ title: 'Success', description: `Product ${editingProduct ? 'updated' : 'created'} successfully` });
       setDialogOpen(false);
