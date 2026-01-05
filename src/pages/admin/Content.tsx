@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Save } from 'lucide-react';
+import { siteContentSchema } from '@/lib/validations';
 
 interface ContentSection {
   id: string;
@@ -55,33 +56,41 @@ const Content = () => {
   const handleSave = async (sectionKey: string, formData: Partial<ContentSection>) => {
     setSaving(sectionKey);
 
+    // Validate form data
+    const validation = siteContentSchema.safeParse(formData);
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
+      toast({ title: 'Validation Error', description: firstError.message, variant: 'destructive' });
+      setSaving(null);
+      return;
+    }
+
     const existing = sections[sectionKey];
     let error;
+
+    const sanitizedData = {
+      title: formData.title?.trim() || null,
+      subtitle: formData.subtitle?.trim() || null,
+      content: formData.content?.trim() || null,
+      image_url: formData.image_url?.trim() || null,
+    };
 
     if (existing) {
       const result = await supabase
         .from('site_content')
-        .update({
-          title: formData.title,
-          subtitle: formData.subtitle,
-          content: formData.content,
-          image_url: formData.image_url,
-        })
+        .update(sanitizedData)
         .eq('id', existing.id);
       error = result.error;
     } else {
       const result = await supabase.from('site_content').insert({
         section_key: sectionKey,
-        title: formData.title,
-        subtitle: formData.subtitle,
-        content: formData.content,
-        image_url: formData.image_url,
+        ...sanitizedData,
       });
       error = result.error;
     }
 
     if (error) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      toast({ title: 'Error', description: 'Failed to save content. Please try again.', variant: 'destructive' });
     } else {
       toast({ title: 'Success', description: 'Content saved successfully' });
       fetchContent();

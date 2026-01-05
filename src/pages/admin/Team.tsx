@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Pencil, Trash2, Loader2, Phone, Mail } from 'lucide-react';
 import { format } from 'date-fns';
+import { teamMemberSchema } from '@/lib/validations';
 
 interface TeamMember {
   id: string;
@@ -91,13 +92,22 @@ const Team = () => {
     e.preventDefault();
     setSubmitting(true);
 
+    // Validate form data
+    const validation = teamMemberSchema.safeParse(formData);
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
+      toast({ title: 'Validation Error', description: firstError.message, variant: 'destructive' });
+      setSubmitting(false);
+      return;
+    }
+
     const memberData = {
-      name: formData.name,
-      email: formData.email || null,
-      phone: formData.phone,
+      name: formData.name.trim(),
+      email: formData.email?.trim() || null,
+      phone: formData.phone.trim(),
       joined_date: formData.joined_date,
       status: formData.status,
-      notes: formData.notes || null,
+      notes: formData.notes?.trim() || null,
     };
 
     let error;
@@ -113,7 +123,7 @@ const Team = () => {
     }
 
     if (error) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      toast({ title: 'Error', description: 'Failed to save team member. Please try again.', variant: 'destructive' });
     } else {
       toast({ title: 'Success', description: `Team member ${editingMember ? 'updated' : 'added'} successfully` });
       setDialogOpen(false);

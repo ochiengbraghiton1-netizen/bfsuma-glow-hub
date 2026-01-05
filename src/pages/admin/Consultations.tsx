@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Phone, Mail, Calendar, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { consultationStatusSchema } from '@/lib/validations';
 
 interface Consultation {
   id: string;
@@ -51,13 +52,20 @@ const Consultations = () => {
   }, []);
 
   const handleStatusChange = async (id: string, newStatus: string) => {
+    // Validate status
+    const validation = consultationStatusSchema.safeParse(newStatus);
+    if (!validation.success) {
+      toast({ title: 'Validation Error', description: 'Invalid status value', variant: 'destructive' });
+      return;
+    }
+
     const { error } = await supabase
       .from('consultations')
       .update({ status: newStatus })
       .eq('id', id);
 
     if (error) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      toast({ title: 'Error', description: 'Failed to update status. Please try again.', variant: 'destructive' });
     } else {
       toast({ title: 'Success', description: 'Status updated successfully' });
       fetchConsultations();
