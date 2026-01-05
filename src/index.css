@@ -32,8 +32,8 @@ All colors MUST be HSL.
     --secondary-foreground: 0 0% 100%;
 
     /* Charcoal black */
-    --muted: 160 10% 20%;
-    --muted-foreground: 160 10% 60%;
+    --muted: 160 10% 95%;
+    --muted-foreground: 160 10% 40%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
@@ -57,6 +57,47 @@ All colors MUST be HSL.
     /* Animations */
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .dark {
+    --background: 160 20% 8%;
+    --foreground: 0 0% 95%;
+
+    --card: 160 20% 12%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 160 20% 10%;
+    --popover-foreground: 0 0% 95%;
+
+    /* Emerald green primary - slightly brighter for dark mode */
+    --primary: 158 64% 55%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 158 64% 65%;
+    
+    /* Gold accent */
+    --accent: 43 96% 60%;
+    --accent-foreground: 160 20% 10%;
+    --accent-glow: 43 96% 70%;
+
+    /* Secondary emerald shades */
+    --secondary: 158 44% 25%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Muted for dark mode */
+    --muted: 160 15% 18%;
+    --muted-foreground: 160 10% 65%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 160 20% 20%;
+    --input: 160 20% 18%;
+    --ring: 158 64% 55%;
+
+    /* Shadows for dark mode */
+    --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.4);
+    --shadow-elegant: 0 20px 60px -10px hsl(0 0% 0% / 0.5);
+    --shadow-gold: 0 0 30px hsl(var(--accent) / 0.3);
   }
 }
 

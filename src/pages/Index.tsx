@@ -7,10 +7,12 @@ import About from "@/components/About";
 import Contact from "@/components/Contact";
 import Chatbot from "@/components/Chatbot";
 import Footer from "@/components/Footer";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const Index = () => {
   return (
     <div className="min-h-screen">
+      <ThemeToggle />
       <Hero />
       <DoctorConsultation />
       <ProductShowcase />
