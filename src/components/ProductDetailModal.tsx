@@ -1,6 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, X, Shield, Leaf, Check } from "lucide-react";
+import { ShoppingCart, X, Shield, Leaf, Check, Heart } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
 import productGeneric from "@/assets/product-generic.jpg";
 
 interface ProductDetailModalProps {
@@ -10,6 +11,7 @@ interface ProductDetailModalProps {
     benefit: string;
     description?: string;
     image?: string;
+    certifications?: string[];
   } | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -22,12 +24,16 @@ const trustSignals = [
 ];
 
 const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalProps) => {
+  const { addToCart, toggleFavorite, isFavorite } = useCart();
+
   if (!product) return null;
 
-  const openWhatsApp = () => {
-    const message = encodeURIComponent(`Hi! I'm interested in ${product.name} (${product.price})`);
-    window.open(`https://wa.me/254795454053?text=${message}`, "_blank");
+  const handleAddToCart = () => {
+    addToCart({ name: product.name, price: product.price, image: product.image });
+    onOpenChange(false);
   };
+
+  const favorite = isFavorite(product.name);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -43,7 +49,7 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
         </button>
         
         <div className="grid md:grid-cols-2 gap-0">
-          {/* Product Image - Focus animation */}
+          {/* Product Image */}
           <div className="relative h-64 md:h-full min-h-[300px] overflow-hidden">
             <img 
               src={product.image || productGeneric}
@@ -52,9 +58,35 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
               style={{ animationDelay: '100ms' }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-secondary/40 to-transparent" />
+            
+            {/* Favorite Button */}
+            <button
+              onClick={() => toggleFavorite(product.name)}
+              className={`
+                absolute top-4 left-4 p-2 rounded-full backdrop-blur-sm transition-all duration-300
+                ${favorite 
+                  ? 'bg-primary text-primary-foreground' 
+                  : 'bg-background/80 text-muted-foreground hover:text-primary'
+                }
+              `}
+            >
+              <Heart className={`w-5 h-5 ${favorite ? 'fill-current' : ''}`} />
+            </button>
+
+            {/* Certifications */}
+            <div className="absolute bottom-4 left-4 flex gap-2">
+              {(product.certifications || ["GMP", "Halal"]).map((cert) => (
+                <span 
+                  key={cert}
+                  className="text-xs font-medium bg-background/90 backdrop-blur-sm text-foreground px-3 py-1 rounded-full"
+                >
+                  {cert}
+                </span>
+              ))}
+            </div>
           </div>
           
-          {/* Product Details - Staggered animations */}
+          {/* Product Details */}
           <div className="p-6 space-y-4">
             <DialogHeader className="space-y-2">
               <DialogTitle 
@@ -65,7 +97,7 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
               </DialogTitle>
             </DialogHeader>
             
-            {/* Price - appears early as it's already familiar */}
+            {/* Price */}
             <p 
               className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent opacity-0 animate-stagger-fade"
               style={{ animationDelay: '200ms' }}
@@ -100,7 +132,7 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
                 </div>
               )}
               
-              {/* Trust Signals - Staggered */}
+              {/* Trust Signals */}
               <div 
                 className="flex flex-wrap gap-2 pt-2 opacity-0 animate-stagger-fade"
                 style={{ animationDelay: '440ms' }}
@@ -118,22 +150,22 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
               </div>
             </div>
             
-            {/* CTA Button - Appears LAST */}
+            {/* CTA Buttons */}
             <div 
               className="pt-4 space-y-3 opacity-0 animate-cta-enter"
               style={{ animationDelay: '700ms' }}
             >
               <Button 
-                onClick={openWhatsApp}
+                onClick={handleAddToCart}
                 variant="premium" 
-                className="w-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                className="w-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg rounded-full"
                 size="lg"
               >
                 <ShoppingCart className="w-5 h-5" />
-                Order via WhatsApp
+                Add to Cart
               </Button>
               <p className="text-xs text-muted-foreground text-center">
-                Click to chat with us on WhatsApp for quick ordering
+                Free shipping on orders over KSh 10,000
               </p>
             </div>
           </div>
