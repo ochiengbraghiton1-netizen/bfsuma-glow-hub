@@ -184,37 +184,40 @@ const ProductShowcase = () => {
           </p>
         </div>
 
-        {/* Search Bar */}
-        <div className="max-w-xl mx-auto mb-8">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 pr-4 py-6 rounded-full border-border/50 bg-card focus:ring-2 focus:ring-primary/20"
-            />
+        {/* Sticky Search Bar & Category Filters */}
+        <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-md py-4 -mx-4 px-4 mb-8 border-b border-border/20">
+          {/* Search Bar */}
+          <div className="max-w-xl mx-auto mb-4">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-12 pr-4 py-6 rounded-full border-border/50 bg-card focus:ring-2 focus:ring-primary/20"
+              />
+            </div>
           </div>
-        </div>
 
-        {/* Category Filters */}
-        <div className="flex flex-wrap justify-center gap-2 mb-12">
-          {categories.map((category) => (
-            <Button
-              key={category.id}
-              variant={activeCategory === category.id ? "default" : "outline"}
-              size="sm"
-              onClick={() => setActiveCategory(category.id)}
-              className={`rounded-full transition-all duration-300 ${
-                activeCategory === category.id 
-                  ? "" 
-                  : "border-border/50 hover:border-primary/50"
-              }`}
-            >
-              {category.label}
-            </Button>
-          ))}
+          {/* Category Filters */}
+          <div className="flex flex-wrap justify-center gap-2">
+            {categories.map((category) => (
+              <Button
+                key={category.id}
+                variant={activeCategory === category.id ? "default" : "outline"}
+                size="sm"
+                onClick={() => setActiveCategory(category.id)}
+                className={`rounded-full transition-all duration-300 ${
+                  activeCategory === category.id 
+                    ? "" 
+                    : "border-border/50 hover:border-primary/50"
+                }`}
+              >
+                {category.label}
+              </Button>
+            ))}
+          </div>
         </div>
         
         {/* Products Grid */}
