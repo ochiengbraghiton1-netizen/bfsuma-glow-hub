@@ -1,7 +1,9 @@
 import { Card } from "@/components/ui/card";
-import { Eye } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ShoppingCart, Heart, Eye } from "lucide-react";
 import { useInView } from "@/hooks/use-in-view";
 import { useState } from "react";
+import { useCart } from "@/contexts/CartContext";
 import productGeneric from "@/assets/product-generic.jpg";
 
 interface ProductCardProps {
@@ -10,23 +12,47 @@ interface ProductCardProps {
   benefit: string;
   description?: string;
   image?: string;
+  category?: string;
+  certifications?: string[];
   onClick?: () => void;
 }
 
-const ProductCard = ({ name, price, benefit, image, onClick }: ProductCardProps) => {
+const ProductCard = ({ 
+  name, 
+  price, 
+  benefit, 
+  image, 
+  certifications = ["GMP", "Halal"],
+  onClick 
+}: ProductCardProps) => {
   const [ref, isInView] = useInView<HTMLDivElement>({ threshold: 0.6, triggerOnce: true });
   const [isHovering, setIsHovering] = useState(false);
+  const { addToCart, toggleFavorite, isFavorite } = useCart();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    addToCart({ name, price, image });
+  };
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleFavorite(name);
+  };
+
+  const favorite = isFavorite(name);
 
   return (
     <Card 
       ref={ref}
-      className="group overflow-hidden bg-card border-border/50 rounded-2xl cursor-pointer transition-shadow duration-500 hover:shadow-glow"
-      onClick={onClick}
+      className="group overflow-hidden bg-card border-border/50 rounded-2xl transition-shadow duration-500 hover:shadow-glow flex flex-col"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
-      {/* Product Image - Animates FIRST */}
-      <div className="relative overflow-hidden">
+      {/* Product Image */}
+      <div 
+        className="relative overflow-hidden cursor-pointer"
+        onClick={onClick}
+      >
         <div
           className={`
             ${isInView ? 'animate-product-image-enter' : 'opacity-0'}
@@ -37,11 +63,37 @@ const ProductCard = ({ name, price, benefit, image, onClick }: ProductCardProps)
           <img 
             src={image || productGeneric}
             alt={name}
-            className="w-full h-64 object-cover"
+            className="w-full h-56 object-cover"
           />
         </div>
         
-        {/* Hover overlay - no animation on scroll, only on hover */}
+        {/* Favorite Button */}
+        <button
+          onClick={handleToggleFavorite}
+          className={`
+            absolute top-3 right-3 p-2 rounded-full backdrop-blur-sm transition-all duration-300
+            ${favorite 
+              ? 'bg-primary text-primary-foreground' 
+              : 'bg-background/80 text-muted-foreground hover:text-primary'
+            }
+          `}
+        >
+          <Heart className={`w-4 h-4 ${favorite ? 'fill-current' : ''}`} />
+        </button>
+
+        {/* Certifications */}
+        <div className="absolute top-3 left-3 flex gap-1">
+          {certifications.map((cert) => (
+            <span 
+              key={cert}
+              className="text-xs font-medium bg-background/90 backdrop-blur-sm text-foreground px-2 py-1 rounded-full"
+            >
+              {cert}
+            </span>
+          ))}
+        </div>
+        
+        {/* View Details Overlay */}
         <div 
           className={`
             absolute inset-0 bg-gradient-to-t from-secondary/80 to-transparent 
@@ -57,11 +109,11 @@ const ProductCard = ({ name, price, benefit, image, onClick }: ProductCardProps)
         </div>
       </div>
       
-      <div className="p-6 space-y-3">
-        {/* Product Name - Animates SECOND (80ms delay) */}
+      <div className="p-5 flex flex-col flex-1">
+        {/* Product Name */}
         <h3 
           className={`
-            text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-300
+            text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-1
             ${isInView ? 'animate-product-name-enter' : 'opacity-0'}
           `}
           style={{ animationDelay: isInView ? '80ms' : '0ms' }}
@@ -69,10 +121,10 @@ const ProductCard = ({ name, price, benefit, image, onClick }: ProductCardProps)
           {name}
         </h3>
         
-        {/* Benefit Line - Animates THIRD (160ms delay) */}
+        {/* Benefit Description - 2 lines */}
         <p 
           className={`
-            text-sm text-muted-foreground line-clamp-2
+            text-sm text-muted-foreground line-clamp-2 mt-2 flex-1
             ${isInView ? 'animate-product-benefit-enter' : 'opacity-0'}
             ${isHovering ? 'text-foreground/80' : ''}
             transition-colors duration-300
@@ -82,10 +134,10 @@ const ProductCard = ({ name, price, benefit, image, onClick }: ProductCardProps)
           {benefit}
         </p>
         
-        {/* Price - Animates FOURTH (260ms delay) */}
+        {/* Price */}
         <p 
           className={`
-            text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent
+            text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mt-3
             ${isInView ? 'animate-product-price-enter' : 'opacity-0'}
             ${isHovering ? 'scale-[1.02]' : 'scale-100'}
             transition-transform duration-300 origin-left
@@ -94,6 +146,20 @@ const ProductCard = ({ name, price, benefit, image, onClick }: ProductCardProps)
         >
           {price}
         </p>
+
+        {/* Add to Cart Button */}
+        <Button
+          onClick={handleAddToCart}
+          variant="default"
+          className={`
+            w-full mt-4 rounded-full transition-all duration-300
+            ${isInView ? 'animate-product-price-enter' : 'opacity-0'}
+          `}
+          style={{ animationDelay: isInView ? '340ms' : '0ms' }}
+        >
+          <ShoppingCart className="w-4 h-4 mr-2" />
+          Add to Cart
+        </Button>
       </div>
     </Card>
   );
