@@ -1,7 +1,9 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, X, Shield, Leaf, Check, Heart } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 import productGeneric from "@/assets/product-generic.jpg";
 
 interface ProductDetailModalProps {
@@ -25,6 +27,7 @@ const trustSignals = [
 
 const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalProps) => {
   const { addToCart, toggleFavorite, isFavorite } = useCart();
+  const isMobile = useIsMobile();
 
   if (!product) return null;
 
@@ -35,73 +38,69 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
 
   const favorite = isFavorite(product.name);
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent 
-        className="max-w-2xl max-h-[85vh] md:max-h-[90vh] overflow-hidden p-0 animate-modal-content"
-        style={{ animationDuration: '400ms' }}
-      >
-        {/* Fixed Header with Close Button - Always Visible */}
-        <div className="sticky top-0 z-20 flex items-center justify-between p-3 md:p-4 bg-background/95 backdrop-blur-md border-b border-border/20 md:absolute md:top-0 md:right-0 md:left-auto md:border-0 md:bg-transparent">
-          <span className="text-sm font-medium text-muted-foreground md:hidden">Product Details</span>
-          <button 
-            onClick={() => onOpenChange(false)}
-            className="rounded-full bg-background/90 md:bg-background/80 p-2.5 md:p-2 backdrop-blur-sm hover:bg-background transition-colors duration-200 shadow-md md:shadow-none"
-            aria-label="Close modal"
-          >
-            <X className="h-5 w-5 md:h-4 md:w-4" />
-          </button>
-        </div>
+  const ModalContent = (
+    <>
+      {/* Close Button */}
+      <div className="sticky top-0 z-20 flex items-center justify-between p-3 md:p-4 bg-background/95 backdrop-blur-md border-b border-border/20 md:absolute md:top-0 md:right-0 md:left-auto md:border-0 md:bg-transparent">
+        <span className="text-sm font-medium text-muted-foreground md:hidden">Product Details</span>
+        <button 
+          onClick={() => onOpenChange(false)}
+          className="rounded-full bg-background/90 md:bg-background/80 p-2 backdrop-blur-sm hover:bg-background transition-colors duration-200 shadow-md md:shadow-none"
+          aria-label="Close modal"
+        >
+          <X className="h-4 w-4 md:h-3.5 md:w-3.5" />
+        </button>
+      </div>
         
-        <div className="overflow-y-auto max-h-[calc(85vh-56px)] md:max-h-[90vh]">
-          <div className="grid md:grid-cols-2 gap-0">
-            {/* Product Image */}
-            <div className="relative h-56 md:h-full min-h-[250px] md:min-h-[300px] overflow-hidden">
-              <img 
-                src={product.image || productGeneric}
-                alt={product.name}
-                className="w-full h-full object-cover animate-modal-image-focus"
-                style={{ animationDelay: '100ms' }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-secondary/40 to-transparent" />
-              
-              {/* Favorite Button */}
-              <button
-                onClick={() => toggleFavorite(product.name)}
-                className={`
-                  absolute top-4 left-4 p-2 rounded-full backdrop-blur-sm transition-all duration-300
-                  ${favorite 
-                    ? 'bg-primary text-primary-foreground' 
-                    : 'bg-background/80 text-muted-foreground hover:text-primary'
-                  }
-                `}
-              >
-                <Heart className={`w-5 h-5 ${favorite ? 'fill-current' : ''}`} />
-              </button>
+      <div className="overflow-y-auto max-h-[calc(85vh-56px)] md:max-h-[90vh]">
+        <div className="grid md:grid-cols-2 gap-0">
+          {/* Product Image */}
+          <div className="relative h-56 md:h-full min-h-[250px] md:min-h-[300px] overflow-hidden">
+            <img 
+              src={product.image || productGeneric}
+              alt={product.name}
+              className="w-full h-full object-cover animate-modal-image-focus"
+              style={{ animationDelay: '100ms' }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-secondary/40 to-transparent" />
+            
+            {/* Favorite Button */}
+            <button
+              onClick={() => toggleFavorite(product.name)}
+              className={`
+                absolute top-4 left-4 p-2 rounded-full backdrop-blur-sm transition-all duration-300
+                ${favorite 
+                  ? 'bg-primary text-primary-foreground' 
+                  : 'bg-background/80 text-muted-foreground hover:text-primary'
+                }
+              `}
+            >
+              <Heart className={`w-5 h-5 ${favorite ? 'fill-current' : ''}`} />
+            </button>
 
-              {/* Certifications */}
-              <div className="absolute bottom-4 left-4 flex gap-2">
-                {(product.certifications || ["GMP", "Halal"]).map((cert) => (
-                  <span 
-                    key={cert}
-                    className="text-xs font-medium bg-background/90 backdrop-blur-sm text-foreground px-3 py-1 rounded-full"
-                  >
-                    {cert}
-                  </span>
-                ))}
-              </div>
+            {/* Certifications */}
+            <div className="absolute bottom-4 left-4 flex gap-2">
+              {(product.certifications || ["GMP", "Halal"]).map((cert) => (
+                <span 
+                  key={cert}
+                  className="text-xs font-medium bg-background/90 backdrop-blur-sm text-foreground px-3 py-1 rounded-full"
+                >
+                  {cert}
+                </span>
+              ))}
             </div>
-          
+          </div>
+        
           {/* Product Details */}
           <div className="p-6 space-y-4">
-            <DialogHeader className="space-y-2">
-              <DialogTitle 
+            <div className="space-y-2">
+              <h2 
                 className="text-2xl font-bold text-foreground opacity-0 animate-stagger-fade"
                 style={{ animationDelay: '150ms' }}
               >
                 {product.name}
-              </DialogTitle>
-            </DialogHeader>
+              </h2>
+            </div>
             
             {/* Price */}
             <p 
@@ -175,8 +174,30 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
               </p>
             </div>
           </div>
-          </div>
         </div>
+      </div>
+    </>
+  );
+
+  // Mobile: Use Drawer with swipe-to-close
+  if (isMobile) {
+    return (
+      <Drawer open={open} onOpenChange={onOpenChange}>
+        <DrawerContent className="max-h-[85vh] p-0">
+          {ModalContent}
+        </DrawerContent>
+      </Drawer>
+    );
+  }
+
+  // Desktop: Use Dialog
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent 
+        className="max-w-2xl max-h-[90vh] overflow-hidden p-0 animate-modal-content"
+        style={{ animationDuration: '400ms' }}
+      >
+        {ModalContent}
       </DialogContent>
     </Dialog>
   );
