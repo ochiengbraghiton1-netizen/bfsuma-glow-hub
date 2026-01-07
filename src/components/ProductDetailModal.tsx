@@ -38,53 +38,59 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 animate-modal-content"
+        className="max-w-2xl max-h-[85vh] md:max-h-[90vh] overflow-hidden p-0 animate-modal-content"
         style={{ animationDuration: '400ms' }}
       >
-        <button 
-          onClick={() => onOpenChange(false)}
-          className="absolute right-4 top-4 z-10 rounded-full bg-background/80 p-2 backdrop-blur-sm hover:bg-background transition-colors duration-200"
-        >
-          <X className="h-4 w-4" />
-        </button>
+        {/* Fixed Header with Close Button - Always Visible */}
+        <div className="sticky top-0 z-20 flex items-center justify-between p-3 md:p-4 bg-background/95 backdrop-blur-md border-b border-border/20 md:absolute md:top-0 md:right-0 md:left-auto md:border-0 md:bg-transparent">
+          <span className="text-sm font-medium text-muted-foreground md:hidden">Product Details</span>
+          <button 
+            onClick={() => onOpenChange(false)}
+            className="rounded-full bg-background/90 md:bg-background/80 p-2.5 md:p-2 backdrop-blur-sm hover:bg-background transition-colors duration-200 shadow-md md:shadow-none"
+            aria-label="Close modal"
+          >
+            <X className="h-5 w-5 md:h-4 md:w-4" />
+          </button>
+        </div>
         
-        <div className="grid md:grid-cols-2 gap-0">
-          {/* Product Image */}
-          <div className="relative h-64 md:h-full min-h-[300px] overflow-hidden">
-            <img 
-              src={product.image || productGeneric}
-              alt={product.name}
-              className="w-full h-full object-cover animate-modal-image-focus"
-              style={{ animationDelay: '100ms' }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-secondary/40 to-transparent" />
-            
-            {/* Favorite Button */}
-            <button
-              onClick={() => toggleFavorite(product.name)}
-              className={`
-                absolute top-4 left-4 p-2 rounded-full backdrop-blur-sm transition-all duration-300
-                ${favorite 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'bg-background/80 text-muted-foreground hover:text-primary'
-                }
-              `}
-            >
-              <Heart className={`w-5 h-5 ${favorite ? 'fill-current' : ''}`} />
-            </button>
+        <div className="overflow-y-auto max-h-[calc(85vh-56px)] md:max-h-[90vh]">
+          <div className="grid md:grid-cols-2 gap-0">
+            {/* Product Image */}
+            <div className="relative h-56 md:h-full min-h-[250px] md:min-h-[300px] overflow-hidden">
+              <img 
+                src={product.image || productGeneric}
+                alt={product.name}
+                className="w-full h-full object-cover animate-modal-image-focus"
+                style={{ animationDelay: '100ms' }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-secondary/40 to-transparent" />
+              
+              {/* Favorite Button */}
+              <button
+                onClick={() => toggleFavorite(product.name)}
+                className={`
+                  absolute top-4 left-4 p-2 rounded-full backdrop-blur-sm transition-all duration-300
+                  ${favorite 
+                    ? 'bg-primary text-primary-foreground' 
+                    : 'bg-background/80 text-muted-foreground hover:text-primary'
+                  }
+                `}
+              >
+                <Heart className={`w-5 h-5 ${favorite ? 'fill-current' : ''}`} />
+              </button>
 
-            {/* Certifications */}
-            <div className="absolute bottom-4 left-4 flex gap-2">
-              {(product.certifications || ["GMP", "Halal"]).map((cert) => (
-                <span 
-                  key={cert}
-                  className="text-xs font-medium bg-background/90 backdrop-blur-sm text-foreground px-3 py-1 rounded-full"
-                >
-                  {cert}
-                </span>
-              ))}
+              {/* Certifications */}
+              <div className="absolute bottom-4 left-4 flex gap-2">
+                {(product.certifications || ["GMP", "Halal"]).map((cert) => (
+                  <span 
+                    key={cert}
+                    className="text-xs font-medium bg-background/90 backdrop-blur-sm text-foreground px-3 py-1 rounded-full"
+                  >
+                    {cert}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
           
           {/* Product Details */}
           <div className="p-6 space-y-4">
@@ -168,6 +174,7 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
                 Free shipping on orders over KSh 10,000
               </p>
             </div>
+          </div>
           </div>
         </div>
       </DialogContent>
