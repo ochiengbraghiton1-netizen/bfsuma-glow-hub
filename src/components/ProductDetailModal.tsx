@@ -1,19 +1,25 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, X, Shield, Leaf, Check, Heart } from "lucide-react";
+import { ShoppingCart, X, Shield, Leaf, Check, Heart, AlertTriangle } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { getStockStatus } from "@/hooks/use-products";
 import productGeneric from "@/assets/product-generic.jpg";
 
 interface ProductDetailModalProps {
   product: {
+    id: string;
     name: string;
     price: string;
+    numericPrice: number;
     benefit: string;
     description?: string;
     image?: string;
     certifications?: string[];
+    stockQuantity?: number;
+    lowStockThreshold?: number;
+    trackInventory?: boolean;
   } | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -31,12 +37,33 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
 
   if (!product) return null;
 
+  const stockStatus = getStockStatus(
+    product.stockQuantity ?? 0,
+    product.lowStockThreshold ?? 10,
+    product.trackInventory ?? true
+  );
+  const isOutOfStock = stockStatus.status === "out-of-stock";
+  const isLowStock = stockStatus.status === "low-stock";
+
   const handleAddToCart = () => {
-    addToCart({ name: product.name, price: product.price, image: product.image });
+    if (isOutOfStock) return;
+    addToCart({ 
+      id: product.id, 
+      name: product.name, 
+      price: product.numericPrice, 
+      priceFormatted: product.price, 
+      image: product.image 
+    });
     onOpenChange(false);
   };
 
-  const favorite = isFavorite(product.name);
+  const favorite = isFavorite(product.id);
+
+  const stockBadgeStyles = {
+    "in-stock": "bg-green-500/10 text-green-600 dark:text-green-400",
+    "low-stock": "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
+    "out-of-stock": "bg-red-500/10 text-red-600 dark:text-red-400",
+  };
 
   const ModalContent = (
     <>
@@ -66,7 +93,7 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
             
             {/* Favorite Button */}
             <button
-              onClick={() => toggleFavorite(product.name)}
+              onClick={() => toggleFavorite(product.id)}
               className={`
                 absolute top-4 left-4 p-2 rounded-full backdrop-blur-sm transition-all duration-300
                 ${favorite 
@@ -100,6 +127,22 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
               >
                 {product.name}
               </h2>
+              
+              {/* Stock Status Badge */}
+              {product.trackInventory !== false && (
+                <div 
+                  className="opacity-0 animate-stagger-fade"
+                  style={{ animationDelay: '180ms' }}
+                >
+                  <span className={`inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1 rounded-full ${stockBadgeStyles[stockStatus.status]}`}>
+                    {isLowStock && <AlertTriangle className="w-3.5 h-3.5" />}
+                    {stockStatus.label}
+                    {isLowStock && product.stockQuantity && (
+                      <span className="ml-1">— Only {product.stockQuantity} left!</span>
+                    )}
+                  </span>
+                </div>
+              )}
             </div>
             
             {/* Price */}
@@ -165,9 +208,10 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
                 variant="premium" 
                 className="w-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg rounded-full"
                 size="lg"
+                disabled={isOutOfStock}
               >
                 <ShoppingCart className="w-5 h-5" />
-                Add to Cart
+                {isOutOfStock ? "Out of Stock" : "Add to Cart"}
               </Button>
               <p className="text-xs text-muted-foreground text-center">
                 Free shipping on orders over KSh 10,000
