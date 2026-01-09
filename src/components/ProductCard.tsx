@@ -4,42 +4,63 @@ import { ShoppingCart, Heart, Eye } from "lucide-react";
 import { useInView } from "@/hooks/use-in-view";
 import { useState } from "react";
 import { useCart } from "@/contexts/CartContext";
+import { getStockStatus } from "@/hooks/use-products";
 import productGeneric from "@/assets/product-generic.jpg";
 
 interface ProductCardProps {
+  id: string;
   name: string;
   price: string;
+  numericPrice: number;
   benefit: string;
   description?: string;
   image?: string;
   category?: string;
   certifications?: string[];
+  stockQuantity?: number;
+  lowStockThreshold?: number;
+  trackInventory?: boolean;
   onClick?: () => void;
 }
 
 const ProductCard = ({ 
+  id,
   name, 
-  price, 
+  price,
+  numericPrice,
   benefit, 
   image, 
   certifications = ["GMP", "Halal"],
+  stockQuantity = 0,
+  lowStockThreshold = 10,
+  trackInventory = true,
   onClick 
 }: ProductCardProps) => {
   const [ref, isInView] = useInView<HTMLDivElement>({ threshold: 0.6, triggerOnce: true });
   const [isHovering, setIsHovering] = useState(false);
   const { addToCart, toggleFavorite, isFavorite } = useCart();
 
+  const stockStatus = getStockStatus(stockQuantity, lowStockThreshold, trackInventory);
+  const isOutOfStock = stockStatus.status === "out-of-stock";
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    addToCart({ name, price, image });
+    if (isOutOfStock) return;
+    addToCart({ id, name, price: numericPrice, priceFormatted: price, image });
   };
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation();
-    toggleFavorite(name);
+    toggleFavorite(id);
   };
 
-  const favorite = isFavorite(name);
+  const favorite = isFavorite(id);
+
+  const stockBadgeStyles = {
+    "in-stock": "bg-green-500/10 text-green-600 dark:text-green-400",
+    "low-stock": "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
+    "out-of-stock": "bg-red-500/10 text-red-600 dark:text-red-400",
+  };
 
   return (
     <Card 
@@ -82,7 +103,7 @@ const ProductCard = ({
         </button>
 
         {/* Certifications */}
-        <div className="absolute top-3 left-3 flex gap-1">
+        <div className="absolute top-3 left-3 flex flex-col gap-1">
           {certifications.map((cert) => (
             <span 
               key={cert}
@@ -92,6 +113,15 @@ const ProductCard = ({
             </span>
           ))}
         </div>
+
+        {/* Stock Status Badge */}
+        {trackInventory && (
+          <div className="absolute bottom-3 left-3">
+            <span className={`text-xs font-medium px-2 py-1 rounded-full ${stockBadgeStyles[stockStatus.status]}`}>
+              {stockStatus.label}
+            </span>
+          </div>
+        )}
         
         {/* View Details Overlay */}
         <div 
@@ -151,6 +181,7 @@ const ProductCard = ({
         <Button
           onClick={handleAddToCart}
           variant="default"
+          disabled={isOutOfStock}
           className={`
             w-full mt-4 rounded-full transition-all duration-300
             ${isInView ? 'animate-product-price-enter' : 'opacity-0'}
@@ -158,7 +189,7 @@ const ProductCard = ({
           style={{ animationDelay: isInView ? '340ms' : '0ms' }}
         >
           <ShoppingCart className="w-4 h-4 mr-2" />
-          Add to Cart
+          {isOutOfStock ? "Out of Stock" : "Add to Cart"}
         </Button>
       </div>
     </Card>

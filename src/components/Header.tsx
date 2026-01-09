@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ShoppingCart, Heart, X, Plus, Minus, Trash2 } from "lucide-react";
+import { ShoppingCart, Plus, Minus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useCart } from "@/contexts/CartContext";
@@ -7,19 +7,12 @@ import ThemeToggle from "./ThemeToggle";
 import productGeneric from "@/assets/product-generic.jpg";
 
 const Header = () => {
-  const { items, totalItems, updateQuantity, removeFromCart, clearCart } = useCart();
+  const { items, totalItems, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
   const [isOpen, setIsOpen] = useState(false);
 
-  const calculateTotal = () => {
-    return items.reduce((total, item) => {
-      const price = parseFloat(item.price.replace(/[^0-9.]/g, ''));
-      return total + (price * item.quantity);
-    }, 0);
-  };
-
   const handleCheckout = () => {
-    const itemsList = items.map(item => `${item.name} x${item.quantity} - ${item.price}`).join('\n');
-    const total = calculateTotal().toLocaleString();
+    const itemsList = items.map(item => `${item.name} x${item.quantity} - ${item.priceFormatted}`).join('\n');
+    const total = totalPrice.toLocaleString();
     const message = encodeURIComponent(
       `Hi! I'd like to place an order:\n\n${itemsList}\n\nTotal: KSh ${total}`
     );
@@ -73,7 +66,7 @@ const Header = () => {
                   <>
                     <div className="flex-1 overflow-y-auto space-y-4 pr-2">
                       {items.map((item) => (
-                        <div key={item.name} className="flex gap-3 p-3 bg-muted/50 rounded-xl">
+                        <div key={item.id} className="flex gap-3 p-3 bg-muted/50 rounded-xl">
                           <img 
                             src={item.image || productGeneric} 
                             alt={item.name}
@@ -81,13 +74,13 @@ const Header = () => {
                           />
                           <div className="flex-1 min-w-0">
                             <h4 className="font-semibold text-sm truncate">{item.name}</h4>
-                            <p className="text-primary font-bold text-sm">{item.price}</p>
+                            <p className="text-primary font-bold text-sm">{item.priceFormatted}</p>
                             <div className="flex items-center gap-2 mt-2">
                               <Button 
                                 variant="outline" 
                                 size="icon" 
                                 className="h-7 w-7"
-                                onClick={() => updateQuantity(item.name, item.quantity - 1)}
+                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
                               >
                                 <Minus className="h-3 w-3" />
                               </Button>
@@ -96,7 +89,7 @@ const Header = () => {
                                 variant="outline" 
                                 size="icon" 
                                 className="h-7 w-7"
-                                onClick={() => updateQuantity(item.name, item.quantity + 1)}
+                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
                               >
                                 <Plus className="h-3 w-3" />
                               </Button>
@@ -104,7 +97,7 @@ const Header = () => {
                                 variant="ghost" 
                                 size="icon" 
                                 className="h-7 w-7 ml-auto text-destructive hover:text-destructive"
-                                onClick={() => removeFromCart(item.name)}
+                                onClick={() => removeFromCart(item.id)}
                               >
                                 <Trash2 className="h-3 w-3" />
                               </Button>
@@ -117,7 +110,7 @@ const Header = () => {
                     <div className="border-t border-border pt-4 mt-4 space-y-4">
                       <div className="flex justify-between text-lg font-bold">
                         <span>Total</span>
-                        <span className="text-primary">KSh {calculateTotal().toLocaleString()}</span>
+                        <span className="text-primary">KSh {totalPrice.toLocaleString()}</span>
                       </div>
                       <Button 
                         variant="premium" 

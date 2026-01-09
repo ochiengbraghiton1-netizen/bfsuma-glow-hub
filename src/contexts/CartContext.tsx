@@ -1,8 +1,10 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
 export interface CartItem {
+  id: string;
   name: string;
-  price: string;
+  price: number;
+  priceFormatted: string;
   image?: string;
   quantity: number;
 }
@@ -10,13 +12,14 @@ export interface CartItem {
 interface CartContextType {
   items: CartItem[];
   addToCart: (item: Omit<CartItem, 'quantity'>) => void;
-  removeFromCart: (name: string) => void;
-  updateQuantity: (name: string, quantity: number) => void;
+  removeFromCart: (id: string) => void;
+  updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   totalItems: number;
+  totalPrice: number;
   favorites: string[];
-  toggleFavorite: (name: string) => void;
-  isFavorite: (name: string) => boolean;
+  toggleFavorite: (id: string) => void;
+  isFavorite: (id: string) => boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -27,41 +30,42 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const addToCart = (item: Omit<CartItem, 'quantity'>) => {
     setItems(prev => {
-      const existing = prev.find(i => i.name === item.name);
+      const existing = prev.find(i => i.id === item.id);
       if (existing) {
         return prev.map(i => 
-          i.name === item.name ? { ...i, quantity: i.quantity + 1 } : i
+          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
         );
       }
       return [...prev, { ...item, quantity: 1 }];
     });
   };
 
-  const removeFromCart = (name: string) => {
-    setItems(prev => prev.filter(i => i.name !== name));
+  const removeFromCart = (id: string) => {
+    setItems(prev => prev.filter(i => i.id !== id));
   };
 
-  const updateQuantity = (name: string, quantity: number) => {
+  const updateQuantity = (id: string, quantity: number) => {
     if (quantity <= 0) {
-      removeFromCart(name);
+      removeFromCart(id);
       return;
     }
     setItems(prev => prev.map(i => 
-      i.name === name ? { ...i, quantity } : i
+      i.id === id ? { ...i, quantity } : i
     ));
   };
 
   const clearCart = () => setItems([]);
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-  const toggleFavorite = (name: string) => {
+  const toggleFavorite = (id: string) => {
     setFavorites(prev => 
-      prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]
+      prev.includes(id) ? prev.filter(n => n !== id) : [...prev, id]
     );
   };
 
-  const isFavorite = (name: string) => favorites.includes(name);
+  const isFavorite = (id: string) => favorites.includes(id);
 
   return (
     <CartContext.Provider value={{
@@ -71,6 +75,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       updateQuantity,
       clearCart,
       totalItems,
+      totalPrice,
       favorites,
       toggleFavorite,
       isFavorite,
