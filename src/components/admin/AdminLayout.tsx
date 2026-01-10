@@ -14,11 +14,17 @@ import {
   X,
   Leaf,
   Home,
+  FolderTree,
+  ShoppingCart,
+  Percent,
 } from 'lucide-react';
 
 const navItems = [
   { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
   { to: '/admin/products', icon: Package, label: 'Products' },
+  { to: '/admin/categories', icon: FolderTree, label: 'Categories' },
+  { to: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
+  { to: '/admin/promotions', icon: Percent, label: 'Promotions' },
   { to: '/admin/consultations', icon: Calendar, label: 'Consultations' },
   { to: '/admin/team', icon: Users, label: 'Team Members' },
   { to: '/admin/content', icon: FileEdit, label: 'Site Content' },

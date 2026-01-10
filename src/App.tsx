@@ -13,6 +13,9 @@ import AdminLayout from "./components/admin/AdminLayout";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import Dashboard from "./pages/admin/Dashboard";
 import Products from "./pages/admin/Products";
+import Categories from "./pages/admin/Categories";
+import Orders from "./pages/admin/Orders";
+import Promotions from "./pages/admin/Promotions";
 import Consultations from "./pages/admin/Consultations";
 import Team from "./pages/admin/Team";
 import Content from "./pages/admin/Content";
@@ -41,6 +44,9 @@ const App = () => (
                 >
                   <Route index element={<Dashboard />} />
                   <Route path="products" element={<Products />} />
+                  <Route path="categories" element={<Categories />} />
+                  <Route path="orders" element={<Orders />} />
+                  <Route path="promotions" element={<Promotions />} />
                   <Route path="consultations" element={<Consultations />} />
                   <Route path="team" element={<Team />} />
                   <Route path="content" element={<Content />} />
