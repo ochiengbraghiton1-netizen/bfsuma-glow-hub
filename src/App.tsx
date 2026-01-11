@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { CartProvider } from "@/contexts/CartContext";
 import Index from "./pages/Index";
+import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import AdminLayout from "./components/admin/AdminLayout";
@@ -34,6 +35,7 @@ const App = () => (
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Index />} />
+                <Route path="/checkout" element={<Checkout />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route
                   path="/admin"

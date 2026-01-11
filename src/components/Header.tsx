@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ShoppingCart, Plus, Minus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -9,14 +10,11 @@ import productGeneric from "@/assets/product-generic.jpg";
 const Header = () => {
   const { items, totalItems, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleCheckout = () => {
-    const itemsList = items.map(item => `${item.name} x${item.quantity} - ${item.priceFormatted}`).join('\n');
-    const total = totalPrice.toLocaleString();
-    const message = encodeURIComponent(
-      `Hi! I'd like to place an order:\n\n${itemsList}\n\nTotal: KSh ${total}`
-    );
-    window.open(`https://wa.me/254795454053?text=${message}`, "_blank");
+    setIsOpen(false);
+    navigate('/checkout');
   };
 
   return (
@@ -118,7 +116,7 @@ const Header = () => {
                         size="lg"
                         onClick={handleCheckout}
                       >
-                        Checkout via WhatsApp
+                        Proceed to Checkout
                       </Button>
                       <Button 
                         variant="ghost" 

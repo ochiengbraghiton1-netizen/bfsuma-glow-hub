@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import DashboardCharts from '@/components/admin/DashboardCharts';
 
 interface Stats {
   products: number;
@@ -242,7 +243,10 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* Charts Row */}
+      {/* Charts Section */}
+      <DashboardCharts />
+
+      {/* Recent Data Row */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Recent Orders */}
         <div className="bg-[hsl(var(--admin-card))] rounded-2xl border border-[hsl(var(--admin-border))] overflow-hidden">
