@@ -19,6 +19,7 @@ import Promotions from "./pages/admin/Promotions";
 import Consultations from "./pages/admin/Consultations";
 import Team from "./pages/admin/Team";
 import Content from "./pages/admin/Content";
+import Admins from "./pages/admin/Admins";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const App = () => (
                   <Route path="consultations" element={<Consultations />} />
                   <Route path="team" element={<Team />} />
                   <Route path="content" element={<Content />} />
+                  <Route path="admins" element={<Admins />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>
