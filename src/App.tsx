@@ -17,10 +17,12 @@ import Products from "./pages/admin/Products";
 import Categories from "./pages/admin/Categories";
 import Orders from "./pages/admin/Orders";
 import Promotions from "./pages/admin/Promotions";
+import Affiliates from "./pages/admin/Affiliates";
 import Consultations from "./pages/admin/Consultations";
 import Team from "./pages/admin/Team";
 import Content from "./pages/admin/Content";
 import Admins from "./pages/admin/Admins";
+import AffiliateDashboard from "./pages/affiliate/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -50,11 +52,13 @@ const App = () => (
                   <Route path="categories" element={<Categories />} />
                   <Route path="orders" element={<Orders />} />
                   <Route path="promotions" element={<Promotions />} />
+                  <Route path="affiliates" element={<Affiliates />} />
                   <Route path="consultations" element={<Consultations />} />
                   <Route path="team" element={<Team />} />
                   <Route path="content" element={<Content />} />
                   <Route path="admins" element={<Admins />} />
                 </Route>
+                <Route path="/affiliate" element={<AffiliateDashboard />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

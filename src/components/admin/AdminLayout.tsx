@@ -29,6 +29,7 @@ const navItems = [
   { to: '/admin/categories', icon: FolderTree, label: 'Categories' },
   { to: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
   { to: '/admin/promotions', icon: Percent, label: 'Promotions' },
+  { to: '/admin/affiliates', icon: Users, label: 'Affiliates' },
   { to: '/admin/consultations', icon: Calendar, label: 'Consultations' },
   { to: '/admin/team', icon: Users, label: 'Team Members' },
   { to: '/admin/content', icon: FileEdit, label: 'Site Content' },
