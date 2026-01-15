@@ -69,17 +69,10 @@ const AffiliateDashboard = () => {
   useEffect(() => {
     if (!authLoading && !user) {
       navigate('/auth');
-    } else if (!authLoading && user && !isTeamMember) {
-      navigate('/');
-      toast({
-        title: 'Access Denied',
-        description: 'You do not have affiliate access',
-        variant: 'destructive',
-      });
     } else if (user) {
       fetchAffiliateData();
     }
-  }, [user, authLoading, isTeamMember]);
+  }, [user, authLoading]);
 
   const fetchAffiliateData = async () => {
     if (!user) return;

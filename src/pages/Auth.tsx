@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useReferral } from '@/hooks/use-referral';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Leaf, Loader2 } from 'lucide-react';
+import { Leaf, Loader2, Users } from 'lucide-react';
 import { z } from 'zod';
 
 const emailSchema = z.string().email('Please enter a valid email address');
@@ -22,6 +23,7 @@ const Auth = () => {
   const [errors, setErrors] = useState<{ email?: string; password?: string; fullName?: string }>({});
 
   const { user, signIn, signUp } = useAuth();
+  const { referralCode, clearReferral } = useReferral();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -81,7 +83,8 @@ const Auth = () => {
           navigate('/admin');
         }
       } else {
-        const { error } = await signUp(email, password, fullName);
+        // Pass referral code if available
+        const { error } = await signUp(email, password, fullName, referralCode || undefined);
         if (error) {
           if (error.message.includes('already registered')) {
             toast({
@@ -97,9 +100,13 @@ const Auth = () => {
             });
           }
         } else {
+          // Clear the referral code after successful signup
+          clearReferral();
           toast({
             title: 'Account created!',
-            description: 'Welcome aboard! Redirecting to dashboard...',
+            description: referralCode 
+              ? 'Welcome! You\'ve been linked to your referrer and have your own affiliate account.'
+              : 'Welcome aboard! Redirecting to dashboard...',
           });
           navigate('/admin');
         }
@@ -129,9 +136,17 @@ const Auth = () => {
           </CardTitle>
           <CardDescription>
             {isLogin 
-              ? 'Sign in to access your admin dashboard' 
-              : 'Register to become an admin'}
+              ? 'Sign in to access your dashboard' 
+              : referralCode 
+                ? 'Join through your referral link' 
+                : 'Register to get started'}
           </CardDescription>
+          {!isLogin && referralCode && (
+            <div className="mt-2 flex items-center justify-center gap-2 text-sm text-primary bg-primary/10 rounded-lg py-2 px-3">
+              <Users className="w-4 h-4" />
+              <span>Referred by code: <strong>{referralCode}</strong></span>
+            </div>
+          )}
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">

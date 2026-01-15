@@ -14,6 +14,100 @@ export type Database = {
   }
   public: {
     Tables: {
+      affiliate_clicks: {
+        Row: {
+          affiliate_id: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          referrer_url: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          affiliate_id: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          referrer_url?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          affiliate_id?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          referrer_url?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_clicks_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliates: {
+        Row: {
+          commission_rate: number
+          created_at: string
+          id: string
+          referral_code: string
+          referral_url: string | null
+          referred_by: string | null
+          status: string
+          total_clicks: number
+          total_commission: number
+          total_conversions: number
+          total_sales: number
+          total_signups: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          commission_rate?: number
+          created_at?: string
+          id?: string
+          referral_code: string
+          referral_url?: string | null
+          referred_by?: string | null
+          status?: string
+          total_clicks?: number
+          total_commission?: number
+          total_conversions?: number
+          total_sales?: number
+          total_signups?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          commission_rate?: number
+          created_at?: string
+          id?: string
+          referral_code?: string
+          referral_url?: string | null
+          referred_by?: string | null
+          status?: string
+          total_clicks?: number
+          total_commission?: number
+          total_conversions?: number
+          total_sales?: number
+          total_signups?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliates_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           created_at: string
@@ -367,6 +461,57 @@ export type Database = {
         }
         Relationships: []
       }
+      referrals: {
+        Row: {
+          affiliate_id: string
+          commission_amount: number
+          created_at: string
+          id: string
+          order_id: string | null
+          referral_type: string
+          referred_user_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          affiliate_id: string
+          commission_amount?: number
+          created_at?: string
+          id?: string
+          order_id?: string | null
+          referral_type?: string
+          referred_user_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          affiliate_id?: string
+          commission_amount?: number
+          created_at?: string
+          id?: string
+          order_id?: string | null
+          referral_type?: string
+          referred_user_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referrals_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referrals_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       site_content: {
         Row: {
           content: string | null
@@ -463,6 +608,7 @@ export type Database = {
         Args: { p_product_id: string; p_quantity: number }
         Returns: boolean
       }
+      generate_referral_code: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
