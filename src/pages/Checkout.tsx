@@ -193,21 +193,16 @@ const Checkout = () => {
         }
       }
 
-      // Update product stock quantities
+      // Update product stock quantities atomically using database function
       for (const item of items) {
-        const { data: product } = await supabase
-          .from('products')
-          .select('stock_quantity')
-          .eq('id', item.id)
-          .eq('track_inventory', true)
-          .maybeSingle();
+        const { data: stockResult, error: stockError } = await supabase
+          .rpc('decrement_stock', { p_product_id: item.id, p_quantity: item.quantity });
         
-        if (product) {
-          await supabase
-            .from('products')
-            .update({ stock_quantity: Math.max(0, product.stock_quantity - item.quantity) })
-            .eq('id', item.id);
+        if (stockError) {
+          console.error('Stock decrement error:', stockError);
         }
+        // Note: stockResult will be false if insufficient stock, but we continue
+        // since the order is already placed - this prevents race condition overselling
       }
 
       setOrderId(order.id);
