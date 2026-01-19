@@ -1,10 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { TrendingUp, Users, Award, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import joinEarnBg from "@/assets/join-earn-bg.jpg";
 
 const JoinEarn = () => {
-  const openWhatsApp = () => {
-    window.open("https://wa.me/254795454053", "_blank");
+  const navigate = useNavigate();
+  
+  const goToJoinBusiness = () => {
+    navigate("/join-business");
   };
 
   const benefits = [
@@ -70,12 +73,12 @@ const JoinEarn = () => {
           </div>
 
           <Button 
-            onClick={openWhatsApp}
+            onClick={goToJoinBusiness}
             variant="premium" 
             size="xl"
             className="group animate-scale-in"
           >
-            Join Now on WhatsApp
+            Join the Business
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Button>
         </div>
