@@ -108,6 +108,80 @@ export type Database = {
           },
         ]
       }
+      business_registrations: {
+        Row: {
+          agreement_accepted: boolean
+          approved_at: string | null
+          approved_by: string | null
+          assigned_sponsor_id: string | null
+          county_city: string
+          created_at: string
+          email: string | null
+          entry_fee: number
+          full_name: string
+          has_sponsor: boolean
+          id: string
+          phone: string
+          rejection_reason: string | null
+          sponsor_membership_id: string | null
+          sponsor_name: string | null
+          sponsor_phone: string | null
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          agreement_accepted?: boolean
+          approved_at?: string | null
+          approved_by?: string | null
+          assigned_sponsor_id?: string | null
+          county_city: string
+          created_at?: string
+          email?: string | null
+          entry_fee?: number
+          full_name: string
+          has_sponsor?: boolean
+          id?: string
+          phone: string
+          rejection_reason?: string | null
+          sponsor_membership_id?: string | null
+          sponsor_name?: string | null
+          sponsor_phone?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          agreement_accepted?: boolean
+          approved_at?: string | null
+          approved_by?: string | null
+          assigned_sponsor_id?: string | null
+          county_city?: string
+          created_at?: string
+          email?: string | null
+          entry_fee?: number
+          full_name?: string
+          has_sponsor?: boolean
+          id?: string
+          phone?: string
+          rejection_reason?: string | null
+          sponsor_membership_id?: string | null
+          sponsor_name?: string | null
+          sponsor_phone?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_registrations_assigned_sponsor_id_fkey"
+            columns: ["assigned_sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "business_registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           created_at: string

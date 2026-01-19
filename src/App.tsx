@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
+import JoinBusiness from "./pages/JoinBusiness";
 import AdminLayout from "./components/admin/AdminLayout";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import Dashboard from "./pages/admin/Dashboard";
@@ -22,6 +23,7 @@ import Consultations from "./pages/admin/Consultations";
 import Team from "./pages/admin/Team";
 import Content from "./pages/admin/Content";
 import Admins from "./pages/admin/Admins";
+import BusinessRegistrations from "./pages/admin/BusinessRegistrations";
 import AffiliateDashboard from "./pages/affiliate/Dashboard";
 
 const queryClient = new QueryClient();
@@ -39,6 +41,7 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/join-business" element={<JoinBusiness />} />
                 <Route
                   path="/admin"
                   element={
@@ -57,6 +60,7 @@ const App = () => (
                   <Route path="team" element={<Team />} />
                   <Route path="content" element={<Content />} />
                   <Route path="admins" element={<Admins />} />
+                  <Route path="business-registrations" element={<BusinessRegistrations />} />
                 </Route>
                 <Route path="/affiliate" element={<AffiliateDashboard />} />
                 <Route path="*" element={<NotFound />} />
