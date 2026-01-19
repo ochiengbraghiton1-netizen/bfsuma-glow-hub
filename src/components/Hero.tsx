@@ -1,14 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import heroBg from "@/assets/wellness-hero.jpg";
 
 const Hero = () => {
+  const navigate = useNavigate();
+  
   const scrollToProducts = () => {
     document.getElementById("products")?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const openWhatsApp = () => {
-    window.open("https://wa.me/254795454053", "_blank");
+  const goToJoinBusiness = () => {
+    navigate("/join-business");
   };
 
   return (
@@ -75,7 +78,7 @@ const Hero = () => {
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Button>
           <Button 
-            onClick={openWhatsApp}
+            onClick={goToJoinBusiness}
             variant="glass" 
             size="xl"
           >
