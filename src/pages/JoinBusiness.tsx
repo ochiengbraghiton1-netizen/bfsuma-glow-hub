@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
@@ -18,14 +18,29 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { ArrowLeft, Users, CheckCircle, Loader2, Info } from 'lucide-react';
+import { ArrowLeft, Users, Loader2, Info } from 'lucide-react';
 import { businessRegistrationSchema, BusinessRegistrationFormData } from '@/lib/business-registration-validation';
+import RegistrationSuccess from '@/components/business-registration/RegistrationSuccess';
+
+interface RegistrationData {
+  id: string;
+  full_name: string;
+  phone: string;
+  email?: string;
+  county_city: string;
+  has_sponsor: boolean;
+  sponsor_name?: string;
+  sponsor_phone?: string;
+  entry_fee: number;
+  status: 'pending' | 'approved' | 'rejected' | 'payment_pending' | 'payment_received';
+}
+
+const REGISTRATION_STORAGE_KEY = 'bf_suma_registration';
 
 const JoinBusiness = () => {
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [registrationData, setRegistrationData] = useState<RegistrationData | null>(null);
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   const form = useForm<BusinessRegistrationFormData>({
     resolver: zodResolver(businessRegistrationSchema),
@@ -44,28 +59,61 @@ const JoinBusiness = () => {
 
   const hasSponsor = form.watch('has_sponsor');
 
+  // Check for existing registration on mount
+  useEffect(() => {
+    const storedRegistration = sessionStorage.getItem(REGISTRATION_STORAGE_KEY);
+    if (storedRegistration) {
+      try {
+        const parsed = JSON.parse(storedRegistration);
+        setRegistrationData(parsed);
+      } catch (e) {
+        sessionStorage.removeItem(REGISTRATION_STORAGE_KEY);
+      }
+    }
+  }, []);
+
   const onSubmit = async (data: BusinessRegistrationFormData) => {
     setSubmitting(true);
     try {
-      const { error } = await supabase.from('business_registrations').insert({
-        full_name: data.full_name,
-        phone: data.phone,
-        email: data.email || null,
-        county_city: data.county_city,
-        has_sponsor: data.has_sponsor,
-        sponsor_name: data.has_sponsor ? data.sponsor_name : null,
-        sponsor_phone: data.has_sponsor ? data.sponsor_phone : null,
-        sponsor_membership_id: data.has_sponsor ? data.sponsor_membership_id : null,
-        agreement_accepted: data.agreement_accepted,
-        status: 'pending',
-      });
+      const { data: insertedData, error } = await supabase
+        .from('business_registrations')
+        .insert({
+          full_name: data.full_name,
+          phone: data.phone,
+          email: data.email || null,
+          county_city: data.county_city,
+          has_sponsor: data.has_sponsor,
+          sponsor_name: data.has_sponsor ? data.sponsor_name : null,
+          sponsor_phone: data.has_sponsor ? data.sponsor_phone : null,
+          sponsor_membership_id: data.has_sponsor ? data.sponsor_membership_id : null,
+          agreement_accepted: data.agreement_accepted,
+          status: 'pending',
+        })
+        .select()
+        .single();
 
       if (error) throw error;
 
-      setSubmitted(true);
+      const regData: RegistrationData = {
+        id: insertedData.id,
+        full_name: insertedData.full_name,
+        phone: insertedData.phone,
+        email: insertedData.email || undefined,
+        county_city: insertedData.county_city,
+        has_sponsor: insertedData.has_sponsor,
+        sponsor_name: insertedData.sponsor_name || undefined,
+        sponsor_phone: insertedData.sponsor_phone || undefined,
+        entry_fee: insertedData.entry_fee,
+        status: insertedData.status as RegistrationData['status'],
+      };
+
+      // Store in session storage for persistence on refresh
+      sessionStorage.setItem(REGISTRATION_STORAGE_KEY, JSON.stringify(regData));
+      setRegistrationData(regData);
+
       toast({
         title: 'Registration Submitted!',
-        description: 'Your application has been received. We will contact you shortly.',
+        description: 'Your application has been received.',
       });
     } catch (error: any) {
       console.error('Registration error:', error);
@@ -79,30 +127,19 @@ const JoinBusiness = () => {
     }
   };
 
-  if (submitted) {
+  const handleStartNew = () => {
+    sessionStorage.removeItem(REGISTRATION_STORAGE_KEY);
+    setRegistrationData(null);
+    form.reset();
+  };
+
+  // Show success page if registration exists
+  if (registrationData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md text-center">
-          <CardContent className="pt-10 pb-8">
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-              <CheckCircle className="h-10 w-10 text-green-600 dark:text-green-400" />
-            </div>
-            <h2 className="text-2xl font-bold mb-2">Application Submitted!</h2>
-            <p className="text-muted-foreground mb-6">
-              Thank you for your interest in joining BF SUMA. Your application is being reviewed. 
-              We will contact you shortly to confirm your registration and payment details.
-            </p>
-            <div className="space-y-3">
-              <Button onClick={() => navigate('/')} className="w-full">
-                Return to Home
-              </Button>
-              <Button variant="outline" onClick={() => { setSubmitted(false); form.reset(); }} className="w-full">
-                Submit Another Application
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <RegistrationSuccess 
+        registrationData={registrationData} 
+        onStartNew={handleStartNew}
+      />
     );
   }
 
