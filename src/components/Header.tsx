@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { useCart } from "@/contexts/CartContext";
 import ThemeToggle from "./ThemeToggle";
 import productGeneric from "@/assets/product-generic.jpg";
+import bfSumaLogo from "@/assets/bf-suma-logo.png";
 
 const Header = () => {
   const { items, totalItems, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
@@ -21,6 +22,7 @@ const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-2">
+          <img src={bfSumaLogo} alt="BF SUMA Logo" className="h-10 w-auto" />
           <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             BF SUMA
           </span>
