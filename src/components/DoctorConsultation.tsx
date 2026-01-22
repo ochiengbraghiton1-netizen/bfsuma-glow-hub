@@ -46,6 +46,8 @@ const DoctorConsultation = () => {
             <img
               src={doctorImg}
               alt="Wellness consultation"
+              loading="lazy"
+              decoding="async"
               className="relative rounded-3xl shadow-elegant w-full h-[400px] object-cover"
             />
           </div>

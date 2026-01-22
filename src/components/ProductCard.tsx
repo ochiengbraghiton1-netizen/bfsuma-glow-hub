@@ -84,6 +84,8 @@ const ProductCard = ({
           <img 
             src={image || productGeneric}
             alt={name}
+            loading="lazy"
+            decoding="async"
             className="w-full h-56 object-cover"
           />
         </div>

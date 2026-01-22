@@ -17,13 +17,16 @@ const Hero = () => {
   return (
     <section 
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
-      style={{
-        backgroundImage: `url(${heroBg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed"
-      }}
     >
+      {/* Hero background image - LCP element */}
+      <img
+        src={heroBg}
+        alt=""
+        fetchPriority="high"
+        decoding="async"
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ objectPosition: "center" }}
+      />
       {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-secondary/90 via-secondary/70 to-primary/80" />
       
