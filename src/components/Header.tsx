@@ -27,9 +27,10 @@ const Header = () => {
         </div>
 
         <nav className="hidden md:flex items-center gap-6">
-          <a href="#products" className="text-sm text-muted-foreground hover:text-primary transition-colors">Products</a>
-          <a href="#about" className="text-sm text-muted-foreground hover:text-primary transition-colors">About</a>
-          <a href="#contact" className="text-sm text-muted-foreground hover:text-primary transition-colors">Contact</a>
+          <a href="#products" onClick={(e) => { e.preventDefault(); document.getElementById("products")?.scrollIntoView({ behavior: "smooth" }); }} className="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer">Products</a>
+          <a href="#about" onClick={(e) => { e.preventDefault(); document.getElementById("about")?.scrollIntoView({ behavior: "smooth" }); }} className="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer">About</a>
+          <a href="#faq" onClick={(e) => { e.preventDefault(); document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" }); }} className="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer">FAQ</a>
+          <a href="#contact" onClick={(e) => { e.preventDefault(); document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }); }} className="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer">Contact</a>
         </nav>
 
         <div className="flex items-center gap-3">
