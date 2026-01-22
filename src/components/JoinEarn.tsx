@@ -29,15 +29,15 @@ const JoinEarn = () => {
   ];
 
   return (
-    <section 
-      className="relative py-24 overflow-hidden"
-      style={{
-        backgroundImage: `url(${joinEarnBg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed"
-      }}
-    >
+    <section className="relative py-24 overflow-hidden">
+      {/* Background image - lazy loaded */}
+      <img
+        src={joinEarnBg}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
       <div className="absolute inset-0 bg-gradient-to-r from-secondary/95 via-primary/90 to-secondary/95" />
       
       <div className="relative z-10 container mx-auto px-4">
