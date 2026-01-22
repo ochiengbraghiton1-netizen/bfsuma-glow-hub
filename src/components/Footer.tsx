@@ -22,12 +22,27 @@ const Footer = () => {
             <h4 className="font-bold mb-4 text-accent">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#products" className="text-white/80 hover:text-accent transition-colors">
+                <a href="#products" onClick={(e) => { e.preventDefault(); document.getElementById("products")?.scrollIntoView({ behavior: "smooth" }); }} className="text-white/80 hover:text-accent transition-colors cursor-pointer">
                   Products
                 </a>
               </li>
               <li>
-                <a href="https://wa.me/254795454053" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-accent transition-colors">
+                <a href="#about" onClick={(e) => { e.preventDefault(); document.getElementById("about")?.scrollIntoView({ behavior: "smooth" }); }} className="text-white/80 hover:text-accent transition-colors cursor-pointer">
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a href="#faq" onClick={(e) => { e.preventDefault(); document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" }); }} className="text-white/80 hover:text-accent transition-colors cursor-pointer">
+                  FAQ
+                </a>
+              </li>
+              <li>
+                <a href="#contact" onClick={(e) => { e.preventDefault(); document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }); }} className="text-white/80 hover:text-accent transition-colors cursor-pointer">
+                  Contact
+                </a>
+              </li>
+              <li>
+                <a href="/join-business" className="text-white/80 hover:text-accent transition-colors">
                   Join & Earn
                 </a>
               </li>
