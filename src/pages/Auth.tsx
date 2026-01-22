@@ -22,16 +22,21 @@ const Auth = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; fullName?: string }>({});
 
-  const { user, signIn, signUp } = useAuth();
+  const { user, signIn, signUp, isAdmin, loading: authLoading } = useAuth();
   const { referralCode, clearReferral } = useReferral();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    if (user) {
-      navigate('/admin');
+    if (user && !authLoading) {
+      // Redirect based on role: admins go to dashboard, others to homepage
+      if (isAdmin) {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
     }
-  }, [user, navigate]);
+  }, [user, isAdmin, authLoading, navigate]);
 
   const validateForm = () => {
     const newErrors: { email?: string; password?: string; fullName?: string } = {};
@@ -80,7 +85,7 @@ const Auth = () => {
             title: 'Welcome back!',
             description: 'You have successfully logged in.',
           });
-          navigate('/admin');
+          // Navigation will be handled by useEffect based on role
         }
       } else {
         // Pass referral code if available
@@ -105,10 +110,10 @@ const Auth = () => {
           toast({
             title: 'Account created!',
             description: referralCode 
-              ? 'Welcome! You\'ve been linked to your referrer and have your own affiliate account.'
-              : 'Welcome aboard! Redirecting to dashboard...',
+              ? 'Welcome! You\'ve been linked to your referrer.'
+              : 'Welcome aboard!',
           });
-          navigate('/admin');
+          // Navigation will be handled by useEffect based on role
         }
       }
     } catch (error) {
