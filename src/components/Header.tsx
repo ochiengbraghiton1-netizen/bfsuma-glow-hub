@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ShoppingCart, Plus, Minus, Trash2, Menu } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
+import { ShoppingCart, Plus, Minus, Trash2, Menu, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useCart } from "@/contexts/CartContext";
@@ -9,10 +9,10 @@ import productGeneric from "@/assets/product-generic.jpg";
 import bfSumaLogo from "@/assets/bf-suma-logo.png";
 
 const navLinks = [
-  { href: "#products", label: "Products" },
-  { href: "#about", label: "About" },
-  { href: "#faq", label: "FAQ" },
-  { href: "#contact", label: "Contact" },
+  { href: "#products", label: "Products", isAnchor: true },
+  { href: "/about", label: "About", isAnchor: false },
+  { href: "#faq", label: "FAQ", isAnchor: true },
+  { href: "#contact", label: "Contact", isAnchor: true },
 ];
 
 const Header = () => {
@@ -26,35 +26,47 @@ const Header = () => {
     navigate('/checkout');
   };
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    const targetId = href.replace("#", "");
-    document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, isAnchor: boolean) => {
+    if (isAnchor) {
+      e.preventDefault();
+      const targetId = href.replace("#", "");
+      document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+    }
     setIsMobileMenuOpen(false);
   };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <img src={bfSumaLogo} alt="BF SUMA Logo" className="h-10 w-auto" />
           <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             BF SUMA
           </span>
-        </div>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={(e) => handleNavClick(e, link.href)}
-              className="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer"
-            >
-              {link.label}
-            </a>
-          ))}
+          {navLinks.map((link) =>
+            link.isAnchor ? (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={(e) => handleNavClick(e, link.href, link.isAnchor)}
+                className="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+              >
+                {link.label}
+              </a>
+            ) : (
+              <Link
+                key={link.href}
+                to={link.href}
+                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                {link.label}
+              </Link>
+            )
+          )}
         </nav>
 
         <div className="flex items-center gap-3">
@@ -165,7 +177,7 @@ const Header = () => {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[280px]">
+            <SheetContent side="left" className="w-[280px] flex flex-col">
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2">
                   <img src={bfSumaLogo} alt="BF SUMA Logo" className="h-8 w-auto" />
@@ -175,18 +187,51 @@ const Header = () => {
                 </SheetTitle>
               </SheetHeader>
               
-              <nav className="mt-8 flex flex-col gap-4">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    onClick={(e) => handleNavClick(e, link.href)}
-                    className="text-base font-medium text-foreground hover:text-primary transition-colors py-2 border-b border-border/50"
-                  >
-                    {link.label}
-                  </a>
+              <nav className="mt-8 flex flex-col gap-1 flex-1">
+                {navLinks.map((link, index) => (
+                  link.isAnchor ? (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      onClick={(e) => handleNavClick(e, link.href, link.isAnchor)}
+                      className="text-base font-medium text-foreground hover:text-primary hover:bg-muted/50 transition-all duration-300 py-3 px-3 rounded-lg border-b border-border/30"
+                      style={{
+                        animation: `fade-in 0.3s ease-out ${index * 0.05}s both`
+                      }}
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      key={link.href}
+                      to={link.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="text-base font-medium text-foreground hover:text-primary hover:bg-muted/50 transition-all duration-300 py-3 px-3 rounded-lg border-b border-border/30"
+                      style={{
+                        animation: `fade-in 0.3s ease-out ${index * 0.05}s both`
+                      }}
+                    >
+                      {link.label}
+                    </Link>
+                  )
                 ))}
               </nav>
+
+              {/* Sticky CTA Button */}
+              <div className="pt-4 border-t border-border mt-auto">
+                <Button
+                  asChild
+                  variant="premium"
+                  className="w-full"
+                  size="lg"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <Link to="/join-business" className="flex items-center justify-center gap-2">
+                    <UserPlus className="h-5 w-5" />
+                    Become a Distributor
+                  </Link>
+                </Button>
+              </div>
             </SheetContent>
           </Sheet>
         </div>
