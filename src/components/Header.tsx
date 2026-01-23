@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ShoppingCart, Plus, Minus, Trash2 } from "lucide-react";
+import { ShoppingCart, Plus, Minus, Trash2, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useCart } from "@/contexts/CartContext";
@@ -8,14 +8,29 @@ import ThemeToggle from "./ThemeToggle";
 import productGeneric from "@/assets/product-generic.jpg";
 import bfSumaLogo from "@/assets/bf-suma-logo.png";
 
+const navLinks = [
+  { href: "#products", label: "Products" },
+  { href: "#about", label: "About" },
+  { href: "#faq", label: "FAQ" },
+  { href: "#contact", label: "Contact" },
+];
+
 const Header = () => {
   const { items, totalItems, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleCheckout = () => {
-    setIsOpen(false);
+    setIsCartOpen(false);
     navigate('/checkout');
+  };
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const targetId = href.replace("#", "");
+    document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+    setIsMobileMenuOpen(false);
   };
 
   return (
@@ -28,17 +43,25 @@ const Header = () => {
           </span>
         </div>
 
+        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          <a href="#products" onClick={(e) => { e.preventDefault(); document.getElementById("products")?.scrollIntoView({ behavior: "smooth" }); }} className="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer">Products</a>
-          <a href="#about" onClick={(e) => { e.preventDefault(); document.getElementById("about")?.scrollIntoView({ behavior: "smooth" }); }} className="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer">About</a>
-          <a href="#faq" onClick={(e) => { e.preventDefault(); document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" }); }} className="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer">FAQ</a>
-          <a href="#contact" onClick={(e) => { e.preventDefault(); document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }); }} className="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer">Contact</a>
+          {navLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)}
+              className="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+            >
+              {link.label}
+            </a>
+          ))}
         </nav>
 
         <div className="flex items-center gap-3">
           <ThemeToggle />
           
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+          {/* Cart Sheet */}
+          <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="relative">
                 <ShoppingCart className="h-5 w-5" />
@@ -132,6 +155,38 @@ const Header = () => {
                   </>
                 )}
               </div>
+            </SheetContent>
+          </Sheet>
+
+          {/* Mobile Menu */}
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="md:hidden">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[280px]">
+              <SheetHeader>
+                <SheetTitle className="flex items-center gap-2">
+                  <img src={bfSumaLogo} alt="BF SUMA Logo" className="h-8 w-auto" />
+                  <span className="text-lg font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                    BF SUMA
+                  </span>
+                </SheetTitle>
+              </SheetHeader>
+              
+              <nav className="mt-8 flex flex-col gap-4">
+                {navLinks.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    onClick={(e) => handleNavClick(e, link.href)}
+                    className="text-base font-medium text-foreground hover:text-primary transition-colors py-2 border-b border-border/50"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </nav>
             </SheetContent>
           </Sheet>
         </div>
