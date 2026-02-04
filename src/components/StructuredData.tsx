@@ -13,10 +13,10 @@ const StructuredData = ({ faqs }: StructuredDataProps) => {
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "BF SUMA Kenya",
-    "alternateName": "BF SUMA",
+    "name": "BF SUMA ROYAL Kenya",
+    "alternateName": "BF SUMA ROYAL",
     "url": "https://bfsuma-glow-hub.lovable.app",
-    "logo": "https://bfsuma-glow-hub.lovable.app/favicon.ico",
+    "logo": "https://bfsuma-glow-hub.lovable.app/favicon.png",
     "description": "Premium natural health supplements and wellness business opportunity in Kenya",
     "address": {
       "@type": "PostalAddress",
@@ -39,8 +39,8 @@ const StructuredData = ({ faqs }: StructuredDataProps) => {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "HealthAndBeautyBusiness",
-    "name": "BF SUMA Kenya - Braghiton Ochieng",
-    "image": "https://bfsuma-glow-hub.lovable.app/favicon.ico",
+    "name": "BF SUMA ROYAL Kenya - Braghiton Ochieng",
+    "image": "https://bfsuma-glow-hub.lovable.app/favicon.png",
     "url": "https://bfsuma-glow-hub.lovable.app",
     "telephone": "+254795454053",
     "address": {
@@ -61,7 +61,7 @@ const StructuredData = ({ faqs }: StructuredDataProps) => {
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "BF SUMA Kenya",
+    "name": "BF SUMA ROYAL Kenya",
     "url": "https://bfsuma-glow-hub.lovable.app",
     "potentialAction": {
       "@type": "SearchAction",

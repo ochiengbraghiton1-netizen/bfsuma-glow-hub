@@ -22,7 +22,7 @@ const Hero = () => {
       <img
         src={heroBg}
         alt=""
-        fetchPriority="high"
+        loading="eager"
         decoding="async"
         className="absolute inset-0 w-full h-full object-cover"
         style={{ objectPosition: "center" }}

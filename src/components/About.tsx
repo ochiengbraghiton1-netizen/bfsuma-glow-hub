@@ -31,11 +31,11 @@ const About = () => {
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             About{" "}
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              BF SUMA
+              BF SUMA ROYAL
             </span>
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            BF SUMA is a global health and wellness brand offering premium natural supplements 
+            BF SUMA ROYAL is a global health and wellness brand offering premium natural supplements 
             that support longevity, immunity, and overall vitality. Trusted worldwide, 
             now empowering entrepreneurs in Kenya to build successful wellness businesses.
           </p>

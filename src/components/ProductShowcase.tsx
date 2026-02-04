@@ -92,7 +92,7 @@ const ProductShowcase = () => {
         </div>
 
         {/* Sticky Search Bar & Category Filters */}
-        <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-md py-4 -mx-4 px-4 mb-8 border-b border-border/20">
+        <div className="sticky top-16 z-40 bg-background/95 backdrop-blur-md py-4 mb-8 border-b border-border/20 -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 md:rounded-xl">
           {/* Search Bar */}
           <div className="max-w-xl mx-auto mb-4">
             <div className="relative">

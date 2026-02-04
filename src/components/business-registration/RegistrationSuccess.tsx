@@ -42,7 +42,7 @@ const RegistrationSuccess = ({ registrationData, onStartNew }: RegistrationSucce
   const entryFee = registrationData.entry_fee || 7000;
   const sponsorDisplay = registrationData.has_sponsor && registrationData.sponsor_name 
     ? registrationData.sponsor_name 
-    : 'BF SUMA Company Sponsor';
+    : 'BF SUMA ROYAL Company Sponsor';
 
   // Redirect to dashboard if approved
   useEffect(() => {
@@ -117,7 +117,7 @@ const RegistrationSuccess = ({ registrationData, onStartNew }: RegistrationSucce
             Registration Successful 🎉
           </h1>
           <p className="text-lg text-muted-foreground animate-fade-in">
-            Welcome to BF SUMA. Your registration has been received.
+            Welcome to BF SUMA ROYAL. Your registration has been received.
           </p>
         </div>
 
