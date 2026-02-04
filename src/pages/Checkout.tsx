@@ -185,10 +185,15 @@ Sent from BF SUMA ROYAL Website`;
     setIsSubmitting(true);
 
     try {
+      // Generate order ID on client to avoid needing .select() after insert
+      // This works for both guests and signed-in users
+      const newOrderId = crypto.randomUUID();
+
       // Save order to database for admin dashboard
-      const { data: order, error: orderError } = await supabase
+      const { error: orderError } = await supabase
         .from('orders')
         .insert({
+          id: newOrderId,
           customer_name: formData.customerName,
           customer_email: formData.customerEmail || null,
           customer_phone: formData.customerPhone,
@@ -199,15 +204,13 @@ Sent from BF SUMA ROYAL Website`;
           discount_amount: discount,
           total_amount: finalTotal,
           status: 'pending',
-        })
-        .select()
-        .single();
+        });
 
       if (orderError) throw orderError;
 
       // Save order items
       const orderItems = items.map(item => ({
-        order_id: order.id,
+        order_id: newOrderId,
         product_id: item.id,
         product_name: item.name,
         product_price: item.price,
@@ -242,10 +245,10 @@ Sent from BF SUMA ROYAL Website`;
         await supabase.rpc('decrement_stock', { p_product_id: item.id, p_quantity: item.quantity });
       }
 
-      setOrderId(order.id);
+      setOrderId(newOrderId);
       
       // Open WhatsApp with the order details
-      const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${generateWhatsAppMessage(order.id)}`;
+      const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${generateWhatsAppMessage(newOrderId)}`;
       window.open(whatsappUrl, '_blank');
 
       setOrderComplete(true);
