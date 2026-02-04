@@ -8,7 +8,7 @@ const Chatbot = () => {
   const [messages, setMessages] = useState([
     {
       type: "bot",
-      text: "Hello! I'm here to help you with BF SUMA products and business opportunities. How can I assist you today?"
+      text: "Hello! I'm here to help you with BF SUMA ROYAL products and business opportunities. How can I assist you today?"
     }
   ]);
 
@@ -30,7 +30,7 @@ const Chatbot = () => {
         response = "Our products range from KSh 4,914 to KSh 22,113. For a complete price list and special offers, would you like to connect on WhatsApp?";
         break;
       case "join":
-        response = "Great choice! As a BF SUMA distributor, you can earn commissions, bonuses, and build a wellness business. Would you like to talk to Braghiton on WhatsApp to get started?";
+        response = "Great choice! As a BF SUMA ROYAL distributor, you can earn commissions, bonuses, and build a wellness business. Would you like to talk to Braghiton on WhatsApp to get started?";
         break;
       case "contact":
         response = "Contact Braghiton Ochieng:\n📱 WhatsApp: +254 795 454053\n✉️ Email: braghiton.ochieng.125@gmail.com\n📍 JKUAT Towers, Westlands, Nairobi";
@@ -66,7 +66,7 @@ const Chatbot = () => {
                 <MessageCircle className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="font-bold">BF SUMA Assistant</h3>
+                <h3 className="font-bold">BF SUMA ROYAL Assistant</h3>
                 <p className="text-sm text-white/80">Online</p>
               </div>
             </div>

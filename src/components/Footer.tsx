@@ -10,7 +10,7 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-accent to-accent-glow bg-clip-text text-transparent">
-              BF SUMA Kenya
+              BF SUMA ROYAL
             </h3>
             <p className="text-white/80 mb-4">
               Empowering health, enhancing wealth. Premium natural supplements and business opportunities.
@@ -72,7 +72,7 @@ const Footer = () => {
         {/* Social Media & Copyright */}
         <div className="pt-8 border-t border-white/20 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-white/60 text-sm text-center md:text-left">
-            © {currentYear} BF SUMA Kenya | Health, Wealth & Wellness by Braghiton Ochieng
+            © {currentYear} BF SUMA ROYAL Kenya | Health, Wealth & Wellness by Braghiton Ochieng
           </p>
           
           <div className="flex gap-4">

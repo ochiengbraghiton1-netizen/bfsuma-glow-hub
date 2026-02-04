@@ -1,5 +1,6 @@
 import { Shield, Globe, Award, Leaf, Users, Heart, CheckCircle, Building } from "lucide-react";
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -26,9 +27,35 @@ const teamValues = [
   { icon: Award, title: "Excellence", description: "Committed to the highest quality in everything we do." },
 ];
 
+const aboutPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "name": "About BF SUMA ROYAL Kenya",
+  "description": "Learn about BF SUMA ROYAL, a global leader in natural health and wellness products. Discover our story, mission, values, and certifications.",
+  "url": "https://bfsuma-glow-hub.lovable.app/about",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "BF SUMA ROYAL Kenya",
+    "foundingDate": "2007",
+    "numberOfEmployees": "1000+",
+    "areaServed": "50+ Countries"
+  }
+};
+
 const AboutPage = () => {
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>About BF SUMA ROYAL Kenya - Our Story, Mission & Certifications</title>
+        <meta name="description" content="Learn about BF SUMA ROYAL, a global leader in natural health and wellness products with 50+ countries, 200+ products. Discover our story, values, GMP & ISO certifications." />
+        <meta name="keywords" content="BF SUMA ROYAL about, BF SUMA history, wellness company Kenya, natural supplements manufacturer, GMP certified supplements" />
+        <link rel="canonical" href="https://bfsuma-glow-hub.lovable.app/about" />
+        <meta property="og:title" content="About BF SUMA ROYAL Kenya - Our Story & Mission" />
+        <meta property="og:description" content="Learn about BF SUMA ROYAL, a global leader in natural health and wellness products with 50+ countries, 200+ products." />
+        <meta property="og:url" content="https://bfsuma-glow-hub.lovable.app/about" />
+        <meta property="og:type" content="website" />
+        <script type="application/ld+json">{JSON.stringify(aboutPageSchema)}</script>
+      </Helmet>
       <Header />
       
       {/* Hero Section */}
@@ -43,7 +70,7 @@ const AboutPage = () => {
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
               About{" "}
               <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                BF SUMA
+                BF SUMA ROYAL
               </span>
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed mb-8">
@@ -77,7 +104,7 @@ const AboutPage = () => {
                   products that support longevity, immunity, and overall vitality.
                 </p>
                 <p>
-                  In Kenya, BF SUMA has become a trusted name in wellness, offering not just 
+                In Kenya, BF SUMA ROYAL has become a trusted name in wellness, offering not just 
                   world-class products but also a unique business opportunity for entrepreneurs 
                   who want to build their own wellness business.
                 </p>
@@ -243,7 +270,7 @@ const AboutPage = () => {
               Ready to Start Your Wellness Journey?
             </h2>
             <p className="text-muted-foreground mb-8">
-              Join thousands of entrepreneurs building successful wellness businesses with BF SUMA.
+              Join thousands of entrepreneurs building successful wellness businesses with BF SUMA ROYAL.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild variant="premium" size="lg">

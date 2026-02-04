@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { ShoppingCart, Plus, Minus, Trash2, Menu, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -20,6 +20,7 @@ const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleCheckout = () => {
     setIsCartOpen(false);
@@ -27,21 +28,32 @@ const Header = () => {
   };
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, isAnchor: boolean) => {
+    setIsMobileMenuOpen(false);
+    
     if (isAnchor) {
       e.preventDefault();
       const targetId = href.replace("#", "");
-      document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+      
+      // If not on homepage, navigate first then scroll
+      if (location.pathname !== "/") {
+        navigate("/");
+        // Wait for navigation then scroll
+        setTimeout(() => {
+          document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      } else {
+        document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+      }
     }
-    setIsMobileMenuOpen(false);
   };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <img src={bfSumaLogo} alt="BF SUMA Logo" className="h-10 w-auto" />
+          <img src={bfSumaLogo} alt="BF SUMA ROYAL Logo" className="h-10 w-auto" />
           <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            BF SUMA
+            BF SUMA ROYAL
           </span>
         </Link>
 
@@ -177,12 +189,12 @@ const Header = () => {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[280px] flex flex-col">
+            <SheetContent side="left" className="w-[280px] flex flex-col pt-12">
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2">
-                  <img src={bfSumaLogo} alt="BF SUMA Logo" className="h-8 w-auto" />
+                  <img src={bfSumaLogo} alt="BF SUMA ROYAL Logo" className="h-8 w-auto" />
                   <span className="text-lg font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                    BF SUMA
+                    BF SUMA ROYAL
                   </span>
                 </SheetTitle>
               </SheetHeader>

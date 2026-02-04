@@ -154,7 +154,7 @@ const JoinBusiness = () => {
           </Link>
           <div className="flex items-center gap-2">
             <Users className="h-5 w-5 text-primary" />
-            <span className="font-semibold">BF SUMA Business</span>
+            <span className="font-semibold">BF SUMA ROYAL Business</span>
           </div>
         </div>
       </header>
@@ -163,7 +163,7 @@ const JoinBusiness = () => {
         {/* Hero Section */}
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            Join BF SUMA Business
+            Join BF SUMA ROYAL Business
           </h1>
           <p className="text-muted-foreground text-lg">
             Start your journey to financial freedom with our networking business opportunity
@@ -243,7 +243,7 @@ const JoinBusiness = () => {
               <CardHeader>
                 <CardTitle className="text-xl">Business Referral Details</CardTitle>
                 <CardDescription>
-                  If someone referred you to BF SUMA, provide their details below
+                  If someone referred you to BF SUMA ROYAL, provide their details below
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -255,7 +255,7 @@ const JoinBusiness = () => {
                       <div className="space-y-0.5">
                         <FormLabel className="text-base">Do you have an Upline or Sponsor?</FormLabel>
                         <FormDescription>
-                          Someone who introduced you to BF SUMA
+                          Someone who introduced you to BF SUMA ROYAL
                         </FormDescription>
                       </div>
                       <FormControl>
@@ -307,7 +307,7 @@ const JoinBusiness = () => {
                           <FormControl>
                             <Input placeholder="Optional" {...field} />
                           </FormControl>
-                          <FormDescription>If you know their BF SUMA ID</FormDescription>
+                          <FormDescription>If you know their BF SUMA ROYAL ID</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -317,7 +317,7 @@ const JoinBusiness = () => {
                   <div className="flex items-start gap-3 p-4 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800">
                     <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                     <p className="text-sm text-blue-700 dark:text-blue-300">
-                      No worries! If you don't have a sponsor, you will be assigned to our company team who will guide you through your BF SUMA journey.
+                      No worries! If you don't have a sponsor, you will be assigned to our company team who will guide you through your BF SUMA ROYAL journey.
                     </p>
                   </div>
                 )}
@@ -353,7 +353,7 @@ const JoinBusiness = () => {
                       </FormControl>
                       <div className="space-y-1 leading-none">
                         <FormLabel className="text-sm font-normal cursor-pointer">
-                          I understand that BF SUMA operates as a networking business and that my sponsor (upline) will benefit from my registration. *
+                          I understand that BF SUMA ROYAL operates as a networking business and that my sponsor (upline) will benefit from my registration. *
                         </FormLabel>
                         <FormMessage />
                       </div>
@@ -381,7 +381,7 @@ const JoinBusiness = () => {
             </Button>
 
             <p className="text-center text-sm text-muted-foreground">
-              By submitting, you agree to be contacted by BF SUMA representatives
+              By submitting, you agree to be contacted by BF SUMA ROYAL representatives
             </p>
           </form>
         </Form>

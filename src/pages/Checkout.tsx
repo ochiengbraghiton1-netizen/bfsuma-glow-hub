@@ -7,9 +7,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, ShoppingBag, Loader2, CreditCard, Phone, CheckCircle } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Loader2, MessageCircle, CheckCircle } from 'lucide-react';
 import { z } from 'zod';
 import productGeneric from '@/assets/product-generic.jpg';
+
+const WHATSAPP_NUMBER = "254795454053";
 
 const checkoutSchema = z.object({
   customerName: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
@@ -72,7 +74,6 @@ const Checkout = () => {
         return;
       }
 
-      // Check usage limit
       if (promo.usage_limit && promo.usage_count >= promo.usage_limit) {
         toast({
           title: 'Code Expired',
@@ -82,7 +83,6 @@ const Checkout = () => {
         return;
       }
 
-      // Check minimum order amount
       if (promo.min_order_amount && subtotal < Number(promo.min_order_amount)) {
         toast({
           title: 'Minimum Not Met',
@@ -92,7 +92,6 @@ const Checkout = () => {
         return;
       }
 
-      // Calculate discount
       let discountAmount = 0;
       if (promo.discount_type === 'percentage') {
         discountAmount = (subtotal * Number(promo.discount_value)) / 100;
@@ -113,10 +112,42 @@ const Checkout = () => {
     }
   };
 
+  const generateWhatsAppMessage = (orderId: string) => {
+    const itemsList = items.map(item => 
+      `• ${item.name} x${item.quantity} - KES ${(item.price * item.quantity).toLocaleString()}`
+    ).join('\n');
+
+    const message = `🛒 *NEW ORDER - BF SUMA ROYAL*
+
+📋 *Order ID:* ${orderId.slice(0, 8).toUpperCase()}
+
+👤 *Customer Details:*
+Name: ${formData.customerName}
+Phone: ${formData.customerPhone}
+${formData.customerEmail ? `Email: ${formData.customerEmail}` : ''}
+
+📦 *Products:*
+${itemsList}
+
+💰 *Order Summary:*
+Subtotal: KES ${subtotal.toLocaleString()}
+${discount > 0 ? `Discount (${promoApplied?.code}): -KES ${discount.toLocaleString()}` : ''}
+*Total: KES ${finalTotal.toLocaleString()}*
+
+📍 *Delivery Address:*
+${formData.shippingAddress}
+
+${formData.notes ? `📝 *Notes:* ${formData.notes}` : ''}
+
+---
+Sent from BF SUMA ROYAL Website`;
+
+    return encodeURIComponent(message);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate form
     const result = checkoutSchema.safeParse(formData);
     if (!result.success) {
       const fieldErrors: Partial<Record<keyof CheckoutFormData, string>> = {};
@@ -141,7 +172,7 @@ const Checkout = () => {
     setIsSubmitting(true);
 
     try {
-      // Create order
+      // Save order to database for admin dashboard
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
@@ -161,7 +192,7 @@ const Checkout = () => {
 
       if (orderError) throw orderError;
 
-      // Create order items
+      // Save order items
       const orderItems = items.map(item => ({
         order_id: order.id,
         product_id: item.id,
@@ -193,25 +224,23 @@ const Checkout = () => {
         }
       }
 
-      // Update product stock quantities atomically using database function
+      // Update product stock quantities
       for (const item of items) {
-        const { data: stockResult, error: stockError } = await supabase
-          .rpc('decrement_stock', { p_product_id: item.id, p_quantity: item.quantity });
-        
-        if (stockError) {
-          console.error('Stock decrement error:', stockError);
-        }
-        // Note: stockResult will be false if insufficient stock, but we continue
-        // since the order is already placed - this prevents race condition overselling
+        await supabase.rpc('decrement_stock', { p_product_id: item.id, p_quantity: item.quantity });
       }
 
       setOrderId(order.id);
+      
+      // Open WhatsApp with the order details
+      const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${generateWhatsAppMessage(order.id)}`;
+      window.open(whatsappUrl, '_blank');
+
       setOrderComplete(true);
       clearCart();
 
       toast({
-        title: 'Order Placed!',
-        description: 'Your order has been received. We will contact you shortly.',
+        title: 'Order Sent!',
+        description: 'Your order has been sent via WhatsApp. We will confirm shortly.',
       });
     } catch (error) {
       console.error('Order error:', error);
@@ -227,23 +256,31 @@ const Checkout = () => {
 
   if (orderComplete) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center space-y-6">
           <div className="w-20 h-20 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
             <CheckCircle className="h-10 w-10 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Order Confirmed!</h1>
+          <h1 className="text-2xl font-bold text-foreground">Order Sent!</h1>
           <p className="text-muted-foreground">
-            Thank you for your order. We've received it and will contact you shortly to arrange delivery and payment via M-Pesa.
+            Your order has been sent to our WhatsApp. We will contact you shortly to confirm your order and arrange delivery.
           </p>
           {orderId && (
             <p className="text-sm text-muted-foreground">
               Order ID: <span className="font-mono text-foreground">{orderId.slice(0, 8).toUpperCase()}</span>
             </p>
           )}
-          <div className="pt-4">
+          <div className="pt-4 space-y-3">
             <Button onClick={() => navigate('/')} className="w-full">
               Continue Shopping
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => window.open(`https://wa.me/${WHATSAPP_NUMBER}`, '_blank')}
+              className="w-full"
+            >
+              <MessageCircle className="h-4 w-4 mr-2" />
+              Contact Us on WhatsApp
             </Button>
           </div>
         </div>
@@ -253,7 +290,7 @@ const Checkout = () => {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center space-y-6">
           <ShoppingBag className="h-16 w-16 mx-auto text-muted-foreground/50" />
           <h1 className="text-2xl font-bold text-foreground">Your Cart is Empty</h1>
@@ -268,14 +305,13 @@ const Checkout = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center">
           <Button variant="ghost" onClick={() => navigate('/')} className="gap-2">
             <ArrowLeft className="h-4 w-4" /> Back to Shop
           </Button>
           <span className="ml-auto text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            BF SUMA
+            BF SUMA ROYAL
           </span>
         </div>
       </header>
@@ -284,11 +320,10 @@ const Checkout = () => {
         <h1 className="text-3xl font-bold mb-8">Checkout</h1>
         
         <div className="grid lg:grid-cols-2 gap-8">
-          {/* Customer Form */}
           <div className="space-y-6">
             <div className="bg-card rounded-2xl border border-border p-6">
               <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                <Phone className="h-5 w-5 text-primary" />
+                <MessageCircle className="h-5 w-5 text-primary" />
                 Contact Information
               </h2>
               
@@ -363,28 +398,16 @@ const Checkout = () => {
                   />
                 </div>
 
-                {/* Payment Method */}
                 <div className="pt-4 border-t border-border">
                   <h3 className="font-semibold mb-3 flex items-center gap-2">
-                    <CreditCard className="h-5 w-5 text-primary" />
-                    Payment Method
+                    <MessageCircle className="h-5 w-5 text-green-600" />
+                    Order via WhatsApp
                   </h3>
-                  <div className="bg-muted/50 rounded-xl p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center">
-                        <span className="text-white font-bold text-xs">M-PESA</span>
-                      </div>
-                      <div>
-                        <p className="font-medium">M-Pesa Payment</p>
-                        <p className="text-sm text-muted-foreground">
-                          Pay on delivery or via M-Pesa prompt
-                        </p>
-                      </div>
-                    </div>
+                  <div className="bg-green-50 dark:bg-green-950/30 rounded-xl p-4 border border-green-200 dark:border-green-800">
+                    <p className="text-sm text-muted-foreground">
+                      After submitting, your order details will be sent via WhatsApp. We'll confirm your order and arrange delivery and payment.
+                    </p>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    You will receive an M-Pesa payment request after order confirmation.
-                  </p>
                 </div>
 
                 <Button 
@@ -397,17 +420,19 @@ const Checkout = () => {
                   {isSubmitting ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Placing Order...
+                      Processing...
                     </>
                   ) : (
-                    `Place Order - KES ${finalTotal.toLocaleString()}`
+                    <>
+                      <MessageCircle className="h-4 w-4 mr-2" />
+                      Order via WhatsApp - KES {finalTotal.toLocaleString()}
+                    </>
                   )}
                 </Button>
               </form>
             </div>
           </div>
 
-          {/* Order Summary */}
           <div className="lg:sticky lg:top-24 h-fit">
             <div className="bg-card rounded-2xl border border-border p-6">
               <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
@@ -436,7 +461,6 @@ const Checkout = () => {
                 ))}
               </div>
 
-              {/* Promo Code */}
               <div className="border-t border-border pt-4 mb-4">
                 <Label htmlFor="promoCode">Promo Code</Label>
                 <div className="flex gap-2 mt-1">
@@ -458,28 +482,23 @@ const Checkout = () => {
                 </div>
                 {promoApplied && (
                   <p className="text-sm text-primary mt-2">
-                    ✓ Code "{promoApplied.code}" applied
+                    ✓ Code "{promoApplied.code}" applied - KES {promoApplied.discount.toLocaleString()} off
                   </p>
                 )}
               </div>
 
-              {/* Totals */}
-              <div className="border-t border-border pt-4 space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Subtotal</span>
+              <div className="space-y-2 border-t border-border pt-4">
+                <div className="flex justify-between text-muted-foreground">
+                  <span>Subtotal</span>
                   <span>KES {subtotal.toLocaleString()}</span>
                 </div>
-                {promoApplied && (
-                  <div className="flex justify-between text-sm text-primary">
+                {discount > 0 && (
+                  <div className="flex justify-between text-primary">
                     <span>Discount</span>
                     <span>-KES {discount.toLocaleString()}</span>
                   </div>
                 )}
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Delivery</span>
-                  <span className="text-muted-foreground">Calculated at confirmation</span>
-                </div>
-                <div className="flex justify-between text-lg font-bold pt-2 border-t border-border">
+                <div className="flex justify-between text-lg font-bold pt-2">
                   <span>Total</span>
                   <span className="text-primary">KES {finalTotal.toLocaleString()}</span>
                 </div>
