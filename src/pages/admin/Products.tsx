@@ -20,6 +20,9 @@ interface Product {
   description: string | null;
   image_url: string | null;
   is_active: boolean;
+  stock_quantity: number;
+  low_stock_threshold: number;
+  track_inventory: boolean;
 }
 
 const Products = () => {
@@ -34,6 +37,9 @@ const Products = () => {
     description: '',
     image_url: '',
     is_active: true,
+    stock_quantity: '0',
+    low_stock_threshold: '10',
+    track_inventory: true,
   });
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
@@ -64,6 +70,9 @@ const Products = () => {
       description: '',
       image_url: '',
       is_active: true,
+      stock_quantity: '0',
+      low_stock_threshold: '10',
+      track_inventory: true,
     });
     setEditingProduct(null);
   };
@@ -77,6 +86,9 @@ const Products = () => {
       description: product.description || '',
       image_url: product.image_url || '',
       is_active: product.is_active,
+      stock_quantity: product.stock_quantity.toString(),
+      low_stock_threshold: product.low_stock_threshold.toString(),
+      track_inventory: product.track_inventory,
     });
     setDialogOpen(true);
   };
@@ -101,6 +113,9 @@ const Products = () => {
       description: formData.description?.trim() || null,
       image_url: formData.image_url?.trim() || null,
       is_active: formData.is_active,
+      stock_quantity: parseInt(formData.stock_quantity) || 0,
+      low_stock_threshold: parseInt(formData.low_stock_threshold) || 10,
+      track_inventory: formData.track_inventory,
     };
 
     let error;
@@ -215,6 +230,38 @@ const Products = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Switch
+                  id="track_inventory"
+                  checked={formData.track_inventory}
+                  onCheckedChange={(checked) => setFormData({ ...formData, track_inventory: checked })}
+                />
+                <Label htmlFor="track_inventory">Track Inventory</Label>
+              </div>
+              {formData.track_inventory && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="stock_quantity">Stock Quantity</Label>
+                    <Input
+                      id="stock_quantity"
+                      type="number"
+                      min="0"
+                      value={formData.stock_quantity}
+                      onChange={(e) => setFormData({ ...formData, stock_quantity: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="low_stock_threshold">Low Stock Alert</Label>
+                    <Input
+                      id="low_stock_threshold"
+                      type="number"
+                      min="0"
+                      value={formData.low_stock_threshold}
+                      onChange={(e) => setFormData({ ...formData, low_stock_threshold: e.target.value })}
+                    />
+                  </div>
+                </div>
+              )}
+              <div className="flex items-center gap-2">
+                <Switch
                   id="is_active"
                   checked={formData.is_active}
                   onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
@@ -237,7 +284,7 @@ const Products = () => {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Price</TableHead>
-                <TableHead>Benefit</TableHead>
+                <TableHead>Stock</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -254,7 +301,25 @@ const Products = () => {
                   <TableRow key={product.id}>
                     <TableCell className="font-medium">{product.name}</TableCell>
                     <TableCell>KES {product.price.toLocaleString()}</TableCell>
-                    <TableCell className="max-w-[200px] truncate">{product.benefit || '-'}</TableCell>
+                    <TableCell>
+                      {product.track_inventory ? (
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          product.stock_quantity === 0 
+                            ? 'bg-destructive/10 text-destructive' 
+                            : product.stock_quantity <= product.low_stock_threshold 
+                              ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' 
+                              : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                        }`}>
+                          {product.stock_quantity === 0 
+                            ? 'Out of Stock' 
+                            : product.stock_quantity <= product.low_stock_threshold 
+                              ? `Low (${product.stock_quantity})` 
+                              : `In Stock (${product.stock_quantity})`}
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground text-xs">Not tracked</span>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <span className={`px-2 py-1 rounded-full text-xs ${product.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
                         {product.is_active ? 'Active' : 'Inactive'}
