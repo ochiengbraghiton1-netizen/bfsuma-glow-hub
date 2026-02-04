@@ -21,6 +21,8 @@ import {
 import { ArrowLeft, Users, Loader2, Info } from 'lucide-react';
 import { businessRegistrationSchema, BusinessRegistrationFormData } from '@/lib/business-registration-validation';
 import RegistrationSuccess from '@/components/business-registration/RegistrationSuccess';
+import { HoneypotField } from '@/components/ui/honeypot-field';
+import { isBot } from '@/lib/honeypot';
 
 interface RegistrationData {
   id: string;
@@ -40,6 +42,7 @@ const REGISTRATION_STORAGE_KEY = 'bf_suma_registration';
 const JoinBusiness = () => {
   const [submitting, setSubmitting] = useState(false);
   const [registrationData, setRegistrationData] = useState<RegistrationData | null>(null);
+  const [honeypot, setHoneypot] = useState('');
   const { toast } = useToast();
 
   const form = useForm<BusinessRegistrationFormData>({
@@ -73,6 +76,16 @@ const JoinBusiness = () => {
   }, []);
 
   const onSubmit = async (data: BusinessRegistrationFormData) => {
+    // Check honeypot - silently reject bot submissions
+    if (isBot(honeypot)) {
+      toast({
+        title: 'Submission Failed',
+        description: 'Something went wrong. Please try again.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setSubmitting(true);
     try {
       const { data: insertedData, error } = await supabase
@@ -170,9 +183,12 @@ const JoinBusiness = () => {
           </p>
         </div>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Personal Information */}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {/* Honeypot field for bot detection */}
+          <HoneypotField value={honeypot} onChange={setHoneypot} />
+          
+          {/* Personal Information */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl">Personal Information</CardTitle>
