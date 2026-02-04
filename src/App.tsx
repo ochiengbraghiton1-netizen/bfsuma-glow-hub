@@ -10,6 +10,8 @@ import Index from "./pages/Index";
 import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import JoinBusiness from "./pages/JoinBusiness";
 import AboutPage from "./pages/AboutPage";
 import AdminLayout from "./components/admin/AdminLayout";
@@ -43,6 +45,8 @@ const App = () => (
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/join-business" element={<JoinBusiness />} />
                 <Route
                   path="/admin"
