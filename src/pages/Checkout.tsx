@@ -10,6 +10,8 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, ShoppingBag, Loader2, MessageCircle, CheckCircle } from 'lucide-react';
 import { z } from 'zod';
 import productGeneric from '@/assets/product-generic.jpg';
+import { HoneypotField } from '@/components/ui/honeypot-field';
+import { isBot } from '@/lib/honeypot';
 
 const WHATSAPP_NUMBER = "254795454053";
 
@@ -42,6 +44,7 @@ const Checkout = () => {
   const [promoApplied, setPromoApplied] = useState<{ discount: number; code: string } | null>(null);
   const [orderComplete, setOrderComplete] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [honeypot, setHoneypot] = useState('');
 
   const subtotal = totalPrice;
   const discount = promoApplied?.discount || 0;
@@ -148,6 +151,16 @@ Sent from BF SUMA ROYAL Website`;
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Check honeypot - silently reject bot submissions
+    if (isBot(honeypot)) {
+      toast({
+        title: 'Order Failed',
+        description: 'Something went wrong. Please try again.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     const result = checkoutSchema.safeParse(formData);
     if (!result.success) {
       const fieldErrors: Partial<Record<keyof CheckoutFormData, string>> = {};
@@ -328,6 +341,9 @@ Sent from BF SUMA ROYAL Website`;
               </h2>
               
               <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Honeypot field for bot detection */}
+                <HoneypotField value={honeypot} onChange={setHoneypot} />
+                
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="customerName">Full Name *</Label>
