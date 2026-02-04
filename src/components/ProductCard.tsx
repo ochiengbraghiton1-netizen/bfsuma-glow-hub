@@ -5,6 +5,7 @@ import { useInView } from "@/hooks/use-in-view";
 import { useState } from "react";
 import { useCart } from "@/contexts/CartContext";
 import { getStockStatus } from "@/hooks/use-products";
+import ResponsiveImage from "@/components/ui/responsive-image";
 import productGeneric from "@/assets/product-generic.jpg";
 
 interface ProductCardProps {
@@ -81,12 +82,14 @@ const ProductCard = ({
           `}
           style={{ transformStyle: 'preserve-3d' }}
         >
-          <img 
+          <ResponsiveImage 
             src={image || productGeneric}
             alt={name}
             loading="lazy"
             decoding="async"
             className="w-full h-56 object-cover"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            fallbackSrc={productGeneric}
           />
         </div>
         
