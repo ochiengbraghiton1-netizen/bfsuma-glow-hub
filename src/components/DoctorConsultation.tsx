@@ -1,12 +1,20 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { MessageCircle, Stethoscope, Heart, Calendar } from "lucide-react";
+import { MessageCircle, Stethoscope, Heart, Calendar, ArrowLeft } from "lucide-react";
 import doctorImg from "@/assets/doctor-consultation.jpg";
+import ConsultationForm, { ConsultationData } from "@/components/consultation/ConsultationForm";
+import ConsultationSuccess from "@/components/consultation/ConsultationSuccess";
+
+type ViewState = "intro" | "form" | "success";
 
 const DoctorConsultation = () => {
-  const openWhatsApp = () => {
-    const message = encodeURIComponent("Hi! I'd like to book a free wellness consultation.");
-    window.open(`https://wa.me/254795454053?text=${message}`, "_blank");
+  const [viewState, setViewState] = useState<ViewState>("intro");
+  const [submittedData, setSubmittedData] = useState<ConsultationData | null>(null);
+
+  const handleFormSuccess = (data: ConsultationData) => {
+    setSubmittedData(data);
+    setViewState("success");
   };
 
   const benefits = [
@@ -27,75 +35,114 @@ const DoctorConsultation = () => {
     },
   ];
 
-  return (
-    <section className="py-20 bg-gradient-to-b from-background to-muted/20">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Consult a Wellness Expert
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Get personalized health guidance from certified wellness doctors. Book a free consultation today and begin your journey to better health.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-8 items-center max-w-6xl mx-auto">
-          {/* Image Section */}
-          <div className="relative group animate-scale-in">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-3xl blur-2xl opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
-            <img
-              src={doctorImg}
-              alt="Wellness consultation"
-              loading="lazy"
-              decoding="async"
-              className="relative rounded-3xl shadow-elegant w-full h-[400px] object-cover"
-            />
-          </div>
-
-          {/* Content Section */}
-          <div className="space-y-6">
-            <div className="grid gap-4">
-              {benefits.map((benefit, index) => (
-                <Card
-                  key={index}
-                  className="p-6 bg-card/50 backdrop-blur-sm border-border/50 hover:shadow-glow transition-all duration-300 hover:-translate-y-1"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 rounded-full bg-gradient-to-br from-primary to-accent">
-                      <benefit.icon className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-lg mb-1 text-foreground">
-                        {benefit.title}
-                      </h3>
-                      <p className="text-muted-foreground">
-                        {benefit.description}
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-
-            <Button
-              onClick={openWhatsApp}
-              variant="hero"
-              size="xl"
-              className="w-full"
-            >
-              <MessageCircle className="w-5 h-5" />
-              Book a Consultation
-            </Button>
-
-            <p className="text-sm text-center text-muted-foreground">
-              Available via WhatsApp • Response within 24 hours
+  // Intro view - shows benefits and CTA to open form
+  if (viewState === "intro") {
+    return (
+      <section className="py-20 bg-gradient-to-b from-background to-muted/20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12 animate-fade-in">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Consult a Wellness Expert
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Get personalized health guidance from certified wellness doctors. Book a free consultation today and begin your journey to better health.
             </p>
           </div>
+
+          <div className="grid md:grid-cols-2 gap-8 items-center max-w-6xl mx-auto">
+            {/* Image Section */}
+            <div className="relative group animate-scale-in">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-3xl blur-2xl opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
+              <img
+                src={doctorImg}
+                alt="Wellness consultation"
+                loading="lazy"
+                decoding="async"
+                className="relative rounded-3xl shadow-elegant w-full h-[400px] object-cover"
+              />
+            </div>
+
+            {/* Content Section */}
+            <div className="space-y-6">
+              <div className="grid gap-4">
+                {benefits.map((benefit, index) => (
+                  <Card
+                    key={index}
+                    className="p-6 bg-card/50 backdrop-blur-sm border-border/50 hover:shadow-glow transition-all duration-300 hover:-translate-y-1"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 rounded-full bg-gradient-to-br from-primary to-accent">
+                        <benefit.icon className="w-6 h-6 text-primary-foreground" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-lg mb-1 text-foreground">
+                          {benefit.title}
+                        </h3>
+                        <p className="text-muted-foreground">
+                          {benefit.description}
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+
+              <Button
+                onClick={() => setViewState("form")}
+                variant="hero"
+                size="xl"
+                className="w-full"
+              >
+                <MessageCircle className="w-5 h-5" />
+                Request a Consultation
+              </Button>
+
+              <p className="text-sm text-center text-muted-foreground">
+                📋 Complete a short form • 💬 Get guidance via WhatsApp
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
-  );
+      </section>
+    );
+  }
+
+  // Form view
+  if (viewState === "form") {
+    return (
+      <section className="py-20 bg-gradient-to-b from-background to-muted/20">
+        <div className="container mx-auto px-4">
+          {/* Back Button */}
+          <div className="max-w-2xl mx-auto mb-6">
+            <Button
+              variant="ghost"
+              onClick={() => setViewState("intro")}
+              className="gap-2 text-muted-foreground hover:text-foreground"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back
+            </Button>
+          </div>
+
+          <ConsultationForm onSuccess={handleFormSuccess} />
+        </div>
+      </section>
+    );
+  }
+
+  // Success view
+  if (viewState === "success" && submittedData) {
+    return (
+      <section className="py-20 bg-gradient-to-b from-background to-muted/20">
+        <div className="container mx-auto px-4">
+          <ConsultationSuccess data={submittedData} />
+        </div>
+      </section>
+    );
+  }
+
+  return null;
 };
 
 export default DoctorConsultation;
