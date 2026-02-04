@@ -36,9 +36,28 @@ const aboutPageSchema = {
   "mainEntity": {
     "@type": "Organization",
     "name": "BF SUMA ROYAL Kenya",
+    "alternateName": "BF SUMA ROYAL",
     "foundingDate": "2007",
     "numberOfEmployees": "1000+",
-    "areaServed": "50+ Countries"
+    "areaServed": "50+ Countries",
+    "url": "https://bfsuma-glow-hub.lovable.app",
+    "logo": "https://bfsuma-glow-hub.lovable.app/favicon.png",
+    "sameAs": [
+      "https://www.facebook.com/profile.php?id=100067452825041",
+      "https://www.instagram.com/ochiengbraghiton254"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+254795454053",
+      "contactType": "sales",
+      "availableLanguage": ["English", "Swahili"]
+    },
+    "hasCredential": [
+      { "@type": "EducationalOccupationalCredential", "credentialCategory": "GMP Certified" },
+      { "@type": "EducationalOccupationalCredential", "credentialCategory": "ISO 9001:2015" },
+      { "@type": "EducationalOccupationalCredential", "credentialCategory": "Halal Certified" },
+      { "@type": "EducationalOccupationalCredential", "credentialCategory": "FDA Registered" }
+    ]
   }
 };
 
@@ -48,12 +67,24 @@ const AboutPage = () => {
       <Helmet>
         <title>About BF SUMA ROYAL Kenya - Our Story, Mission & Certifications</title>
         <meta name="description" content="Learn about BF SUMA ROYAL, a global leader in natural health and wellness products with 50+ countries, 200+ products. Discover our story, values, GMP & ISO certifications." />
-        <meta name="keywords" content="BF SUMA ROYAL about, BF SUMA history, wellness company Kenya, natural supplements manufacturer, GMP certified supplements" />
+        <meta name="keywords" content="BF SUMA ROYAL about, BF SUMA history, wellness company Kenya, natural supplements manufacturer, GMP certified supplements, ISO 9001 health products" />
         <link rel="canonical" href="https://bfsuma-glow-hub.lovable.app/about" />
+        
+        {/* Open Graph */}
         <meta property="og:title" content="About BF SUMA ROYAL Kenya - Our Story & Mission" />
         <meta property="og:description" content="Learn about BF SUMA ROYAL, a global leader in natural health and wellness products with 50+ countries, 200+ products." />
         <meta property="og:url" content="https://bfsuma-glow-hub.lovable.app/about" />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://bfsuma-glow-hub.lovable.app/og-image.png" />
+        <meta property="og:site_name" content="BF SUMA ROYAL Kenya" />
+        <meta property="og:locale" content="en_KE" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="About BF SUMA ROYAL Kenya - Our Story & Mission" />
+        <meta name="twitter:description" content="Discover our 15+ year journey empowering wellness entrepreneurs across 50+ countries with 200+ natural health products." />
+        <meta name="twitter:image" content="https://bfsuma-glow-hub.lovable.app/og-image.png" />
+        
         <script type="application/ld+json">{JSON.stringify(aboutPageSchema)}</script>
       </Helmet>
       <Header />
