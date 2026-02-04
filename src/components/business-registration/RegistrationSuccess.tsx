@@ -3,15 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { 
   CheckCircle, 
-  CreditCard, 
   Clock, 
   Rocket, 
   User, 
   Phone, 
   Users,
+  MessageCircle,
   ArrowRight,
   Home,
   RefreshCw
@@ -94,15 +93,27 @@ const RegistrationSuccess = ({ registrationData, onStartNew }: RegistrationSucce
     }
   };
 
-  const handleProceedToPayment = () => {
-    // Navigate to checkout with business registration context
-    navigate('/checkout', { 
-      state: { 
-        businessRegistration: true,
-        registrationId: registrationData.id,
-        amount: entryFee 
-      }
-    });
+  const buildWhatsAppUrl = () => {
+    const phoneDigits = '254795454053';
+    const email = registrationData.email && registrationData.email.trim().length > 0
+      ? registrationData.email
+      : 'N/A';
+
+    const message = [
+      'Hi BF SUMA team 👋 I have completed the Join to Earn registration.',
+      `Name: ${registrationData.full_name}`,
+      `Phone: ${registrationData.phone}`,
+      `Email: ${email}`,
+      '',
+      'Please guide me on the next steps and payment.',
+    ].join('\n');
+
+    return `https://wa.me/${phoneDigits}?text=${encodeURIComponent(message)}`;
+  };
+
+  const handleCompleteOnWhatsApp = () => {
+    const url = buildWhatsAppUrl();
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -114,10 +125,10 @@ const RegistrationSuccess = ({ registrationData, onStartNew }: RegistrationSucce
             <CheckCircle className="h-10 w-10 text-green-600 dark:text-green-400" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-3 animate-fade-in">
-            Registration Successful 🎉
+            Registration received 🎉
           </h1>
           <p className="text-lg text-muted-foreground animate-fade-in">
-            Welcome to BF SUMA ROYAL. Your registration has been received.
+            Final step: complete your registration with a BF SUMA mentor on WhatsApp.
           </p>
         </div>
 
@@ -183,56 +194,24 @@ const RegistrationSuccess = ({ registrationData, onStartNew }: RegistrationSucce
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Step 1: Make Payment */}
-              <div className="relative pl-8">
-                <div className="absolute left-0 top-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">
-                  1
-                </div>
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-lg">Make Payment</h3>
-                  <p className="text-muted-foreground">
-                    To activate your account, please pay <strong>KES {entryFee.toLocaleString()}</strong>.
-                  </p>
-                  <Button 
-                    onClick={handleProceedToPayment}
-                    size="lg" 
-                    className="w-full sm:w-auto group"
-                  >
-                    <CreditCard className="mr-2 h-4 w-4" />
-                    Proceed to Payment
-                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </div>
-              </div>
+              <div className="space-y-3">
+                <p className="text-muted-foreground">
+                  Tap the button below to message our team on WhatsApp. A BF SUMA mentor will guide you step-by-step through payment and onboarding.
+                </p>
 
-              <Separator />
+                <Button
+                  onClick={handleCompleteOnWhatsApp}
+                  size="lg"
+                  className="w-full group"
+                >
+                  <MessageCircle className="mr-2 h-4 w-4" />
+                  Complete Registration on WhatsApp
+                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
 
-              {/* Step 2: Wait for Confirmation */}
-              <div className="relative pl-8">
-                <div className="absolute left-0 top-0 w-6 h-6 rounded-full bg-muted text-muted-foreground flex items-center justify-center text-sm font-bold">
-                  2
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg">Wait for Confirmation</h3>
-                  <p className="text-muted-foreground">
-                    After payment, your account will be reviewed and confirmed by our team.
-                  </p>
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Step 3: Get Access */}
-              <div className="relative pl-8">
-                <div className="absolute left-0 top-0 w-6 h-6 rounded-full bg-muted text-muted-foreground flex items-center justify-center text-sm font-bold">
-                  3
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg">Get Access</h3>
-                  <p className="text-muted-foreground">
-                    Once approved, you will get access to your dashboard, referral link, and training materials.
-                  </p>
-                </div>
+                <p className="text-sm text-muted-foreground">
+                  A BF SUMA mentor will guide you step-by-step through payment and onboarding.
+                </p>
               </div>
             </CardContent>
           </Card>

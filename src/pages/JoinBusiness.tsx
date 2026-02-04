@@ -25,7 +25,7 @@ import { HoneypotField } from '@/components/ui/honeypot-field';
 import { isBot } from '@/lib/honeypot';
 
 interface RegistrationData {
-  id: string;
+  id?: string;
   full_name: string;
   phone: string;
   email?: string;
@@ -88,7 +88,10 @@ const JoinBusiness = () => {
 
     setSubmitting(true);
     try {
-      const { data: insertedData, error } = await supabase
+      // IMPORTANT: Do NOT chain `.select()` here.
+      // This page supports anonymous registrations; selecting the inserted row would require
+      // a SELECT policy that can identify the anonymous user, which we don't have.
+      const { error } = await supabase
         .from('business_registrations')
         .insert({
           full_name: data.full_name,
@@ -101,23 +104,22 @@ const JoinBusiness = () => {
           sponsor_membership_id: data.has_sponsor ? data.sponsor_membership_id : null,
           agreement_accepted: data.agreement_accepted,
           status: 'pending',
-        })
-        .select()
-        .single();
+        });
 
       if (error) throw error;
 
       const regData: RegistrationData = {
-        id: insertedData.id,
-        full_name: insertedData.full_name,
-        phone: insertedData.phone,
-        email: insertedData.email || undefined,
-        county_city: insertedData.county_city,
-        has_sponsor: insertedData.has_sponsor,
-        sponsor_name: insertedData.sponsor_name || undefined,
-        sponsor_phone: insertedData.sponsor_phone || undefined,
-        entry_fee: insertedData.entry_fee,
-        status: insertedData.status as RegistrationData['status'],
+        // We already have the form values locally; this keeps the UX smooth and avoids
+        // relying on a read-back of the inserted row.
+        full_name: data.full_name,
+        phone: data.phone,
+        email: data.email || undefined,
+        county_city: data.county_city,
+        has_sponsor: data.has_sponsor,
+        sponsor_name: data.has_sponsor ? data.sponsor_name : undefined,
+        sponsor_phone: data.has_sponsor ? data.sponsor_phone : undefined,
+        entry_fee: 7000,
+        status: 'pending',
       };
 
       // Store in session storage for persistence on refresh
