@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://bfsuma-glow-hub.lovable.app</loc>
+    <loc>https://bfsumaroyal.com</loc>
     <changefreq>weekly</changefreq>
     <priority>1</priority>
   </url>
   <url>
-    <loc>https://bfsuma-glow-hub.lovable.app/about</loc>
+    <loc>https://bfsumaroyal.com/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bfsuma-glow-hub.lovable.app/join-business</loc>
+    <loc>https://bfsumaroyal.com/join-business</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bfsuma-glow-hub.lovable.app/checkout</loc>
+    <loc>https://bfsumaroyal.com/checkout</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://bfsuma-glow-hub.lovable.app/auth</loc>
+    <loc>https://bfsumaroyal.com/auth</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

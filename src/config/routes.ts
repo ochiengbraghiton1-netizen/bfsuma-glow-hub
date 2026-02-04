@@ -102,4 +102,9 @@ export const getRouteConfig = (path: string): RouteConfig | undefined => {
 /**
  * Base URL for the published site
  */
-export const SITE_BASE_URL = 'https://bfsuma-glow-hub.lovable.app';
+export const SITE_BASE_URL = 'https://bfsumaroyal.com';
+
+/**
+ * Edge function URL for dynamic sitemap
+ */
+export const SITEMAP_EDGE_FUNCTION_URL = 'https://sboaeutgckyiwunfmxqp.supabase.co/functions/v1/sitemap';

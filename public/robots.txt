@@ -13,5 +13,9 @@ Allow: /
 User-agent: *
 Allow: /
 
-# Sitemap
-Sitemap: https://bfsuma-glow-hub.lovable.app/sitemap.xml
+# Sitemap (dynamic - generated from edge function)
+Sitemap: https://bfsumaroyal.com/sitemap.xml
+
+# Disallow admin and private routes
+Disallow: /admin
+Disallow: /affiliate
