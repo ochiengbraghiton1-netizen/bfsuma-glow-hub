@@ -3,9 +3,10 @@
  import { Button } from '@/components/ui/button';
  import { Label } from '@/components/ui/label';
  import { useToast } from '@/hooks/use-toast';
- import { Upload, X, Loader2, ImageIcon, Camera, Plus, Check } from 'lucide-react';
+ import { Upload, X, Loader2, ImageIcon, Camera, Plus, Check, Crop } from 'lucide-react';
  import { cn } from '@/lib/utils';
  import { compressImage, formatFileSize } from '@/lib/image-compression';
+ import ImageCropper from './ImageCropper';
  
  interface ProductImageUploadProps {
    value: string | null;
@@ -37,6 +38,9 @@
    const [uploading, setUploading] = useState(false);
    const [dragOver, setDragOver] = useState(false);
    const [uploadQueue, setUploadQueue] = useState<UploadProgress[]>([]);
+   const [cropperOpen, setCropperOpen] = useState(false);
+   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+   const [pendingFile, setPendingFile] = useState<File | null>(null);
    const fileInputRef = useRef<HTMLInputElement>(null);
    const { toast } = useToast();
  
@@ -166,6 +170,16 @@
  
      if (multiple && files.length > 1) {
        uploadMultipleImages(Array.from(files));
+     } else if (files[0] && !multiple) {
+       // For single image, open cropper first
+       const file = files[0];
+       setPendingFile(file);
+       const reader = new FileReader();
+       reader.onload = () => {
+         setImageToCrop(reader.result as string);
+         setCropperOpen(true);
+       };
+       reader.readAsDataURL(file);
      } else if (files[0]) {
        uploadImage(files[0]);
      }
@@ -180,10 +194,38 @@
  
      if (multiple && files.length > 1) {
        uploadMultipleImages(Array.from(files));
+     } else if (files[0] && !multiple) {
+       // For single image, open cropper first
+       const file = files[0];
+       setPendingFile(file);
+       const reader = new FileReader();
+       reader.onload = () => {
+         setImageToCrop(reader.result as string);
+         setCropperOpen(true);
+       };
+       reader.readAsDataURL(file);
      } else if (files[0]) {
        uploadImage(files[0]);
      }
    }, [multiple, uploadImage, uploadMultipleImages]);
+ 
+   const handleCropComplete = useCallback(async (croppedBlob: Blob) => {
+     setCropperOpen(false);
+     setImageToCrop(null);
+     
+     // Create a File from the cropped blob
+     const fileName = pendingFile?.name || 'cropped-image.jpg';
+     const croppedFile = new File([croppedBlob], fileName, { type: 'image/jpeg' });
+     setPendingFile(null);
+     
+     await uploadImage(croppedFile);
+   }, [pendingFile, uploadImage]);
+ 
+   const handleCropCancel = useCallback(() => {
+     setCropperOpen(false);
+     setImageToCrop(null);
+     setPendingFile(null);
+   }, []);
  
    const handleDragOver = useCallback((e: React.DragEvent) => {
      e.preventDefault();
@@ -270,9 +312,20 @@
      <div className="space-y-2">
        <Label>Product Image</Label>
        <p className="text-xs text-muted-foreground mb-2">
-         Upload a JPG or PNG image (1:1 ratio recommended, max 5MB)
+         Upload a JPG or PNG image (auto-cropped to 1:1 square, max 5MB)
          {multiple && ' - Select multiple files for bulk upload'}
        </p>
+ 
+       {/* Image Cropper Modal */}
+       {imageToCrop && (
+         <ImageCropper
+           imageSrc={imageToCrop}
+           onCropComplete={handleCropComplete}
+           onCancel={handleCropCancel}
+           open={cropperOpen}
+           aspectRatio={1}
+         />
+       )}
  
        <input
          ref={fileInputRef}
@@ -359,7 +412,7 @@
              <p className="text-sm font-medium">
                {multiple ? 'Click to upload or drag multiple images' : 'Click to upload or drag and drop'}
              </p>
-             <p className="text-xs">JPG, PNG or WebP • Auto-compressed</p>
+             <p className="text-xs">JPG, PNG or WebP • Auto-cropped & compressed</p>
            </div>
          </div>
        )}
