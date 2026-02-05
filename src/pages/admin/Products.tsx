@@ -176,11 +176,11 @@ const Products = () => {
               Add Product
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
             <DialogHeader>
               <DialogTitle>{editingProduct ? 'Edit Product' : 'Add New Product'}</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 overflow-y-auto flex-1 pr-2 -mr-2 pb-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Product Name *</Label>
                 <Input
@@ -264,11 +264,13 @@ const Products = () => {
                 />
                 <Label htmlFor="is_active">Active (visible on website)</Label>
               </div>
-              <Button type="submit" className="w-full" disabled={submitting}>
+            </form>
+            <div className="pt-4 border-t mt-auto flex-shrink-0">
+              <Button type="submit" className="w-full" disabled={submitting} onClick={handleSubmit}>
                 {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                 {editingProduct ? 'Update Product' : 'Add Product'}
               </Button>
-            </form>
+            </div>
           </DialogContent>
         </Dialog>
       </div>
