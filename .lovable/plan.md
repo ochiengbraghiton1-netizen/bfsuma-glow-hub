@@ -1,51 +1,77 @@
 
+## Plan: Add SEO-Friendly Alt Text and Update Meta Tags
 
-## Fix: Product Update Validation Error
+### Current State Analysis
 
-### Problem Identified
-When editing a product without changing the image, you get "Expected string, received null" validation error. This happens because:
+**Images Missing Alt Text:**
+1. **Hero background** (`Hero.tsx`): Currently `alt=""` - This is the LCP (Largest Contentful Paint) image and should have descriptive alt text for SEO
+2. **Join & Earn background** (`JoinEarn.tsx`): Currently `alt=""` - decorative but could benefit from alt text
+3. **Community background** (`Community.tsx`): Currently `alt=""` - decorative but could benefit from alt text
 
-- The product's `image_url` from the database is `null` (no image)
-- When you click edit, this `null` value is loaded into the form
-- The validation schema expects either a `string` or `undefined`, but not `null`
-- Zod's `.optional()` only allows `undefined`, not `null`
+**Images with Alt Text (OK):**
+- Doctor consultation image: `alt="Wellness consultation"` - could be improved
+- Product cards: Use `alt={name}` - good, dynamically uses product name
 
-### Solution
-Update the validation schema to accept `null` values for the `image_url` field using `.nullable()` in addition to `.optional()`.
+**Meta Tags:**
+- The `index.html` title and description don't fully align with the new hero messaging
+
+---
 
 ### Changes Required
 
-**File: `src/lib/validations.ts`**
-
-Update the `image_url` field in `productSchema` to also accept `null`:
-
+#### 1. Hero.tsx - Add Alt Text to Hero Image
 ```text
-Current:
-  image_url: z.string()
-    .max(2000, 'Image URL must be less than 2000 characters')
-    .refine(...)
-    .optional(),
-
-Fixed:
-  image_url: z.string()
-    .max(2000, 'Image URL must be less than 2000 characters')
-    .refine(...)
-    .nullable()
-    .optional(),
+Current:  alt=""
+Updated:  alt="BF SUMA Royal premium wellness supplements and natural health products display"
 ```
 
-This change allows the field to be:
-- A valid URL string
-- `null` (no image)
-- `undefined` (not provided)
-
-### Additional Improvement
-Also update the `resetForm` function in `Products.tsx` to consistently use `null` instead of empty string for `image_url` to match the database behavior:
-
+#### 2. DoctorConsultation.tsx - Improve Alt Text
 ```text
-Line 72: image_url: '',  -->  image_url: null,
+Current:  alt="Wellness consultation"
+Updated:  alt="BF SUMA Royal wellness expert providing personalized health consultation"
 ```
 
-### Expected Result
-After this fix, you will be able to update product inventory (or any other field) without getting validation errors when the product has no image.
+#### 3. JoinEarn.tsx - Add Alt Text to Background
+```text
+Current:  alt=""
+Updated:  alt="BF SUMA Royal business opportunity and wellness entrepreneur community"
+```
 
+#### 4. Community.tsx - Add Alt Text to Background
+```text
+Current:  alt=""
+Updated:  alt="BF SUMA Royal wellness community training and mentorship program"
+```
+
+#### 5. index.html - Update Meta Title and Description
+
+**Title:**
+```text
+Current:  "BF SUMA ROYAL Kenya - Premium Natural Supplements & Wellness Business Opportunity"
+Updated:  "BF SUMA Royal - Premium Supplements for Better Health | Wellness Business Opportunity Kenya"
+```
+
+**Meta Description:**
+```text
+Current:  "Discover BF SUMA ROYAL's premium natural health supplements in Kenya..."
+Updated:  "BF SUMA Royal offers trusted wellness products designed to support your health journey. Premium supplements backed by a real business opportunity. Shop NMN Capsules, ArthroXtra, Ganoderma & more in Kenya."
+```
+
+**Open Graph Title and Description** will also be updated to match.
+
+---
+
+### Technical Details
+
+All changes are simple string replacements in the following files:
+- `src/components/Hero.tsx` (line 24)
+- `src/components/DoctorConsultation.tsx` (line 58)
+- `src/components/JoinEarn.tsx` (line 37)
+- `src/components/Community.tsx` (line 17)
+- `index.html` (lines 21, 22, 29, 30, 35, 36)
+
+### SEO Benefits
+- Improved image indexing for Google Image Search
+- Better accessibility for screen readers
+- Meta tags aligned with hero content for consistent messaging
+- Keywords included: "BF SUMA Royal", "supplements", "wellness", "business opportunity", "Kenya"
