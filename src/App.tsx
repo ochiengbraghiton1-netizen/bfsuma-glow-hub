@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { CartProvider } from "@/contexts/CartContext";
+import { useReferral } from "@/hooks/use-referral";
 import Index from "./pages/Index";
 import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
@@ -29,6 +30,12 @@ import Admins from "./pages/admin/Admins";
 import BusinessRegistrations from "./pages/admin/BusinessRegistrations";
 import AffiliateDashboard from "./pages/affiliate/Dashboard";
 
+// Component to initialize referral tracking
+const ReferralTracker = () => {
+  useReferral();
+  return null;
+};
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -40,6 +47,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
+              <ReferralTracker />
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/about" element={<AboutPage />} />
