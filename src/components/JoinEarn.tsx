@@ -33,7 +33,7 @@ const JoinEarn = () => {
       {/* Background image - lazy loaded */}
       <img
         src={joinEarnBg}
-        alt=""
+        alt="BF SUMA Royal business opportunity and wellness entrepreneur community"
         loading="lazy"
         decoding="async"
         className="absolute inset-0 w-full h-full object-cover"

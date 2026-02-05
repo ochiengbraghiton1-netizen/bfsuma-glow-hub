@@ -12,7 +12,7 @@ const Community = () => {
       {/* Background image - lazy loaded */}
       <img
         src={communityBg}
-        alt=""
+        alt="BF SUMA Royal wellness community training and mentorship program"
         loading="lazy"
         decoding="async"
         className="absolute inset-0 w-full h-full object-cover"
