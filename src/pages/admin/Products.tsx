@@ -11,6 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { productSchema } from '@/lib/validations';
+import ProductImageUpload from '@/components/admin/ProductImageUpload';
 
 interface Product {
   id: string;
@@ -35,7 +36,7 @@ const Products = () => {
     price: '',
     benefit: '',
     description: '',
-    image_url: '',
+    image_url: null as string | null,
     is_active: true,
     stock_quantity: '0',
     low_stock_threshold: '10',
@@ -84,7 +85,7 @@ const Products = () => {
       price: product.price.toString(),
       benefit: product.benefit || '',
       description: product.description || '',
-      image_url: product.image_url || '',
+    image_url: product.image_url || null,
       is_active: product.is_active,
       stock_quantity: product.stock_quantity.toString(),
       low_stock_threshold: product.low_stock_threshold.toString(),
@@ -218,16 +219,11 @@ const Products = () => {
                   rows={3}
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="image_url">Image URL</Label>
-                <Input
-                  id="image_url"
-                  type="url"
-                  value={formData.image_url}
-                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                  placeholder="https://..."
-                />
-              </div>
+              <ProductImageUpload
+                value={formData.image_url}
+                onChange={(url) => setFormData({ ...formData, image_url: url })}
+                disabled={submitting}
+              />
               <div className="flex items-center gap-2">
                 <Switch
                   id="track_inventory"
