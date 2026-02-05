@@ -22,6 +22,7 @@ export const productSchema = z.object({
     .max(2000, 'Image URL must be less than 2000 characters')
     .refine((val) => !val || val.startsWith('https://') || val.startsWith('http://'), 
       'Image URL must be a valid URL')
+    .nullable()
     .optional(),
   is_active: z.boolean(),
 });
