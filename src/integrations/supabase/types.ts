@@ -757,27 +757,7 @@ export type Database = {
       }
     }
     Views: {
-      product_ratings: {
-        Row: {
-          average_rating: number | null
-          five_star: number | null
-          four_star: number | null
-          one_star: number | null
-          product_id: string | null
-          review_count: number | null
-          three_star: number | null
-          two_star: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "product_reviews_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
       decrement_stock: {
@@ -785,6 +765,13 @@ export type Database = {
         Returns: boolean
       }
       generate_referral_code: { Args: never; Returns: string }
+      get_product_ratings: {
+        Args: { p_product_id: string }
+        Returns: {
+          average_rating: number
+          review_count: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

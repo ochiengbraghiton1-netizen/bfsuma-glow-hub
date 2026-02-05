@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import Hero from "@/components/Hero";
 import Header from "@/components/Header";
 import DoctorConsultation from "@/components/DoctorConsultation";
@@ -12,6 +13,7 @@ import Chatbot from "@/components/Chatbot";
 import Footer from "@/components/Footer";
 import StructuredData from "@/components/StructuredData";
 import { useProducts } from "@/hooks/use-products";
+import { useProductRatings } from "@/hooks/use-product-ratings";
 
 // FAQ data for structured data
 const faqData = [
@@ -47,10 +49,12 @@ const faqData = [
 
 const Index = () => {
   const { products } = useProducts();
+  const productIds = useMemo(() => products.map(p => p.id), [products]);
+  const { data: productRatings } = useProductRatings(productIds);
   
   return (
     <div className="min-h-screen">
-      <StructuredData faqs={faqData} products={products} />
+      <StructuredData faqs={faqData} products={products} productRatings={productRatings} />
       <Header />
       <main className="pt-16"> {/* Offset for fixed header */}
         <Hero />

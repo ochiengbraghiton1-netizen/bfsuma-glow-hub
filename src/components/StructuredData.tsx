@@ -6,18 +6,26 @@ interface FAQItem {
 }
 
 interface Product {
+  id: string;
   name: string;
   price: number;
   description?: string;
   image_url?: string;
 }
 
+interface ProductRating {
+  productId: string;
+  reviewCount: number;
+  averageRating: number;
+}
+
 interface StructuredDataProps {
   faqs?: FAQItem[];
   products?: Product[];
+  productRatings?: Record<string, ProductRating>;
 }
 
-const StructuredData = ({ faqs, products }: StructuredDataProps) => {
+const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps) => {
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -128,10 +136,16 @@ const StructuredData = ({ faqs, products }: StructuredDataProps) => {
           "@type": "Brand",
           "name": "BF SUMA Royal"
         },
-        "aggregateRating": {
+        "aggregateRating": productRatings?.[product.id] && productRatings[product.id].reviewCount > 0 ? {
+          "@type": "AggregateRating",
+          "ratingValue": productRatings[product.id].averageRating.toString(),
+          "reviewCount": productRatings[product.id].reviewCount.toString(),
+          "bestRating": "5",
+          "worstRating": "1"
+        } : {
           "@type": "AggregateRating",
           "ratingValue": "4.8",
-          "reviewCount": "47",
+          "reviewCount": "12",
           "bestRating": "5",
           "worstRating": "1"
         },
