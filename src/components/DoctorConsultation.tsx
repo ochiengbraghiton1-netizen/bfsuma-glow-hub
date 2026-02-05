@@ -55,7 +55,7 @@ const DoctorConsultation = () => {
               <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-3xl blur-2xl opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
               <img
                 src={doctorImg}
-                alt="Wellness consultation"
+                alt="BF SUMA Royal wellness expert providing personalized health consultation"
                 loading="lazy"
                 decoding="async"
                 className="relative rounded-3xl shadow-elegant w-full h-[400px] object-cover"

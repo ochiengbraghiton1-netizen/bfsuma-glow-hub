@@ -21,7 +21,7 @@ const Hero = () => {
       {/* Hero background image - LCP element */}
       <img
         src={heroBg}
-        alt=""
+        alt="BF SUMA Royal premium wellness supplements and natural health products display"
         loading="eager"
         decoding="async"
         className="absolute inset-0 w-full h-full object-cover"
