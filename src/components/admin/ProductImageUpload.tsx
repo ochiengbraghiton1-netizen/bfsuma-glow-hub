@@ -1,12 +1,15 @@
- import { useState, useRef, useCallback, useMemo } from 'react';
+ import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
  import { supabase } from '@/integrations/supabase/client';
  import { Button } from '@/components/ui/button';
  import { Label } from '@/components/ui/label';
+ import { Input } from '@/components/ui/input';
  import { useToast } from '@/hooks/use-toast';
- import { Upload, X, Loader2, ImageIcon, Camera, Plus, Check, Crop } from 'lucide-react';
+ import { Upload, X, Loader2, ImageIcon, Camera, Plus, Check, Link2, Image } from 'lucide-react';
  import { cn } from '@/lib/utils';
  import { compressImage, formatFileSize } from '@/lib/image-compression';
  import ImageCropper from './ImageCropper';
+ import { useIsMobile } from '@/hooks/use-mobile';
+ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
  
  interface ProductImageUploadProps {
    value: string | null;
@@ -42,7 +45,12 @@
    const [imageToCrop, setImageToCrop] = useState<string | null>(null);
    const [pendingFile, setPendingFile] = useState<File | null>(null);
    const fileInputRef = useRef<HTMLInputElement>(null);
+   const cameraInputRef = useRef<HTMLInputElement>(null);
+   const [imageUrl, setImageUrl] = useState('');
+   const [urlPopoverOpen, setUrlPopoverOpen] = useState(false);
+   const [loadingUrl, setLoadingUrl] = useState(false);
    const { toast } = useToast();
+   const isMobile = useIsMobile();
  
    const uploadSingleImage = useCallback(async (
      file: File, 
@@ -164,6 +172,16 @@
      setTimeout(() => setUploadQueue([]), 3000);
    }, [existingUrls, onMultipleChange, toast, uploadSingleImage]);
  
+   const openCropperWithFile = useCallback((file: File) => {
+     setPendingFile(file);
+     const reader = new FileReader();
+     reader.onload = () => {
+       setImageToCrop(reader.result as string);
+       setCropperOpen(true);
+     };
+     reader.readAsDataURL(file);
+   }, []);
+ 
    const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
      const files = e.target.files;
      if (!files || files.length === 0) return;
@@ -171,20 +189,12 @@
      if (multiple && files.length > 1) {
        uploadMultipleImages(Array.from(files));
      } else if (files[0] && !multiple) {
-       // For single image, open cropper first
-       const file = files[0];
-       setPendingFile(file);
-       const reader = new FileReader();
-       reader.onload = () => {
-         setImageToCrop(reader.result as string);
-         setCropperOpen(true);
-       };
-       reader.readAsDataURL(file);
+       openCropperWithFile(files[0]);
      } else if (files[0]) {
        uploadImage(files[0]);
      }
      e.target.value = '';
-   }, [multiple, uploadImage, uploadMultipleImages]);
+   }, [multiple, uploadImage, uploadMultipleImages, openCropperWithFile]);
  
    const handleDrop = useCallback((e: React.DragEvent) => {
      e.preventDefault();
@@ -195,25 +205,16 @@
      if (multiple && files.length > 1) {
        uploadMultipleImages(Array.from(files));
      } else if (files[0] && !multiple) {
-       // For single image, open cropper first
-       const file = files[0];
-       setPendingFile(file);
-       const reader = new FileReader();
-       reader.onload = () => {
-         setImageToCrop(reader.result as string);
-         setCropperOpen(true);
-       };
-       reader.readAsDataURL(file);
+       openCropperWithFile(files[0]);
      } else if (files[0]) {
        uploadImage(files[0]);
      }
-   }, [multiple, uploadImage, uploadMultipleImages]);
+   }, [multiple, uploadImage, uploadMultipleImages, openCropperWithFile]);
  
    const handleCropComplete = useCallback(async (croppedBlob: Blob) => {
      setCropperOpen(false);
      setImageToCrop(null);
      
-     // Create a File from the cropped blob
      const fileName = pendingFile?.name || 'cropped-image.jpg';
      const croppedFile = new File([croppedBlob], fileName, { type: 'image/jpeg' });
      setPendingFile(null);
@@ -245,6 +246,63 @@
      fileInputRef.current?.click();
    }, []);
  
+   const triggerCameraCapture = useCallback(() => {
+     cameraInputRef.current?.click();
+   }, []);
+ 
+   const handleUrlSubmit = useCallback(async () => {
+     if (!imageUrl.trim()) return;
+     
+     setLoadingUrl(true);
+     try {
+       const url = new URL(imageUrl.trim());
+       
+       const response = await fetch(url.toString(), { mode: 'cors' });
+       if (!response.ok) throw new Error('Failed to fetch image');
+       
+       const blob = await response.blob();
+       if (!blob.type.startsWith('image/')) {
+         throw new Error('URL does not point to a valid image');
+       }
+       
+       const file = new File([blob], 'url-image.jpg', { type: blob.type });
+       setUrlPopoverOpen(false);
+       setImageUrl('');
+       openCropperWithFile(file);
+     } catch (error: any) {
+       toast({
+         title: 'Invalid image URL',
+         description: error.message || 'Could not load image from the provided URL.',
+         variant: 'destructive',
+       });
+     } finally {
+       setLoadingUrl(false);
+     }
+   }, [imageUrl, toast, openCropperWithFile]);
+ 
+   const handlePaste = useCallback((e: ClipboardEvent) => {
+     const items = e.clipboardData?.items;
+     if (!items) return;
+     
+     for (const item of items) {
+       if (item.type.startsWith('image/')) {
+         e.preventDefault();
+         const file = item.getAsFile();
+         if (file) {
+           openCropperWithFile(file);
+         }
+         break;
+       }
+     }
+   }, [openCropperWithFile]);
+ 
+   useEffect(() => {
+     if (isMobile || disabled) return;
+     
+     document.addEventListener('paste', handlePaste);
+     return () => document.removeEventListener('paste', handlePaste);
+   }, [isMobile, disabled, handlePaste]);
+ 
    const compressionStats = useMemo(() => {
      const completedUploads = uploadQueue.filter(u => u.status === 'done' && u.compressedSize);
      if (completedUploads.length === 0) return null;
@@ -257,7 +315,6 @@
      return { saved, percentage };
    }, [uploadQueue]);
  
-   // Bulk upload progress view
    if (multiple && uploadQueue.length > 0) {
      return (
        <div className="space-y-2">
@@ -316,7 +373,6 @@
          {multiple && ' - Select multiple files for bulk upload'}
        </p>
  
-       {/* Image Cropper Modal */}
        {imageToCrop && (
          <ImageCropper
            imageSrc={imageToCrop}
@@ -327,6 +383,7 @@
          />
        )}
  
+       {/* Gallery/file picker input - no capture attribute */}
        <input
          ref={fileInputRef}
          type="file"
@@ -335,7 +392,17 @@
          className="hidden"
          disabled={disabled || uploading}
          multiple={multiple}
+       />
+       
+       {/* Camera input - with capture attribute */}
+       <input
+         ref={cameraInputRef}
+         type="file"
+         accept="image/*"
          capture="environment"
+         onChange={handleFileSelect}
+         className="hidden"
+         disabled={disabled || uploading}
        />
  
        {value ? (
@@ -385,35 +452,126 @@
            )}
          </div>
        ) : uploading ? (
-         <div className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-primary/50 rounded-lg bg-primary/5">
+         <div className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-primary/50 rounded-lg bg-primary/5">
            <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
            <p className="text-sm text-muted-foreground">Compressing & uploading...</p>
          </div>
        ) : (
-         <div
-           onClick={triggerFileSelect}
-           onDrop={handleDrop}
-           onDragOver={handleDragOver}
-           onDragLeave={handleDragLeave}
-           className={cn(
-             "flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-lg cursor-pointer transition-colors",
-             dragOver
-               ? "border-primary bg-primary/10"
-               : "border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/50",
-             disabled && "opacity-50 cursor-not-allowed"
-           )}
-         >
-           <div className="flex flex-col items-center gap-2 text-muted-foreground">
-             <div className="flex gap-2">
-               <Upload className="h-6 w-6" />
-               <Camera className="h-6 w-6" />
-               {multiple && <Plus className="h-6 w-6" />}
+         <div className="space-y-3">
+           {/* Drag and drop zone */}
+           <div
+             onClick={triggerFileSelect}
+             onDrop={handleDrop}
+             onDragOver={handleDragOver}
+             onDragLeave={handleDragLeave}
+             className={cn(
+               "flex flex-col items-center justify-center w-full h-28 border-2 border-dashed rounded-lg cursor-pointer transition-colors",
+               dragOver
+                 ? "border-primary bg-primary/10"
+                 : "border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/50",
+               disabled && "opacity-50 cursor-not-allowed"
+             )}
+           >
+             <div className="flex flex-col items-center gap-1.5 text-muted-foreground px-4">
+               <div className="flex gap-2">
+                 <Image className="h-5 w-5" />
+                 {multiple && <Plus className="h-5 w-5" />}
+               </div>
+               <p className="text-sm font-medium text-center">
+                 {isMobile 
+                   ? 'Tap to select from gallery' 
+                   : multiple 
+                     ? 'Click or drag multiple images' 
+                     : 'Click to select or drag and drop'}
+               </p>
+               <p className="text-xs">JPG, PNG or WebP • Auto-cropped & compressed</p>
              </div>
-             <p className="text-sm font-medium">
-               {multiple ? 'Click to upload or drag multiple images' : 'Click to upload or drag and drop'}
-             </p>
-             <p className="text-xs">JPG, PNG or WebP • Auto-cropped & compressed</p>
            </div>
+ 
+           {/* Action buttons */}
+           <div className="flex flex-wrap gap-2">
+             {isMobile && (
+               <Button
+                 type="button"
+                 variant="outline"
+                 size="sm"
+                 onClick={triggerCameraCapture}
+                 disabled={disabled}
+                 className="flex-1"
+               >
+                 <Camera className="h-4 w-4 mr-2" />
+                 Camera
+               </Button>
+             )}
+             
+             <Button
+               type="button"
+               variant="outline"
+               size="sm"
+               onClick={triggerFileSelect}
+               disabled={disabled}
+               className="flex-1"
+             >
+               <Upload className="h-4 w-4 mr-2" />
+               {isMobile ? 'Gallery' : 'Browse Files'}
+             </Button>
+ 
+             {!isMobile && (
+               <Popover open={urlPopoverOpen} onOpenChange={setUrlPopoverOpen}>
+                 <PopoverTrigger asChild>
+                   <Button
+                     type="button"
+                     variant="outline"
+                     size="sm"
+                     disabled={disabled}
+                   >
+                     <Link2 className="h-4 w-4 mr-2" />
+                     Paste URL
+                   </Button>
+                 </PopoverTrigger>
+                 <PopoverContent className="w-80" align="start">
+                   <div className="space-y-3">
+                     <div className="space-y-1">
+                       <Label htmlFor="image-url" className="text-sm">Image URL</Label>
+                       <p className="text-xs text-muted-foreground">
+                         Enter a direct link to an image
+                       </p>
+                     </div>
+                     <Input
+                       id="image-url"
+                       type="url"
+                       placeholder="https://example.com/image.jpg"
+                       value={imageUrl}
+                       onChange={(e) => setImageUrl(e.target.value)}
+                       onKeyDown={(e) => e.key === 'Enter' && handleUrlSubmit()}
+                     />
+                     <Button
+                       type="button"
+                       size="sm"
+                       className="w-full"
+                       onClick={handleUrlSubmit}
+                       disabled={loadingUrl || !imageUrl.trim()}
+                     >
+                       {loadingUrl ? (
+                         <>
+                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                           Loading...
+                         </>
+                       ) : (
+                         'Load Image'
+                       )}
+                     </Button>
+                   </div>
+                 </PopoverContent>
+               </Popover>
+             )}
+           </div>
+ 
+           {!isMobile && (
+             <p className="text-xs text-muted-foreground text-center">
+               💡 Tip: You can also paste an image directly from your clipboard (Ctrl/Cmd + V)
+             </p>
+           )}
          </div>
        )}
      </div>
