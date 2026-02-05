@@ -101,14 +101,21 @@ const StructuredData = ({ faqs, products }: StructuredDataProps) => {
     }
   };
 
-  // Product structured data for rich results
-  const productListSchema = products && products.length > 0 ? {
+  // Calculate priceValidUntil (1 year from now)
+  const priceValidUntil = new Date();
+  priceValidUntil.setFullYear(priceValidUntil.getFullYear() + 1);
+  const priceValidUntilStr = priceValidUntil.toISOString().split('T')[0];
+
+  // Product structured data for rich results - filter to ensure valid products
+  const validProducts = products?.filter(p => p.price > 0) || [];
+  
+  const productListSchema = validProducts.length > 0 ? {
     "@context": "https://schema.org",
     "@type": "ItemList",
     "name": "BF SUMA Royal Wellness Products",
     "description": "Premium natural health supplements from BF SUMA Royal Kenya",
-    "numberOfItems": products.length,
-    "itemListElement": products.slice(0, 10).map((product, index) => ({
+    "numberOfItems": validProducts.length,
+    "itemListElement": validProducts.slice(0, 10).map((product, index) => ({
       "@type": "ListItem",
       "position": index + 1,
       "item": {
@@ -122,9 +129,12 @@ const StructuredData = ({ faqs, products }: StructuredDataProps) => {
         },
         "offers": {
           "@type": "Offer",
+          "url": "https://bfsuma-glow-hub.lovable.app/#products",
           "priceCurrency": "KES",
-          "price": product.price,
+          "price": product.price.toString(),
+          "priceValidUntil": priceValidUntilStr,
           "availability": "https://schema.org/InStock",
+          "itemCondition": "https://schema.org/NewCondition",
           "seller": {
             "@type": "Organization",
             "name": "BF SUMA Royal Kenya"
