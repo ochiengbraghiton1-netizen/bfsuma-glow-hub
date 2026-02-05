@@ -53,21 +53,21 @@ const Hero = () => {
         <div className="flex items-center justify-center gap-2 mb-6 animate-scale-in">
           <Sparkles className="w-6 h-6 text-accent animate-glow" />
           <span className="text-accent font-semibold uppercase tracking-wider text-sm">
-            Premium Wellness Solutions
+            Trusted Wellness Products
           </span>
           <Sparkles className="w-6 h-6 text-accent animate-glow" />
         </div>
         
         <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-          Empowering Your Health.
+          Premium Supplements for Better Health
           <br />
           <span className="bg-gradient-to-r from-accent to-accent-glow bg-clip-text text-transparent">
-            Enhancing Your Wealth.
+            Backed by a Real Business Opportunity
           </span>
         </h1>
         
         <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
-          Discover premium natural supplements that transform lives — and your financial future.
+          BF SUMA Royal offers trusted wellness products designed to support your health journey. Whether you're looking for quality supplements or a flexible way to earn, you've come to the right place.
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -77,7 +77,7 @@ const Hero = () => {
             size="xl"
             className="group"
           >
-            Shop Products
+            Buy Products
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Button>
           <Button 
@@ -85,7 +85,7 @@ const Hero = () => {
             variant="glass" 
             size="xl"
           >
-            Join & Earn
+            Join the Business
           </Button>
         </div>
       </div>
