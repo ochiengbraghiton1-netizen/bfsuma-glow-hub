@@ -1,104 +1,189 @@
- import { useState, useRef, useCallback } from 'react';
+ import { useState, useRef, useCallback, useMemo } from 'react';
  import { supabase } from '@/integrations/supabase/client';
  import { Button } from '@/components/ui/button';
  import { Label } from '@/components/ui/label';
  import { useToast } from '@/hooks/use-toast';
- import { Upload, X, Loader2, ImageIcon, Camera } from 'lucide-react';
+ import { Upload, X, Loader2, ImageIcon, Camera, Plus, Check } from 'lucide-react';
  import { cn } from '@/lib/utils';
+ import { compressImage, formatFileSize } from '@/lib/image-compression';
  
  interface ProductImageUploadProps {
    value: string | null;
    onChange: (url: string | null) => void;
    disabled?: boolean;
+   multiple?: boolean;
+   onMultipleChange?: (urls: string[]) => void;
+   existingUrls?: string[];
  }
  
- const ProductImageUpload = ({ value, onChange, disabled }: ProductImageUploadProps) => {
+ interface UploadProgress {
+   file: File;
+   status: 'pending' | 'compressing' | 'uploading' | 'done' | 'error';
+   progress: number;
+   url?: string;
+   originalSize: number;
+   compressedSize?: number;
+   error?: string;
+ }
+ 
+ const ProductImageUpload = ({ 
+   value, 
+   onChange, 
+   disabled,
+   multiple = false,
+   onMultipleChange,
+   existingUrls = []
+ }: ProductImageUploadProps) => {
    const [uploading, setUploading] = useState(false);
    const [dragOver, setDragOver] = useState(false);
+   const [uploadQueue, setUploadQueue] = useState<UploadProgress[]>([]);
    const fileInputRef = useRef<HTMLInputElement>(null);
    const { toast } = useToast();
  
-   const uploadImage = useCallback(async (file: File) => {
-     // Validate file type
+   const uploadSingleImage = useCallback(async (
+     file: File, 
+     updateProgress: (update: Partial<UploadProgress>) => void
+   ): Promise<string | null> => {
      if (!file.type.startsWith('image/')) {
        toast({
          title: 'Invalid file type',
          description: 'Please upload a JPG or PNG image.',
          variant: 'destructive',
        });
-       return;
+       return null;
      }
  
-     // Validate file size (max 5MB)
      if (file.size > 5 * 1024 * 1024) {
        toast({
          title: 'File too large',
          description: 'Please upload an image smaller than 5MB.',
          variant: 'destructive',
        });
-       return;
+       return null;
      }
  
-     setUploading(true);
- 
      try {
-       // Generate unique filename
-       const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+       updateProgress({ status: 'compressing', progress: 20 });
+       const compressedFile = await compressImage(file, 1200, 1200, 0.8);
+       updateProgress({ 
+         status: 'uploading', 
+         progress: 40,
+         compressedSize: compressedFile.size 
+       });
+ 
+       const fileExt = compressedFile.name.split('.').pop()?.toLowerCase() || 'jpg';
        const fileName = `${crypto.randomUUID()}.${fileExt}`;
        const filePath = `product-images/${fileName}`;
  
-       // Upload to Supabase Storage
        const { error: uploadError } = await supabase.storage
          .from('products')
-         .upload(filePath, file, {
+         .upload(filePath, compressedFile, {
            cacheControl: '3600',
            upsert: false,
          });
  
-       if (uploadError) {
-         throw uploadError;
-       }
+       if (uploadError) throw uploadError;
  
-       // Get public URL
+       updateProgress({ progress: 80 });
+ 
        const { data: urlData } = supabase.storage
          .from('products')
          .getPublicUrl(filePath);
  
-       onChange(urlData.publicUrl);
+       updateProgress({ status: 'done', progress: 100, url: urlData.publicUrl });
+       return urlData.publicUrl;
+     } catch (error: any) {
+       console.error('Upload error:', error);
+       updateProgress({ status: 'error', error: error.message });
+       return null;
+     }
+   }, [toast]);
  
-       toast({
-         title: 'Image uploaded',
-         description: 'Product image uploaded successfully.',
-       });
+   const uploadImage = useCallback(async (file: File) => {
+     setUploading(true);
+     try {
+       const url = await uploadSingleImage(file, () => {});
+       if (url) {
+         onChange(url);
+         toast({
+           title: 'Image uploaded',
+           description: 'Product image compressed & uploaded successfully.',
+         });
+       }
      } catch (error: any) {
        console.error('Upload error:', error);
        toast({
          title: 'Upload failed',
-         description: error.message || 'Failed to upload image. Please try again.',
+         description: error.message || 'Failed to upload image.',
          variant: 'destructive',
        });
      } finally {
        setUploading(false);
      }
-   }, [onChange, toast]);
+   }, [onChange, toast, uploadSingleImage]);
+ 
+   const uploadMultipleImages = useCallback(async (files: File[]) => {
+     const queue: UploadProgress[] = files.map(file => ({
+       file,
+       status: 'pending',
+       progress: 0,
+       originalSize: file.size,
+     }));
+     setUploadQueue(queue);
+     setUploading(true);
+ 
+     const uploadedUrls: string[] = [...existingUrls];
+ 
+     for (let i = 0; i < files.length; i++) {
+       const file = files[i];
+       const updateProgress = (update: Partial<UploadProgress>) => {
+         setUploadQueue(prev => prev.map((item, idx) => 
+           idx === i ? { ...item, ...update } : item
+         ));
+       };
+ 
+       const url = await uploadSingleImage(file, updateProgress);
+       if (url) uploadedUrls.push(url);
+     }
+ 
+     setUploading(false);
+ 
+     if (onMultipleChange && uploadedUrls.length > existingUrls.length) {
+       onMultipleChange(uploadedUrls);
+       const newCount = uploadedUrls.length - existingUrls.length;
+       toast({
+         title: 'Images uploaded',
+         description: `Successfully uploaded ${newCount} image${newCount > 1 ? 's' : ''}.`,
+       });
+     }
+ 
+     setTimeout(() => setUploadQueue([]), 3000);
+   }, [existingUrls, onMultipleChange, toast, uploadSingleImage]);
  
    const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-     const file = e.target.files?.[0];
-     if (file) {
-       uploadImage(file);
+     const files = e.target.files;
+     if (!files || files.length === 0) return;
+ 
+     if (multiple && files.length > 1) {
+       uploadMultipleImages(Array.from(files));
+     } else if (files[0]) {
+       uploadImage(files[0]);
      }
-     // Reset input so same file can be selected again
      e.target.value = '';
-   }, [uploadImage]);
+   }, [multiple, uploadImage, uploadMultipleImages]);
  
    const handleDrop = useCallback((e: React.DragEvent) => {
      e.preventDefault();
      setDragOver(false);
-     const file = e.dataTransfer.files?.[0];
-     if (file) {
-       uploadImage(file);
+     const files = e.dataTransfer.files;
+     if (!files || files.length === 0) return;
+ 
+     if (multiple && files.length > 1) {
+       uploadMultipleImages(Array.from(files));
+     } else if (files[0]) {
+       uploadImage(files[0]);
      }
-   }, [uploadImage]);
+   }, [multiple, uploadImage, uploadMultipleImages]);
  
    const handleDragOver = useCallback((e: React.DragEvent) => {
      e.preventDefault();
@@ -118,11 +203,75 @@
      fileInputRef.current?.click();
    }, []);
  
+   const compressionStats = useMemo(() => {
+     const completedUploads = uploadQueue.filter(u => u.status === 'done' && u.compressedSize);
+     if (completedUploads.length === 0) return null;
+     
+     const totalOriginal = completedUploads.reduce((sum, u) => sum + u.originalSize, 0);
+     const totalCompressed = completedUploads.reduce((sum, u) => sum + (u.compressedSize || 0), 0);
+     const saved = totalOriginal - totalCompressed;
+     const percentage = Math.round((saved / totalOriginal) * 100);
+     
+     return { saved, percentage };
+   }, [uploadQueue]);
+ 
+   // Bulk upload progress view
+   if (multiple && uploadQueue.length > 0) {
+     return (
+       <div className="space-y-2">
+         <Label>Product Images (Bulk Upload)</Label>
+         <div className="border rounded-lg p-4 space-y-3">
+           {uploadQueue.map((item, idx) => (
+             <div key={idx} className="flex items-center gap-3">
+               <div className="w-10 h-10 rounded bg-muted flex items-center justify-center flex-shrink-0">
+                 {item.status === 'done' ? (
+                   <Check className="h-5 w-5 text-green-500" />
+                 ) : item.status === 'error' ? (
+                   <X className="h-5 w-5 text-destructive" />
+                 ) : (
+                   <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                 )}
+               </div>
+               <div className="flex-1 min-w-0">
+                 <p className="text-sm font-medium truncate">{item.file.name}</p>
+                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                   <span>{formatFileSize(item.originalSize)}</span>
+                   {item.compressedSize && item.compressedSize < item.originalSize && (
+                     <>
+                       <span>→</span>
+                       <span className="text-green-600">{formatFileSize(item.compressedSize)}</span>
+                     </>
+                   )}
+                 </div>
+                 {item.error && <p className="text-xs text-destructive">{item.error}</p>}
+               </div>
+               <div className="w-16 text-right">
+                 <span className="text-xs text-muted-foreground">
+                   {item.status === 'pending' && 'Waiting...'}
+                   {item.status === 'compressing' && 'Compressing'}
+                   {item.status === 'uploading' && 'Uploading'}
+                   {item.status === 'done' && 'Done'}
+                   {item.status === 'error' && 'Failed'}
+                 </span>
+               </div>
+             </div>
+           ))}
+           {compressionStats && compressionStats.saved > 0 && (
+             <p className="text-xs text-green-600 pt-2 border-t">
+               💾 Saved {formatFileSize(compressionStats.saved)} ({compressionStats.percentage}% reduction)
+             </p>
+           )}
+         </div>
+       </div>
+     );
+   }
+ 
    return (
      <div className="space-y-2">
        <Label>Product Image</Label>
        <p className="text-xs text-muted-foreground mb-2">
          Upload a JPG or PNG image (1:1 ratio recommended, max 5MB)
+         {multiple && ' - Select multiple files for bulk upload'}
        </p>
  
        <input
@@ -132,12 +281,11 @@
          onChange={handleFileSelect}
          className="hidden"
          disabled={disabled || uploading}
-         // Enable camera on mobile
+         multiple={multiple}
          capture="environment"
        />
  
        {value ? (
-         // Success state: show preview
          <div className="space-y-3">
            <div className="relative w-full aspect-square max-w-[200px] rounded-lg overflow-hidden border border-border bg-muted">
              <img
@@ -184,13 +332,11 @@
            )}
          </div>
        ) : uploading ? (
-         // Uploading state
          <div className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-primary/50 rounded-lg bg-primary/5">
            <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
-           <p className="text-sm text-muted-foreground">Uploading image...</p>
+           <p className="text-sm text-muted-foreground">Compressing & uploading...</p>
          </div>
        ) : (
-         // Empty state: prompt to upload
          <div
            onClick={triggerFileSelect}
            onDrop={handleDrop}
@@ -208,9 +354,12 @@
              <div className="flex gap-2">
                <Upload className="h-6 w-6" />
                <Camera className="h-6 w-6" />
+               {multiple && <Plus className="h-6 w-6" />}
              </div>
-             <p className="text-sm font-medium">Click to upload or drag and drop</p>
-             <p className="text-xs">JPG, PNG or WebP</p>
+             <p className="text-sm font-medium">
+               {multiple ? 'Click to upload or drag multiple images' : 'Click to upload or drag and drop'}
+             </p>
+             <p className="text-xs">JPG, PNG or WebP • Auto-compressed</p>
            </div>
          </div>
        )}
