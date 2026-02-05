@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { SITE_BASE_URL } from '@/config/routes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -145,6 +146,11 @@ const Affiliates = () => {
       title: 'Copied!',
       description: 'Referral link copied to clipboard',
     });
+  };
+
+  const getAffiliateLink = (affiliate: Affiliate): string => {
+    // Always construct link using correct production base URL
+    return `${SITE_BASE_URL}/?ref=${affiliate.referral_code}`;
   };
 
   const getStatusBadge = (status: string) => {
@@ -302,7 +308,8 @@ const Affiliates = () => {
                         variant="ghost"
                         size="icon"
                         className="h-6 w-6"
-                        onClick={() => copyLink(affiliate.referral_url)}
+                        onClick={() => copyLink(getAffiliateLink(affiliate))}
+                        title="Copy affiliate link"
                       >
                         <Copy className="h-3 w-3" />
                       </Button>
@@ -335,7 +342,7 @@ const Affiliates = () => {
                           <Eye className="h-4 w-4 mr-2" /> View Details
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => copyLink(affiliate.referral_url)}
+                          onClick={() => copyLink(getAffiliateLink(affiliate))}
                           className="cursor-pointer"
                         >
                           <LinkIcon className="h-4 w-4 mr-2" /> Copy Link
@@ -416,13 +423,13 @@ const Affiliates = () => {
                 <div className="flex gap-2">
                   <Input
                     readOnly
-                    value={selectedAffiliate.referral_url}
+                    value={getAffiliateLink(selectedAffiliate)}
                     className="bg-[hsl(var(--admin-bg))] text-sm"
                   />
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={() => copyLink(selectedAffiliate.referral_url)}
+                    onClick={() => copyLink(getAffiliateLink(selectedAffiliate))}
                   >
                     <Copy className="h-4 w-4" />
                   </Button>
