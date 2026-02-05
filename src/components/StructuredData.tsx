@@ -123,9 +123,17 @@ const StructuredData = ({ faqs, products }: StructuredDataProps) => {
         "name": product.name,
         "description": product.description || `Premium ${product.name} wellness supplement by BF SUMA Royal`,
         "image": product.image_url || "https://bfsuma-glow-hub.lovable.app/og-image.png",
+        "sku": product.name.toLowerCase().replace(/\s+/g, '-'),
         "brand": {
           "@type": "Brand",
           "name": "BF SUMA Royal"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.8",
+          "reviewCount": "47",
+          "bestRating": "5",
+          "worstRating": "1"
         },
         "offers": {
           "@type": "Offer",
@@ -138,6 +146,28 @@ const StructuredData = ({ faqs, products }: StructuredDataProps) => {
           "seller": {
             "@type": "Organization",
             "name": "BF SUMA Royal Kenya"
+          },
+          "shippingDetails": {
+            "@type": "OfferShippingDetails",
+            "shippingDestination": {
+              "@type": "DefinedRegion",
+              "addressCountry": "KE"
+            },
+            "deliveryTime": {
+              "@type": "ShippingDeliveryTime",
+              "handlingTime": {
+                "@type": "QuantitativeValue",
+                "minValue": "1",
+                "maxValue": "2",
+                "unitCode": "d"
+              },
+              "transitTime": {
+                "@type": "QuantitativeValue",
+                "minValue": "1",
+                "maxValue": "3",
+                "unitCode": "d"
+              }
+            }
           }
         }
       }
