@@ -356,6 +356,50 @@ export type Database = {
         }
         Relationships: []
       }
+      product_affiliate_links: {
+        Row: {
+          agent_code: string
+          assigned_to: string | null
+          click_count: number
+          created_at: string
+          id: string
+          is_active: boolean
+          product_id: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          agent_code: string
+          assigned_to?: string | null
+          click_count?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          product_id: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          agent_code?: string
+          assigned_to?: string | null
+          click_count?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          product_id?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_affiliate_links_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_images: {
         Row: {
           created_at: string
@@ -764,6 +808,7 @@ export type Database = {
         Args: { p_product_id: string; p_quantity: number }
         Returns: boolean
       }
+      generate_next_agent_code: { Args: never; Returns: string }
       generate_referral_code: { Args: never; Returns: string }
       get_product_ratings: {
         Args: { p_product_id: string }
@@ -781,6 +826,10 @@ export type Database = {
       }
       increment_affiliate_clicks: {
         Args: { affiliate_code: string }
+        Returns: undefined
+      }
+      increment_affiliate_link_clicks: {
+        Args: { link_slug: string }
         Returns: undefined
       }
       is_admin_or_editor: { Args: { _user_id: string }; Returns: boolean }

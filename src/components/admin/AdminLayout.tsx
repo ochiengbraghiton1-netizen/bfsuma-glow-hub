@@ -23,12 +23,15 @@ import {
   Settings,
 } from 'lucide-react';
 
+import { Link as LinkIcon } from 'lucide-react';
+
 const navItems = [
   { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
   { to: '/admin/products', icon: Package, label: 'Products' },
   { to: '/admin/categories', icon: FolderTree, label: 'Categories' },
   { to: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
   { to: '/admin/promotions', icon: Percent, label: 'Promotions' },
+  { to: '/admin/affiliate-links', icon: LinkIcon, label: 'Affiliate Links' },
   { to: '/admin/affiliates', icon: Users, label: 'Affiliates' },
   { to: '/admin/business-registrations', icon: Users, label: 'Business Registrations' },
   { to: '/admin/consultations', icon: Calendar, label: 'Consultations' },
