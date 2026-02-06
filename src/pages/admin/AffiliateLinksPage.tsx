@@ -1,7 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { SITE_BASE_URL } from '@/config/routes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -47,12 +46,24 @@ import {
   MousePointer,
   Loader2,
   ExternalLink,
-  Filter,
+  X,
 } from 'lucide-react';
 
 interface Product {
   id: string;
   name: string;
+}
+
+interface AffiliateLinkRow {
+  id: string;
+  product_id: string;
+  slug: string;
+  agent_code: string;
+  assigned_to: string | null;
+  is_active: boolean;
+  click_count: number;
+  created_at: string;
+  products?: Product | null;
 }
 
 interface AffiliateLink {
@@ -67,13 +78,21 @@ interface AffiliateLink {
   product?: Product;
 }
 
-const AffiliateLinks = () => {
+const generateProductSlug = (productName: string): string => {
+  return productName
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .trim();
+};
+
+const AffiliateLinksPage = () => {
   const [links, setLinks] = useState<AffiliateLink[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
 
-  // Filters
   const [filterProductId, setFilterProductId] = useState<string>('all');
   const [filterAssignee, setFilterAssignee] = useState('');
 
@@ -81,12 +100,11 @@ const AffiliateLinks = () => {
   const [selectedProductId, setSelectedProductId] = useState<string>('');
   const [assignedTo, setAssignedTo] = useState('');
   const [creating, setCreating] = useState(false);
+
   const { toast } = useToast();
 
-  // Use current origin so /p/:slug works in both preview + published.
-  // (SITE_BASE_URL is kept as a fallback for non-browser contexts.)
   const appBaseUrl = useMemo(() => {
-    if (typeof window === 'undefined') return SITE_BASE_URL;
+    if (typeof window === 'undefined') return '';
     return window.location.origin;
   }, []);
 
@@ -100,27 +118,26 @@ const AffiliateLinks = () => {
     try {
       const { data, error } = await supabase
         .from('product_affiliate_links')
-        .select('*')
+        .select(
+          'id, product_id, slug, agent_code, assigned_to, is_active, click_count, created_at, products ( id, name )'
+        )
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      // Fetch product names for each link
-      const linksWithProducts: AffiliateLink[] = [];
-      for (const link of (data || [])) {
-        const { data: product } = await supabase
-          .from('products')
-          .select('id, name')
-          .eq('id', link.product_id)
-          .maybeSingle();
+      const mapped: AffiliateLink[] = ((data || []) as AffiliateLinkRow[]).map((row) => ({
+        id: row.id,
+        product_id: row.product_id,
+        slug: row.slug,
+        agent_code: row.agent_code,
+        assigned_to: row.assigned_to,
+        is_active: row.is_active,
+        click_count: row.click_count,
+        created_at: row.created_at,
+        product: row.products || undefined,
+      }));
 
-        linksWithProducts.push({
-          ...link,
-          product: product || undefined,
-        });
-      }
-
-      setLinks(linksWithProducts);
+      setLinks(mapped);
     } catch (error) {
       console.error('Error fetching affiliate links:', error);
       toast({
@@ -148,15 +165,6 @@ const AffiliateLinks = () => {
     }
   };
 
-  const generateProductSlug = (productName: string): string => {
-    return productName
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .trim();
-  };
-
   const createLink = async () => {
     if (!selectedProductId) {
       toast({
@@ -169,9 +177,7 @@ const AffiliateLinks = () => {
 
     setCreating(true);
     try {
-      // Get next agent code
       const { data: agentCodeData, error: codeError } = await supabase.rpc('generate_next_agent_code');
-
       if (codeError) throw codeError;
 
       const agentCode = agentCodeData as string;
@@ -181,7 +187,7 @@ const AffiliateLinks = () => {
       const productSlug = generateProductSlug(product.name);
       const fullSlug = `${productSlug}-${agentCode.toLowerCase()}`;
 
-      // Validate slug format
+      // Validate slug format: {product-slug}-{agent-code}
       const slugPattern = /^[a-z0-9-]+-a\d{2,}$/;
       if (!slugPattern.test(fullSlug)) {
         throw new Error('Invalid slug format generated');
@@ -247,7 +253,6 @@ const AffiliateLinks = () => {
 
     try {
       const { error } = await supabase.from('product_affiliate_links').delete().eq('id', linkId);
-
       if (error) throw error;
 
       toast({
@@ -266,7 +271,11 @@ const AffiliateLinks = () => {
     }
   };
 
-  const getFullUrl = (slug: string) => `${appBaseUrl}/p/${slug}`;
+  const getFullUrl = (slug: string) => {
+    // Use the current app origin so links work in both preview and published environments.
+    const base = appBaseUrl || '';
+    return `${base}/p/${slug}`;
+  };
 
   const copyLink = async (slug: string) => {
     const fullUrl = getFullUrl(slug);
@@ -283,28 +292,38 @@ const AffiliateLinks = () => {
   };
 
   const filteredLinks = useMemo(() => {
-    const s = search.toLowerCase();
-    const assignee = filterAssignee.trim().toLowerCase();
-
     return links.filter((link) => {
       const matchesSearch =
-        link.slug.toLowerCase().includes(s) ||
-        link.product?.name?.toLowerCase().includes(s) ||
-        link.assigned_to?.toLowerCase().includes(s) ||
-        link.agent_code.toLowerCase().includes(s);
+        link.slug.toLowerCase().includes(search.toLowerCase()) ||
+        link.product?.name?.toLowerCase().includes(search.toLowerCase()) ||
+        link.assigned_to?.toLowerCase().includes(search.toLowerCase()) ||
+        link.agent_code.toLowerCase().includes(search.toLowerCase());
 
       const matchesProduct = filterProductId === 'all' || link.product_id === filterProductId;
-      const matchesAssignee = !assignee || (link.assigned_to || '').toLowerCase().includes(assignee);
+
+      const matchesAssignee =
+        !filterAssignee.trim() ||
+        (link.assigned_to || '').toLowerCase().includes(filterAssignee.trim().toLowerCase());
 
       return matchesSearch && matchesProduct && matchesAssignee;
     });
   }, [links, search, filterProductId, filterAssignee]);
 
-  // Calculate totals
   const totalClicks = links.reduce((acc, link) => acc + (link.click_count || 0), 0);
   const activeLinks = links.filter((l) => l.is_active).length;
 
-  const showFiltersActive = filterProductId !== 'all' || filterAssignee.trim().length > 0;
+  const assigneeSuggestions = useMemo(() => {
+    const set = new Set<string>();
+    for (const l of links) {
+      if (l.assigned_to?.trim()) set.add(l.assigned_to.trim());
+    }
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [links]);
+
+  const clearFilters = () => {
+    setFilterProductId('all');
+    setFilterAssignee('');
+  };
 
   return (
     <div className="space-y-6">
@@ -357,6 +376,7 @@ const AffiliateLinks = () => {
         </div>
 
         <div className="lg:col-span-4">
+          <Label className="sr-only">Filter by product</Label>
           <Select value={filterProductId} onValueChange={setFilterProductId}>
             <SelectTrigger className="bg-[hsl(var(--admin-card))] border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text))]">
               <SelectValue placeholder="Filter by product" />
@@ -373,25 +393,27 @@ const AffiliateLinks = () => {
         </div>
 
         <div className="lg:col-span-3">
-          <Input
-            placeholder="Filter by assignee"
-            value={filterAssignee}
-            onChange={(e) => setFilterAssignee(e.target.value)}
-            className="bg-[hsl(var(--admin-card))] border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text))]"
-          />
+          <Label className="sr-only">Filter by assignee</Label>
+          <div className="relative">
+            <Input
+              placeholder="Filter by assignee"
+              value={filterAssignee}
+              onChange={(e) => setFilterAssignee(e.target.value)}
+              list="assignee-suggestions"
+              className="bg-[hsl(var(--admin-card))] border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text))]"
+            />
+            <datalist id="assignee-suggestions">
+              {assigneeSuggestions.map((name) => (
+                <option key={name} value={name} />
+              ))}
+            </datalist>
+          </div>
         </div>
 
-        {showFiltersActive && (
+        {(filterProductId !== 'all' || filterAssignee.trim()) && (
           <div className="lg:col-span-12 -mt-1">
-            <Button
-              variant="outline"
-              className="gap-2 bg-transparent border-[hsl(var(--admin-border))]"
-              onClick={() => {
-                setFilterProductId('all');
-                setFilterAssignee('');
-              }}
-            >
-              <Filter className="h-4 w-4" />
+            <Button variant="outline" className="gap-2" onClick={clearFilters}>
+              <X className="h-4 w-4" />
               Clear filters
             </Button>
           </div>
@@ -461,9 +483,13 @@ const AffiliateLinks = () => {
                   </TableCell>
                   <TableCell>
                     {link.is_active ? (
-                      <Badge className="bg-green-500/20 text-green-400 border-green-500/30">Active</Badge>
+                      <Badge className="bg-[hsl(var(--admin-success)/0.15)] text-[hsl(var(--admin-success))] border-[hsl(var(--admin-success)/0.25)]">
+                        Active
+                      </Badge>
                     ) : (
-                      <Badge className="bg-red-500/20 text-red-400 border-red-500/30">Inactive</Badge>
+                      <Badge className="bg-[hsl(var(--admin-danger)/0.15)] text-[hsl(var(--admin-danger))] border-[hsl(var(--admin-danger)/0.25)]">
+                        Inactive
+                      </Badge>
                     )}
                   </TableCell>
                   <TableCell className="text-right text-[hsl(var(--admin-text))]">{link.click_count || 0}</TableCell>
@@ -504,7 +530,7 @@ const AffiliateLinks = () => {
                             </>
                           )}
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => deleteLink(link.id)} className="cursor-pointer text-destructive">
+                        <DropdownMenuItem onClick={() => deleteLink(link.id)} className="cursor-pointer text-red-400">
                           <Trash2 className="h-4 w-4 mr-2" /> Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -556,7 +582,8 @@ const AffiliateLinks = () => {
               <div className="bg-[hsl(var(--admin-bg))] p-3 rounded-lg border border-[hsl(var(--admin-border))]">
                 <p className="text-xs text-[hsl(var(--admin-text-muted))] mb-1">Preview:</p>
                 <code className="text-sm text-[hsl(var(--admin-accent))]">
-                  {appBaseUrl}/p/{generateProductSlug(products.find((p) => p.id === selectedProductId)?.name || '')}-a##
+                  /p/
+                  {generateProductSlug(products.find((p) => p.id === selectedProductId)?.name || '')}-a##
                 </code>
               </div>
             )}
@@ -580,5 +607,4 @@ const AffiliateLinks = () => {
   );
 };
 
-export default AffiliateLinks;
-
+export default AffiliateLinksPage;

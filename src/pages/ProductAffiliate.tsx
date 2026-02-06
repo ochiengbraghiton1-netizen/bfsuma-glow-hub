@@ -1,26 +1,43 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
+
+const generateNameSlug = (name: string): string =>
+  name
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .trim();
 
 const ProductAffiliate = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
 
+  const slugInfo = useMemo(() => {
+    if (!slug) return null;
+    const match = slug.match(/^(.*)-a\d{2,}$/); // {product-slug}-a01
+    return {
+      slug,
+      possibleProductSlug: match?.[1] || null,
+    };
+  }, [slug]);
+
   useEffect(() => {
     const resolveLink = async () => {
-      if (!slug) {
+      if (!slugInfo?.slug) {
         setError('Invalid affiliate link');
         return;
       }
 
       try {
-        // Look up the affiliate link - exact match, case-sensitive
+        // Look up the affiliate link - exact match (case-sensitive)
         const { data: linkData, error: linkError } = await supabase
           .from('product_affiliate_links')
           .select('product_id, is_active, slug')
-          .eq('slug', slug)
+          .eq('slug', slugInfo.slug)
           .maybeSingle();
 
         if (linkError) {
@@ -29,6 +46,22 @@ const ProductAffiliate = () => {
         }
 
         if (!linkData) {
+          // Friendly fallback: if the product exists but the affiliate link is invalid
+          if (slugInfo.possibleProductSlug) {
+            const { data: products, error: productsError } = await supabase
+              .from('products')
+              .select('id, name')
+              .eq('is_active', true);
+
+            if (!productsError && products?.length) {
+              const match = products.find((p) => generateNameSlug(p.name) === slugInfo.possibleProductSlug);
+              if (match) {
+                setError(`"${match.name}" is available, but this affiliate link is invalid. Please request a new link from the team.`);
+                return;
+              }
+            }
+          }
+
           setError('Affiliate link not found');
           return;
         }
@@ -39,10 +72,10 @@ const ProductAffiliate = () => {
         }
 
         // Track the click using the RPC function
-        const { error: clickError } = await supabase.rpc('increment_affiliate_link_clicks', { 
-          link_slug: slug 
+        const { error: clickError } = await supabase.rpc('increment_affiliate_link_clicks', {
+          link_slug: slugInfo.slug,
         });
-        
+
         if (clickError) {
           console.error('Error tracking click:', clickError);
           // Don't block redirect for click tracking errors
@@ -66,16 +99,18 @@ const ProductAffiliate = () => {
         }
 
         // Store affiliate attribution in localStorage for order tracking
-        localStorage.setItem('bf_product_affiliate', JSON.stringify({
-          slug,
-          productId: product.id,
-          productName: product.name,
-          timestamp: new Date().toISOString(),
-        }));
+        localStorage.setItem(
+          'bf_product_affiliate',
+          JSON.stringify({
+            slug: slugInfo.slug,
+            productId: product.id,
+            productName: product.name,
+            timestamp: new Date().toISOString(),
+          })
+        );
 
         // Redirect to homepage with product section
         navigate('/#products', { replace: true });
-
       } catch (err) {
         console.error('Error resolving affiliate link:', err);
         setError('Failed to process affiliate link. Please try again.');
@@ -83,7 +118,7 @@ const ProductAffiliate = () => {
     };
 
     resolveLink();
-  }, [slug, navigate]);
+  }, [slugInfo, navigate]);
 
   if (error) {
     return (
