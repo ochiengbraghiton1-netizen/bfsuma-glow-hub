@@ -1,8 +1,12 @@
 import { Facebook, Instagram, Phone, Mail, MapPin } from "lucide-react";
 
-const Footer = () => {
-  const currentYear = new Date().getFullYear();
+const TikTokIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+  </svg>
+);
 
+const Footer = () => {
   return (
     <footer className="relative bg-gradient-to-b from-secondary via-muted to-secondary text-white py-12">
       <div className="container mx-auto px-4">
@@ -59,11 +63,11 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-accent" />
-                <span className="text-sm">braghiton.ochieng.125@gmail.com</span>
+                <span className="text-sm">bfsumaroyal@gmail.com</span>
               </li>
               <li className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-accent" />
-                <span className="text-sm">JKUAT Towers, Westlands, Nairobi</span>
+                <span className="text-sm">Kakamega, Kenya</span>
               </li>
             </ul>
           </div>
@@ -72,12 +76,12 @@ const Footer = () => {
         {/* Social Media & Copyright */}
         <div className="pt-8 border-t border-white/20 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-white/60 text-sm text-center md:text-left">
-            © {currentYear} BF SUMA ROYAL Kenya | Health, Wealth & Wellness by Braghiton Ochieng
+            © 2026 BF SUMA Royal | Kakamega
           </p>
           
           <div className="flex gap-4">
             <a
-              href="https://www.facebook.com/profile.php?id=100067452825041"
+              href="https://www.facebook.com/share/1G6uTXLkpw/"
               target="_blank"
               rel="noopener noreferrer"
               className="w-10 h-10 rounded-full bg-white/10 hover:bg-accent/20 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-glow"
@@ -86,13 +90,22 @@ const Footer = () => {
               <Facebook className="w-5 h-5" />
             </a>
             <a
-              href="https://www.instagram.com/ochiengbraghiton254"
+              href="https://www.instagram.com/bf_suma_royal?igsh=MXRkNTJtYWJ1bmJwNg=="
               target="_blank"
               rel="noopener noreferrer"
               className="w-10 h-10 rounded-full bg-white/10 hover:bg-accent/20 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-glow"
               aria-label="Instagram"
             >
               <Instagram className="w-5 h-5" />
+            </a>
+            <a
+              href="https://www.tiktok.com/@bfsumaroyal"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full bg-white/10 hover:bg-accent/20 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-glow"
+              aria-label="TikTok"
+            >
+              <TikTokIcon className="w-5 h-5" />
             </a>
             <a
               href="https://wa.me/254795454053"
