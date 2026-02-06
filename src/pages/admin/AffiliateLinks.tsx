@@ -86,7 +86,7 @@ const AffiliateLinks = () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('product_affiliate_links' as any)
+        .from('product_affiliate_links')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -98,11 +98,11 @@ const AffiliateLinks = () => {
         const { data: product } = await supabase
           .from('products')
           .select('id, name')
-          .eq('id', (link as any).product_id)
+          .eq('id', link.product_id)
           .maybeSingle();
         
         linksWithProducts.push({
-          ...(link as any),
+          ...link,
           product: product || undefined,
         });
       }
@@ -158,7 +158,7 @@ const AffiliateLinks = () => {
     try {
       // Get next agent code
       const { data: agentCodeData, error: codeError } = await supabase
-        .rpc('generate_next_agent_code' as any);
+        .rpc('generate_next_agent_code');
 
       if (codeError) throw codeError;
 
@@ -176,7 +176,7 @@ const AffiliateLinks = () => {
       }
 
       const { error: insertError } = await supabase
-        .from('product_affiliate_links' as any)
+        .from('product_affiliate_links')
         .insert({
           product_id: selectedProductId,
           slug: fullSlug,
@@ -210,7 +210,7 @@ const AffiliateLinks = () => {
   const toggleLinkStatus = async (linkId: string, currentStatus: boolean) => {
     try {
       const { error } = await supabase
-        .from('product_affiliate_links' as any)
+        .from('product_affiliate_links')
         .update({ is_active: !currentStatus })
         .eq('id', linkId);
 
@@ -237,7 +237,7 @@ const AffiliateLinks = () => {
 
     try {
       const { error } = await supabase
-        .from('product_affiliate_links' as any)
+        .from('product_affiliate_links')
         .delete()
         .eq('id', linkId);
 

@@ -16,56 +16,69 @@ const ProductAffiliate = () => {
       }
 
       try {
-        // Look up the affiliate link
+        // Look up the affiliate link - exact match, case-sensitive
         const { data: linkData, error: linkError } = await supabase
-          .from('product_affiliate_links' as any)
-          .select('product_id, is_active')
+          .from('product_affiliate_links')
+          .select('product_id, is_active, slug')
           .eq('slug', slug)
           .maybeSingle();
 
-        if (linkError) throw linkError;
+        if (linkError) {
+          console.error('Error fetching affiliate link:', linkError);
+          throw linkError;
+        }
 
         if (!linkData) {
           setError('Affiliate link not found');
           return;
         }
 
-        if (!(linkData as any).is_active) {
+        if (!linkData.is_active) {
           setError('This affiliate link is no longer active');
           return;
         }
 
-        // Track the click
-        await supabase.rpc('increment_affiliate_link_clicks' as any, { link_slug: slug });
+        // Track the click using the RPC function
+        const { error: clickError } = await supabase.rpc('increment_affiliate_link_clicks', { 
+          link_slug: slug 
+        });
+        
+        if (clickError) {
+          console.error('Error tracking click:', clickError);
+          // Don't block redirect for click tracking errors
+        }
 
-        // Get the product details
+        // Get the product details to verify it exists
         const { data: product, error: productError } = await supabase
           .from('products')
           .select('id, name')
-          .eq('id', (linkData as any).product_id)
+          .eq('id', linkData.product_id)
           .maybeSingle();
 
-        if (productError) throw productError;
+        if (productError) {
+          console.error('Error fetching product:', productError);
+          throw productError;
+        }
 
         if (!product) {
-          setError('Product not found');
+          setError('The product associated with this link no longer exists');
           return;
         }
 
-        // Store affiliate attribution in localStorage
+        // Store affiliate attribution in localStorage for order tracking
         localStorage.setItem('bf_product_affiliate', JSON.stringify({
           slug,
           productId: product.id,
+          productName: product.name,
           timestamp: new Date().toISOString(),
         }));
 
-        // Redirect to homepage with product section or product modal
-        // For now, redirect to products section on homepage
+        // Redirect to homepage with product section
         navigate('/#products', { replace: true });
 
       } catch (err) {
         console.error('Error resolving affiliate link:', err);
-        setError('Failed to process affiliate link');
+        setError('Failed to process affiliate link. Please try again.');
       }
     };
 
@@ -75,7 +88,7 @@ const ProductAffiliate = () => {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center space-y-4 p-8">
+        <div className="text-center space-y-4 p-8 max-w-md">
           <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto">
             <span className="text-3xl">⚠️</span>
           </div>
