@@ -6,7 +6,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { useCart } from "@/contexts/CartContext";
 import ThemeToggle from "./ThemeToggle";
 import productGeneric from "@/assets/product-generic.jpg";
-import bfSumaLogo from "@/assets/bf-suma-logo.png";
+import bfSumaLogo from "@/assets/bf-suma-logo-new.png";
 
 const navLinks = [
   { href: "#products", label: "Products", isAnchor: true },
