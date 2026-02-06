@@ -23,12 +23,14 @@ import Categories from "./pages/admin/Categories";
 import Orders from "./pages/admin/Orders";
 import Promotions from "./pages/admin/Promotions";
 import Affiliates from "./pages/admin/Affiliates";
+import AffiliateLinks from "./pages/admin/AffiliateLinks";
 import Consultations from "./pages/admin/Consultations";
 import Team from "./pages/admin/Team";
 import Content from "./pages/admin/Content";
 import Admins from "./pages/admin/Admins";
 import BusinessRegistrations from "./pages/admin/BusinessRegistrations";
 import AffiliateDashboard from "./pages/affiliate/Dashboard";
+import ProductAffiliate from "./pages/ProductAffiliate";
 
 // Component to initialize referral tracking
 const ReferralTracker = () => {
@@ -70,6 +72,7 @@ const App = () => (
                   <Route path="orders" element={<Orders />} />
                   <Route path="promotions" element={<Promotions />} />
                   <Route path="affiliates" element={<Affiliates />} />
+                  <Route path="affiliate-links" element={<AffiliateLinks />} />
                   <Route path="consultations" element={<Consultations />} />
                   <Route path="team" element={<Team />} />
                   <Route path="content" element={<Content />} />
@@ -77,6 +80,7 @@ const App = () => (
                   <Route path="business-registrations" element={<BusinessRegistrations />} />
                 </Route>
                 <Route path="/affiliate" element={<AffiliateDashboard />} />
+                <Route path="/p/:slug" element={<ProductAffiliate />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
