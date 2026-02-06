@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { productSchema } from '@/lib/validations';
 import ProductImageUpload from '@/components/admin/ProductImageUpload';
+import BulkStockUpdate from '@/components/admin/BulkStockUpdate';
 
 interface Product {
   id: string;
@@ -274,6 +275,8 @@ const Products = () => {
           </DialogContent>
         </Dialog>
       </div>
+
+      <BulkStockUpdate products={products} onUpdated={fetchProducts} />
 
       <Card>
         <CardContent className="p-0">

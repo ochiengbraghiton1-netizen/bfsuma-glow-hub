@@ -519,23 +519,23 @@ const AffiliateLinks = () => {
 
       {/* Create Dialog */}
       <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-        <DialogContent className="bg-[hsl(var(--admin-card))] border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text))]">
+        <DialogContent className="bg-[hsl(var(--admin-card))] border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text))] z-50 max-w-md">
           <DialogHeader>
-            <DialogTitle>Generate New Affiliate Link</DialogTitle>
+            <DialogTitle className="text-[hsl(var(--admin-text))]">Generate New Affiliate Link</DialogTitle>
             <DialogDescription className="text-[hsl(var(--admin-text-muted))]">
-              Create a unique affiliate link for a product. The link format will be: product-slug-A01
+              Create a unique affiliate link for a product.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Select Product *</Label>
+              <Label className="text-[hsl(var(--admin-text))]">Select Product *</Label>
               <Select value={selectedProductId} onValueChange={setSelectedProductId}>
-                <SelectTrigger className="bg-[hsl(var(--admin-bg))] border-[hsl(var(--admin-border))]">
+                <SelectTrigger className="bg-[hsl(var(--admin-bg))] border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text))]">
                   <SelectValue placeholder="Choose a product" />
                 </SelectTrigger>
-                <SelectContent className="bg-[hsl(var(--admin-card))] border-[hsl(var(--admin-border))]">
+                <SelectContent className="bg-[hsl(var(--admin-card))] border-[hsl(var(--admin-border))] z-[60]">
                   {products.map((product) => (
-                    <SelectItem key={product.id} value={product.id}>
+                    <SelectItem key={product.id} value={product.id} className="text-[hsl(var(--admin-text))]">
                       {product.name}
                     </SelectItem>
                   ))}
@@ -543,29 +543,31 @@ const AffiliateLinks = () => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Assign to Team Member (optional)</Label>
+              <Label className="text-[hsl(var(--admin-text))]">Assign to Team Member (optional)</Label>
               <Input
                 placeholder="Enter team member name"
                 value={assignedTo}
                 onChange={(e) => setAssignedTo(e.target.value)}
-                className="bg-[hsl(var(--admin-bg))] border-[hsl(var(--admin-border))]"
+                className="bg-[hsl(var(--admin-bg))] border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text))]"
               />
-              <p className="text-xs text-[hsl(var(--admin-text-muted))]">This helps you track which team member should use this link</p>
+              <p className="text-xs text-[hsl(var(--admin-text-muted))]">
+                This helps you track which team member should use this link
+              </p>
             </div>
             {selectedProductId && (
               <div className="bg-[hsl(var(--admin-bg))] p-3 rounded-lg border border-[hsl(var(--admin-border))]">
                 <p className="text-xs text-[hsl(var(--admin-text-muted))] mb-1">Preview:</p>
-                <code className="text-sm text-[hsl(var(--admin-accent))]">
-                  {appBaseUrl}/p/{generateProductSlug(products.find((p) => p.id === selectedProductId)?.name || '')}-a##
+                <code className="text-sm text-[hsl(var(--admin-accent))] break-all">
+                  /p/{generateProductSlug(products.find((p) => p.id === selectedProductId)?.name || '')}-a##
                 </code>
               </div>
             )}
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button
               variant="outline"
               onClick={() => setCreateDialogOpen(false)}
-              className="bg-transparent border-[hsl(var(--admin-border))]"
+              className="bg-transparent border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text))]"
             >
               Cancel
             </Button>
