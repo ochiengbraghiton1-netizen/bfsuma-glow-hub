@@ -1,10 +1,77 @@
-import { Shield, Globe, Award, Leaf, Users, Heart, CheckCircle, Building } from "lucide-react";
+import { Globe, Award, Users, Heart, CheckCircle, Lightbulb, Target, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+
+const timelineEvents = [
+  {
+    year: "2006",
+    title: "The Beginning",
+    description:
+      "BF SUMA (Bright Future Superior Unique Manufacturer of America) was founded in Los Angeles, California, USA, with a clear mission: to improve quality of life through scientifically formulated herbal and nutritional supplements.",
+  },
+  {
+    year: "2006–2008",
+    title: "Building the Foundation",
+    description:
+      "BF SUMA established strong research and development capabilities, working within a broader pharmaceutical ecosystem associated with Bright Future Pharmaceutical Lab Ltd. Multiple wellness formulations were developed, laying the groundwork for international expansion.",
+  },
+  {
+    year: "2009",
+    title: "Entry into Africa",
+    description:
+      "BF SUMA officially entered the African market, choosing Kenya as its first point of entry. Kenya became the strategic base for African operations due to its central position in East Africa and growing demand for quality wellness products.",
+    highlight: true,
+  },
+  {
+    year: "2011",
+    title: "Expansion in Kenya",
+    description:
+      "Formal partnerships and distributor networks were established in Kenya. BF SUMA began opening shops, hosting trainings, and building a strong community around health education and product awareness.",
+  },
+  {
+    year: "2013",
+    title: "West Africa Growth",
+    description:
+      "BF SUMA expanded into Nigeria, establishing operations that later grew into major cities including Lagos, Abuja, Port Harcourt, and Kaduna. This marked the brand's strong entry into West Africa.",
+  },
+  {
+    year: "2014",
+    title: "Southern & East Africa Expansion",
+    description:
+      "BF SUMA Limited Tanzania was officially established, headquartered in Dar es Salaam. From Tanzania, distribution extended into Zambia, Burundi, parts of the Democratic Republic of Congo (DRC), and Namibia.",
+  },
+  {
+    year: "2015–2020",
+    title: "Continental Growth",
+    description:
+      "BF SUMA continued expanding its African footprint through a structured distributor and shop-based model, reaching Uganda, Ghana, Zambia, Burundi, DRC, and Namibia. The company strengthened brand recognition, hosted large regional events, and empowered thousands through wellness entrepreneurship.",
+  },
+  {
+    year: "2023",
+    title: "15+ Years of Impact in Africa",
+    description:
+      "BF SUMA celebrated over 15 years of presence in Africa, marking a journey of growth, community impact, and improved wellness across the continent.",
+    highlight: true,
+  },
+  {
+    year: "Today",
+    title: "A Global Wellness Brand",
+    description:
+      "Today, BF SUMA operates as a trusted global health and wellness company with 200+ supplement formulations, patents registered in USA, China, Japan, India, and South Korea, and distribution across 15+ countries worldwide.",
+    highlight: true,
+  },
+];
+
+const coreValues = [
+  { icon: Heart, title: "Trust", description: "Building lasting relationships through honesty and reliability." },
+  { icon: Users, title: "Care", description: "Prioritizing the well-being of our customers and community." },
+  { icon: Award, title: "Respect", description: "Valuing every individual in our global wellness family." },
+  { icon: Lightbulb, title: "Innovation", description: "Continuously advancing our formulations and services." },
+];
 
 const certifications = [
   { name: "GMP Certified", description: "Good Manufacturing Practice certified facilities" },
@@ -13,82 +80,90 @@ const certifications = [
   { name: "FDA Registered", description: "Registered with Food & Drug Administration" },
 ];
 
-const milestones = [
-  { year: "2007", title: "Founded in China", description: "BF SUMA was established with a vision to bring natural wellness to the world." },
-  { year: "2012", title: "Global Expansion", description: "Expanded operations to over 30 countries across Asia and Africa." },
-  { year: "2018", title: "Kenya Launch", description: "Official launch in Kenya, empowering local entrepreneurs." },
-  { year: "2023", title: "Regional Hub", description: "Kenya becomes a major distribution hub for East Africa." },
-];
-
-const teamValues = [
-  { icon: Heart, title: "Customer First", description: "We prioritize the health and satisfaction of every customer." },
-  { icon: Shield, title: "Integrity", description: "Transparency and honesty in all our business practices." },
-  { icon: Users, title: "Community", description: "Building a supportive network of wellness entrepreneurs." },
-  { icon: Award, title: "Excellence", description: "Committed to the highest quality in everything we do." },
-];
-
 const aboutPageSchema = {
   "@context": "https://schema.org",
   "@type": "AboutPage",
-  "name": "About BF SUMA ROYAL Kenya",
-  "description": "Learn about BF SUMA ROYAL, a global leader in natural health and wellness products. Discover our story, mission, values, and certifications.",
-  "url": "https://bfsuma-glow-hub.lovable.app/about",
-  "mainEntity": {
+  name: "About BF SUMA ROYAL Kenya - Our Journey Since 2006",
+  description:
+    "Discover BF SUMA's journey from Los Angeles in 2006 to becoming a trusted global wellness brand across 15+ countries. Learn about our mission, vision, and 15+ years of impact in Africa.",
+  url: "https://bfsuma-glow-hub.lovable.app/about",
+  mainEntity: {
     "@type": "Organization",
-    "name": "BF SUMA ROYAL Kenya",
-    "alternateName": "BF SUMA ROYAL",
-    "foundingDate": "2007",
-    "numberOfEmployees": "1000+",
-    "areaServed": "50+ Countries",
-    "url": "https://bfsuma-glow-hub.lovable.app",
-    "logo": "https://bfsuma-glow-hub.lovable.app/favicon.png",
-    "sameAs": [
-      "https://www.facebook.com/profile.php?id=100067452825041",
-      "https://www.instagram.com/ochiengbraghiton254"
-    ],
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "telephone": "+254795454053",
-      "contactType": "sales",
-      "availableLanguage": ["English", "Swahili"]
+    name: "BF SUMA ROYAL Kenya",
+    alternateName: ["BF SUMA", "Bright Future Superior Unique Manufacturer of America"],
+    foundingDate: "2006",
+    foundingLocation: {
+      "@type": "Place",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Los Angeles",
+        addressRegion: "California",
+        addressCountry: "USA",
+      },
     },
-    "hasCredential": [
-      { "@type": "EducationalOccupationalCredential", "credentialCategory": "GMP Certified" },
-      { "@type": "EducationalOccupationalCredential", "credentialCategory": "ISO 9001:2015" },
-      { "@type": "EducationalOccupationalCredential", "credentialCategory": "Halal Certified" },
-      { "@type": "EducationalOccupationalCredential", "credentialCategory": "FDA Registered" }
-    ]
-  }
+    numberOfEmployees: "1000+",
+    areaServed: "15+ Countries",
+    url: "https://bfsuma-glow-hub.lovable.app",
+    logo: "https://bfsuma-glow-hub.lovable.app/favicon.png",
+    sameAs: [
+      "https://www.facebook.com/profile.php?id=100067452825041",
+      "https://www.instagram.com/ochiengbraghiton254",
+    ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+254795454053",
+      contactType: "sales",
+      availableLanguage: ["English", "Swahili"],
+    },
+    hasCredential: [
+      { "@type": "EducationalOccupationalCredential", credentialCategory: "GMP Certified" },
+      { "@type": "EducationalOccupationalCredential", credentialCategory: "ISO 9001:2015" },
+      { "@type": "EducationalOccupationalCredential", credentialCategory: "Halal Certified" },
+      { "@type": "EducationalOccupationalCredential", credentialCategory: "FDA Registered" },
+    ],
+  },
 };
 
 const AboutPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>About BF SUMA ROYAL Kenya - Our Story, Mission & Certifications</title>
-        <meta name="description" content="Learn about BF SUMA ROYAL, a global leader in natural health and wellness products with 50+ countries, 200+ products. Discover our story, values, GMP & ISO certifications." />
-        <meta name="keywords" content="BF SUMA ROYAL about, BF SUMA history, wellness company Kenya, natural supplements manufacturer, GMP certified supplements, ISO 9001 health products" />
+        <title>About BF SUMA ROYAL Kenya - Our Journey Since 2006</title>
+        <meta
+          name="description"
+          content="Discover BF SUMA's journey from Los Angeles in 2006 to becoming a trusted global wellness brand. Learn about our 15+ years of impact in Africa, mission, vision, and core values."
+        />
+        <meta
+          name="keywords"
+          content="BF SUMA history, BF SUMA journey, wellness company Kenya, natural supplements manufacturer, BF SUMA Africa, health products Kenya, GMP certified supplements"
+        />
         <link rel="canonical" href="https://bfsuma-glow-hub.lovable.app/about" />
-        
+
         {/* Open Graph */}
-        <meta property="og:title" content="About BF SUMA ROYAL Kenya - Our Story & Mission" />
-        <meta property="og:description" content="Learn about BF SUMA ROYAL, a global leader in natural health and wellness products with 50+ countries, 200+ products." />
+        <meta property="og:title" content="About BF SUMA ROYAL Kenya - Our Journey Since 2006" />
+        <meta
+          property="og:description"
+          content="From Los Angeles in 2006 to 15+ countries today. Discover BF SUMA's journey of innovation, growth, and wellness impact across Africa."
+        />
         <meta property="og:url" content="https://bfsuma-glow-hub.lovable.app/about" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://bfsuma-glow-hub.lovable.app/og-image.png" />
         <meta property="og:site_name" content="BF SUMA ROYAL Kenya" />
         <meta property="og:locale" content="en_KE" />
-        
+
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="About BF SUMA ROYAL Kenya - Our Story & Mission" />
-        <meta name="twitter:description" content="Discover our 15+ year journey empowering wellness entrepreneurs across 50+ countries with 200+ natural health products." />
+        <meta name="twitter:title" content="About BF SUMA ROYAL Kenya - Our Journey Since 2006" />
+        <meta
+          name="twitter:description"
+          content="From Los Angeles in 2006 to 15+ countries today. Discover BF SUMA's journey of innovation and wellness impact."
+        />
         <meta name="twitter:image" content="https://bfsuma-glow-hub.lovable.app/og-image.png" />
-        
+
         <script type="application/ld+json">{JSON.stringify(aboutPageSchema)}</script>
       </Helmet>
       <Header />
-      
+
       {/* Hero Section */}
       <section className="pt-24 pb-16 bg-gradient-to-b from-primary/10 to-background">
         <div className="container mx-auto px-4">
@@ -99,77 +174,61 @@ const AboutPage = () => {
             className="max-w-4xl mx-auto text-center"
           >
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              About{" "}
+              Our{" "}
               <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                BF SUMA ROYAL
+                Journey
               </span>
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed mb-8">
-              A global leader in natural health and wellness products, empowering millions 
-              to live healthier, more vibrant lives through science-backed nutrition.
+              From Los Angeles in 2006 to a trusted global wellness brand across 15+ countries —
+              helping people live healthier lives and build brighter futures.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Company Overview */}
+      {/* Mission & Vision */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, ease: "easeOut" }}
+              className="bg-card rounded-2xl p-8 border border-border"
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Story</h2>
-              <div className="space-y-4 text-muted-foreground">
-                <p>
-                  BF SUMA was founded in 2007 with a simple yet powerful mission: to harness 
-                  the healing power of nature and make premium health supplements accessible 
-                  to everyone, everywhere.
-                </p>
-                <p>
-                  Today, we operate in over 50 countries, with a dedicated team of scientists, 
-                  nutritionists, and wellness experts working together to develop innovative 
-                  products that support longevity, immunity, and overall vitality.
-                </p>
-                <p>
-                In Kenya, BF SUMA ROYAL has become a trusted name in wellness, offering not just 
-                  world-class products but also a unique business opportunity for entrepreneurs 
-                  who want to build their own wellness business.
-                </p>
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-primary/10 mb-6">
+                <Target className="w-7 h-7 text-primary" />
               </div>
+              <h2 className="text-2xl font-bold mb-4">Our Mission</h2>
+              <p className="text-muted-foreground leading-relaxed">
+                To improve the quality of life worldwide by providing effective, safe, and innovative
+                health and wellness products.
+              </p>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="grid grid-cols-2 gap-4"
+              className="bg-card rounded-2xl p-8 border border-border"
             >
-              {[
-                { icon: Globe, label: "50+ Countries", sublabel: "Global Presence" },
-                { icon: Users, label: "1M+ Members", sublabel: "Worldwide Network" },
-                { icon: Leaf, label: "200+ Products", sublabel: "Natural Formulas" },
-                { icon: Building, label: "15+ Years", sublabel: "Industry Experience" },
-              ].map((stat, index) => (
-                <div
-                  key={index}
-                  className="bg-card rounded-2xl p-6 text-center border border-border hover:border-primary transition-all duration-300"
-                >
-                  <stat.icon className="w-10 h-10 text-primary mx-auto mb-3" />
-                  <div className="text-2xl font-bold text-foreground">{stat.label}</div>
-                  <div className="text-sm text-muted-foreground">{stat.sublabel}</div>
-                </div>
-              ))}
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-accent/10 mb-6">
+                <Globe className="w-7 h-7 text-accent" />
+              </div>
+              <h2 className="text-2xl font-bold mb-4">Our Vision</h2>
+              <p className="text-muted-foreground leading-relaxed">
+                To become a trusted global leader in wellness, empowering individuals and communities
+                across the world.
+              </p>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Timeline / Milestones */}
+      {/* Timeline */}
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
           <motion.div
@@ -179,41 +238,72 @@ const AboutPage = () => {
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Journey</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">The BF SUMA Story</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              From humble beginnings to a global wellness brand, here's how we've grown.
+              A chronological journey from our founding to becoming a global wellness leader.
             </p>
           </motion.div>
 
-          <div className="max-w-4xl mx-auto">
-            {milestones.map((milestone, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
-                className="flex gap-6 mb-8 last:mb-0"
-              >
-                <div className="flex flex-col items-center">
-                  <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
-                    {milestone.year}
+          <div className="max-w-4xl mx-auto relative">
+            {/* Vertical line */}
+            <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-0.5 bg-border md:-translate-x-1/2" />
+
+            {timelineEvents.map((event, index) => {
+              const isEven = index % 2 === 0;
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.5, delay: index * 0.05, ease: "easeOut" }}
+                  className={`relative flex items-start gap-6 mb-12 last:mb-0 ${
+                    isEven ? "md:flex-row" : "md:flex-row-reverse"
+                  }`}
+                >
+                  {/* Year bubble */}
+                  <div
+                    className={`absolute left-0 md:left-1/2 md:-translate-x-1/2 z-10 flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center font-bold text-sm ${
+                      event.highlight
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-card border-2 border-primary text-primary"
+                    }`}
+                  >
+                    {event.year.length > 4 ? (
+                      <span className="text-xs text-center leading-tight px-1">{event.year}</span>
+                    ) : (
+                      event.year
+                    )}
                   </div>
-                  {index < milestones.length - 1 && (
-                    <div className="w-0.5 h-full bg-border mt-2" />
-                  )}
-                </div>
-                <div className="flex-1 pb-8">
-                  <h3 className="text-xl font-bold mb-2">{milestone.title}</h3>
-                  <p className="text-muted-foreground">{milestone.description}</p>
-                </div>
-              </motion.div>
-            ))}
+
+                  {/* Content card */}
+                  <div
+                    className={`ml-24 md:ml-0 md:w-[calc(50%-4rem)] ${
+                      isEven ? "md:pr-8 md:text-right" : "md:pl-8 md:text-left"
+                    }`}
+                  >
+                    <div
+                      className={`bg-card rounded-xl p-6 border ${
+                        event.highlight ? "border-primary shadow-lg" : "border-border"
+                      }`}
+                    >
+                      <h3 className="text-xl font-bold mb-2 text-foreground">{event.title}</h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        {event.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Spacer for the other side */}
+                  <div className="hidden md:block md:w-[calc(50%-4rem)]" />
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* Values */}
+      {/* Innovation Highlights */}
       <section className="py-16">
         <div className="container mx-auto px-4">
           <motion.div
@@ -223,18 +313,58 @@ const AboutPage = () => {
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Values</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Innovation & Global Reach</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Our commitment to research and development has led to major achievements.
+            </p>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            {[
+              { icon: Sparkles, value: "200+", label: "Supplement Formulations" },
+              { icon: Globe, value: "15+", label: "Countries Worldwide" },
+              { icon: Award, value: "5", label: "International Patents" },
+              { icon: CheckCircle, value: "100%", label: "U.S. Quality Standards" },
+            ].map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
+                className="bg-card rounded-2xl p-6 text-center border border-border hover:border-primary transition-all duration-300"
+              >
+                <stat.icon className="w-10 h-10 text-primary mx-auto mb-3" />
+                <div className="text-3xl font-bold text-foreground mb-1">{stat.value}</div>
+                <div className="text-sm text-muted-foreground">{stat.label}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Core Values */}
+      <section className="py-16 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Core Values</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               The principles that guide everything we do at BF SUMA.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {teamValues.map((value, index) => (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            {coreValues.map((value, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
                 className="bg-card rounded-2xl p-6 text-center border border-border hover:border-primary hover:shadow-lg transition-all duration-300"
@@ -251,7 +381,7 @@ const AboutPage = () => {
       </section>
 
       {/* Certifications */}
-      <section className="py-16 bg-muted/30">
+      <section className="py-16">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -288,7 +418,7 @@ const AboutPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16">
+      <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
