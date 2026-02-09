@@ -18,6 +18,11 @@ export interface DatabaseProduct {
     name: string;
     slug: string;
   } | null;
+  categories: {
+    id: string;
+    name: string;
+    slug: string;
+  }[];
 }
 
 export interface DatabaseCategory {
@@ -58,6 +63,21 @@ export const useProducts = () => {
 
       if (error) throw error;
 
+      // Fetch product categories (many-to-many)
+      const { data: productCategories } = await supabase
+        .from("product_categories")
+        .select("product_id, category_id, categories(id, name, slug)");
+
+      const categoryMap: Record<string, { id: string; name: string; slug: string }[]> = {};
+      (productCategories || []).forEach((pc: any) => {
+        if (!categoryMap[pc.product_id]) {
+          categoryMap[pc.product_id] = [];
+        }
+        if (pc.categories) {
+          categoryMap[pc.product_id].push(pc.categories);
+        }
+      });
+
       return data.map((product) => ({
         id: product.id,
         name: product.name,
@@ -71,6 +91,7 @@ export const useProducts = () => {
         is_active: product.is_active,
         sku: product.sku,
         category: product.categories as DatabaseProduct["category"],
+        categories: categoryMap[product.id] || [],
       })) as DatabaseProduct[];
     },
   });

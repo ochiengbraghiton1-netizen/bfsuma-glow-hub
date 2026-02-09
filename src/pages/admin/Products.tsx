@@ -9,11 +9,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Loader2, Tag } from 'lucide-react';
 import { productSchema } from '@/lib/validations';
 import ProductImageUpload from '@/components/admin/ProductImageUpload';
 import BulkStockUpdate from '@/components/admin/BulkStockUpdate';
 import RichTextEditor from '@/components/ui/rich-text-editor';
+import CategoryMultiSelect from '@/components/admin/CategoryMultiSelect';
+import { Badge } from '@/components/ui/badge';
 
 interface Product {
   id: string;
@@ -26,6 +28,8 @@ interface Product {
   stock_quantity: number;
   low_stock_threshold: number;
   track_inventory: boolean;
+  category_ids?: string[];
+  category_names?: string[];
 }
 
 const Products = () => {
@@ -43,22 +47,41 @@ const Products = () => {
     stock_quantity: '0',
     low_stock_threshold: '10',
     track_inventory: true,
+    category_ids: [] as string[],
   });
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const fetchProducts = async () => {
-    const { data, error } = await supabase
+    // Fetch products
+    const { data: productsData, error } = await supabase
       .from('products')
       .select('*')
       .order('created_at', { ascending: false });
 
     if (error) {
       toast({ title: 'Error', description: 'Failed to fetch products', variant: 'destructive' });
-    } else {
-      setProducts(data || []);
+      setLoading(false);
+      return;
     }
+
+    // Fetch product categories for each product
+    const { data: productCategoriesData } = await supabase
+      .from('product_categories')
+      .select('product_id, category_id, categories(name)');
+
+    // Map categories to products
+    const productsWithCategories = (productsData || []).map(product => {
+      const productCats = (productCategoriesData || []).filter(pc => pc.product_id === product.id);
+      return {
+        ...product,
+        category_ids: productCats.map(pc => pc.category_id),
+        category_names: productCats.map(pc => (pc.categories as any)?.name).filter(Boolean),
+      };
+    });
+
+    setProducts(productsWithCategories);
     setLoading(false);
   };
 
@@ -77,6 +100,7 @@ const Products = () => {
       stock_quantity: '0',
       low_stock_threshold: '10',
       track_inventory: true,
+      category_ids: [],
     });
     setEditingProduct(null);
   };
@@ -88,11 +112,12 @@ const Products = () => {
       price: product.price.toString(),
       benefit: product.benefit || '',
       description: product.description || '',
-    image_url: product.image_url || null,
+      image_url: product.image_url || null,
       is_active: product.is_active,
       stock_quantity: product.stock_quantity.toString(),
       low_stock_threshold: product.low_stock_threshold.toString(),
       track_inventory: product.track_inventory,
+      category_ids: product.category_ids || [],
     });
     setDialogOpen(true);
   };
@@ -122,28 +147,51 @@ const Products = () => {
       track_inventory: formData.track_inventory,
     };
 
+    let productId: string | null = null;
     let error;
+
     if (editingProduct) {
       const result = await supabase
         .from('products')
         .update(productData)
         .eq('id', editingProduct.id);
       error = result.error;
+      productId = editingProduct.id;
     } else {
-      const result = await supabase.from('products').insert(productData);
+      const result = await supabase.from('products').insert(productData).select('id').single();
       error = result.error;
+      productId = result.data?.id || null;
     }
 
-    if (error) {
+    if (error || !productId) {
       toast({ title: 'Error', description: 'Failed to save product. Please try again.', variant: 'destructive' });
-    } else {
-      toast({ title: 'Success', description: `Product ${editingProduct ? 'updated' : 'created'} successfully` });
-      setDialogOpen(false);
-      resetForm();
-      fetchProducts();
-      // Invalidate React Query cache to ensure frontend shows updated data
-      queryClient.invalidateQueries({ queryKey: ['products'] });
+      setSubmitting(false);
+      return;
     }
+
+    // Update product categories
+    // First, delete existing category assignments for this product
+    await supabase.from('product_categories').delete().eq('product_id', productId);
+
+    // Then, insert new category assignments
+    if (formData.category_ids.length > 0) {
+      const categoryInserts = formData.category_ids.map(categoryId => ({
+        product_id: productId,
+        category_id: categoryId,
+      }));
+      
+      const { error: catError } = await supabase.from('product_categories').insert(categoryInserts);
+      if (catError) {
+        toast({ title: 'Warning', description: 'Product saved but categories may not have been updated.', variant: 'destructive' });
+      }
+    }
+
+    toast({ title: 'Success', description: `Product ${editingProduct ? 'updated' : 'created'} successfully` });
+    setDialogOpen(false);
+    resetForm();
+    fetchProducts();
+    // Invalidate React Query cache to ensure frontend shows updated data
+    queryClient.invalidateQueries({ queryKey: ['products'] });
     setSubmitting(false);
   };
 
@@ -229,6 +277,14 @@ const Products = () => {
                 onChange={(url) => setFormData({ ...formData, image_url: url })}
                 disabled={submitting}
               />
+              <div className="space-y-2">
+                <Label>Categories</Label>
+                <CategoryMultiSelect
+                  selectedCategoryIds={formData.category_ids}
+                  onChange={(categoryIds) => setFormData({ ...formData, category_ids: categoryIds })}
+                  disabled={submitting}
+                />
+              </div>
               <div className="flex items-center gap-2">
                 <Switch
                   id="track_inventory"
