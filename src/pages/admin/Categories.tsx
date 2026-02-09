@@ -31,6 +31,7 @@ interface Category {
   image_url: string | null;
   display_order: number | null;
   is_active: boolean;
+  product_count?: number;
 }
 
 const Categories = () => {
@@ -58,9 +59,26 @@ const Categories = () => {
 
     if (error) {
       toast({ title: 'Error loading categories', variant: 'destructive' });
-    } else {
-      setCategories(data || []);
+      setLoading(false);
+      return;
     }
+
+    // Fetch product counts for each category
+    const { data: productCounts } = await supabase
+      .from('product_categories')
+      .select('category_id');
+
+    const countMap: Record<string, number> = {};
+    (productCounts || []).forEach(pc => {
+      countMap[pc.category_id] = (countMap[pc.category_id] || 0) + 1;
+    });
+
+    const categoriesWithCounts = (data || []).map(cat => ({
+      ...cat,
+      product_count: countMap[cat.id] || 0,
+    }));
+
+    setCategories(categoriesWithCounts);
     setLoading(false);
   };
 
@@ -281,6 +299,7 @@ const Categories = () => {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Slug</TableHead>
+                <TableHead>Products</TableHead>
                 <TableHead>Order</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -291,6 +310,11 @@ const Categories = () => {
                 <TableRow key={category.id}>
                   <TableCell className="font-medium">{category.name}</TableCell>
                   <TableCell className="text-muted-foreground">{category.slug}</TableCell>
+                  <TableCell>
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-primary/10 text-primary">
+                      {category.product_count || 0} products
+                    </span>
+                  </TableCell>
                   <TableCell>{category.display_order}</TableCell>
                   <TableCell>
                     <Switch

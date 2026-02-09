@@ -511,6 +511,42 @@ export type Database = {
           },
         ]
       }
+      product_categories: {
+        Row: {
+          category_id: string
+          created_at: string
+          id: string
+          product_id: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          id?: string
+          product_id: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_categories_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_images: {
         Row: {
           created_at: string
@@ -921,6 +957,10 @@ export type Database = {
       }
       generate_next_agent_code: { Args: never; Returns: string }
       generate_referral_code: { Args: never; Returns: string }
+      get_category_product_count: {
+        Args: { p_category_id: string }
+        Returns: number
+      }
       get_product_ratings: {
         Args: { p_product_id: string }
         Returns: {
