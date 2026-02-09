@@ -13,11 +13,31 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // Force all React imports to use the same instance
+      "react": path.resolve(__dirname, "./node_modules/react"),
+      "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
     },
-    dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime"],
- },
+    dedupe: [
+      "react", 
+      "react-dom", 
+      "react/jsx-runtime", 
+      "react/jsx-dev-runtime",
+      "@tiptap/react",
+    ],
+  },
   optimizeDeps: {
-    include: ["react", "react-dom", "@tanstack/react-query"],
+    include: [
+      "react", 
+      "react-dom", 
+      "@tanstack/react-query",
+      "@tiptap/react",
+      "@tiptap/starter-kit",
+      "@tiptap/extension-link",
+      "@tiptap/extension-image",
+      "@tiptap/extension-youtube",
+      "@tiptap/extension-placeholder",
+    ],
     exclude: ["react-image-crop"],
+    force: true,
   },
 }));
