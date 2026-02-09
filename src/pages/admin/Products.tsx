@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -13,6 +13,7 @@ import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { productSchema } from '@/lib/validations';
 import ProductImageUpload from '@/components/admin/ProductImageUpload';
 import BulkStockUpdate from '@/components/admin/BulkStockUpdate';
+import RichTextEditor from '@/components/ui/rich-text-editor';
 
 interface Product {
   id: string;
@@ -45,6 +46,7 @@ const Products = () => {
   });
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const fetchProducts = async () => {
     const { data, error } = await supabase
@@ -139,6 +141,8 @@ const Products = () => {
       setDialogOpen(false);
       resetForm();
       fetchProducts();
+      // Invalidate React Query cache to ensure frontend shows updated data
+      queryClient.invalidateQueries({ queryKey: ['products'] });
     }
     setSubmitting(false);
   };
@@ -213,11 +217,11 @@ const Products = () => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={3}
+                <RichTextEditor
+                  content={formData.description}
+                  onChange={(content) => setFormData({ ...formData, description: content })}
+                  placeholder="Product description with formatting..."
+                  minHeight="150px"
                 />
               </div>
               <ProductImageUpload
