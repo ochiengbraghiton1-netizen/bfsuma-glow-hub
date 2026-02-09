@@ -63,14 +63,12 @@ const Categories = () => {
       return;
     }
 
-    // Fetch product counts for each category
-    const { data: productCounts } = await supabase
-      .from('product_categories')
-      .select('category_id');
+    // Fetch product counts via RPC (only counts active products)
+    const { data: countRows } = await supabase.rpc('get_category_product_counts');
 
     const countMap: Record<string, number> = {};
-    (productCounts || []).forEach(pc => {
-      countMap[pc.category_id] = (countMap[pc.category_id] || 0) + 1;
+    (countRows || []).forEach((row: { category_id: string; product_count: number }) => {
+      countMap[row.category_id] = row.product_count;
     });
 
     const categoriesWithCounts = (data || []).map(cat => ({

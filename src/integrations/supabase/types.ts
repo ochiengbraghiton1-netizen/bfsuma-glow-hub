@@ -961,6 +961,13 @@ export type Database = {
         Args: { p_category_id: string }
         Returns: number
       }
+      get_category_product_counts: {
+        Args: never
+        Returns: {
+          category_id: string
+          product_count: number
+        }[]
+      }
       get_product_ratings: {
         Args: { p_product_id: string }
         Returns: {
