@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -30,67 +30,74 @@ interface Product {
 
 const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
-  const [category, setCategory] = useState<Category | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [allCategories, setAllCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchCategoryAndProducts = async () => {
-      if (!slug) {
-        // Show all categories
-        const { data: categoriesData } = await supabase
-          .from('categories')
-          .select('*')
-          .eq('is_active', true)
-          .order('display_order');
-        
-        setAllCategories(categoriesData || []);
-        setLoading(false);
-        return;
-      }
+  // Fetch all active categories (used when showing category list)
+  const { data: allCategories = [], isLoading: loadingCategories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order');
+      if (error) throw error;
+      return data as Category[];
+    },
+    enabled: !slug, // only fetch when listing categories
+  });
 
-      // Fetch category by slug
-      const { data: categoryData, error: categoryError } = await supabase
+  // Fetch single category by slug
+  const {
+    data: category,
+    isLoading: loadingCategory,
+    isError: categoryError,
+  } = useQuery({
+    queryKey: ['categories', slug],
+    queryFn: async () => {
+      const { data, error } = await supabase
         .from('categories')
         .select('*')
         .eq('slug', slug)
         .eq('is_active', true)
         .single();
+      if (error) throw error;
+      return data as Category;
+    },
+    enabled: !!slug,
+    retry: false,
+  });
 
-      if (categoryError || !categoryData) {
-        setError('Category not found');
-        setLoading(false);
-        return;
-      }
+  // Fetch products for the category (via join table)
+  const { data: products = [], isLoading: loadingProducts } = useQuery({
+    queryKey: ['category-products', category?.id],
+    queryFn: async () => {
+      if (!category) return [];
 
-      setCategory(categoryData);
-
-      // Fetch products in this category via join table
-      const { data: productCategories } = await supabase
+      // Get product IDs from join table
+      const { data: productCategories, error: pcError } = await supabase
         .from('product_categories')
         .select('product_id')
-        .eq('category_id', categoryData.id);
+        .eq('category_id', category.id);
 
-      if (productCategories && productCategories.length > 0) {
-        const productIds = productCategories.map(pc => pc.product_id);
-        
-        const { data: productsData } = await supabase
-          .from('products')
-          .select('id, name, price, benefit, description, image_url, stock_quantity, low_stock_threshold, track_inventory')
-          .in('id', productIds)
-          .eq('is_active', true)
-          .order('name');
+      if (pcError) throw pcError;
+      if (!productCategories || productCategories.length === 0) return [];
 
-        setProducts(productsData || []);
-      }
+      const productIds = productCategories.map(pc => pc.product_id);
 
-      setLoading(false);
-    };
+      const { data, error } = await supabase
+        .from('products')
+        .select('id, name, price, benefit, description, image_url, stock_quantity, low_stock_threshold, track_inventory')
+        .in('id', productIds)
+        .eq('is_active', true)
+        .order('name');
 
-    fetchCategoryAndProducts();
-  }, [slug]);
+      if (error) throw error;
+      return data as Product[];
+    },
+    enabled: !!category?.id,
+  });
+
+  const loading = loadingCategories || loadingCategory || loadingProducts;
 
   if (loading) {
     return (
@@ -104,7 +111,7 @@ const CategoryPage = () => {
     );
   }
 
-  if (error) {
+  if (slug && categoryError) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -136,7 +143,7 @@ const CategoryPage = () => {
           <main className="flex-1 py-12">
             <div className="container mx-auto px-4">
               <h1 className="text-3xl font-bold mb-8">Product Categories</h1>
-              
+
               {allCategories.length === 0 ? (
                 <div className="text-center py-12">
                   <Tag className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
@@ -198,7 +205,7 @@ const CategoryPage = () => {
               <ArrowLeft className="h-4 w-4 mr-1" />
               All Categories
             </Link>
-            
+
             <div className="mb-8">
               <h1 className="text-3xl font-bold">{category?.name}</h1>
               {category?.description && (

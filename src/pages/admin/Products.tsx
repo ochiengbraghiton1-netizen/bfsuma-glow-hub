@@ -190,8 +190,10 @@ const Products = () => {
     setDialogOpen(false);
     resetForm();
     fetchProducts();
-    // Invalidate React Query cache to ensure frontend shows updated data
+    // Invalidate React Query cache to ensure frontend + admin counts stay in sync
     queryClient.invalidateQueries({ queryKey: ['products'] });
+    queryClient.invalidateQueries({ queryKey: ['categories'] });
+    queryClient.invalidateQueries({ queryKey: ['category-products'] });
     setSubmitting(false);
   };
 
