@@ -3,11 +3,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Save } from 'lucide-react';
 import { siteContentSchema } from '@/lib/validations';
+import RichTextEditor from '@/components/ui/rich-text-editor';
 
 interface ContentSection {
   id: string;
@@ -191,12 +191,11 @@ const ContentCard = ({ sectionKey, label, description, data, onSave, saving }: C
           </div>
           <div className="space-y-2">
             <Label htmlFor={`${sectionKey}-content`}>Content</Label>
-            <Textarea
-              id={`${sectionKey}-content`}
-              value={formData.content}
-              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+            <RichTextEditor
+              content={formData.content}
+              onChange={(content) => setFormData({ ...formData, content })}
               placeholder="Main content text..."
-              rows={4}
+              minHeight="200px"
             />
           </div>
           <div className="space-y-2">

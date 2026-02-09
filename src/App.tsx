@@ -29,8 +29,10 @@ import Team from "./pages/admin/Team";
 import Content from "./pages/admin/Content";
 import Admins from "./pages/admin/Admins";
 import BusinessRegistrations from "./pages/admin/BusinessRegistrations";
+import Blog from "./pages/admin/Blog";
 import AffiliateDashboard from "./pages/affiliate/Dashboard";
 import ProductAffiliate from "./pages/ProductAffiliate";
+import BlogPage from "./pages/BlogPage";
 
 // Component to initialize referral tracking
 const ReferralTracker = () => {
@@ -76,10 +78,13 @@ const App = () => (
                   <Route path="consultations" element={<Consultations />} />
                   <Route path="team" element={<Team />} />
                   <Route path="content" element={<Content />} />
+                  <Route path="blog" element={<Blog />} />
                   <Route path="admins" element={<Admins />} />
                   <Route path="business-registrations" element={<BusinessRegistrations />} />
                 </Route>
                 <Route path="/affiliate" element={<AffiliateDashboard />} />
+                <Route path="/blog" element={<BlogPage />} />
+                <Route path="/blog/:slug" element={<BlogPage />} />
                 <Route path="/p/:slug" element={<ProductAffiliate />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

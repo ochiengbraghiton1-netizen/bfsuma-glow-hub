@@ -21,6 +21,7 @@ import {
   Bell,
   Search,
   Settings,
+  BookOpen,
 } from 'lucide-react';
 
 import { Link as LinkIcon } from 'lucide-react';
@@ -37,6 +38,7 @@ const navItems = [
   { to: '/admin/consultations', icon: Calendar, label: 'Consultations' },
   { to: '/admin/team', icon: Users, label: 'Team Members' },
   { to: '/admin/content', icon: FileEdit, label: 'Site Content' },
+  { to: '/admin/blog', icon: BookOpen, label: 'Blog Posts' },
   { to: '/admin/admins', icon: Shield, label: 'Manage Admins' },
 ];
 

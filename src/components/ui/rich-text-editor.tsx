@@ -1,4 +1,4 @@
-import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react';
+import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
@@ -270,31 +270,6 @@ const RichTextEditor = ({
           <Redo className="h-4 w-4" />
         </MenuButton>
       </div>
-
-      {/* Bubble menu for selected text */}
-      {editor && (
-        <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
-          <div className="flex items-center gap-1 p-1 bg-popover border border-border rounded-lg shadow-lg">
-            <MenuButton
-              onClick={() => editor.chain().focus().toggleBold().run()}
-              isActive={editor.isActive('bold')}
-              title="Bold"
-            >
-              <Bold className="h-3 w-3" />
-            </MenuButton>
-            <MenuButton
-              onClick={() => editor.chain().focus().toggleItalic().run()}
-              isActive={editor.isActive('italic')}
-              title="Italic"
-            >
-              <Italic className="h-3 w-3" />
-            </MenuButton>
-            <MenuButton onClick={() => setLinkDialogOpen(true)} title="Add Link">
-              <LinkIcon className="h-3 w-3" />
-            </MenuButton>
-          </div>
-        </BubbleMenu>
-      )}
 
       {/* Editor content */}
       <div style={{ minHeight }} className="overflow-auto">
