@@ -6,9 +6,17 @@ import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, ArrowLeft, Calendar, Clock } from 'lucide-react';
+import { Loader2, ArrowLeft, Calendar, Clock, Tag } from 'lucide-react';
 import { format } from 'date-fns';
 import { Helmet } from 'react-helmet-async';
+import RichTextContent from '@/components/ui/rich-text-content';
+import { stripHtmlTags } from '@/lib/html-utils';
+
+interface BlogCategory {
+  id: string;
+  name: string;
+  slug: string;
+}
 
 interface BlogPost {
   id: string;
@@ -24,26 +32,61 @@ interface BlogPost {
   created_at: string;
 }
 
+interface BlogPostWithCategories extends BlogPost {
+  categories?: BlogCategory[];
+}
+
 const BlogList = () => {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [posts, setPosts] = useState<BlogPostWithCategories[]>([]);
+  const [categories, setCategories] = useState<BlogCategory[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      const { data, error } = await supabase
+    const fetchData = async () => {
+      // Fetch categories
+      const { data: categoriesData } = await supabase
+        .from('blog_categories')
+        .select('*')
+        .order('name');
+
+      if (categoriesData) {
+        setCategories(categoriesData);
+      }
+
+      // Fetch posts with their categories
+      const { data: postsData, error } = await supabase
         .from('blog_posts')
         .select('*')
         .eq('status', 'published')
         .order('published_at', { ascending: false });
 
-      if (!error && data) {
-        setPosts(data);
+      if (!error && postsData) {
+        // Fetch categories for each post
+        const postsWithCategories = await Promise.all(
+          postsData.map(async (post) => {
+            const { data: postCategories } = await supabase
+              .from('blog_post_categories')
+              .select('category_id')
+              .eq('post_id', post.id);
+
+            const categoryIds = postCategories?.map(pc => pc.category_id) || [];
+            const postCats = categoriesData?.filter(c => categoryIds.includes(c.id)) || [];
+
+            return { ...post, categories: postCats };
+          })
+        );
+        setPosts(postsWithCategories);
       }
       setLoading(false);
     };
 
-    fetchPosts();
+    fetchData();
   }, []);
+
+  const filteredPosts = selectedCategory
+    ? posts.filter(post => post.categories?.some(c => c.slug === selectedCategory))
+    : posts;
 
   if (loading) {
     return (
@@ -69,13 +112,36 @@ const BlogList = () => {
             </p>
           </div>
 
-          {posts.length === 0 ? (
+          {/* Category Filter */}
+          {categories.length > 0 && (
+            <div className="flex flex-wrap gap-2 justify-center mb-8">
+              <Button
+                variant={selectedCategory === null ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setSelectedCategory(null)}
+              >
+                All
+              </Button>
+              {categories.map((category) => (
+                <Button
+                  key={category.id}
+                  variant={selectedCategory === category.slug ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setSelectedCategory(category.slug)}
+                >
+                  {category.name}
+                </Button>
+              ))}
+            </div>
+          )}
+
+          {filteredPosts.length === 0 ? (
             <div className="text-center py-16">
               <p className="text-muted-foreground">No blog posts published yet. Check back soon!</p>
             </div>
           ) : (
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {posts.map((post) => (
+              {filteredPosts.map((post) => (
                 <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                   {post.featured_image && (
                     <div className="aspect-video overflow-hidden">
@@ -91,6 +157,16 @@ const BlogList = () => {
                       <Calendar className="h-4 w-4" />
                       {post.published_at && format(new Date(post.published_at), 'MMM d, yyyy')}
                     </div>
+                    {post.categories && post.categories.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {post.categories.map((cat) => (
+                          <Badge key={cat.id} variant="secondary" className="text-xs">
+                            <Tag className="h-3 w-3 mr-1" />
+                            {cat.name}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
                     <CardTitle className="line-clamp-2">
                       <Link to={`/blog/${post.slug}`} className="hover:text-primary transition-colors">
                         {post.title}
@@ -118,7 +194,7 @@ const BlogList = () => {
 };
 
 const BlogPostView = ({ slug }: { slug: string }) => {
-  const [post, setPost] = useState<BlogPost | null>(null);
+  const [post, setPost] = useState<BlogPostWithCategories | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
@@ -134,7 +210,24 @@ const BlogPostView = ({ slug }: { slug: string }) => {
       if (error || !data) {
         setNotFound(true);
       } else {
-        setPost(data);
+        // Fetch categories
+        const { data: postCategories } = await supabase
+          .from('blog_post_categories')
+          .select('category_id')
+          .eq('post_id', data.id);
+
+        const categoryIds = postCategories?.map(pc => pc.category_id) || [];
+        
+        if (categoryIds.length > 0) {
+          const { data: categories } = await supabase
+            .from('blog_categories')
+            .select('*')
+            .in('id', categoryIds);
+          
+          setPost({ ...data, categories: categories || [] });
+        } else {
+          setPost({ ...data, categories: [] });
+        }
       }
       setLoading(false);
     };
@@ -166,24 +259,28 @@ const BlogPostView = ({ slug }: { slug: string }) => {
   }
 
   // Estimate reading time (avg 200 words per minute)
-  const wordCount = post.content?.replace(/<[^>]*>/g, '').split(/\s+/).length || 0;
+  const plainContent = stripHtmlTags(post.content);
+  const wordCount = plainContent.split(/\s+/).length;
   const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+
+  // Clean description for SEO
+  const metaDescription = post.meta_description || stripHtmlTags(post.excerpt) || '';
 
   return (
     <>
       <Helmet>
         <title>{post.meta_title || post.title} | BF SUMA Kenya</title>
-        <meta name="description" content={post.meta_description || post.excerpt || ''} />
+        <meta name="description" content={metaDescription} />
         {post.featured_image && <meta property="og:image" content={post.featured_image} />}
         <meta property="og:title" content={post.meta_title || post.title} />
-        <meta property="og:description" content={post.meta_description || post.excerpt || ''} />
+        <meta property="og:description" content={metaDescription} />
         <meta property="og:type" content="article" />
         <script type="application/ld+json">
           {JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'BlogPosting',
             headline: post.title,
-            description: post.excerpt,
+            description: stripHtmlTags(post.excerpt),
             image: post.featured_image,
             datePublished: post.published_at,
             dateModified: post.created_at,
@@ -235,12 +332,22 @@ const BlogPostView = ({ slug }: { slug: string }) => {
                 {readingTime} min read
               </div>
             </div>
+            {post.categories && post.categories.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-4">
+                {post.categories.map((cat) => (
+                  <Badge key={cat.id} variant="secondary">
+                    <Tag className="h-3 w-3 mr-1" />
+                    {cat.name}
+                  </Badge>
+                ))}
+              </div>
+            )}
           </header>
 
-          {/* Post Content */}
-          <div
-            className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-semibold prose-a:text-primary prose-img:rounded-lg"
-            dangerouslySetInnerHTML={{ __html: post.content || '' }}
+          {/* Post Content - Using RichTextContent for proper HTML rendering */}
+          <RichTextContent 
+            content={post.content || ''} 
+            className="prose-lg"
           />
 
           {/* Share / CTA */}

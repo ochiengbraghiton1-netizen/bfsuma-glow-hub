@@ -22,17 +22,22 @@ import {
   Quote,
   Code,
   Strikethrough,
+  Upload,
+  Loader2,
 } from 'lucide-react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface RichTextEditorProps {
   content: string;
@@ -47,17 +52,20 @@ const MenuButton = ({
   isActive,
   children,
   title,
+  disabled,
 }: {
   onClick: () => void;
   isActive?: boolean;
   children: React.ReactNode;
   title: string;
+  disabled?: boolean;
 }) => (
   <Button
     type="button"
     variant="ghost"
     size="sm"
     onClick={onClick}
+    disabled={disabled}
     className={cn(
       'h-8 w-8 p-0',
       isActive && 'bg-accent text-accent-foreground'
@@ -81,6 +89,9 @@ const RichTextEditor = ({
   const [imageUrl, setImageUrl] = useState('');
   const [youtubeDialogOpen, setYoutubeDialogOpen] = useState(false);
   const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   const editor = useEditor({
     extensions: [
@@ -88,6 +99,8 @@ const RichTextEditor = ({
         heading: {
           levels: [1, 2, 3],
         },
+        // Disable built-in link extension from StarterKit to avoid duplicates
+        // StarterKit doesn't include Link by default, but just to be safe
       }),
       Link.configure({
         openOnClick: false,
@@ -121,6 +134,8 @@ const RichTextEditor = ({
           'prose prose-sm sm:prose dark:prose-invert max-w-none focus:outline-none px-4 py-3',
           'prose-headings:font-semibold prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg',
           'prose-p:my-2 prose-ul:my-2 prose-ol:my-2',
+          'prose-ul:list-disc prose-ol:list-decimal prose-ul:pl-6 prose-ol:pl-6',
+          'prose-li:my-1',
           'prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic'
         ),
       },
@@ -142,7 +157,7 @@ const RichTextEditor = ({
     }
   }, [editor, linkUrl]);
 
-  const addImage = useCallback(() => {
+  const addImageByUrl = useCallback(() => {
     if (imageUrl && editor) {
       editor.chain().focus().setImage({ src: imageUrl }).run();
       setImageUrl('');
@@ -158,12 +173,94 @@ const RichTextEditor = ({
     }
   }, [editor, youtubeUrl]);
 
+  const handleImageUpload = useCallback(async (file: File) => {
+    if (!editor) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: 'Invalid file type',
+        description: 'Please upload an image file',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: 'File too large',
+        description: 'Please upload an image smaller than 5MB',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setUploading(true);
+
+    try {
+      // Generate unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `blog-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `blog-images/${fileName}`;
+
+      // Upload to Supabase Storage (products bucket is public)
+      const { error: uploadError } = await supabase.storage
+        .from('products')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('products')
+        .getPublicUrl(filePath);
+
+      // Insert image into editor
+      editor.chain().focus().setImage({ src: publicUrl }).run();
+
+      toast({
+        title: 'Image uploaded',
+        description: 'Image has been added to the content',
+      });
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast({
+        title: 'Upload failed',
+        description: 'Failed to upload image. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setUploading(false);
+    }
+  }, [editor, toast]);
+
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleImageUpload(file);
+    }
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, [handleImageUpload]);
+
   if (!editor) {
     return null;
   }
 
   return (
     <div className={cn('border border-input rounded-md bg-background', className)}>
+      {/* Hidden file input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileSelect}
+        accept="image/*"
+        className="hidden"
+      />
+
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-1 p-2 border-b border-input bg-muted/30">
         <MenuButton
@@ -248,7 +345,18 @@ const RichTextEditor = ({
         <MenuButton onClick={() => setLinkDialogOpen(true)} title="Add Link">
           <LinkIcon className="h-4 w-4" />
         </MenuButton>
-        <MenuButton onClick={() => setImageDialogOpen(true)} title="Add Image">
+        <MenuButton 
+          onClick={() => fileInputRef.current?.click()} 
+          title="Upload Image"
+          disabled={uploading}
+        >
+          {uploading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Upload className="h-4 w-4" />
+          )}
+        </MenuButton>
+        <MenuButton onClick={() => setImageDialogOpen(true)} title="Add Image by URL">
           <ImageIcon className="h-4 w-4" />
         </MenuButton>
         <MenuButton onClick={() => setYoutubeDialogOpen(true)} title="Add YouTube Video">
@@ -281,6 +389,7 @@ const RichTextEditor = ({
         <DialogContent className="z-50">
           <DialogHeader>
             <DialogTitle>Add Link</DialogTitle>
+            <DialogDescription>Enter the URL for the link</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
@@ -302,11 +411,12 @@ const RichTextEditor = ({
         </DialogContent>
       </Dialog>
 
-      {/* Image Dialog */}
+      {/* Image URL Dialog */}
       <Dialog open={imageDialogOpen} onOpenChange={setImageDialogOpen}>
         <DialogContent className="z-50">
           <DialogHeader>
-            <DialogTitle>Add Image</DialogTitle>
+            <DialogTitle>Add Image by URL</DialogTitle>
+            <DialogDescription>Enter the URL of an image to embed</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
@@ -323,7 +433,7 @@ const RichTextEditor = ({
             <Button variant="outline" onClick={() => setImageDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={addImage}>Add Image</Button>
+            <Button onClick={addImageByUrl}>Add Image</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -333,6 +443,7 @@ const RichTextEditor = ({
         <DialogContent className="z-50">
           <DialogHeader>
             <DialogTitle>Add YouTube Video</DialogTitle>
+            <DialogDescription>Enter the YouTube video URL</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">

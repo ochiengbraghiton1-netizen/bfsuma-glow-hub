@@ -5,13 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Plus, Pencil, Trash2, Eye, EyeOff, ExternalLink } from 'lucide-react';
+import { Loader2, Plus, Pencil, Trash2, Eye, EyeOff, ExternalLink, Calendar as CalendarIcon, Tag } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import {
   Table,
@@ -29,8 +30,19 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import RichTextEditor from '@/components/ui/rich-text-editor';
 import { format } from 'date-fns';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+
+interface BlogCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+}
 
 interface BlogPost {
   id: string;
@@ -43,6 +55,7 @@ interface BlogPost {
   meta_description: string | null;
   status: string;
   published_at: string | null;
+  scheduled_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -56,16 +69,33 @@ const initialFormState = {
   meta_title: '',
   meta_description: '',
   status: 'draft',
+  scheduled_at: null as Date | null,
+  category_ids: [] as string[],
 };
 
 const Blog = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [categories, setCategories] = useState<BlogCategory[]>([]);
+  const [postCategories, setPostCategories] = useState<Record<string, string[]>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [formData, setFormData] = useState(initialFormState);
+  const [newCategoryName, setNewCategoryName] = useState('');
   const { toast } = useToast();
+
+  const fetchCategories = async () => {
+    const { data, error } = await supabase
+      .from('blog_categories')
+      .select('*')
+      .order('name');
+
+    if (!error && data) {
+      setCategories(data);
+    }
+  };
 
   const fetchPosts = async () => {
     const { data, error } = await supabase
@@ -77,11 +107,26 @@ const Blog = () => {
       toast({ title: 'Error', description: 'Failed to fetch blog posts', variant: 'destructive' });
     } else {
       setPosts(data || []);
+
+      // Fetch categories for all posts
+      const { data: postCatsData } = await supabase
+        .from('blog_post_categories')
+        .select('post_id, category_id');
+
+      if (postCatsData) {
+        const catMap: Record<string, string[]> = {};
+        postCatsData.forEach(pc => {
+          if (!catMap[pc.post_id]) catMap[pc.post_id] = [];
+          catMap[pc.post_id].push(pc.category_id);
+        });
+        setPostCategories(catMap);
+      }
     }
     setLoading(false);
   };
 
   useEffect(() => {
+    fetchCategories();
     fetchPosts();
   }, []);
 
@@ -107,8 +152,15 @@ const Blog = () => {
     setDialogOpen(true);
   };
 
-  const openEditDialog = (post: BlogPost) => {
+  const openEditDialog = async (post: BlogPost) => {
     setEditingPost(post);
+    
+    // Fetch post categories
+    const { data: postCats } = await supabase
+      .from('blog_post_categories')
+      .select('category_id')
+      .eq('post_id', post.id);
+
     setFormData({
       title: post.title,
       slug: post.slug,
@@ -118,6 +170,8 @@ const Blog = () => {
       meta_title: post.meta_title || '',
       meta_description: post.meta_description || '',
       status: post.status,
+      scheduled_at: post.scheduled_at ? new Date(post.scheduled_at) : null,
+      category_ids: postCats?.map(pc => pc.category_id) || [],
     });
     setDialogOpen(true);
   };
@@ -140,8 +194,10 @@ const Blog = () => {
       meta_description: formData.meta_description.trim() || null,
       status: formData.status,
       published_at: formData.status === 'published' ? new Date().toISOString() : null,
+      scheduled_at: formData.scheduled_at?.toISOString() || null,
     };
 
+    let postId: string | null = null;
     let error;
 
     if (editingPost) {
@@ -150,14 +206,27 @@ const Blog = () => {
         .update(postData)
         .eq('id', editingPost.id);
       error = result.error;
+      postId = editingPost.id;
     } else {
-      const result = await supabase.from('blog_posts').insert(postData);
+      const result = await supabase.from('blog_posts').insert(postData).select('id').single();
       error = result.error;
+      postId = result.data?.id || null;
     }
 
     if (error) {
       toast({ title: 'Error', description: error.message, variant: 'destructive' });
-    } else {
+    } else if (postId) {
+      // Update categories
+      // First delete existing
+      await supabase.from('blog_post_categories').delete().eq('post_id', postId);
+      
+      // Then insert new ones
+      if (formData.category_ids.length > 0) {
+        await supabase.from('blog_post_categories').insert(
+          formData.category_ids.map(catId => ({ post_id: postId!, category_id: catId }))
+        );
+      }
+
       toast({ title: 'Success', description: `Blog post ${editingPost ? 'updated' : 'created'} successfully` });
       setDialogOpen(false);
       fetchPosts();
@@ -196,6 +265,46 @@ const Blog = () => {
     }
   };
 
+  const handleAddCategory = async () => {
+    if (!newCategoryName.trim()) return;
+
+    const slug = newCategoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+    const { error } = await supabase.from('blog_categories').insert({
+      name: newCategoryName.trim(),
+      slug,
+    });
+
+    if (error) {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    } else {
+      toast({ title: 'Success', description: 'Category added' });
+      setNewCategoryName('');
+      fetchCategories();
+    }
+  };
+
+  const handleDeleteCategory = async (id: string) => {
+    if (!confirm('Delete this category? Posts will be uncategorized.')) return;
+
+    const { error } = await supabase.from('blog_categories').delete().eq('id', id);
+
+    if (error) {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    } else {
+      fetchCategories();
+    }
+  };
+
+  const toggleCategory = (categoryId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      category_ids: prev.category_ids.includes(categoryId)
+        ? prev.category_ids.filter(id => id !== categoryId)
+        : [...prev.category_ids, categoryId]
+    }));
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -211,10 +320,16 @@ const Blog = () => {
           <h1 className="text-3xl font-bold text-[hsl(var(--admin-text))]">Blog Posts</h1>
           <p className="text-muted-foreground">Manage your blog content and marketing copy</p>
         </div>
-        <Button onClick={openCreateDialog}>
-          <Plus className="h-4 w-4 mr-2" />
-          New Post
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setCategoryDialogOpen(true)}>
+            <Tag className="h-4 w-4 mr-2" />
+            Categories
+          </Button>
+          <Button onClick={openCreateDialog}>
+            <Plus className="h-4 w-4 mr-2" />
+            New Post
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -231,6 +346,7 @@ const Blog = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead className="text-[hsl(var(--admin-text))]">Title</TableHead>
+                  <TableHead className="text-[hsl(var(--admin-text))]">Categories</TableHead>
                   <TableHead className="text-[hsl(var(--admin-text))]">Status</TableHead>
                   <TableHead className="text-[hsl(var(--admin-text))]">Created</TableHead>
                   <TableHead className="text-[hsl(var(--admin-text))]">Actions</TableHead>
@@ -243,6 +359,24 @@ const Blog = () => {
                       <div>
                         <p className="font-medium text-[hsl(var(--admin-text))]">{post.title}</p>
                         <p className="text-sm text-muted-foreground">/blog/{post.slug}</p>
+                        {post.scheduled_at && new Date(post.scheduled_at) > new Date() && (
+                          <p className="text-xs text-amber-500 flex items-center gap-1 mt-1">
+                            <CalendarIcon className="h-3 w-3" />
+                            Scheduled: {format(new Date(post.scheduled_at), 'MMM d, yyyy h:mm a')}
+                          </p>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {postCategories[post.id]?.map(catId => {
+                          const cat = categories.find(c => c.id === catId);
+                          return cat ? (
+                            <Badge key={catId} variant="secondary" className="text-xs">
+                              {cat.name}
+                            </Badge>
+                          ) : null;
+                        })}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -309,6 +443,9 @@ const Blog = () => {
             <DialogTitle className="text-[hsl(var(--admin-text))]">
               {editingPost ? 'Edit Post' : 'Create New Post'}
             </DialogTitle>
+            <DialogDescription>
+              Fill in the details below to {editingPost ? 'update' : 'create'} your blog post.
+            </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-6">
@@ -333,6 +470,35 @@ const Blog = () => {
                   placeholder="post-url-slug"
                   className="text-[hsl(var(--admin-text))] bg-background"
                 />
+              </div>
+            </div>
+
+            {/* Categories */}
+            <div className="space-y-2">
+              <Label className="text-[hsl(var(--admin-text))]">Categories</Label>
+              <div className="flex flex-wrap gap-2 p-3 border rounded-md bg-muted/20">
+                {categories.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No categories yet. Create one first.</p>
+                ) : (
+                  categories.map((cat) => (
+                    <label
+                      key={cat.id}
+                      className={cn(
+                        "flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer transition-colors",
+                        formData.category_ids.includes(cat.id)
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted hover:bg-muted/80"
+                      )}
+                    >
+                      <Checkbox
+                        checked={formData.category_ids.includes(cat.id)}
+                        onCheckedChange={() => toggleCategory(cat.id)}
+                        className="sr-only"
+                      />
+                      <span className="text-sm">{cat.name}</span>
+                    </label>
+                  ))
+                )}
               </div>
             </div>
 
@@ -371,6 +537,61 @@ const Blog = () => {
               />
             </div>
 
+            {/* Scheduling */}
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label className="text-[hsl(var(--admin-text))]">Schedule Publication</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !formData.scheduled_at && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.scheduled_at ? format(formData.scheduled_at, "PPP") : "Pick a date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 z-[60]">
+                    <Calendar
+                      mode="single"
+                      selected={formData.scheduled_at || undefined}
+                      onSelect={(date) => setFormData({ ...formData, scheduled_at: date || null })}
+                      disabled={(date) => date < new Date()}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                {formData.scheduled_at && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setFormData({ ...formData, scheduled_at: null })}
+                    className="text-xs"
+                  >
+                    Clear date
+                  </Button>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="status" className="text-[hsl(var(--admin-text))]">Status</Label>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value) => setFormData({ ...formData, status: value })}
+                >
+                  <SelectTrigger className="text-[hsl(var(--admin-text))] bg-background">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="z-[60]">
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="published">Published</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
             {/* SEO Fields */}
             <div className="border-t pt-4">
               <h3 className="font-medium mb-4 text-[hsl(var(--admin-text))]">SEO Settings</h3>
@@ -388,32 +609,17 @@ const Blog = () => {
                   <p className="text-xs text-muted-foreground">{formData.meta_title.length}/60</p>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="status" className="text-[hsl(var(--admin-text))]">Status</Label>
-                  <Select
-                    value={formData.status}
-                    onValueChange={(value) => setFormData({ ...formData, status: value })}
-                  >
-                    <SelectTrigger className="text-[hsl(var(--admin-text))] bg-background">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="z-[60]">
-                      <SelectItem value="draft">Draft</SelectItem>
-                      <SelectItem value="published">Published</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Label htmlFor="meta_description" className="text-[hsl(var(--admin-text))]">Meta Description</Label>
+                  <Input
+                    id="meta_description"
+                    value={formData.meta_description}
+                    onChange={(e) => setFormData({ ...formData, meta_description: e.target.value })}
+                    placeholder="SEO description (max 160 chars)"
+                    maxLength={160}
+                    className="text-[hsl(var(--admin-text))] bg-background"
+                  />
+                  <p className="text-xs text-muted-foreground">{formData.meta_description.length}/160</p>
                 </div>
-              </div>
-              <div className="space-y-2 mt-4">
-                <Label htmlFor="meta_description" className="text-[hsl(var(--admin-text))]">Meta Description</Label>
-                <Input
-                  id="meta_description"
-                  value={formData.meta_description}
-                  onChange={(e) => setFormData({ ...formData, meta_description: e.target.value })}
-                  placeholder="SEO description (max 160 chars)"
-                  maxLength={160}
-                  className="text-[hsl(var(--admin-text))] bg-background"
-                />
-                <p className="text-xs text-muted-foreground">{formData.meta_description.length}/160</p>
               </div>
             </div>
           </div>
@@ -426,6 +632,50 @@ const Blog = () => {
               {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               {editingPost ? 'Update Post' : 'Create Post'}
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Categories Dialog */}
+      <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
+        <DialogContent className="max-w-md z-50">
+          <DialogHeader>
+            <DialogTitle className="text-[hsl(var(--admin-text))]">Manage Categories</DialogTitle>
+            <DialogDescription>Add or remove blog post categories.</DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <Input
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                placeholder="New category name"
+                className="text-[hsl(var(--admin-text))] bg-background"
+              />
+              <Button onClick={handleAddCategory}>Add</Button>
+            </div>
+
+            <div className="space-y-2">
+              {categories.map((cat) => (
+                <div key={cat.id} className="flex items-center justify-between p-2 border rounded">
+                  <span className="text-[hsl(var(--admin-text))]">{cat.name}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDeleteCategory(cat.id)}
+                  >
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
+                </div>
+              ))}
+              {categories.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-4">No categories yet</p>
+              )}
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button onClick={() => setCategoryDialogOpen(false)}>Done</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

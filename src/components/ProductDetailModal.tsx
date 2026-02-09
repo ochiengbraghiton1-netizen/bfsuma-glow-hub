@@ -1,4 +1,4 @@
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, X, Shield, Leaf, Check, Heart, AlertTriangle } from "lucide-react";
@@ -6,6 +6,8 @@ import { useCart } from "@/contexts/CartContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getStockStatus } from "@/hooks/use-products";
 import productGeneric from "@/assets/product-generic.jpg";
+import RichTextContent from "@/components/ui/rich-text-content";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface ProductDetailModalProps {
   product: {
@@ -174,9 +176,10 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
                   <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-1">
                     Description
                   </h4>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    {product.description}
-                  </p>
+                  <RichTextContent 
+                    content={product.description} 
+                    className="text-muted-foreground text-sm"
+                  />
                 </div>
               )}
               
@@ -240,7 +243,11 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
       <DialogContent 
         className="max-w-2xl max-h-[90vh] overflow-hidden p-0 animate-modal-content"
         style={{ animationDuration: '400ms' }}
+        aria-describedby={undefined}
       >
+        <VisuallyHidden>
+          <DialogTitle>{product.name}</DialogTitle>
+        </VisuallyHidden>
         {ModalContent}
       </DialogContent>
     </Dialog>
