@@ -11,6 +11,7 @@ import bfSumaLogo from "@/assets/bf-suma-logo-new.png";
 const navLinks = [
   { href: "#products", label: "Products", isAnchor: true },
   { href: "/about", label: "About", isAnchor: false },
+  { href: "/blog", label: "Blog", isAnchor: false },
   { href: "#faq", label: "FAQ", isAnchor: true },
   { href: "#contact", label: "Contact", isAnchor: true },
 ];
