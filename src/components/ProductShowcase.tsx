@@ -63,7 +63,12 @@ const ProductShowcase = () => {
   }, [products, searchQuery, activeCategory]);
 
   const getProductImage = (product: DatabaseProduct) => {
-    return productImageMap[product.name] || product.image_url || undefined;
+    // Prioritize database image_url (from admin uploads) over hardcoded local images
+    // This ensures admin-uploaded images are displayed correctly
+    if (product.image_url) {
+      return product.image_url;
+    }
+    return productImageMap[product.name] || undefined;
   };
 
   if (error) {
