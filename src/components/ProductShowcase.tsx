@@ -57,7 +57,9 @@ const ProductShowcase = () => {
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.benefit?.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory =
-        activeCategory === "all" || product.category?.slug === activeCategory;
+        activeCategory === "all" ||
+        product.category?.slug === activeCategory ||
+        product.categories.some((cat) => cat.slug === activeCategory);
       return matchesSearch && matchesCategory;
     });
   }, [products, searchQuery, activeCategory]);
