@@ -23,6 +23,8 @@ export default defineConfig(({ mode }) => ({
       "react/jsx-runtime", 
       "react/jsx-dev-runtime",
       "@tiptap/react",
+      "@tiptap/extension-underline",
+      "@tiptap/extension-text-align",
     ],
   },
   optimizeDeps: {
