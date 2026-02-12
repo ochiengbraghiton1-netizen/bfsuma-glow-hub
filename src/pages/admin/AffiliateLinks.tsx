@@ -83,12 +83,8 @@ const AffiliateLinks = () => {
   const [creating, setCreating] = useState(false);
   const { toast } = useToast();
 
-  // Use current origin so /p/:slug works in both preview + published.
-  // (SITE_BASE_URL is kept as a fallback for non-browser contexts.)
-  const appBaseUrl = useMemo(() => {
-    if (typeof window === 'undefined') return SITE_BASE_URL;
-    return window.location.origin;
-  }, []);
+  // Always use the production domain for affiliate links
+  const appBaseUrl = SITE_BASE_URL;
 
   useEffect(() => {
     fetchLinks();
