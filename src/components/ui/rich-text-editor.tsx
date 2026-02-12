@@ -118,9 +118,11 @@ const RichTextEditor = ({
         types: ['heading', 'paragraph'],
       }),
       Link.configure({
-        openOnClick: false,
+        openOnClick: true,
+        autolink: true,
         HTMLAttributes: {
           class: 'text-primary underline cursor-pointer',
+          rel: 'noopener noreferrer',
         },
       }),
       Image.configure({
@@ -139,10 +141,12 @@ const RichTextEditor = ({
         placeholder,
       }),
     ],
-    content,
+    content: content || '',
     onUpdate: ({ editor }) => {
+      isInternalUpdate.current = true;
       onChange(editor.getHTML());
     },
+    immediatelyRender: false,
     editorProps: {
       attributes: {
         class: cn(
@@ -166,10 +170,15 @@ const RichTextEditor = ({
     },
   });
 
+  // Only sync external content changes (e.g., when opening edit dialog with new data)
+  // Use a ref to track whether this is an external update vs internal typing
+  const isInternalUpdate = useRef(false);
+
   useEffect(() => {
-    if (editor && content !== editor.getHTML()) {
-      editor.commands.setContent(content);
+    if (editor && !isInternalUpdate.current && content !== editor.getHTML()) {
+      editor.commands.setContent(content || '');
     }
+    isInternalUpdate.current = false;
   }, [content, editor]);
 
   const addLink = useCallback(() => {
