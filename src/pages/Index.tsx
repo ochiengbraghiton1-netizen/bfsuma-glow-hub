@@ -12,6 +12,7 @@ import Contact from "@/components/Contact";
 import Chatbot from "@/components/Chatbot";
 import Footer from "@/components/Footer";
 import StructuredData from "@/components/StructuredData";
+import CommunityStories from "@/components/blog/CommunityStories";
 import { useProducts } from "@/hooks/use-products";
 import { useProductRatings } from "@/hooks/use-product-ratings";
 
@@ -61,6 +62,7 @@ const Index = () => {
         <DoctorConsultation />
         <Testimonials />
         <ProductShowcase />
+        <CommunityStories />
         <About />
         <FAQ />
         <JoinEarn />

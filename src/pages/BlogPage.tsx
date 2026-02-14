@@ -6,10 +6,11 @@ import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, ArrowLeft, Calendar, Clock, Tag } from 'lucide-react';
+import { Loader2, ArrowLeft, Calendar, Clock, Tag, Play } from 'lucide-react';
 import { format } from 'date-fns';
 import { Helmet } from 'react-helmet-async';
 import RichTextContent from '@/components/ui/rich-text-content';
+import BlogPostUGC from '@/components/blog/BlogPostUGC';
 import { stripHtmlTags } from '@/lib/html-utils';
 
 interface BlogCategory {
@@ -25,6 +26,8 @@ interface BlogPost {
   excerpt: string | null;
   content: string | null;
   featured_image: string | null;
+  video_url: string | null;
+  is_featured: boolean;
   meta_title: string | null;
   meta_description: string | null;
   status: string;
@@ -36,6 +39,16 @@ interface BlogPostWithCategories extends BlogPost {
   categories?: BlogCategory[];
 }
 
+interface RelatedProduct {
+  id: string;
+  name: string;
+  price: number;
+  benefit: string | null;
+  image_url: string | null;
+}
+
+const UGC_CATEGORY_SLUGS = ['ugc-testimonials', 'ugc', 'testimonials'];
+
 const BlogList = () => {
   const [posts, setPosts] = useState<BlogPostWithCategories[]>([]);
   const [categories, setCategories] = useState<BlogCategory[]>([]);
@@ -44,17 +57,13 @@ const BlogList = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      // Fetch categories
       const { data: categoriesData } = await supabase
         .from('blog_categories')
         .select('*')
         .order('name');
 
-      if (categoriesData) {
-        setCategories(categoriesData);
-      }
+      if (categoriesData) setCategories(categoriesData);
 
-      // Fetch posts with their categories
       const { data: postsData, error } = await supabase
         .from('blog_posts')
         .select('*')
@@ -62,7 +71,6 @@ const BlogList = () => {
         .order('published_at', { ascending: false });
 
       if (!error && postsData) {
-        // Fetch categories for each post
         const postsWithCategories = await Promise.all(
           postsData.map(async (post) => {
             const { data: postCategories } = await supabase
@@ -72,7 +80,6 @@ const BlogList = () => {
 
             const categoryIds = postCategories?.map(pc => pc.category_id) || [];
             const postCats = categoriesData?.filter(c => categoryIds.includes(c.id)) || [];
-
             return { ...post, categories: postCats };
           })
         );
@@ -112,7 +119,6 @@ const BlogList = () => {
             </p>
           </div>
 
-          {/* Category Filter */}
           {categories.length > 0 && (
             <div className="flex flex-wrap gap-2 justify-center mb-8">
               <Button
@@ -142,16 +148,28 @@ const BlogList = () => {
           ) : (
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {filteredPosts.map((post) => (
-                <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  {post.featured_image && (
-                    <div className="aspect-video overflow-hidden">
+                <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow group">
+                  <div className="relative aspect-video overflow-hidden bg-muted">
+                    {post.featured_image ? (
                       <img
                         src={post.featured_image}
                         alt={post.title}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
                       />
-                    </div>
-                  )}
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10">
+                        <Tag className="w-8 h-8 text-muted-foreground" />
+                      </div>
+                    )}
+                    {post.video_url && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-full bg-primary/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                          <Play className="w-5 h-5 text-primary-foreground ml-0.5" fill="currentColor" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
                   <CardHeader>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                       <Calendar className="h-4 w-4" />
@@ -173,14 +191,14 @@ const BlogList = () => {
                       </Link>
                     </CardTitle>
                     {post.excerpt && (
-                      <CardDescription className="line-clamp-3">
-                        {post.excerpt}
-                      </CardDescription>
+                      <CardDescription className="line-clamp-3">{post.excerpt}</CardDescription>
                     )}
                   </CardHeader>
                   <CardContent>
                     <Button asChild variant="outline" className="w-full">
-                      <Link to={`/blog/${post.slug}`}>Read More</Link>
+                      <Link to={`/blog/${post.slug}`}>
+                        {post.video_url ? 'Watch Story' : 'Read More'}
+                      </Link>
                     </Button>
                   </CardContent>
                 </Card>
@@ -195,6 +213,7 @@ const BlogList = () => {
 
 const BlogPostView = ({ slug }: { slug: string }) => {
   const [post, setPost] = useState<BlogPostWithCategories | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<RelatedProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
@@ -209,26 +228,44 @@ const BlogPostView = ({ slug }: { slug: string }) => {
 
       if (error || !data) {
         setNotFound(true);
-      } else {
-        // Fetch categories
-        const { data: postCategories } = await supabase
-          .from('blog_post_categories')
-          .select('category_id')
-          .eq('post_id', data.id);
-
-        const categoryIds = postCategories?.map(pc => pc.category_id) || [];
-        
-        if (categoryIds.length > 0) {
-          const { data: categories } = await supabase
-            .from('blog_categories')
-            .select('*')
-            .in('id', categoryIds);
-          
-          setPost({ ...data, categories: categories || [] });
-        } else {
-          setPost({ ...data, categories: [] });
-        }
+        setLoading(false);
+        return;
       }
+
+      // Fetch categories
+      const { data: postCategories } = await supabase
+        .from('blog_post_categories')
+        .select('category_id')
+        .eq('post_id', data.id);
+
+      const categoryIds = postCategories?.map(pc => pc.category_id) || [];
+      let cats: BlogCategory[] = [];
+      if (categoryIds.length > 0) {
+        const { data: catData } = await supabase
+          .from('blog_categories')
+          .select('*')
+          .in('id', categoryIds);
+        cats = catData || [];
+      }
+
+      setPost({ ...data, categories: cats });
+
+      // Fetch related products
+      const { data: productLinks } = await supabase
+        .from('blog_post_products')
+        .select('product_id')
+        .eq('post_id', data.id);
+
+      if (productLinks?.length) {
+        const { data: products } = await supabase
+          .from('products')
+          .select('id, name, price, benefit, image_url')
+          .in('id', productLinks.map(l => l.product_id))
+          .eq('is_active', true);
+
+        setRelatedProducts(products || []);
+      }
+
       setLoading(false);
     };
 
@@ -258,12 +295,11 @@ const BlogPostView = ({ slug }: { slug: string }) => {
     );
   }
 
-  // Estimate reading time (avg 200 words per minute)
+  const isUGC = post.categories?.some(c => UGC_CATEGORY_SLUGS.includes(c.slug));
+
   const plainContent = stripHtmlTags(post.content);
   const wordCount = plainContent.split(/\s+/).length;
   const readingTime = Math.max(1, Math.ceil(wordCount / 200));
-
-  // Clean description for SEO
   const metaDescription = post.meta_description || stripHtmlTags(post.excerpt) || '';
 
   return (
@@ -284,21 +320,15 @@ const BlogPostView = ({ slug }: { slug: string }) => {
             image: post.featured_image,
             datePublished: post.published_at,
             dateModified: post.created_at,
-            author: {
-              '@type': 'Organization',
-              name: 'BF SUMA Kenya',
-            },
-            publisher: {
-              '@type': 'Organization',
-              name: 'BF SUMA Kenya',
-            },
+            ...(post.video_url && { video: { '@type': 'VideoObject', contentUrl: post.video_url, name: post.title } }),
+            author: { '@type': 'Organization', name: 'BF SUMA Kenya' },
+            publisher: { '@type': 'Organization', name: 'BF SUMA Kenya' },
           })}
         </script>
       </Helmet>
 
       <article className="py-12 px-4 md:px-8">
         <div className="max-w-3xl mx-auto">
-          {/* Back Button */}
           <Button asChild variant="ghost" className="mb-6">
             <Link to="/blog">
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -306,22 +336,15 @@ const BlogPostView = ({ slug }: { slug: string }) => {
             </Link>
           </Button>
 
-          {/* Featured Image */}
-          {post.featured_image && (
+          {/* Featured Image (non-UGC only, UGC leads with video) */}
+          {!isUGC && post.featured_image && (
             <div className="aspect-video overflow-hidden rounded-lg mb-8">
-              <img
-                src={post.featured_image}
-                alt={post.title}
-                className="w-full h-full object-cover"
-              />
+              <img src={post.featured_image} alt={post.title} className="w-full h-full object-cover" />
             </div>
           )}
 
-          {/* Post Header */}
           <header className="mb-8">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-              {post.title}
-            </h1>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">{post.title}</h1>
             <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
@@ -344,26 +367,29 @@ const BlogPostView = ({ slug }: { slug: string }) => {
             )}
           </header>
 
-          {/* Post Content - Using RichTextContent for proper HTML rendering */}
-          <RichTextContent 
-            content={post.content || ''} 
-            className="prose-lg"
-          />
+          {/* Render UGC layout or standard content */}
+          {isUGC ? (
+            <BlogPostUGC post={post} relatedProducts={relatedProducts} />
+          ) : (
+            <>
+              <RichTextContent content={post.content || ''} className="prose-lg" />
 
-          {/* Share / CTA */}
-          <div className="mt-12 pt-8 border-t">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <p className="text-muted-foreground">Enjoyed this article?</p>
-              <div className="flex gap-4">
-                <Button asChild>
-                  <Link to="/#products">View Our Products</Link>
-                </Button>
-                <Button variant="outline" asChild>
-                  <Link to="/blog">More Articles</Link>
-                </Button>
+              {/* Share / CTA */}
+              <div className="mt-12 pt-8 border-t">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <p className="text-muted-foreground">Enjoyed this article?</p>
+                  <div className="flex gap-4">
+                    <Button asChild>
+                      <Link to="/#products">View Our Products</Link>
+                    </Button>
+                    <Button variant="outline" asChild>
+                      <Link to="/blog">More Articles</Link>
+                    </Button>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </>
+          )}
         </div>
       </article>
     </>
