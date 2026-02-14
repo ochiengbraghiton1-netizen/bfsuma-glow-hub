@@ -168,6 +168,42 @@ export type Database = {
           },
         ]
       }
+      blog_post_products: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          product_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          product_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_post_products_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blog_post_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_posts: {
         Row: {
           author_id: string | null
@@ -176,6 +212,7 @@ export type Database = {
           excerpt: string | null
           featured_image: string | null
           id: string
+          is_featured: boolean
           meta_description: string | null
           meta_title: string | null
           published_at: string | null
@@ -184,6 +221,7 @@ export type Database = {
           status: string
           title: string
           updated_at: string
+          video_url: string | null
         }
         Insert: {
           author_id?: string | null
@@ -192,6 +230,7 @@ export type Database = {
           excerpt?: string | null
           featured_image?: string | null
           id?: string
+          is_featured?: boolean
           meta_description?: string | null
           meta_title?: string | null
           published_at?: string | null
@@ -200,6 +239,7 @@ export type Database = {
           status?: string
           title: string
           updated_at?: string
+          video_url?: string | null
         }
         Update: {
           author_id?: string | null
@@ -208,6 +248,7 @@ export type Database = {
           excerpt?: string | null
           featured_image?: string | null
           id?: string
+          is_featured?: boolean
           meta_description?: string | null
           meta_title?: string | null
           published_at?: string | null
@@ -216,6 +257,7 @@ export type Database = {
           status?: string
           title?: string
           updated_at?: string
+          video_url?: string | null
         }
         Relationships: []
       }

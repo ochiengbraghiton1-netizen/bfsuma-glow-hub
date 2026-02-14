@@ -7,6 +7,7 @@ import { useCart } from "@/contexts/CartContext";
 import { formatPrice, getStockStatus } from "@/hooks/use-products";
 import RichTextContent from "@/components/ui/rich-text-content";
 import ProductReviews from "@/components/ProductReviews";
+import RelatedBlogPosts from "@/components/blog/RelatedBlogPosts";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import productGeneric from "@/assets/product-generic.jpg";
@@ -283,6 +284,13 @@ const ProductAffiliate = () => {
                 <p className="text-xs text-muted-foreground text-center">Free shipping on orders over KSh 10,000</p>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Related Blog Posts */}
+        <section className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="border-t border-border/50 pt-10">
+            <RelatedBlogPosts productId={product.id} />
           </div>
         </section>
 

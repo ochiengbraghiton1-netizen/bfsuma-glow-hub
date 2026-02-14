@@ -51,6 +51,8 @@ interface BlogPost {
   excerpt: string | null;
   content: string | null;
   featured_image: string | null;
+  video_url: string | null;
+  is_featured: boolean;
   meta_title: string | null;
   meta_description: string | null;
   status: string;
@@ -60,23 +62,32 @@ interface BlogPost {
   updated_at: string;
 }
 
+interface ProductOption {
+  id: string;
+  name: string;
+}
+
 const initialFormState = {
   title: '',
   slug: '',
   excerpt: '',
   content: '',
   featured_image: '',
+  video_url: '',
+  is_featured: false,
   meta_title: '',
   meta_description: '',
   status: 'draft',
   scheduled_at: null as Date | null,
   category_ids: [] as string[],
+  product_ids: [] as string[],
 };
 
 const Blog = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [postCategories, setPostCategories] = useState<Record<string, string[]>>({});
+  const [allProducts, setAllProducts] = useState<ProductOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -128,6 +139,10 @@ const Blog = () => {
   useEffect(() => {
     fetchCategories();
     fetchPosts();
+    // Fetch all products for tagging
+    supabase.from('products').select('id, name').eq('is_active', true).order('name').then(({ data }) => {
+      if (data) setAllProducts(data);
+    });
   }, []);
 
   const generateSlug = (title: string) => {
@@ -161,17 +176,26 @@ const Blog = () => {
       .select('category_id')
       .eq('post_id', post.id);
 
+    // Fetch post products
+    const { data: postProds } = await supabase
+      .from('blog_post_products')
+      .select('product_id')
+      .eq('post_id', post.id);
+
     setFormData({
       title: post.title,
       slug: post.slug,
       excerpt: post.excerpt || '',
       content: post.content || '',
       featured_image: post.featured_image || '',
+      video_url: post.video_url || '',
+      is_featured: post.is_featured || false,
       meta_title: post.meta_title || '',
       meta_description: post.meta_description || '',
       status: post.status,
       scheduled_at: post.scheduled_at ? new Date(post.scheduled_at) : null,
       category_ids: postCats?.map(pc => pc.category_id) || [],
+      product_ids: postProds?.map(pp => pp.product_id) || [],
     });
     setDialogOpen(true);
   };
@@ -190,6 +214,8 @@ const Blog = () => {
       excerpt: formData.excerpt.trim() || null,
       content: formData.content || null,
       featured_image: formData.featured_image.trim() || null,
+      video_url: formData.video_url.trim() || null,
+      is_featured: formData.is_featured,
       meta_title: formData.meta_title.trim() || null,
       meta_description: formData.meta_description.trim() || null,
       status: formData.status,
@@ -217,13 +243,18 @@ const Blog = () => {
       toast({ title: 'Error', description: error.message, variant: 'destructive' });
     } else if (postId) {
       // Update categories
-      // First delete existing
       await supabase.from('blog_post_categories').delete().eq('post_id', postId);
-      
-      // Then insert new ones
       if (formData.category_ids.length > 0) {
         await supabase.from('blog_post_categories').insert(
           formData.category_ids.map(catId => ({ post_id: postId!, category_id: catId }))
+        );
+      }
+
+      // Update product links
+      await supabase.from('blog_post_products').delete().eq('post_id', postId);
+      if (formData.product_ids.length > 0) {
+        await supabase.from('blog_post_products').insert(
+          formData.product_ids.map(prodId => ({ post_id: postId!, product_id: prodId }))
         );
       }
 
@@ -357,7 +388,11 @@ const Blog = () => {
                   <TableRow key={post.id}>
                     <TableCell>
                       <div>
-                        <p className="font-medium text-[hsl(var(--admin-text))]">{post.title}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium text-[hsl(var(--admin-text))]">{post.title}</p>
+                          {post.is_featured && <Badge variant="outline" className="text-xs">⭐ Featured</Badge>}
+                          {post.video_url && <Badge variant="outline" className="text-xs">🎥 Video</Badge>}
+                        </div>
                         <p className="text-sm text-muted-foreground">/blog/{post.slug}</p>
                         {post.scheduled_at && new Date(post.scheduled_at) > new Date() && (
                           <p className="text-xs text-amber-500 flex items-center gap-1 mt-1">
@@ -535,6 +570,66 @@ const Blog = () => {
                 placeholder="https://example.com/image.jpg"
                 className="text-[hsl(var(--admin-text))] bg-background"
               />
+            </div>
+
+            {/* Video URL */}
+            <div className="space-y-2">
+              <Label htmlFor="video_url" className="text-[hsl(var(--admin-text))]">Video URL (YouTube, TikTok, Instagram)</Label>
+              <Input
+                id="video_url"
+                value={formData.video_url}
+                onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
+                placeholder="https://youtube.com/watch?v=..."
+                className="text-[hsl(var(--admin-text))] bg-background"
+              />
+            </div>
+
+            {/* Featured Toggle & Product Tagging */}
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label className="text-[hsl(var(--admin-text))]">Featured Post</Label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <Checkbox
+                    checked={formData.is_featured}
+                    onCheckedChange={(checked) => setFormData({ ...formData, is_featured: !!checked })}
+                  />
+                  <span className="text-sm text-[hsl(var(--admin-text))]">Show on homepage "Community Stories"</span>
+                </label>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[hsl(var(--admin-text))]">Related Products</Label>
+                <div className="flex flex-wrap gap-2 p-3 border rounded-md bg-muted/20 max-h-40 overflow-y-auto">
+                  {allProducts.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">No products available.</p>
+                  ) : (
+                    allProducts.map((prod) => (
+                      <label
+                        key={prod.id}
+                        className={cn(
+                          "flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer transition-colors text-sm",
+                          formData.product_ids.includes(prod.id)
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted hover:bg-muted/80"
+                        )}
+                      >
+                        <Checkbox
+                          checked={formData.product_ids.includes(prod.id)}
+                          onCheckedChange={() => {
+                            setFormData(prev => ({
+                              ...prev,
+                              product_ids: prev.product_ids.includes(prod.id)
+                                ? prev.product_ids.filter(id => id !== prod.id)
+                                : [...prev.product_ids, prod.id]
+                            }));
+                          }}
+                          className="sr-only"
+                        />
+                        {prod.name}
+                      </label>
+                    ))
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Scheduling */}
