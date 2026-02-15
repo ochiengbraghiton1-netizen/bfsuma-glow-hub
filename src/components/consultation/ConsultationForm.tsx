@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { HoneypotField } from "@/components/ui/honeypot-field";
+import { PhoneInput } from "@/components/ui/phone-input";
 import {
   Select,
   SelectContent,
@@ -57,7 +58,7 @@ const ConsultationForm = ({ onSuccess }: ConsultationFormProps) => {
     resolver: zodResolver(consultationSchema),
     defaultValues: {
       fullName: "",
-      phone: "",
+      phone: "+254",
       email: "",
       ageRange: undefined,
       gender: undefined,
@@ -166,9 +167,10 @@ const ConsultationForm = ({ onSuccess }: ConsultationFormProps) => {
                 <FormItem>
                   <FormLabel>WhatsApp Number *</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="+254 7XX XXX XXX"
-                      {...field}
+                    <PhoneInput
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="712 345 678"
                       disabled={isSubmitting}
                     />
                   </FormControl>

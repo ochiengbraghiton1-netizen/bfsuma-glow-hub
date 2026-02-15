@@ -32,8 +32,7 @@ export const consultationSchema = z.object({
   phone: z.string()
     .trim()
     .min(1, 'Phone number is required')
-    .max(30, 'Phone must be less than 30 characters')
-    .regex(/^[+\d\s()-]+$/, 'Please enter a valid phone number'),
+    .regex(/^\+\d{7,15}$/, 'Please enter a valid phone number'),
   email: z.string()
     .email('Please enter a valid email')
     .max(255, 'Email must be less than 255 characters')

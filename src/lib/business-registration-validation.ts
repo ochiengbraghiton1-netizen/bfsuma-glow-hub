@@ -8,7 +8,7 @@ export const businessRegistrationSchema = z.object({
   phone: z.string()
     .trim()
     .min(1, 'Phone number is required')
-    .regex(/^(?:\+254|0)[17]\d{8}$/, 'Please enter a valid Kenyan phone number (e.g., 0712345678 or +254712345678)'),
+    .regex(/^\+\d{7,15}$/, 'Please enter a valid international phone number'),
   email: z.string()
     .email('Invalid email address')
     .max(255, 'Email must be less than 255 characters')
@@ -26,7 +26,7 @@ export const businessRegistrationSchema = z.object({
     .or(z.literal('')),
   sponsor_phone: z.string()
     .trim()
-    .regex(/^(?:\+254|0)[17]\d{8}$/, 'Please enter a valid Kenyan phone number')
+    .regex(/^\+\d{7,15}$/, 'Please enter a valid international phone number')
     .optional()
     .or(z.literal('')),
   sponsor_membership_id: z.string()
