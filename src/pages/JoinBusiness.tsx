@@ -23,6 +23,7 @@ import { businessRegistrationSchema, BusinessRegistrationFormData } from '@/lib/
 import RegistrationSuccess from '@/components/business-registration/RegistrationSuccess';
 import { HoneypotField } from '@/components/ui/honeypot-field';
 import { isBot } from '@/lib/honeypot';
+import { PhoneInput } from '@/components/ui/phone-input';
 
 interface RegistrationData {
   id?: string;
@@ -49,12 +50,12 @@ const JoinBusiness = () => {
     resolver: zodResolver(businessRegistrationSchema),
     defaultValues: {
       full_name: '',
-      phone: '',
+      phone: '+254',
       email: '',
       county_city: '',
       has_sponsor: false,
       sponsor_name: '',
-      sponsor_phone: '',
+      sponsor_phone: '+254',
       sponsor_membership_id: '',
       agreement_accepted: false as unknown as true,
     },
@@ -218,9 +219,12 @@ const JoinBusiness = () => {
                     <FormItem>
                       <FormLabel>Phone Number *</FormLabel>
                       <FormControl>
-                        <Input placeholder="0712345678" {...field} />
+                        <PhoneInput
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder="712 345 678"
+                        />
                       </FormControl>
-                      <FormDescription>Kenyan format (e.g., 0712345678 or +254712345678)</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -309,7 +313,11 @@ const JoinBusiness = () => {
                         <FormItem>
                           <FormLabel>Sponsor / Upline Phone Number *</FormLabel>
                           <FormControl>
-                            <Input placeholder="0712345678" {...field} />
+                            <PhoneInput
+                              value={field.value || '+254'}
+                              onChange={field.onChange}
+                              placeholder="712 345 678"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

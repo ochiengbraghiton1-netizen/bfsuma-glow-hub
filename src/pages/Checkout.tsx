@@ -12,13 +12,14 @@ import { z } from 'zod';
 import productGeneric from '@/assets/product-generic.jpg';
 import { HoneypotField } from '@/components/ui/honeypot-field';
 import { isBot } from '@/lib/honeypot';
+import { PhoneInput, formatForWhatsApp } from '@/components/ui/phone-input';
 
 const WHATSAPP_NUMBER = "254795454053";
 
 const checkoutSchema = z.object({
   customerName: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
   customerEmail: z.string().trim().email('Invalid email address').max(255).optional().or(z.literal('')),
-  customerPhone: z.string().trim().min(10, 'Phone number must be at least 10 digits').max(15),
+  customerPhone: z.string().trim().min(7, 'Phone number is too short').max(20).regex(/^\+\d{7,15}$/, 'Please enter a valid phone number'),
   shippingAddress: z.string().trim().min(10, 'Please enter a complete address').max(500),
   notes: z.string().trim().max(500).optional(),
   promoCode: z.string().trim().max(50).optional(),
@@ -34,7 +35,7 @@ const Checkout = () => {
   const [formData, setFormData] = useState<CheckoutFormData>({
     customerName: '',
     customerEmail: '',
-    customerPhone: '',
+    customerPhone: '+254',
     shippingAddress: '',
     notes: '',
     promoCode: '',
@@ -363,12 +364,11 @@ Sent from BF SUMA ROYAL Website`;
                   </div>
                   <div>
                     <Label htmlFor="customerPhone">Phone Number *</Label>
-                    <Input
-                      id="customerPhone"
+                    <PhoneInput
                       value={formData.customerPhone}
-                      onChange={(e) => handleInputChange('customerPhone', e.target.value)}
-                      placeholder="0712345678"
-                      className={errors.customerPhone ? 'border-destructive' : ''}
+                      onChange={(val) => handleInputChange('customerPhone', val)}
+                      placeholder="712 345 678"
+                      error={!!errors.customerPhone}
                     />
                     {errors.customerPhone && (
                       <p className="text-sm text-destructive mt-1">{errors.customerPhone}</p>
