@@ -80,14 +80,14 @@ const AffiliateDashboard = () => {
     setLoading(true);
     try {
       const { data: affData, error: affError } = await supabase
-        .from('affiliates' as any)
+        .from('affiliates')
         .select('*')
         .eq('user_id', user.id)
         .maybeSingle();
 
       if (affError) throw affError;
 
-      const rawAff = affData as unknown as AffiliateData | null;
+      const rawAff = affData as AffiliateData | null;
       if (!rawAff) {
         toast({
           title: 'No Affiliate Account',
@@ -101,7 +101,7 @@ const AffiliateDashboard = () => {
       setAffiliate(rawAff);
 
       const { data: refData, error: refError } = await supabase
-        .from('referrals' as any)
+        .from('referrals')
         .select('*')
         .eq('affiliate_id', rawAff.id)
         .order('created_at', { ascending: false })
@@ -109,7 +109,7 @@ const AffiliateDashboard = () => {
 
       if (refError) throw refError;
 
-      const rawRefs = refData as unknown as any[];
+      const rawRefs = (refData || []) as any[];
       const referralsWithProfiles: Referral[] = [];
       for (const ref of (rawRefs || [])) {
         if (ref.referred_user_id) {
