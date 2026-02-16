@@ -1035,6 +1035,14 @@ export type Database = {
       is_admin_or_editor: { Args: { _user_id: string }; Returns: boolean }
       is_super_admin: { Args: { _user_id: string }; Returns: boolean }
       is_team_member: { Args: { _user_id: string }; Returns: boolean }
+      record_affiliate_conversion: {
+        Args: {
+          p_order_id: string
+          p_order_total: number
+          p_referral_code: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "editor" | "viewer"

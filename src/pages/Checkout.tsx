@@ -246,6 +246,22 @@ Sent from BF SUMA ROYAL Website`;
         await supabase.rpc('decrement_stock', { p_product_id: item.id, p_quantity: item.quantity });
       }
 
+      // Track affiliate conversion if referral code exists
+      const storedRef = localStorage.getItem('bf_referral_code');
+      const refExpiry = localStorage.getItem('bf_referral_expiry');
+      if (storedRef && (!refExpiry || new Date(refExpiry) > new Date())) {
+        try {
+          await supabase.rpc('record_affiliate_conversion', {
+            p_referral_code: storedRef,
+            p_order_id: newOrderId,
+            p_order_total: finalTotal,
+          });
+        } catch (err) {
+          console.error('Affiliate conversion tracking error:', err);
+          // Non-blocking: order still proceeds
+        }
+      }
+
       setOrderId(newOrderId);
       
       // Open WhatsApp with the order details

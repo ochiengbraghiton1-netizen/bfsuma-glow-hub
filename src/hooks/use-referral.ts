@@ -54,9 +54,9 @@ export const useReferral = () => {
 
   const trackClick = async (code: string) => {
     try {
-      // Get affiliate ID from code using raw query
+      // Get affiliate ID from code
       const { data: affiliate } = await supabase
-        .from('affiliates' as any)
+        .from('affiliates')
         .select('id')
         .eq('referral_code', code)
         .eq('status', 'active')
@@ -64,15 +64,15 @@ export const useReferral = () => {
 
       if (affiliate) {
         // Record the click
-        await supabase.from('affiliate_clicks' as any).insert({
-          affiliate_id: (affiliate as any).id,
+        await supabase.from('affiliate_clicks').insert({
+          affiliate_id: affiliate.id,
           ip_address: null,
           user_agent: navigator.userAgent,
-          referrer_url: document.referrer || null,
+          referrer_url: document.referrer || window.location.href,
         });
 
         // Increment click count using RPC
-        await supabase.rpc('increment_affiliate_clicks' as any, { affiliate_code: code });
+        await supabase.rpc('increment_affiliate_clicks', { affiliate_code: code });
       }
     } catch (error) {
       console.error('Error tracking referral click:', error);
