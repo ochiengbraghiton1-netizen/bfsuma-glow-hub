@@ -55,31 +55,40 @@ interface Product {
   name: string;
 }
 
+interface SimpleAffiliate {
+  id: string;
+  name: string | null;
+  referral_code: string;
+}
+
 interface AffiliateLink {
   id: string;
   product_id: string;
   slug: string;
   agent_code: string;
   assigned_to: string | null;
+  affiliate_id: string | null;
   is_active: boolean;
   click_count: number;
   created_at: string;
   product?: Product;
+  affiliate?: SimpleAffiliate;
 }
 
 const AffiliateLinks = () => {
   const [links, setLinks] = useState<AffiliateLink[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [affiliatesList, setAffiliatesList] = useState<SimpleAffiliate[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
 
   // Filters
   const [filterProductId, setFilterProductId] = useState<string>('all');
-  const [filterAssignee, setFilterAssignee] = useState('');
+  const [filterAffiliateId, setFilterAffiliateId] = useState<string>('all');
 
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<string>('');
-  const [assignedTo, setAssignedTo] = useState('');
+  const [selectedAffiliateId, setSelectedAffiliateId] = useState<string>('');
   const [creating, setCreating] = useState(false);
   const { toast } = useToast();
 
@@ -89,6 +98,7 @@ const AffiliateLinks = () => {
   useEffect(() => {
     fetchLinks();
     fetchProducts();
+    fetchAffiliates();
   }, []);
 
   const fetchLinks = async () => {
@@ -101,22 +111,34 @@ const AffiliateLinks = () => {
 
       if (error) throw error;
 
-      // Fetch product names for each link
-      const linksWithProducts: AffiliateLink[] = [];
+      // Fetch product names and affiliate names for each link
+      const linksWithDetails: AffiliateLink[] = [];
       for (const link of (data || [])) {
+        const rawLink = link as any;
         const { data: product } = await supabase
           .from('products')
           .select('id, name')
-          .eq('id', link.product_id)
+          .eq('id', rawLink.product_id)
           .maybeSingle();
 
-        linksWithProducts.push({
-          ...link,
+        let affiliateData: SimpleAffiliate | undefined;
+        if (rawLink.affiliate_id) {
+          const { data: aff } = await supabase
+            .from('affiliates')
+            .select('id, name, referral_code')
+            .eq('id', rawLink.affiliate_id)
+            .maybeSingle();
+          affiliateData = (aff as any) || undefined;
+        }
+
+        linksWithDetails.push({
+          ...rawLink,
           product: product || undefined,
+          affiliate: affiliateData,
         });
       }
 
-      setLinks(linksWithProducts);
+      setLinks(linksWithDetails);
     } catch (error) {
       console.error('Error fetching affiliate links:', error);
       toast({
@@ -126,6 +148,21 @@ const AffiliateLinks = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchAffiliates = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('affiliates')
+        .select('id, name, referral_code')
+        .eq('status', 'active')
+        .order('name');
+
+      if (error) throw error;
+      setAffiliatesList((data || []) as unknown as SimpleAffiliate[]);
+    } catch (error) {
+      console.error('Error fetching affiliates:', error);
     }
   };
 
@@ -155,29 +192,27 @@ const AffiliateLinks = () => {
 
   const createLink = async () => {
     if (!selectedProductId) {
-      toast({
-        title: 'Error',
-        description: 'Please select a product',
-        variant: 'destructive',
-      });
+      toast({ title: 'Error', description: 'Please select a product', variant: 'destructive' });
+      return;
+    }
+    if (!selectedAffiliateId) {
+      toast({ title: 'Error', description: 'Please select an affiliate', variant: 'destructive' });
       return;
     }
 
     setCreating(true);
     try {
-      // Get next agent code
       const { data: agentCodeData, error: codeError } = await supabase.rpc('generate_next_agent_code');
-
       if (codeError) throw codeError;
 
       const agentCode = agentCodeData as string;
       const product = products.find((p) => p.id === selectedProductId);
       if (!product) throw new Error('Product not found');
 
+      const selectedAff = affiliatesList.find((a) => a.id === selectedAffiliateId);
       const productSlug = generateProductSlug(product.name);
       const fullSlug = `${productSlug}-${agentCode.toLowerCase()}`;
 
-      // Validate slug format
       const slugPattern = /^[a-z0-9-]+-a\d{2,}$/;
       if (!slugPattern.test(fullSlug)) {
         throw new Error('Invalid slug format generated');
@@ -187,8 +222,9 @@ const AffiliateLinks = () => {
         product_id: selectedProductId,
         slug: fullSlug,
         agent_code: agentCode,
-        assigned_to: assignedTo.trim() || null,
-      });
+        assigned_to: selectedAff?.name || null,
+        affiliate_id: selectedAffiliateId,
+      } as any);
 
       if (insertError) throw insertError;
 
@@ -199,7 +235,7 @@ const AffiliateLinks = () => {
 
       setCreateDialogOpen(false);
       setSelectedProductId('');
-      setAssignedTo('');
+      setSelectedAffiliateId('');
       fetchLinks();
     } catch (error) {
       console.error('Error creating affiliate link:', error);
@@ -212,6 +248,8 @@ const AffiliateLinks = () => {
       setCreating(false);
     }
   };
+
+
 
   const toggleLinkStatus = async (linkId: string, currentStatus: boolean) => {
     try {
@@ -280,27 +318,27 @@ const AffiliateLinks = () => {
 
   const filteredLinks = useMemo(() => {
     const s = search.toLowerCase();
-    const assignee = filterAssignee.trim().toLowerCase();
 
     return links.filter((link) => {
       const matchesSearch =
         link.slug.toLowerCase().includes(s) ||
         link.product?.name?.toLowerCase().includes(s) ||
+        link.affiliate?.name?.toLowerCase().includes(s) ||
         link.assigned_to?.toLowerCase().includes(s) ||
         link.agent_code.toLowerCase().includes(s);
 
       const matchesProduct = filterProductId === 'all' || link.product_id === filterProductId;
-      const matchesAssignee = !assignee || (link.assigned_to || '').toLowerCase().includes(assignee);
+      const matchesAffiliate = filterAffiliateId === 'all' || link.affiliate_id === filterAffiliateId;
 
-      return matchesSearch && matchesProduct && matchesAssignee;
+      return matchesSearch && matchesProduct && matchesAffiliate;
     });
-  }, [links, search, filterProductId, filterAssignee]);
+  }, [links, search, filterProductId, filterAffiliateId]);
 
   // Calculate totals
   const totalClicks = links.reduce((acc, link) => acc + (link.click_count || 0), 0);
   const activeLinks = links.filter((l) => l.is_active).length;
 
-  const showFiltersActive = filterProductId !== 'all' || filterAssignee.trim().length > 0;
+  const showFiltersActive = filterProductId !== 'all' || filterAffiliateId !== 'all';
 
   return (
     <div className="space-y-6">
@@ -369,12 +407,19 @@ const AffiliateLinks = () => {
         </div>
 
         <div className="lg:col-span-3">
-          <Input
-            placeholder="Filter by assignee"
-            value={filterAssignee}
-            onChange={(e) => setFilterAssignee(e.target.value)}
-            className="bg-[hsl(var(--admin-card))] border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text))]"
-          />
+          <Select value={filterAffiliateId} onValueChange={setFilterAffiliateId}>
+            <SelectTrigger className="bg-[hsl(var(--admin-card))] border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text))]">
+              <SelectValue placeholder="Filter by affiliate" />
+            </SelectTrigger>
+            <SelectContent className="bg-[hsl(var(--admin-card))] border-[hsl(var(--admin-border))]">
+              <SelectItem value="all">All affiliates</SelectItem>
+              {affiliatesList.map((a) => (
+                <SelectItem key={a.id} value={a.id}>
+                  {a.name || a.referral_code}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {showFiltersActive && (
@@ -384,7 +429,7 @@ const AffiliateLinks = () => {
               className="gap-2 bg-transparent border-[hsl(var(--admin-border))]"
               onClick={() => {
                 setFilterProductId('all');
-                setFilterAssignee('');
+                setFilterAffiliateId('all');
               }}
             >
               <Filter className="h-4 w-4" />
@@ -453,7 +498,7 @@ const AffiliateLinks = () => {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-[hsl(var(--admin-text))]">
-                    {link.assigned_to || <span className="text-[hsl(var(--admin-text-muted))]">—</span>}
+                    {link.affiliate?.name || link.assigned_to || <span className="text-[hsl(var(--admin-text-muted))]">—</span>}
                   </TableCell>
                   <TableCell>
                     {link.is_active ? (
@@ -539,15 +584,21 @@ const AffiliateLinks = () => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-[hsl(var(--admin-text))]">Assign to Team Member (optional)</Label>
-              <Input
-                placeholder="Enter team member name"
-                value={assignedTo}
-                onChange={(e) => setAssignedTo(e.target.value)}
-                className="bg-[hsl(var(--admin-bg))] border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text))]"
-              />
+              <Label className="text-[hsl(var(--admin-text))]">Assign to Affiliate *</Label>
+              <Select value={selectedAffiliateId} onValueChange={setSelectedAffiliateId}>
+                <SelectTrigger className="bg-[hsl(var(--admin-bg))] border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text))]">
+                  <SelectValue placeholder="Choose an affiliate" />
+                </SelectTrigger>
+                <SelectContent className="bg-[hsl(var(--admin-card))] border-[hsl(var(--admin-border))] z-[60]">
+                  {affiliatesList.map((aff) => (
+                    <SelectItem key={aff.id} value={aff.id} className="text-[hsl(var(--admin-text))]">
+                      {aff.name || aff.referral_code}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <p className="text-xs text-[hsl(var(--admin-text-muted))]">
-                This helps you track which team member should use this link
+                Select the affiliate partner for this product link
               </p>
             </div>
             {selectedProductId && (
@@ -567,7 +618,7 @@ const AffiliateLinks = () => {
             >
               Cancel
             </Button>
-            <Button onClick={createLink} disabled={creating || !selectedProductId}>
+            <Button onClick={createLink} disabled={creating || !selectedProductId || !selectedAffiliateId}>
               {creating && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Generate Link
             </Button>
