@@ -53,7 +53,9 @@ export type Database = {
         Row: {
           commission_rate: number
           created_at: string
+          email: string | null
           id: string
+          name: string | null
           referral_code: string
           referral_url: string | null
           referred_by: string | null
@@ -64,12 +66,14 @@ export type Database = {
           total_sales: number
           total_signups: number
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           commission_rate?: number
           created_at?: string
+          email?: string | null
           id?: string
+          name?: string | null
           referral_code: string
           referral_url?: string | null
           referred_by?: string | null
@@ -80,12 +84,14 @@ export type Database = {
           total_sales?: number
           total_signups?: number
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           commission_rate?: number
           created_at?: string
+          email?: string | null
           id?: string
+          name?: string | null
           referral_code?: string
           referral_url?: string | null
           referred_by?: string | null
@@ -96,7 +102,7 @@ export type Database = {
           total_sales?: number
           total_signups?: number
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -511,6 +517,7 @@ export type Database = {
       }
       product_affiliate_links: {
         Row: {
+          affiliate_id: string | null
           agent_code: string
           assigned_to: string | null
           click_count: number
@@ -522,6 +529,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          affiliate_id?: string | null
           agent_code: string
           assigned_to?: string | null
           click_count?: number
@@ -533,6 +541,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          affiliate_id?: string | null
           agent_code?: string
           assigned_to?: string | null
           click_count?: number
@@ -544,6 +553,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "product_affiliate_links_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "product_affiliate_links_product_id_fkey"
             columns: ["product_id"]

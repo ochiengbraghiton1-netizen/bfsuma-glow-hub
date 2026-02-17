@@ -4,6 +4,7 @@ import { useToast } from '@/hooks/use-toast';
 import { SITE_BASE_URL } from '@/config/routes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import {
   Table,
@@ -43,11 +44,14 @@ import {
   Copy,
   TrendingUp,
   Loader2,
+  Plus,
 } from 'lucide-react';
 
 interface Affiliate {
   id: string;
-  user_id: string;
+  name: string | null;
+  email: string | null;
+  user_id: string | null;
   referral_code: string;
   referral_url: string;
   status: string;
@@ -58,10 +62,6 @@ interface Affiliate {
   total_sales: number;
   total_commission: number;
   created_at: string;
-  profiles?: {
-    full_name: string | null;
-    email: string | null;
-  };
 }
 
 const Affiliates = () => {
@@ -71,6 +71,11 @@ const Affiliates = () => {
   const [selectedAffiliate, setSelectedAffiliate] = useState<Affiliate | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [createOpen, setCreateOpen] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+  const [newCommissionRate, setNewCommissionRate] = useState('10');
+  const [creating, setCreating] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -80,29 +85,13 @@ const Affiliates = () => {
   const fetchAffiliates = async () => {
     setLoading(true);
     try {
-      const { data: affData, error: affError } = await supabase
-        .from('affiliates' as any)
+      const { data, error } = await supabase
+        .from('affiliates')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (affError) throw affError;
-
-      const rawData = affData as unknown as any[];
-      const affiliatesWithProfiles: Affiliate[] = [];
-      for (const aff of (rawData || [])) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('full_name, email')
-          .eq('user_id', aff.user_id)
-          .maybeSingle();
-        
-        affiliatesWithProfiles.push({
-          ...aff,
-          profiles: profile || undefined,
-        } as Affiliate);
-      }
-
-      setAffiliates(affiliatesWithProfiles);
+      if (error) throw error;
+      setAffiliates((data || []) as unknown as Affiliate[]);
     } catch (error) {
       console.error('Error fetching affiliates:', error);
       toast({
@@ -115,11 +104,52 @@ const Affiliates = () => {
     }
   };
 
+  const createAffiliate = async () => {
+    if (!newName.trim()) {
+      toast({ title: 'Error', description: 'Name is required', variant: 'destructive' });
+      return;
+    }
+
+    setCreating(true);
+    try {
+      // Generate referral code
+      const { data: codeData, error: codeError } = await supabase.rpc('generate_referral_code');
+      if (codeError) throw codeError;
+
+      const code = codeData as string;
+      const referralUrl = `${SITE_BASE_URL}/?ref=${code}`;
+
+      const { error } = await supabase.from('affiliates').insert({
+        name: newName.trim(),
+        email: newEmail.trim() || null,
+        referral_code: code,
+        referral_url: referralUrl,
+        commission_rate: parseFloat(newCommissionRate) || 10,
+        status: 'active',
+        user_id: null as any,
+      } as any);
+
+      if (error) throw error;
+
+      toast({ title: 'Affiliate Created', description: `${newName.trim()} has been added as an affiliate` });
+      setCreateOpen(false);
+      setNewName('');
+      setNewEmail('');
+      setNewCommissionRate('10');
+      fetchAffiliates();
+    } catch (error) {
+      console.error('Error creating affiliate:', error);
+      toast({ title: 'Error', description: 'Failed to create affiliate', variant: 'destructive' });
+    } finally {
+      setCreating(false);
+    }
+  };
+
   const updateStatus = async (affiliateId: string, newStatus: string) => {
     try {
       const { error } = await supabase
-        .from('affiliates' as any)
-        .update({ status: newStatus })
+        .from('affiliates')
+        .update({ status: newStatus } as any)
         .eq('id', affiliateId);
 
       if (error) throw error;
@@ -132,24 +162,16 @@ const Affiliates = () => {
       fetchAffiliates();
     } catch (error) {
       console.error('Error updating status:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to update affiliate status',
-        variant: 'destructive',
-      });
+      toast({ title: 'Error', description: 'Failed to update affiliate status', variant: 'destructive' });
     }
   };
 
   const copyLink = (url: string) => {
     navigator.clipboard.writeText(url);
-    toast({
-      title: 'Copied!',
-      description: 'Referral link copied to clipboard',
-    });
+    toast({ title: 'Copied!', description: 'Referral link copied to clipboard' });
   };
 
   const getAffiliateLink = (affiliate: Affiliate): string => {
-    // Always construct link using correct production base URL
     return `${SITE_BASE_URL}/?ref=${affiliate.referral_code}`;
   };
 
@@ -169,15 +191,14 @@ const Affiliates = () => {
   const filteredAffiliates = affiliates.filter((affiliate) => {
     const matchesSearch =
       affiliate.referral_code.toLowerCase().includes(search.toLowerCase()) ||
-      affiliate.profiles?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-      affiliate.profiles?.email?.toLowerCase().includes(search.toLowerCase());
+      affiliate.name?.toLowerCase().includes(search.toLowerCase()) ||
+      affiliate.email?.toLowerCase().includes(search.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || affiliate.status === statusFilter;
     
     return matchesSearch && matchesStatus;
   });
 
-  // Calculate totals
   const totals = affiliates.reduce(
     (acc, aff) => ({
       clicks: acc.clicks + (aff.total_clicks || 0),
@@ -196,6 +217,10 @@ const Affiliates = () => {
           <h1 className="text-3xl font-bold text-[hsl(var(--admin-text))]">Affiliates</h1>
           <p className="text-[hsl(var(--admin-text-muted))]">Manage affiliate partners and track performance</p>
         </div>
+        <Button onClick={() => setCreateOpen(true)} className="gap-2">
+          <Plus className="h-4 w-4" />
+          Add Affiliate
+        </Button>
       </div>
 
       {/* Stats Cards */}
@@ -273,6 +298,9 @@ const Affiliates = () => {
           <div className="flex flex-col items-center justify-center py-12 text-[hsl(var(--admin-text-muted))]">
             <Users className="h-12 w-12 mb-4 opacity-50" />
             <p>No affiliates found</p>
+            <Button variant="outline" className="mt-4" onClick={() => setCreateOpen(true)}>
+              Add your first affiliate
+            </Button>
           </div>
         ) : (
           <Table>
@@ -294,10 +322,10 @@ const Affiliates = () => {
                   <TableCell>
                     <div>
                       <p className="font-medium text-[hsl(var(--admin-text))]">
-                        {affiliate.profiles?.full_name || 'Unknown'}
+                        {affiliate.name || 'Unnamed'}
                       </p>
                       <p className="text-sm text-[hsl(var(--admin-text-muted))]">
-                        {affiliate.profiles?.email || '-'}
+                        {affiliate.email || '-'}
                       </p>
                     </div>
                   </TableCell>
@@ -381,6 +409,60 @@ const Affiliates = () => {
         )}
       </div>
 
+      {/* Create Affiliate Dialog */}
+      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+        <DialogContent className="bg-[hsl(var(--admin-card))] border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text))] max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New Affiliate</DialogTitle>
+            <DialogDescription className="text-[hsl(var(--admin-text-muted))]">
+              Create a new affiliate partner. A unique referral code will be generated automatically.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label className="text-[hsl(var(--admin-text))]">Name *</Label>
+              <Input
+                placeholder="Enter affiliate name"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                className="bg-[hsl(var(--admin-bg))] border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text))]"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[hsl(var(--admin-text))]">Email (optional)</Label>
+              <Input
+                type="email"
+                placeholder="Enter email address"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                className="bg-[hsl(var(--admin-bg))] border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text))]"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[hsl(var(--admin-text))]">Commission Rate (%)</Label>
+              <Input
+                type="number"
+                min="0"
+                max="100"
+                placeholder="10"
+                value={newCommissionRate}
+                onChange={(e) => setNewCommissionRate(e.target.value)}
+                className="bg-[hsl(var(--admin-bg))] border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text))]"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCreateOpen(false)} className="bg-transparent border-[hsl(var(--admin-border))]">
+              Cancel
+            </Button>
+            <Button onClick={createAffiliate} disabled={creating || !newName.trim()}>
+              {creating && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Create Affiliate
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Details Dialog */}
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
         <DialogContent className="bg-[hsl(var(--admin-card))] border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text))] max-w-lg">
@@ -395,11 +477,11 @@ const Affiliates = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-[hsl(var(--admin-text-muted))]">Name</p>
-                  <p className="font-medium">{selectedAffiliate.profiles?.full_name || 'Unknown'}</p>
+                  <p className="font-medium">{selectedAffiliate.name || 'Unnamed'}</p>
                 </div>
                 <div>
                   <p className="text-sm text-[hsl(var(--admin-text-muted))]">Email</p>
-                  <p className="font-medium">{selectedAffiliate.profiles?.email || '-'}</p>
+                  <p className="font-medium">{selectedAffiliate.email || '-'}</p>
                 </div>
                 <div>
                   <p className="text-sm text-[hsl(var(--admin-text-muted))]">Referral Code</p>
@@ -414,23 +496,15 @@ const Affiliates = () => {
                   <p className="font-medium">{selectedAffiliate.commission_rate}%</p>
                 </div>
                 <div>
-                  <p className="text-sm text-[hsl(var(--admin-text-muted))]">Joined</p>
+                  <p className="text-sm text-[hsl(var(--admin-text-muted))]">Created</p>
                   <p className="font-medium">{new Date(selectedAffiliate.created_at).toLocaleDateString()}</p>
                 </div>
               </div>
               <div className="border-t border-[hsl(var(--admin-border))] pt-4">
                 <p className="text-sm text-[hsl(var(--admin-text-muted))] mb-2">Referral URL</p>
                 <div className="flex gap-2">
-                  <Input
-                    readOnly
-                    value={getAffiliateLink(selectedAffiliate)}
-                    className="bg-[hsl(var(--admin-bg))] text-sm"
-                  />
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => copyLink(getAffiliateLink(selectedAffiliate))}
-                  >
+                  <Input readOnly value={getAffiliateLink(selectedAffiliate)} className="bg-[hsl(var(--admin-bg))] text-sm" />
+                  <Button variant="outline" size="icon" onClick={() => copyLink(getAffiliateLink(selectedAffiliate))}>
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
