@@ -148,28 +148,32 @@ const BlogList = () => {
           ) : (
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {filteredPosts.map((post) => (
-                <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow group">
-                  <div className="relative aspect-video overflow-hidden bg-muted">
-                    {post.featured_image ? (
+                <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow group flex flex-col">
+                  {post.featured_image ? (
+                    <div className="relative aspect-video overflow-hidden bg-muted">
                       <img
                         src={post.featured_image}
                         alt={post.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                       />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10">
-                        <Tag className="w-8 h-8 text-muted-foreground" />
-                      </div>
-                    )}
-                    {post.video_url && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-12 h-12 rounded-full bg-primary/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                          <Play className="w-5 h-5 text-primary-foreground ml-0.5" fill="currentColor" />
+                      {post.video_url && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-12 h-12 rounded-full bg-primary/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                            <Play className="w-5 h-5 text-primary-foreground ml-0.5" fill="currentColor" />
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="aspect-video flex items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10">
+                      {post.video_url ? (
+                        <Play className="w-10 h-10 text-primary" />
+                      ) : (
+                        <Tag className="w-10 h-10 text-muted-foreground/50" />
+                      )}
+                    </div>
+                  )}
                   <CardHeader>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                       <Calendar className="h-4 w-4" />

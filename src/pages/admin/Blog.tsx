@@ -562,14 +562,58 @@ const Blog = () => {
 
             {/* Featured Image */}
             <div className="space-y-2">
-              <Label htmlFor="featured_image" className="text-[hsl(var(--admin-text))]">Featured Image URL</Label>
-              <Input
-                id="featured_image"
-                value={formData.featured_image}
-                onChange={(e) => setFormData({ ...formData, featured_image: e.target.value })}
-                placeholder="https://example.com/image.jpg"
-                className="text-[hsl(var(--admin-text))] bg-background"
-              />
+              <Label className="text-[hsl(var(--admin-text))]">Featured Image</Label>
+              {formData.featured_image && (
+                <div className="relative w-full aspect-video rounded-lg overflow-hidden border bg-muted">
+                  <img src={formData.featured_image} alt="Featured" className="w-full h-full object-cover" />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    className="absolute top-2 right-2"
+                    onClick={() => setFormData({ ...formData, featured_image: '' })}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              )}
+              {!formData.featured_image && (
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        if (file.size > 5 * 1024 * 1024) {
+                          toast({ title: 'File too large', description: 'Max 5MB', variant: 'destructive' });
+                          return;
+                        }
+                        const fileExt = file.name.split('.').pop();
+                        const fileName = `blog-featured-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+                        const filePath = `blog-images/${fileName}`;
+                        const { error: uploadError } = await supabase.storage.from('products').upload(filePath, file);
+                        if (uploadError) {
+                          toast({ title: 'Upload failed', description: uploadError.message, variant: 'destructive' });
+                          return;
+                        }
+                        const { data: { publicUrl } } = supabase.storage.from('products').getPublicUrl(filePath);
+                        setFormData({ ...formData, featured_image: publicUrl });
+                        toast({ title: 'Image uploaded' });
+                      }}
+                      className="text-[hsl(var(--admin-text))] bg-background"
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">Or paste a URL:</p>
+                  <Input
+                    value={formData.featured_image}
+                    onChange={(e) => setFormData({ ...formData, featured_image: e.target.value })}
+                    placeholder="https://example.com/image.jpg"
+                    className="text-[hsl(var(--admin-text))] bg-background"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Video URL */}

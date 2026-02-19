@@ -97,6 +97,7 @@ const RichTextEditor = ({
 }: RichTextEditorProps) => {
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
   const [linkUrl, setLinkUrl] = useState('');
+  const [linkNewTab, setLinkNewTab] = useState(true);
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const [youtubeDialogOpen, setYoutubeDialogOpen] = useState(false);
@@ -118,11 +119,10 @@ const RichTextEditor = ({
         types: ['heading', 'paragraph'],
       }),
       Link.configure({
-        openOnClick: true,
+        openOnClick: false,
         autolink: true,
         HTMLAttributes: {
           class: 'text-primary underline cursor-pointer',
-          rel: 'noopener noreferrer',
         },
       }),
       Image.configure({
@@ -183,11 +183,17 @@ const RichTextEditor = ({
 
   const addLink = useCallback(() => {
     if (linkUrl && editor) {
-      editor.chain().focus().extendMarkRange('link').setLink({ href: linkUrl }).run();
+      const attrs = {
+        href: linkUrl,
+        target: linkNewTab ? '_blank' : null,
+        rel: linkNewTab ? 'noopener noreferrer' : null,
+      };
+      editor.chain().focus().extendMarkRange('link').setLink(attrs).run();
       setLinkUrl('');
+      setLinkNewTab(true);
       setLinkDialogOpen(false);
     }
-  }, [editor, linkUrl]);
+  }, [editor, linkUrl, linkNewTab]);
 
   const addImageByUrl = useCallback(() => {
     if (imageUrl && editor) {
@@ -359,8 +365,16 @@ const RichTextEditor = ({
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="link-url">URL</Label>
-              <Input id="link-url" value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} placeholder="https://example.com" />
+              <Input id="link-url" value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} placeholder="https://example.com or /blog/post-slug" />
             </div>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={linkNewTab} onChange={(e) => setLinkNewTab(e.target.checked)} className="rounded" />
+              <span className="text-sm">Open in new tab</span>
+            </label>
+            <p className="text-xs text-muted-foreground">
+              Internal links: /blog/slug, /p/product-slug, /#products<br />
+              External links: https://wa.me/254...
+            </p>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setLinkDialogOpen(false)}>Cancel</Button>
