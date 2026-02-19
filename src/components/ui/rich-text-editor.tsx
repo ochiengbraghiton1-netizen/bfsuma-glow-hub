@@ -121,6 +121,8 @@ const RichTextEditor = ({
       Link.configure({
         openOnClick: false,
         autolink: true,
+        linkOnPaste: true,
+        defaultProtocol: 'https',
         HTMLAttributes: {
           class: 'text-primary underline cursor-pointer',
         },
