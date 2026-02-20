@@ -32,11 +32,10 @@ const Auth = () => {
 
   useEffect(() => {
     if (user && !authLoading) {
-      // Redirect based on role: admins go to dashboard, others to homepage
       if (isAdmin) {
         navigate('/admin');
       } else {
-        navigate('/');
+        navigate('/account');
       }
     }
   }, [user, isAdmin, authLoading, navigate]);
