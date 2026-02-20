@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import { ShoppingCart, Plus, Minus, Trash2, Menu, UserPlus } from "lucide-react";
+import { ShoppingCart, Plus, Minus, Trash2, Menu, UserPlus, LogIn, LogOut, User, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import ThemeToggle from "./ThemeToggle";
 import productGeneric from "@/assets/product-generic.jpg";
 import bfSumaLogo from "@/assets/bf-suma-logo-new.png";
+import { Separator } from "@/components/ui/separator";
 
 const navLinks = [
   { href: "#products", label: "Products", isAnchor: true },
@@ -18,6 +20,7 @@ const navLinks = [
 
 const Header = () => {
   const { items, totalItems, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
+  const { user, signOut, isAdmin } = useAuth();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -35,10 +38,8 @@ const Header = () => {
       e.preventDefault();
       const targetId = href.replace("#", "");
       
-      // If not on homepage, navigate first then scroll
       if (location.pathname !== "/") {
         navigate("/");
-        // Wait for navigation then scroll
         setTimeout(() => {
           document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
         }, 100);
@@ -46,6 +47,12 @@ const Header = () => {
         document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
       }
     }
+  };
+
+  const handleSignOut = async () => {
+    setIsMobileMenuOpen(false);
+    await signOut();
+    navigate('/');
   };
 
   return (
@@ -84,6 +91,25 @@ const Header = () => {
 
         <div className="flex items-center gap-3">
           <ThemeToggle />
+
+          {/* Desktop auth button */}
+          <div className="hidden md:block">
+            {user ? (
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/account">
+                  <User className="h-4 w-4 mr-1" />
+                  Account
+                </Link>
+              </Button>
+            ) : (
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/auth">
+                  <LogIn className="h-4 w-4 mr-1" />
+                  Sign In
+                </Link>
+              </Button>
+            )}
+          </div>
           
           {/* Cart Sheet */}
           <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
@@ -228,6 +254,74 @@ const Header = () => {
                     </Link>
                   )
                 ))}
+
+                <Separator className="my-3" />
+
+                {/* Auth-aware menu items */}
+                {user ? (
+                  <>
+                    <Link
+                      to="/account"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="text-base font-medium text-foreground hover:text-primary hover:bg-muted/50 transition-all duration-300 py-3 px-3 rounded-lg flex items-center gap-3"
+                    >
+                      <User className="h-4 w-4" />
+                      My Account
+                    </Link>
+                    <Link
+                      to="/order-tracking"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="text-base font-medium text-foreground hover:text-primary hover:bg-muted/50 transition-all duration-300 py-3 px-3 rounded-lg flex items-center gap-3"
+                    >
+                      <ShoppingCart className="h-4 w-4" />
+                      My Orders
+                    </Link>
+                    <Link
+                      to="/affiliate"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="text-base font-medium text-foreground hover:text-primary hover:bg-muted/50 transition-all duration-300 py-3 px-3 rounded-lg flex items-center gap-3"
+                    >
+                      <LayoutDashboard className="h-4 w-4" />
+                      Affiliate Dashboard
+                    </Link>
+                    {isAdmin && (
+                      <Link
+                        to="/admin"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="text-base font-medium text-foreground hover:text-primary hover:bg-muted/50 transition-all duration-300 py-3 px-3 rounded-lg flex items-center gap-3"
+                      >
+                        <LayoutDashboard className="h-4 w-4" />
+                        Admin Dashboard
+                      </Link>
+                    )}
+                    <button
+                      onClick={handleSignOut}
+                      className="text-base font-medium text-destructive hover:bg-destructive/10 transition-all duration-300 py-3 px-3 rounded-lg flex items-center gap-3 text-left w-full"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to="/auth"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="text-base font-medium text-foreground hover:text-primary hover:bg-muted/50 transition-all duration-300 py-3 px-3 rounded-lg flex items-center gap-3"
+                    >
+                      <LogIn className="h-4 w-4" />
+                      Sign In
+                    </Link>
+                    <Link
+                      to="/auth"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="text-base font-medium text-foreground hover:text-primary hover:bg-muted/50 transition-all duration-300 py-3 px-3 rounded-lg flex items-center gap-3"
+                    >
+                      <UserPlus className="h-4 w-4" />
+                      Sign Up
+                    </Link>
+                  </>
+                )}
               </nav>
 
               {/* Sticky CTA Button */}
