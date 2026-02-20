@@ -190,6 +190,10 @@ const Products = () => {
     setDialogOpen(false);
     resetForm();
     fetchProducts();
+
+    // Notify IndexNow about product changes
+    const { notifyIndexNow } = await import('@/lib/indexnow');
+    notifyIndexNow(['/', '/category'], editingProduct ? 'product_updated' : 'product_created');
     // Invalidate React Query cache to ensure frontend + admin counts stay in sync
     queryClient.invalidateQueries({ queryKey: ['products'] });
     queryClient.invalidateQueries({ queryKey: ['categories'] });

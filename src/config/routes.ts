@@ -83,6 +83,14 @@ export const routes: RouteConfig[] = [
     includeInSitemap: false,
     title: 'Admin Dashboard - BF SUMA ROYAL',
   },
+  {
+    path: '/blog',
+    includeInSitemap: true,
+    changefreq: 'daily',
+    priority: 0.9,
+    title: 'Blog - BF SUMA ROYAL',
+    description: 'Read the latest health tips, wellness advice, and product insights from BF SUMA ROYAL.',
+  },
 ];
 
 /**

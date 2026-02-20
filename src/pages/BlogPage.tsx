@@ -133,9 +133,11 @@ const BlogList = () => {
                   key={category.id}
                   variant={selectedCategory === category.slug ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setSelectedCategory(category.slug)}
+                  asChild
                 >
-                  {category.name}
+                  <Link to={`/blog/category/${category.slug}`}>
+                    {category.name}
+                  </Link>
                 </Button>
               ))}
             </div>
