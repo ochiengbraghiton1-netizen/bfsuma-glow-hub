@@ -33,6 +33,7 @@ import Blog from "./pages/admin/Blog";
 import AffiliateDashboard from "./pages/affiliate/Dashboard";
 import ProductAffiliate from "./pages/ProductAffiliate";
 import BlogPage from "./pages/BlogPage";
+import BlogCategoryPage from "./pages/BlogCategoryPage";
 import CategoryPage from "./pages/CategoryPage";
 
 // Component to initialize referral tracking
@@ -85,6 +86,7 @@ const App = () => (
                 </Route>
                 <Route path="/affiliate" element={<AffiliateDashboard />} />
                 <Route path="/blog" element={<BlogPage />} />
+                <Route path="/blog/category/:slug" element={<BlogCategoryPage />} />
                 <Route path="/blog/:slug" element={<BlogPage />} />
                 <Route path="/category" element={<CategoryPage />} />
                 <Route path="/category/:slug" element={<CategoryPage />} />

@@ -36,6 +36,7 @@ import { format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
+import { notifyIndexNow } from '@/lib/indexnow';
 
 interface BlogCategory {
   id: string;
@@ -261,6 +262,12 @@ const Blog = () => {
       toast({ title: 'Success', description: `Blog post ${editingPost ? 'updated' : 'created'} successfully` });
       setDialogOpen(false);
       fetchPosts();
+
+      // Notify IndexNow
+      if (formData.status === 'published') {
+        const blogUrl = `/blog/${formData.slug.trim()}`;
+        notifyIndexNow([blogUrl, '/blog'], editingPost ? 'blog_updated' : 'blog_published');
+      }
     }
     setSaving(false);
   };

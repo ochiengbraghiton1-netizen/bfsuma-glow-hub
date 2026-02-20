@@ -2,3 +2,6 @@ project_id = "sboaeutgckyiwunfmxqp"
 
 [functions.sitemap]
 verify_jwt = false
+
+[functions.indexnow]
+verify_jwt = false
