@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useToast } from '@/hooks/use-toast';
 import { Leaf, Loader2, Users, Chrome } from 'lucide-react';
 import { lovable } from '@/integrations/lovable/index';
+import { supabase } from '@/integrations/supabase/client';
 import { Separator } from '@/components/ui/separator';
 import { z } from 'zod';
 
@@ -132,21 +133,32 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      const { error } = await lovable.auth.signInWithOAuth('google', {
-        redirect_uri: `${window.location.origin}/auth/callback`,
-      });
-      
-      if (error) {
-        toast({
-          title: 'Google sign-in failed',
-          description: error.message,
-          variant: 'destructive',
+      const isCustomDomain = !window.location.hostname.includes('lovable.app') && !window.location.hostname.includes('lovableproject.com');
+
+      if (isCustomDomain) {
+        // Bypass auth-bridge for custom domains
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
+            skipBrowserRedirect: true,
+          },
         });
+        if (error) throw error;
+        if (data?.url) {
+          window.location.href = data.url;
+          return;
+        }
+      } else {
+        const { error } = await lovable.auth.signInWithOAuth('google', {
+          redirect_uri: `${window.location.origin}/auth/callback`,
+        });
+        if (error) throw error;
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
-        title: 'Error',
-        description: 'An unexpected error occurred with Google sign-in.',
+        title: 'Google sign-in failed',
+        description: error?.message || 'An unexpected error occurred with Google sign-in.',
         variant: 'destructive',
       });
     } finally {
