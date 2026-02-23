@@ -33,6 +33,7 @@ import Admins from "./pages/admin/Admins";
 import BusinessRegistrations from "./pages/admin/BusinessRegistrations";
 import Blog from "./pages/admin/Blog";
 import AffiliateDashboard from "./pages/affiliate/Dashboard";
+import DistributorDashboard from "./pages/distributor/Dashboard";
 import ProductAffiliate from "./pages/ProductAffiliate";
 import BlogPage from "./pages/BlogPage";
 import BlogCategoryPage from "./pages/BlogCategoryPage";
@@ -89,6 +90,7 @@ const App = () => (
                   <Route path="business-registrations" element={<BusinessRegistrations />} />
                 </Route>
                 <Route path="/affiliate" element={<AffiliateDashboard />} />
+                <Route path="/distributor/dashboard" element={<DistributorDashboard />} />
                 <Route path="/blog" element={<BlogPage />} />
                 <Route path="/blog/category/:slug" element={<BlogCategoryPage />} />
                 <Route path="/blog/:slug" element={<BlogPage />} />

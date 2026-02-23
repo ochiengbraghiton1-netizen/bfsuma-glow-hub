@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
-type UserRole = 'super_admin' | 'admin' | 'editor' | 'team_member' | 'viewer' | null;
+type UserRole = 'super_admin' | 'admin' | 'editor' | 'team_member' | 'distributor' | 'viewer' | null;
 
 interface AuthContextType {
   user: User | null;
@@ -11,6 +11,7 @@ interface AuthContextType {
   isAdmin: boolean;
   isSuperAdmin: boolean;
   isTeamMember: boolean;
+  isDistributor: boolean;
   userRole: UserRole;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string, fullName: string, referralCode?: string) => Promise<{ error: Error | null }>;
@@ -26,6 +27,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isTeamMember, setIsTeamMember] = useState(false);
+  const [isDistributor, setIsDistributor] = useState(false);
   const [userRole, setUserRole] = useState<UserRole>(null);
 
   const checkUserRoles = async (userId: string) => {
@@ -41,32 +43,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsSuperAdmin(true);
         setIsAdmin(true);
         setIsTeamMember(false);
+        setIsDistributor(false);
         setUserRole('super_admin');
       } else if (roles.includes('admin')) {
         setIsSuperAdmin(false);
         setIsAdmin(true);
         setIsTeamMember(false);
+        setIsDistributor(false);
         setUserRole('admin');
       } else if (roles.includes('editor')) {
         setIsSuperAdmin(false);
         setIsAdmin(true);
         setIsTeamMember(false);
+        setIsDistributor(false);
         setUserRole('editor');
+      } else if (roles.includes('distributor')) {
+        setIsSuperAdmin(false);
+        setIsAdmin(false);
+        setIsTeamMember(false);
+        setIsDistributor(true);
+        setUserRole('distributor');
       } else if (roles.includes('team_member')) {
         setIsSuperAdmin(false);
         setIsAdmin(false);
         setIsTeamMember(true);
+        setIsDistributor(false);
         setUserRole('team_member');
       } else {
         setIsSuperAdmin(false);
         setIsAdmin(false);
         setIsTeamMember(false);
+        setIsDistributor(false);
         setUserRole('viewer');
       }
     } else {
       setIsSuperAdmin(false);
       setIsAdmin(false);
       setIsTeamMember(false);
+      setIsDistributor(false);
       setUserRole(null);
     }
   };
@@ -85,6 +99,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setIsSuperAdmin(false);
           setIsAdmin(false);
           setIsTeamMember(false);
+          setIsDistributor(false);
           setUserRole(null);
         }
         setLoading(false);
@@ -137,6 +152,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isAdmin, 
       isSuperAdmin, 
       isTeamMember, 
+      isDistributor,
       userRole,
       signIn, 
       signUp, 

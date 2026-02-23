@@ -48,6 +48,7 @@ const Products = () => {
     low_stock_threshold: '10',
     track_inventory: true,
     category_ids: [] as string[],
+    pv_value: '0',
   });
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
@@ -101,6 +102,7 @@ const Products = () => {
       low_stock_threshold: '10',
       track_inventory: true,
       category_ids: [],
+      pv_value: '0',
     });
     setEditingProduct(null);
   };
@@ -118,6 +120,7 @@ const Products = () => {
       low_stock_threshold: product.low_stock_threshold.toString(),
       track_inventory: product.track_inventory,
       category_ids: product.category_ids || [],
+      pv_value: ((product as any).pv_value || 0).toString(),
     });
     setDialogOpen(true);
   };
@@ -145,6 +148,7 @@ const Products = () => {
       stock_quantity: parseInt(formData.stock_quantity) || 0,
       low_stock_threshold: parseInt(formData.low_stock_threshold) || 10,
       track_inventory: formData.track_inventory,
+      pv_value: parseFloat(formData.pv_value) || 0,
     };
 
     let productId: string | null = null;
@@ -258,6 +262,17 @@ const Products = () => {
                   value={formData.price}
                   onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                   required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="pv_value">PV (Point Value)</Label>
+                <Input
+                  id="pv_value"
+                  type="number"
+                  step="0.01"
+                  value={formData.pv_value}
+                  onChange={(e) => setFormData({ ...formData, pv_value: e.target.value })}
+                  placeholder="0"
                 />
               </div>
               <div className="space-y-2">

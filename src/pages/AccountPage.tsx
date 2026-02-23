@@ -89,11 +89,11 @@ const AccountPage = () => {
 
             <Card className="hover:shadow-md transition-shadow">
               <CardContent className="pt-6">
-                <Link to="/affiliate" className="flex items-center gap-3 text-foreground hover:text-primary transition-colors">
+                <Link to="/distributor/dashboard" className="flex items-center gap-3 text-foreground hover:text-primary transition-colors">
                   <Link2 className="h-5 w-5 text-primary" />
                   <div>
-                    <p className="font-medium">Affiliate Dashboard</p>
-                    <p className="text-sm text-muted-foreground">Manage referrals & earnings</p>
+                    <p className="font-medium">Distributor Dashboard</p>
+                    <p className="text-sm text-muted-foreground">Track your PV & links</p>
                   </div>
                 </Link>
               </CardContent>

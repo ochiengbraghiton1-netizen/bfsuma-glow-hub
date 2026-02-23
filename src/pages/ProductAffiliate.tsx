@@ -28,6 +28,7 @@ interface ProductData {
   stock_quantity: number;
   low_stock_threshold: number;
   track_inventory: boolean;
+  pv_value: number;
 }
 
 const ProductAffiliate = () => {
@@ -105,7 +106,7 @@ const ProductAffiliate = () => {
         // 4) Fetch full product
         const { data: prod, error: prodErr } = await supabase
           .from("products")
-          .select("id, name, price, benefit, description, image_url, stock_quantity, low_stock_threshold, track_inventory")
+          .select("id, name, price, benefit, description, image_url, stock_quantity, low_stock_threshold, track_inventory, pv_value")
           .eq("id", productId)
           .eq("is_active", true)
           .maybeSingle();
@@ -241,9 +242,16 @@ const ProductAffiliate = () => {
                 )}
               </div>
 
-              <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                {formattedPrice}
-              </p>
+              <div className="flex items-center gap-3">
+                <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  {formattedPrice}
+                </p>
+                {product.pv_value > 0 && (
+                  <span className="text-sm font-semibold bg-primary/10 text-primary px-3 py-1 rounded-full">
+                    {product.pv_value} PV
+                  </span>
+                )}
+              </div>
 
               {product.benefit && (
                 <div>
