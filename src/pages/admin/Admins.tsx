@@ -31,7 +31,7 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 
-type AppRole = 'admin' | 'editor' | 'viewer';
+type AppRole = 'admin' | 'editor' | 'viewer' | 'distributor';
 
 interface UserRole {
   id: string;
@@ -51,12 +51,14 @@ const roleColors: Record<AppRole, string> = {
   admin: 'bg-red-500/20 text-red-400 border-red-500/30',
   editor: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
   viewer: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
+  distributor: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
 };
 
 const roleIcons: Record<AppRole, typeof Shield> = {
   admin: Shield,
   editor: Edit,
   viewer: Eye,
+  distributor: User,
 };
 
 const Admins = () => {
@@ -280,6 +282,12 @@ const Admins = () => {
                       <div className="flex items-center gap-2">
                         <Eye className="h-4 w-4 text-gray-400" />
                         Viewer - Read only
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="distributor" className="text-[hsl(var(--admin-text))]">
+                      <div className="flex items-center gap-2">
+                        <User className="h-4 w-4 text-emerald-400" />
+                        Distributor - PV tracking
                       </div>
                     </SelectItem>
                   </SelectContent>

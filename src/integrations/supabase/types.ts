@@ -416,6 +416,51 @@ export type Database = {
         }
         Relationships: []
       }
+      distributor_pv_logs: {
+        Row: {
+          created_at: string
+          distributor_id: string
+          id: string
+          order_id: string | null
+          product_id: string | null
+          pv_value: number
+          referral_type: string
+        }
+        Insert: {
+          created_at?: string
+          distributor_id: string
+          id?: string
+          order_id?: string | null
+          product_id?: string | null
+          pv_value?: number
+          referral_type?: string
+        }
+        Update: {
+          created_at?: string
+          distributor_id?: string
+          id?: string
+          order_id?: string | null
+          product_id?: string | null
+          pv_value?: number
+          referral_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "distributor_pv_logs_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "distributor_pv_logs_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_items: {
         Row: {
           created_at: string
@@ -699,6 +744,7 @@ export type Database = {
           low_stock_threshold: number
           name: string
           price: number
+          pv_value: number
           sku: string | null
           stock_quantity: number
           track_inventory: boolean
@@ -715,6 +761,7 @@ export type Database = {
           low_stock_threshold?: number
           name: string
           price: number
+          pv_value?: number
           sku?: string | null
           stock_quantity?: number
           track_inventory?: boolean
@@ -731,6 +778,7 @@ export type Database = {
           low_stock_threshold?: number
           name?: string
           price?: number
+          pv_value?: number
           sku?: string | null
           stock_quantity?: number
           track_inventory?: boolean
@@ -1026,6 +1074,13 @@ export type Database = {
           product_count: number
         }[]
       }
+      get_distributor_pv_summary: {
+        Args: { p_distributor_id: string }
+        Returns: {
+          total_conversions: number
+          total_pv: number
+        }[]
+      }
       get_product_ratings: {
         Args: { p_product_id: string }
         Returns: {
@@ -1059,9 +1114,19 @@ export type Database = {
         }
         Returns: undefined
       }
+      record_distributor_pv: {
+        Args: {
+          p_distributor_user_id: string
+          p_order_id?: string
+          p_product_id: string
+          p_pv_value: number
+          p_referral_type?: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
-      app_role: "admin" | "editor" | "viewer"
+      app_role: "admin" | "editor" | "viewer" | "distributor"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1189,7 +1254,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "editor", "viewer"],
+      app_role: ["admin", "editor", "viewer", "distributor"],
     },
   },
 } as const

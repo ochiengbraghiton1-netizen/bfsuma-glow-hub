@@ -20,7 +20,7 @@ const navLinks = [
 
 const Header = () => {
   const { items, totalItems, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
-  const { user, signOut, isAdmin } = useAuth();
+  const { user, signOut, isAdmin, isDistributor } = useAuth();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -276,14 +276,16 @@ const Header = () => {
                       <ShoppingCart className="h-4 w-4" />
                       My Orders
                     </Link>
-                    <Link
-                      to="/affiliate"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="text-base font-medium text-foreground hover:text-primary hover:bg-muted/50 transition-all duration-300 py-3 px-3 rounded-lg flex items-center gap-3"
-                    >
-                      <LayoutDashboard className="h-4 w-4" />
-                      Affiliate Dashboard
-                    </Link>
+                    {isDistributor && (
+                      <Link
+                        to="/distributor/dashboard"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="text-base font-medium text-foreground hover:text-primary hover:bg-muted/50 transition-all duration-300 py-3 px-3 rounded-lg flex items-center gap-3"
+                      >
+                        <LayoutDashboard className="h-4 w-4" />
+                        Distributor Dashboard
+                      </Link>
+                    )}
                     {isAdmin && (
                       <Link
                         to="/admin"

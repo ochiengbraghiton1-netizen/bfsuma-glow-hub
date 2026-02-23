@@ -13,8 +13,8 @@ const JoinEarn = () => {
   const benefits = [
     {
       icon: TrendingUp,
-      title: "Earn Income",
-      description: "Build a profitable business with generous commissions"
+      title: "Earn PV",
+      description: "Accumulate Point Value (PV) with every product sale"
     },
     {
       icon: Users,
@@ -51,7 +51,7 @@ const JoinEarn = () => {
           
           <p className="text-xl mb-12 text-white/90 leading-relaxed animate-fade-in">
             Partner with BF SUMA Kenya as an independent distributor. 
-            Sell health supplements, earn points, bonuses, and commissions — 
+            Sell health supplements, earn PV (Point Value), bonuses, and rewards — 
             while promoting wellness and changing lives.
           </p>
 

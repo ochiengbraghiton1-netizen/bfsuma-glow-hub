@@ -22,7 +22,7 @@ const Auth = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; fullName?: string }>({});
 
-  const { user, signIn, signUp, isAdmin, loading: authLoading } = useAuth();
+  const { user, signIn, signUp, isAdmin, isDistributor, loading: authLoading } = useAuth();
   const { referralCode, clearReferral } = useReferral();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -31,11 +31,13 @@ const Auth = () => {
     if (user && !authLoading) {
       if (isAdmin) {
         navigate('/admin');
+      } else if (isDistributor) {
+        navigate('/distributor/dashboard');
       } else {
         navigate('/account');
       }
     }
-  }, [user, isAdmin, authLoading, navigate]);
+  }, [user, isAdmin, isDistributor, authLoading, navigate]);
 
   const validateForm = () => {
     const newErrors: { email?: string; password?: string; fullName?: string } = {};
