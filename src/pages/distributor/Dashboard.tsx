@@ -277,10 +277,36 @@ const DistributorDashboard = () => {
     navigate('/');
   };
 
-  if (authLoading || loading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-3 text-muted-foreground">Checking access...</span>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // useEffect will redirect to /auth
+  }
+
+  if (!isDistributor) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4 p-8">
+          <h2 className="text-xl font-bold">Access Denied</h2>
+          <p className="text-muted-foreground">You need a distributor role to access this dashboard.</p>
+          <Button onClick={() => navigate('/account')}>Go to Account</Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-3 text-muted-foreground">Loading dashboard...</span>
       </div>
     );
   }

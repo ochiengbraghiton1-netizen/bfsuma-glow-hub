@@ -77,7 +77,7 @@ const AccountPage = () => {
           <div className="grid gap-4 sm:grid-cols-2">
             <Card className="hover:shadow-md transition-shadow">
               <CardContent className="pt-6">
-                <Link to="/order-tracking" className="flex items-center gap-3 text-foreground hover:text-primary transition-colors">
+                <Link to="/account/orders" className="flex items-center gap-3 text-foreground hover:text-primary transition-colors">
                   <ShoppingBag className="h-5 w-5 text-primary" />
                   <div>
                     <p className="font-medium">My Orders</p>
