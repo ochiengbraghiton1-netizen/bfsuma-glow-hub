@@ -52,21 +52,29 @@ interface Order {
 
 const statusOptions = [
   { value: 'all', label: 'All Orders' },
-  { value: 'pending', label: 'Pending' },
+  { value: 'pending_whatsapp', label: 'Pending WhatsApp' },
+  { value: 'whatsapp_initiated', label: 'WhatsApp Initiated' },
   { value: 'confirmed', label: 'Confirmed' },
-  { value: 'processing', label: 'Processing' },
-  { value: 'shipped', label: 'Shipped' },
-  { value: 'delivered', label: 'Delivered' },
+  { value: 'completed', label: 'Completed' },
   { value: 'cancelled', label: 'Cancelled' },
 ];
 
 const statusColors: Record<string, string> = {
   pending: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
-  confirmed: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
-  processing: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
-  shipped: 'bg-orange-500/10 text-orange-600 border-orange-500/20',
-  delivered: 'bg-green-500/10 text-green-600 border-green-500/20',
+  pending_whatsapp: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
+  whatsapp_initiated: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+  confirmed: 'bg-green-500/10 text-green-600 border-green-500/20',
+  completed: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
   cancelled: 'bg-red-500/10 text-red-600 border-red-500/20',
+};
+
+const statusLabels: Record<string, string> = {
+  pending: 'Pending',
+  pending_whatsapp: 'Pending WhatsApp',
+  whatsapp_initiated: 'WhatsApp Initiated',
+  confirmed: 'Confirmed',
+  completed: 'Completed',
+  cancelled: 'Cancelled',
 };
 
 const Orders = () => {
@@ -207,7 +215,7 @@ const Orders = () => {
                   </TableCell>
                   <TableCell>
                     <Badge className={statusColors[order.status] || ''} variant="outline">
-                      {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                      {statusLabels[order.status] || order.status}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
