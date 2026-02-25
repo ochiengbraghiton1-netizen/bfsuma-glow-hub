@@ -204,7 +204,7 @@ Sent from BF SUMA ROYAL Website`;
           subtotal: subtotal,
           discount_amount: discount,
           total_amount: finalTotal,
-          status: 'pending',
+          status: 'pending_whatsapp',
         });
 
       if (orderError) throw orderError;
@@ -262,19 +262,10 @@ Sent from BF SUMA ROYAL Website`;
         }
       }
 
-      setOrderId(newOrderId);
-      
-      // Open WhatsApp with the order details
-      const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${generateWhatsAppMessage(newOrderId)}`;
-      window.open(whatsappUrl, '_blank');
-
-      setOrderComplete(true);
       clearCart();
 
-      toast({
-        title: 'Order Sent!',
-        description: 'Your order has been sent via WhatsApp. We will confirm shortly.',
-      });
+      // Redirect to order confirmation page instead of WhatsApp
+      navigate(`/order-confirmation/${newOrderId}`);
     } catch (error) {
       console.error('Order error:', error);
       toast({
