@@ -342,12 +342,36 @@ const BlogPostView = ({ slug }: { slug: string }) => {
             </Link>
           </Button>
 
-          {/* Featured Image (non-UGC only, UGC leads with video) */}
-          {!isUGC && post.featured_image && (
-            <div className="aspect-video overflow-hidden rounded-lg mb-8">
-              <img src={post.featured_image} alt={post.title} className="w-full h-full object-cover" />
-            </div>
-          )}
+          {/* Video or Featured Image (non-UGC only, UGC leads with video via BlogPostUGC) */}
+          {!isUGC && (() => {
+            if (post.video_url) {
+              const ytMatch = post.video_url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+              if (ytMatch) {
+                const embedUrl = `https://www.youtube.com/embed/${ytMatch[1]}`;
+                return (
+                  <div className="rounded-2xl overflow-hidden bg-black shadow-xl mb-8">
+                    <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                      <iframe
+                        src={embedUrl}
+                        className="absolute inset-0 w-full h-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        title={post.title}
+                      />
+                    </div>
+                  </div>
+                );
+              }
+            }
+            if (post.featured_image) {
+              return (
+                <div className="aspect-video overflow-hidden rounded-lg mb-8">
+                  <img src={post.featured_image} alt={post.title} className="w-full h-full object-cover" />
+                </div>
+              );
+            }
+            return null;
+          })()}
 
           <header className="mb-8">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">{post.title}</h1>
