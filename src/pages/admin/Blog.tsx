@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Plus, Pencil, Trash2, Eye, EyeOff, ExternalLink, Calendar as CalendarIcon, Tag } from 'lucide-react';
+import { Loader2, Plus, Pencil, Trash2, Eye, EyeOff, ExternalLink, Calendar as CalendarIcon, Tag, Copy } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -451,15 +451,29 @@ const Blog = () => {
                           <Pencil className="h-4 w-4" />
                         </Button>
                         {post.status === 'published' && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            asChild
-                          >
-                            <a href={`/blog/${post.slug}`} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="h-4 w-4" />
-                            </a>
-                          </Button>
+                          <>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                const url = `https://bfsumaroyal.com/blog/${post.slug}`;
+                                navigator.clipboard.writeText(url);
+                                toast({ title: 'Copied!', description: url });
+                              }}
+                              title="Copy link"
+                            >
+                              <Copy className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              asChild
+                            >
+                              <a href={`/blog/${post.slug}`} target="_blank" rel="noopener noreferrer">
+                                <ExternalLink className="h-4 w-4" />
+                              </a>
+                            </Button>
+                          </>
                         )}
                         <Button
                           variant="ghost"
