@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { CartProvider } from "@/contexts/CartContext";
 import { useReferral } from "@/hooks/use-referral";
+import GTMPageView from "@/components/GTMPageView";
 import Index from "./pages/Index";
 import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
@@ -60,6 +61,7 @@ const App = () => (
             <Sonner />
             <BrowserRouter>
               <ReferralTracker />
+              <GTMPageView />
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/about" element={<AboutPage />} />
