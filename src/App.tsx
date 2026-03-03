@@ -42,6 +42,8 @@ import ProductAffiliate from "./pages/ProductAffiliate";
 import BlogPage from "./pages/BlogPage";
 import BlogCategoryPage from "./pages/BlogCategoryPage";
 import CategoryPage from "./pages/CategoryPage";
+import ContactPage from "./pages/ContactPage";
+import FAQPage from "./pages/FAQPage";
 
 // Component to initialize referral tracking
 const ReferralTracker = () => {
@@ -105,6 +107,8 @@ const App = () => (
                 <Route path="/category" element={<CategoryPage />} />
                 <Route path="/category/:slug" element={<CategoryPage />} />
                 <Route path="/p/:slug" element={<ProductAffiliate />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/faq" element={<FAQPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
