@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, ShoppingBag, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import heroBg from "@/assets/wellness-hero.jpg";
 
 const Hero = () => {
@@ -70,23 +71,38 @@ const Hero = () => {
           BF SUMA Royal offers trusted wellness products designed to support your health journey. Whether you're looking for quality supplements or a flexible way to earn, you've come to the right place.
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Button 
-            onClick={scrollToProducts}
-            variant="premium" 
-            size="xl"
-            className="group"
+        <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
           >
-            Buy Products
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </Button>
-          <Button 
-            onClick={goToJoinBusiness}
-            variant="glass" 
-            size="xl"
+            <Button 
+              onClick={scrollToProducts}
+              variant="premium" 
+              size="xl"
+              className="group h-16 px-12 text-xl font-bold shadow-[0_0_40px_hsl(43_96%_56%/0.5)] hover:shadow-[0_0_60px_hsl(43_96%_56%/0.7)] transition-all duration-300"
+            >
+              <ShoppingBag className="w-6 h-6" />
+              Buy Products
+              <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.5 }}
           >
-            Join the Business
-          </Button>
+            <Button 
+              onClick={goToJoinBusiness}
+              variant="glass" 
+              size="xl"
+              className="h-16 px-12 text-xl font-bold border-2 border-accent/40 hover:border-accent hover:shadow-[0_0_30px_hsl(43_96%_56%/0.3)] transition-all duration-300"
+            >
+              <Users className="w-6 h-6" />
+              Join the Business
+            </Button>
+          </motion.div>
         </div>
       </div>
 
