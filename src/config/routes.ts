@@ -91,6 +91,22 @@ export const routes: RouteConfig[] = [
     title: 'Blog - BF SUMA ROYAL',
     description: 'Read the latest health tips, wellness advice, and product insights from BF SUMA ROYAL.',
   },
+  {
+    path: '/contact',
+    includeInSitemap: true,
+    changefreq: 'monthly',
+    priority: 0.7,
+    title: 'Contact Us - BF SUMA ROYAL',
+    description: 'Get in touch with BF SUMA ROYAL. Contact us for product inquiries, business opportunities, or support.',
+  },
+  {
+    path: '/faq',
+    includeInSitemap: true,
+    changefreq: 'monthly',
+    priority: 0.7,
+    title: 'FAQ - BF SUMA ROYAL',
+    description: 'Frequently asked questions about BF SUMA ROYAL products, business opportunity, and distributor program.',
+  },
 ];
 
 /**
