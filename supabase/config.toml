@@ -1,7 +1,9 @@
 project_id = "sboaeutgckyiwunfmxqp"
 
-[functions.sitemap]
-verify_jwt = false
-
-[functions.indexnow]
-verify_jwt = false
+[functions]
+  [functions.auth-email-hook]
+    verify_jwt = false
+  [functions.indexnow]
+    verify_jwt = false
+  [functions.sitemap]
+    verify_jwt = false
