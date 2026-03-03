@@ -13,6 +13,8 @@ import Chatbot from "@/components/Chatbot";
 import Footer from "@/components/Footer";
 import StructuredData from "@/components/StructuredData";
 import CommunityStories from "@/components/blog/CommunityStories";
+import NewsletterSignup from "@/components/NewsletterSignup";
+import ExitIntentPopup from "@/components/ExitIntentPopup";
 import { useProducts } from "@/hooks/use-products";
 import { useProductRatings } from "@/hooks/use-product-ratings";
 
@@ -68,7 +70,9 @@ const Index = () => {
         <JoinEarn />
         <Community />
         <Contact />
+        <NewsletterSignup />
         <Chatbot />
+        <ExitIntentPopup />
       </main>
       <Footer />
     </div>
