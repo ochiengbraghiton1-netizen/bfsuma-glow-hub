@@ -14,8 +14,8 @@ const navLinks = [
   { href: "#products", label: "Products", isAnchor: true },
   { href: "/about", label: "About", isAnchor: false },
   { href: "/blog", label: "Blog", isAnchor: false },
-  { href: "#faq", label: "FAQ", isAnchor: true },
-  { href: "#contact", label: "Contact", isAnchor: true },
+  { href: "/faq", label: "FAQ", isAnchor: false },
+  { href: "/contact", label: "Contact", isAnchor: false },
 ];
 
 const Header = () => {

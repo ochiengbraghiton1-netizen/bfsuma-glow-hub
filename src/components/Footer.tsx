@@ -36,12 +36,12 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#faq" onClick={(e) => { e.preventDefault(); document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" }); }} className="text-white/80 hover:text-accent transition-colors cursor-pointer">
+                <a href="/faq" className="text-white/80 hover:text-accent transition-colors">
                   FAQ
                 </a>
               </li>
               <li>
-                <a href="#contact" onClick={(e) => { e.preventDefault(); document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }); }} className="text-white/80 hover:text-accent transition-colors cursor-pointer">
+                <a href="/contact" className="text-white/80 hover:text-accent transition-colors">
                   Contact
                 </a>
               </li>
