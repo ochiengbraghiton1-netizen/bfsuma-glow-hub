@@ -151,6 +151,137 @@ Sent from BF SUMA ROYAL Website`;
     return encodeURIComponent(message);
   };
 
+  const saveOrderToDb = async (status: string) => {
+    const newOrderId = crypto.randomUUID();
+
+    const { error: orderError } = await supabase
+      .from('orders')
+      .insert({
+        id: newOrderId,
+        customer_name: formData.customerName,
+        customer_email: formData.customerEmail || null,
+        customer_phone: formData.customerPhone,
+        shipping_address: formData.shippingAddress,
+        notes: formData.notes || null,
+        promotion_code: promoApplied?.code || null,
+        subtotal: subtotal,
+        discount_amount: discount,
+        total_amount: finalTotal,
+        status,
+      });
+
+    if (orderError) throw orderError;
+
+    const orderItems = items.map(item => ({
+      order_id: newOrderId,
+      product_id: item.id,
+      product_name: item.name,
+      product_price: item.price,
+      quantity: item.quantity,
+      subtotal: item.price * item.quantity,
+    }));
+
+    const { error: itemsError } = await supabase
+      .from('order_items')
+      .insert(orderItems);
+
+    if (itemsError) throw itemsError;
+
+    // Update promo usage count
+    if (promoApplied) {
+      const { data: promo } = await supabase
+        .from('promotions')
+        .select('usage_count')
+        .eq('code', promoApplied.code)
+        .maybeSingle();
+      
+      if (promo) {
+        await supabase
+          .from('promotions')
+          .update({ usage_count: (promo.usage_count || 0) + 1 })
+          .eq('code', promoApplied.code);
+      }
+    }
+
+    // Update product stock quantities
+    for (const item of items) {
+      await supabase.rpc('decrement_stock', { p_product_id: item.id, p_quantity: item.quantity });
+    }
+
+    // Track affiliate conversion
+    const storedRef = localStorage.getItem('bf_referral_code');
+    const refExpiry = localStorage.getItem('bf_referral_expiry');
+    if (storedRef && (!refExpiry || new Date(refExpiry) > new Date())) {
+      try {
+        await supabase.rpc('record_affiliate_conversion', {
+          p_referral_code: storedRef,
+          p_order_id: newOrderId,
+          p_order_total: finalTotal,
+        });
+      } catch (err) {
+        console.error('Affiliate conversion tracking error:', err);
+      }
+    }
+
+    return newOrderId;
+  };
+
+  const handlePayPalApprove = async (paypalOrderId: string, details: any) => {
+    // Validate form first
+    const result = checkoutSchema.safeParse(formData);
+    if (!result.success) {
+      const fieldErrors: Partial<Record<keyof CheckoutFormData, string>> = {};
+      result.error.errors.forEach(err => {
+        if (err.path[0]) {
+          fieldErrors[err.path[0] as keyof CheckoutFormData] = err.message;
+        }
+      });
+      setErrors(fieldErrors);
+      toast({
+        title: 'Please fill in required fields',
+        description: 'Complete the form before paying.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (isBot(honeypot)) return;
+
+    setIsSubmitting(true);
+    try {
+      const newOrderId = await saveOrderToDb('paid');
+
+      // Update order with PayPal transaction ID in notes
+      await supabase
+        .from('orders')
+        .update({ 
+          notes: `${formData.notes || ''}\n[PayPal Transaction: ${details.id || paypalOrderId}]`.trim()
+        })
+        .eq('id', newOrderId);
+
+      clearCart();
+      navigate(`/order-confirmation/${newOrderId}`);
+    } catch (error) {
+      console.error('PayPal order save error:', error);
+      toast({
+        title: 'Order Failed',
+        description: 'Payment was received but order save failed. Please contact support.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handlePayPalError = (error: any) => {
+    console.error('PayPal error:', error);
+    toast({
+      title: 'Payment Failed',
+      description: 'There was an error with PayPal. Please try again or use WhatsApp checkout.',
+      variant: 'destructive',
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
