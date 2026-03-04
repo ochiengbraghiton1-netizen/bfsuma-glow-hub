@@ -38,10 +38,14 @@ interface Order {
 
 const statusConfig: Record<string, { icon: typeof Package; color: string; label: string }> = {
   pending: { icon: Clock, color: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20', label: 'Pending' },
+  pending_whatsapp: { icon: Clock, color: 'bg-orange-500/10 text-orange-500 border-orange-500/20', label: 'Pending (WhatsApp)' },
+  whatsapp_initiated: { icon: Package, color: 'bg-amber-500/10 text-amber-500 border-amber-500/20', label: 'WhatsApp Sent' },
+  paid: { icon: CheckCircle, color: 'bg-purple-500/10 text-purple-600 border-purple-500/20', label: 'Paid (PayPal)' },
   confirmed: { icon: Package, color: 'bg-blue-500/10 text-blue-500 border-blue-500/20', label: 'Confirmed' },
   processing: { icon: Package, color: 'bg-purple-500/10 text-purple-500 border-purple-500/20', label: 'Processing' },
   shipped: { icon: Truck, color: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20', label: 'Shipped' },
   delivered: { icon: CheckCircle, color: 'bg-green-500/10 text-green-500 border-green-500/20', label: 'Delivered' },
+  completed: { icon: CheckCircle, color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20', label: 'Completed' },
   cancelled: { icon: XCircle, color: 'bg-red-500/10 text-red-500 border-red-500/20', label: 'Cancelled' },
 };
 
