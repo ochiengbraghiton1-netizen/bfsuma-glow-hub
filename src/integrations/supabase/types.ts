@@ -543,6 +543,9 @@ export type Database = {
           discount_amount: number
           id: string
           notes: string | null
+          payment_method: string
+          payment_status: string
+          paypal_transaction_id: string | null
           promotion_code: string | null
           shipping_address: string | null
           status: string
@@ -560,6 +563,9 @@ export type Database = {
           discount_amount?: number
           id?: string
           notes?: string | null
+          payment_method?: string
+          payment_status?: string
+          paypal_transaction_id?: string | null
           promotion_code?: string | null
           shipping_address?: string | null
           status?: string
@@ -577,6 +583,9 @@ export type Database = {
           discount_amount?: number
           id?: string
           notes?: string | null
+          payment_method?: string
+          payment_status?: string
+          paypal_transaction_id?: string | null
           promotion_code?: string | null
           shipping_address?: string | null
           status?: string
