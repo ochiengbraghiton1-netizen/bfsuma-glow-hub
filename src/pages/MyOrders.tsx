@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Loader2, Package, ShoppingBag, Truck, CheckCircle, Clock, XCircle, ArrowLeft } from 'lucide-react';
+import { Loader2, Package, ShoppingBag, Truck, CheckCircle, Clock, XCircle, ArrowLeft, CreditCard, MessageCircle } from 'lucide-react';
 import OrderTimeline from '@/components/OrderTimeline';
 import { format } from 'date-fns';
 import { Helmet } from 'react-helmet-async';
@@ -35,6 +35,8 @@ interface Order {
   promotion_code: string | null;
   notes: string | null;
   created_at: string;
+  payment_method: string;
+  payment_status: string;
 }
 
 const statusConfig: Record<string, { icon: typeof Package; color: string; label: string }> = {
