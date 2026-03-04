@@ -237,44 +237,46 @@ const OrderConfirmation = () => {
             </CardContent>
           </Card>
 
-          {/* WhatsApp Confirmation */}
-          <Card className="border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-950/20">
-            <CardContent className="p-6 space-y-4">
-              <div className="text-center space-y-2">
-                <MessageCircle className="h-8 w-8 mx-auto text-green-600" />
-                <h2 className="text-lg font-semibold">Confirm Your Order on WhatsApp</h2>
-                <p className="text-sm text-muted-foreground">
-                  Click the button below to send your order details via WhatsApp. We'll confirm your order and arrange delivery.
-                </p>
-              </div>
-
-              <Button
-                onClick={handleWhatsAppConfirm}
-                className="w-full bg-green-600 hover:bg-green-700 text-white"
-                size="lg"
-              >
-                <MessageCircle className="h-5 w-5 mr-2" />
-                Confirm on WhatsApp
-                <ExternalLink className="h-4 w-4 ml-2" />
-              </Button>
-
-              <Separator />
-
-              <div className="text-center space-y-3">
-                <p className="text-sm text-muted-foreground">
-                  If WhatsApp does not open, please message us manually:
-                </p>
-                <div className="flex items-center justify-center gap-2">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-mono font-medium">{WHATSAPP_DISPLAY}</span>
-                  <Button variant="outline" size="sm" onClick={copyPhoneNumber}>
-                    <Copy className="h-3 w-3 mr-1" />
-                    {copied ? 'Copied!' : 'Copy'}
-                  </Button>
+          {/* WhatsApp Confirmation - only for non-paid orders */}
+          {!isPaid && (
+            <Card className="border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-950/20">
+              <CardContent className="p-6 space-y-4">
+                <div className="text-center space-y-2">
+                  <MessageCircle className="h-8 w-8 mx-auto text-green-600" />
+                  <h2 className="text-lg font-semibold">Confirm Your Order on WhatsApp</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Click the button below to send your order details via WhatsApp. We'll confirm your order and arrange delivery.
+                  </p>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+
+                <Button
+                  onClick={handleWhatsAppConfirm}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white"
+                  size="lg"
+                >
+                  <MessageCircle className="h-5 w-5 mr-2" />
+                  Confirm on WhatsApp
+                  <ExternalLink className="h-4 w-4 ml-2" />
+                </Button>
+
+                <Separator />
+
+                <div className="text-center space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    If WhatsApp does not open, please message us manually:
+                  </p>
+                  <div className="flex items-center justify-center gap-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-mono font-medium">{WHATSAPP_DISPLAY}</span>
+                    <Button variant="outline" size="sm" onClick={copyPhoneNumber}>
+                      <Copy className="h-3 w-3 mr-1" />
+                      {copied ? 'Copied!' : 'Copy'}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-3">
