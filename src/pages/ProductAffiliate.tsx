@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, ShoppingCart, Heart, ArrowLeft, Shield, Leaf, Check, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import RelatedBlogPosts from "@/components/blog/RelatedBlogPosts";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import productGeneric from "@/assets/product-generic.jpg";
+import { stripHtmlTags, truncateText } from "@/lib/html-utils";
 
 const trustSignals = [
   { icon: Shield, label: "Quality Assured" },
@@ -188,8 +190,64 @@ const ProductAffiliate = () => {
     "out-of-stock": "bg-red-500/10 text-red-600 dark:text-red-400",
   };
 
+  const seoTitle = `${product.name} - BF SUMA ROYAL`;
+  const plainDescription = stripHtmlTags(product.benefit || product.description);
+  const seoDescription = truncateText(plainDescription || `Buy ${product.name} from BF SUMA ROYAL. Premium health & wellness supplement.`, 160);
+  const seoImage = product.image_url || `${window.location.origin}/og-image.png`;
+  const canonicalUrl = `${window.location.origin}/p/${slug}`;
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <Helmet>
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDescription} />
+        <link rel="canonical" href={canonicalUrl} />
+
+        {/* Open Graph */}
+        <meta property="og:type" content="product" />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDescription} />
+        <meta property="og:image" content={seoImage} />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:site_name" content="BF SUMA ROYAL" />
+        <meta property="product:price:amount" content={String(product.price)} />
+        <meta property="product:price:currency" content="KES" />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDescription} />
+        <meta name="twitter:image" content={seoImage} />
+
+        {/* JSON-LD Product structured data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: product.name,
+            description: plainDescription || undefined,
+            image: seoImage,
+            url: canonicalUrl,
+            brand: { "@type": "Brand", name: "BF SUMA" },
+            sku: product.id,
+            offers: {
+              "@type": "Offer",
+              price: product.price,
+              priceCurrency: "KES",
+              availability: isOutOfStock
+                ? "https://schema.org/OutOfStock"
+                : "https://schema.org/InStock",
+              url: canonicalUrl,
+              priceValidUntil: new Date(Date.now() + 90 * 86400000).toISOString().split("T")[0],
+              shippingDetails: {
+                "@type": "OfferShippingDetails",
+                shippingDestination: { "@type": "DefinedRegion", addressCountry: "KE" },
+              },
+              itemCondition: "https://schema.org/NewCondition",
+            },
+          })}
+        </script>
+      </Helmet>
       <Header />
       <main className="flex-1">
         {/* Breadcrumb */}
