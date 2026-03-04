@@ -24,6 +24,7 @@ const defaultSections = [
   { key: 'doctor_consultation', label: 'Doctor Consultation', description: 'Wellness consultation section' },
   { key: 'join_earn', label: 'Join & Earn', description: 'Business opportunity section' },
   { key: 'community', label: 'Community', description: 'Training and mentorship section' },
+  { key: 'instagram_widget', label: 'Instagram Live Feed', description: 'Elfsight widget ID for the Community page Instagram feed. Paste only the widget ID (e.g. abc123-def456)' },
 ];
 
 const Content = () => {
