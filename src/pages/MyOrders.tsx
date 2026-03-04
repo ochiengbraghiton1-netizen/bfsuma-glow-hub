@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Loader2, Package, ShoppingBag, Truck, CheckCircle, Clock, XCircle, ArrowLeft } from 'lucide-react';
+import { Loader2, Package, ShoppingBag, Truck, CheckCircle, Clock, XCircle, ArrowLeft, CreditCard, MessageCircle } from 'lucide-react';
 import OrderTimeline from '@/components/OrderTimeline';
 import { format } from 'date-fns';
 import { Helmet } from 'react-helmet-async';
@@ -35,6 +35,8 @@ interface Order {
   promotion_code: string | null;
   notes: string | null;
   created_at: string;
+  payment_method: string;
+  payment_status: string;
 }
 
 const statusConfig: Record<string, { icon: typeof Package; color: string; label: string }> = {
@@ -157,9 +159,22 @@ const MyOrders = () => {
                             {format(new Date(order.created_at), 'MMMM d, yyyy')}
                           </CardDescription>
                         </div>
-                        <Badge variant="outline" className={statusColor}>
-                          {statusConfig[order.status]?.label || order.status}
-                        </Badge>
+                        <div className="flex flex-wrap gap-2">
+                          <Badge variant="outline" className={statusColor}>
+                            {statusConfig[order.status]?.label || order.status}
+                          </Badge>
+                          {order.payment_method === 'paypal' && order.payment_status === 'paid' ? (
+                            <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20 gap-1">
+                              <CreditCard className="h-3 w-3" />
+                              Paid (PayPal)
+                            </Badge>
+                          ) : order.payment_method === 'whatsapp' ? (
+                            <Badge variant="outline" className="bg-orange-500/10 text-orange-600 border-orange-500/20 gap-1">
+                              <MessageCircle className="h-3 w-3" />
+                              WhatsApp
+                            </Badge>
+                          ) : null}
+                        </div>
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
