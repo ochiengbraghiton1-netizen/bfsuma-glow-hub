@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,11 +8,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Instagram, Facebook, Twitter, Video, ExternalLink } from "lucide-react";
+import { Plus, Pencil, Trash2, Instagram, Facebook, Twitter, Video, ExternalLink, Upload, X, Loader2 } from "lucide-react";
 
 const platformOptions = [
   { value: "instagram", label: "Instagram", icon: Instagram },
@@ -43,6 +43,8 @@ const SocialPosts = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: posts, isLoading } = useQuery({
     queryKey: ["admin-social-posts"],
@@ -123,6 +125,24 @@ const SocialPosts = () => {
     setDialogOpen(true);
   };
 
+  const handleImageUpload = async (file: File) => {
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `${crypto.randomUUID()}.${ext}`;
+      const { error } = await supabase.storage.from("social-posts").upload(path, file);
+      if (error) throw error;
+      const { data: urlData } = supabase.storage.from("social-posts").getPublicUrl(path);
+      setForm((prev) => ({ ...prev, image_url: urlData.publicUrl }));
+      toast({ title: "Image uploaded" });
+    } catch (err: any) {
+      toast({ title: "Upload failed", description: err.message, variant: "destructive" });
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
   const PlatformBadge = ({ platform }: { platform: string }) => {
     const p = platformOptions.find((o) => o.value === platform);
     if (!p) return <span>{platform}</span>;
@@ -186,10 +206,56 @@ const SocialPosts = () => {
                 <Label>Content / Caption</Label>
                 <Textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={3} placeholder="What they said about the product..." />
               </div>
+
+              {/* Image upload section */}
               <div>
-                <Label>Image URL</Label>
-                <Input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="https://..." />
+                <Label>Image</Label>
+                <div className="space-y-2">
+                  {form.image_url && (
+                    <div className="relative w-full h-40 rounded-lg overflow-hidden border bg-muted">
+                      <img src={form.image_url} alt="Preview" className="w-full h-full object-cover" />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        className="absolute top-2 right-2 h-6 w-6"
+                        onClick={() => setForm({ ...form, image_url: "" })}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
+                  <div className="flex gap-2 items-center">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleImageUpload(file);
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={uploading}
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      {uploading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Upload className="h-4 w-4 mr-2" />}
+                      {uploading ? "Uploading..." : "Upload Image"}
+                    </Button>
+                    <span className="text-xs text-muted-foreground">or paste URL below</span>
+                  </div>
+                  <Input
+                    value={form.image_url}
+                    onChange={(e) => setForm({ ...form, image_url: e.target.value })}
+                    placeholder="https://..."
+                  />
+                </div>
               </div>
+
               <div>
                 <Label>Post URL</Label>
                 <Input value={form.post_url} onChange={(e) => setForm({ ...form, post_url: e.target.value })} placeholder="https://instagram.com/p/..." />
