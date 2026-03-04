@@ -27,6 +27,28 @@ export default defineConfig(({ mode }) => ({
       "@tiptap/extension-text-align",
     ],
   },
+  build: {
+    // Enable CSS and JS minification (Vite uses esbuild for JS, lightningcss/postcss for CSS)
+    minify: "esbuild",
+    cssMinify: true,
+    // Target modern browsers for smaller output
+    target: "es2020",
+    // Chunk splitting for better caching
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "vendor-react": ["react", "react-dom", "react-router-dom"],
+          "vendor-query": ["@tanstack/react-query"],
+          "vendor-ui": ["@radix-ui/react-dialog", "@radix-ui/react-popover", "@radix-ui/react-dropdown-menu", "@radix-ui/react-tabs", "@radix-ui/react-toast"],
+          "vendor-supabase": ["@supabase/supabase-js"],
+          "vendor-motion": ["framer-motion"],
+          "vendor-charts": ["recharts"],
+        },
+      },
+    },
+    // Increase chunk size warning limit
+    chunkSizeWarningLimit: 600,
+  },
   optimizeDeps: {
     include: [
       "react", 
