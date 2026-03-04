@@ -1022,6 +1022,63 @@ export type Database = {
         }
         Relationships: []
       }
+      social_posts: {
+        Row: {
+          author_avatar_url: string | null
+          author_handle: string | null
+          author_name: string
+          content: string | null
+          created_at: string
+          display_order: number | null
+          hashtags: string[] | null
+          id: string
+          image_url: string | null
+          is_approved: boolean | null
+          is_featured: boolean | null
+          likes_count: number | null
+          platform: string
+          post_url: string | null
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          author_avatar_url?: string | null
+          author_handle?: string | null
+          author_name: string
+          content?: string | null
+          created_at?: string
+          display_order?: number | null
+          hashtags?: string[] | null
+          id?: string
+          image_url?: string | null
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          likes_count?: number | null
+          platform?: string
+          post_url?: string | null
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          author_avatar_url?: string | null
+          author_handle?: string | null
+          author_name?: string
+          content?: string | null
+          created_at?: string
+          display_order?: number | null
+          hashtags?: string[] | null
+          id?: string
+          image_url?: string | null
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          likes_count?: number | null
+          platform?: string
+          post_url?: string | null
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       team_members: {
         Row: {
           created_at: string

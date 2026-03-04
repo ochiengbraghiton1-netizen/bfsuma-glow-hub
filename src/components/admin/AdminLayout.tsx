@@ -23,6 +23,7 @@ import {
   Settings,
   BookOpen,
 } from 'lucide-react';
+import { Instagram } from 'lucide-react';
 
 import { Link as LinkIcon } from 'lucide-react';
 
@@ -40,6 +41,7 @@ const navItems = [
   { to: '/admin/content', icon: FileEdit, label: 'Site Content' },
   { to: '/admin/blog', icon: BookOpen, label: 'Blog Posts' },
   { to: '/admin/admins', icon: Shield, label: 'Manage Admins' },
+  { to: '/admin/social-posts', icon: Instagram, label: 'Social / UGC' },
 ];
 
 const AdminLayout = () => {
