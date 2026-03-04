@@ -397,6 +397,12 @@ const BlogPostView = ({ slug }: { slug: string }) => {
                 ))}
               </div>
             )}
+            <div className="mt-5 pt-4 border-t border-border/50">
+              <SocialShareButtons
+                url={`${SITE_BASE_URL}/blog/${post.slug}`}
+                title={post.title}
+              />
+            </div>
           </header>
 
           {/* Render UGC layout or standard content */}
@@ -408,6 +414,12 @@ const BlogPostView = ({ slug }: { slug: string }) => {
 
               {/* Share / CTA */}
               <div className="mt-12 pt-8 border-t">
+                <div className="mb-6">
+                  <SocialShareButtons
+                    url={`${SITE_BASE_URL}/blog/${post.slug}`}
+                    title={post.title}
+                  />
+                </div>
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                   <p className="text-muted-foreground">Enjoyed this article?</p>
                   <div className="flex gap-4">
