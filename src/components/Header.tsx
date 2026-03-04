@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { ShoppingCart, Plus, Minus, Trash2, Menu, UserPlus, LogIn, LogOut, User, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,8 +23,17 @@ const Header = () => {
   const { user, signOut, isAdmin, isDistributor } = useAuth();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 80);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleCheckout = () => {
     setIsCartOpen(false);
@@ -56,7 +65,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
+    <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b transition-all duration-300 ease-in-out ${isScrolled ? "bg-background/95 border-border shadow-lg shadow-black/10" : "bg-background/80 border-border/50 shadow-none"}`}>
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
          <img src={bfSumaLogo} alt="BF SUMA ROYAL Logo" className="h-8 md:h-10 w-auto" />
