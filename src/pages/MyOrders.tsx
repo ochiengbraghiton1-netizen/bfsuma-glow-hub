@@ -159,9 +159,22 @@ const MyOrders = () => {
                             {format(new Date(order.created_at), 'MMMM d, yyyy')}
                           </CardDescription>
                         </div>
-                        <Badge variant="outline" className={statusColor}>
-                          {statusConfig[order.status]?.label || order.status}
-                        </Badge>
+                        <div className="flex flex-wrap gap-2">
+                          <Badge variant="outline" className={statusColor}>
+                            {statusConfig[order.status]?.label || order.status}
+                          </Badge>
+                          {order.payment_method === 'paypal' && order.payment_status === 'paid' ? (
+                            <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20 gap-1">
+                              <CreditCard className="h-3 w-3" />
+                              Paid (PayPal)
+                            </Badge>
+                          ) : order.payment_method === 'whatsapp' ? (
+                            <Badge variant="outline" className="bg-orange-500/10 text-orange-600 border-orange-500/20 gap-1">
+                              <MessageCircle className="h-3 w-3" />
+                              WhatsApp
+                            </Badge>
+                          ) : null}
+                        </div>
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
