@@ -14,6 +14,8 @@ import { HoneypotField } from '@/components/ui/honeypot-field';
 import { isBot } from '@/lib/honeypot';
 import { PhoneInput, formatForWhatsApp } from '@/components/ui/phone-input';
 import PayPalButton from '@/components/checkout/PayPalButton';
+import CurrencySelector from '@/components/checkout/CurrencySelector';
+import { useCurrency } from '@/hooks/use-currency';
 
 const WHATSAPP_NUMBER = "254795454053";
 
@@ -32,6 +34,7 @@ const Checkout = () => {
   const { items, totalPrice, clearCart } = useCart();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { currency, setCurrency, convert, format: formatCurrency } = useCurrency('USD');
   
   const [formData, setFormData] = useState<CheckoutFormData>({
     customerName: '',
@@ -92,7 +95,7 @@ const Checkout = () => {
       if (promo.min_order_amount && subtotal < Number(promo.min_order_amount)) {
         toast({
           title: 'Minimum Not Met',
-          description: `Minimum order amount of KES ${Number(promo.min_order_amount).toLocaleString()} required.`,
+          description: `Minimum order amount of KSh ${Number(promo.min_order_amount).toLocaleString()} required.`,
           variant: 'destructive',
         });
         return;
@@ -111,7 +114,7 @@ const Checkout = () => {
       setPromoApplied({ discount: discountAmount, code: promo.code });
       toast({
         title: 'Promo Applied!',
-        description: `You saved KES ${discountAmount.toLocaleString()}`,
+        description: `You saved ${formatCurrency(discountAmount)}`,
       });
     } catch (error) {
       console.error('Error applying promo:', error);
@@ -120,7 +123,7 @@ const Checkout = () => {
 
   const generateWhatsAppMessage = (orderId: string) => {
     const itemsList = items.map(item => 
-      `• ${item.name} x${item.quantity} - KES ${(item.price * item.quantity).toLocaleString()}`
+      `• ${item.name} x${item.quantity} - ${formatCurrency(item.price * item.quantity)}`
     ).join('\n');
 
     const message = `🛒 *NEW ORDER - BF SUMA ROYAL*
@@ -135,10 +138,10 @@ ${formData.customerEmail ? `Email: ${formData.customerEmail}` : ''}
 📦 *Products:*
 ${itemsList}
 
-💰 *Order Summary:*
-Subtotal: KES ${subtotal.toLocaleString()}
-${discount > 0 ? `Discount (${promoApplied?.code}): -KES ${discount.toLocaleString()}` : ''}
-*Total: KES ${finalTotal.toLocaleString()}*
+💰 *Order Summary (${currency}):*
+Subtotal: ${formatCurrency(subtotal)}
+${discount > 0 ? `Discount (${promoApplied?.code}): -${formatCurrency(discount)}` : ''}
+*Total: ${formatCurrency(finalTotal)}*
 
 📍 *Delivery Address:*
 ${formData.shippingAddress}
@@ -168,6 +171,7 @@ Sent from BF SUMA ROYAL Website`;
         discount_amount: discount,
         total_amount: finalTotal,
         status,
+        currency,
       });
 
     if (orderError) throw orderError;
@@ -223,11 +227,28 @@ Sent from BF SUMA ROYAL Website`;
       }
     }
 
+    // GA4 purchase event
+    if (typeof window !== 'undefined' && (window as any).dataLayer) {
+      (window as any).dataLayer.push({
+        event: 'purchase',
+        ecommerce: {
+          transaction_id: newOrderId,
+          value: convert(finalTotal),
+          currency: currency,
+          items: items.map(item => ({
+            item_id: item.id,
+            item_name: item.name,
+            price: convert(item.price),
+            quantity: item.quantity,
+          })),
+        },
+      });
+    }
+
     return newOrderId;
   };
 
   const handlePayPalApprove = async (paypalOrderId: string, details: any) => {
-    // Validate form first
     const result = checkoutSchema.safeParse(formData);
     if (!result.success) {
       const fieldErrors: Partial<Record<keyof CheckoutFormData, string>> = {};
@@ -251,7 +272,6 @@ Sent from BF SUMA ROYAL Website`;
     try {
       const newOrderId = await saveOrderToDb('paid');
 
-      // Update order with PayPal transaction ID in notes
       await supabase
         .from('orders')
         .update({ 
@@ -376,9 +396,12 @@ Sent from BF SUMA ROYAL Website`;
           <Button variant="ghost" onClick={() => navigate('/')} className="gap-2">
             <ArrowLeft className="h-4 w-4" /> Back to Shop
           </Button>
-          <span className="ml-auto text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            BF SUMA ROYAL
-          </span>
+          <div className="ml-auto flex items-center gap-4">
+            <CurrencySelector value={currency} onChange={setCurrency} />
+            <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              BF SUMA ROYAL
+            </span>
+          </div>
         </div>
       </header>
 
@@ -394,7 +417,6 @@ Sent from BF SUMA ROYAL Website`;
               </h2>
               
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Honeypot field for bot detection */}
                 <HoneypotField value={honeypot} onChange={setHoneypot} />
                 
                 <div className="grid sm:grid-cols-2 gap-4">
@@ -517,7 +539,7 @@ Sent from BF SUMA ROYAL Website`;
                         ) : (
                           <>
                             <MessageCircle className="h-4 w-4 mr-2" />
-                            Order via WhatsApp - KES {finalTotal.toLocaleString()}
+                            Order via WhatsApp - {formatCurrency(finalTotal)}
                           </>
                         )}
                       </Button>
@@ -528,11 +550,12 @@ Sent from BF SUMA ROYAL Website`;
                     <>
                       <div className="bg-muted/50 rounded-xl p-4 border border-border mb-4">
                         <p className="text-sm text-muted-foreground">
-                          Pay securely with PayPal. Supports credit/debit cards and PayPal balance. International customers welcome.
+                          Pay securely with PayPal in <strong>{currency}</strong>. Supports credit/debit cards and PayPal balance.
                         </p>
                       </div>
                       <PayPalButton
-                        amount={finalTotal}
+                        amount={convert(finalTotal)}
+                        currency={currency}
                         onApprove={handlePayPalApprove}
                         onError={handlePayPalError}
                         disabled={isSubmitting || items.length === 0}
@@ -565,7 +588,7 @@ Sent from BF SUMA ROYAL Website`;
                     </div>
                     <div className="text-right">
                       <p className="font-semibold">
-                        KES {(item.price * item.quantity).toLocaleString()}
+                        {formatCurrency(item.price * item.quantity)}
                       </p>
                     </div>
                   </div>
@@ -593,7 +616,7 @@ Sent from BF SUMA ROYAL Website`;
                 </div>
                 {promoApplied && (
                   <p className="text-sm text-primary mt-2">
-                    ✓ Code "{promoApplied.code}" applied - KES {promoApplied.discount.toLocaleString()} off
+                    ✓ Code "{promoApplied.code}" applied - {formatCurrency(promoApplied.discount)} off
                   </p>
                 )}
               </div>
@@ -601,17 +624,17 @@ Sent from BF SUMA ROYAL Website`;
               <div className="space-y-2 border-t border-border pt-4">
                 <div className="flex justify-between text-muted-foreground">
                   <span>Subtotal</span>
-                  <span>KES {subtotal.toLocaleString()}</span>
+                  <span>{formatCurrency(subtotal)}</span>
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-primary">
                     <span>Discount</span>
-                    <span>-KES {discount.toLocaleString()}</span>
+                    <span>-{formatCurrency(discount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-lg font-bold pt-2">
                   <span>Total</span>
-                  <span className="text-primary">KES {finalTotal.toLocaleString()}</span>
+                  <span className="text-primary">{formatCurrency(finalTotal)}</span>
                 </div>
               </div>
             </div>
