@@ -138,6 +138,7 @@ const OrderConfirmation = () => {
     completed: 'Completed',
     cancelled: 'Cancelled',
     pending: 'Awaiting WhatsApp Confirmation',
+    paid: 'Paid via PayPal',
   };
 
   const statusColor: Record<string, string> = {
@@ -147,7 +148,10 @@ const OrderConfirmation = () => {
     completed: 'bg-green-500/10 text-green-600 border-green-500/20',
     cancelled: 'bg-red-500/10 text-red-600 border-red-500/20',
     pending: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
+    paid: 'bg-green-500/10 text-green-600 border-green-500/20',
   };
+
+  const isPaid = order.status === 'paid';
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
