@@ -14,6 +14,13 @@ import Footer from '@/components/Footer';
 const WHATSAPP_NUMBER = "254795454053";
 const WHATSAPP_DISPLAY = "+254 795 454 053";
 
+const CURRENCY_SYMBOLS: Record<string, string> = {
+  KES: 'KSh',
+  USD: '$',
+  EUR: '€',
+  GBP: '£',
+};
+
 interface OrderItem {
   id: string;
   product_name: string;
@@ -35,6 +42,7 @@ interface Order {
   status: string;
   notes: string | null;
   created_at: string;
+  currency: string;
 }
 
 const formatOrderId = (id: string) => `BF-${id.slice(0, 4).toUpperCase()}`;
@@ -73,7 +81,7 @@ const OrderConfirmation = () => {
       return;
     }
 
-    setOrder(orderData);
+    setOrder(orderData as Order);
 
     const { data: items } = await supabase
       .from('order_items')
@@ -84,19 +92,24 @@ const OrderConfirmation = () => {
     setLoading(false);
   };
 
+  const formatAmount = (amount: number) => {
+    const cur = order?.currency || 'KES';
+    const symbol = CURRENCY_SYMBOLS[cur] || cur;
+    return `${symbol} ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  };
+
   const generateWhatsAppMessage = () => {
     if (!order) return '';
     const shortId = formatOrderId(order.id);
     const productNames = orderItems.map(i => `${i.product_name} x${i.quantity}`).join(', ');
     return encodeURIComponent(
-      `Hello BF Suma, I am confirming Order #${shortId} for ${productNames}. My name is ${order.customer_name}. Phone: ${order.customer_phone}. Total: KES ${order.total_amount.toLocaleString()}.`
+      `Hello BF Suma, I am confirming Order #${shortId} for ${productNames}. My name is ${order.customer_name}. Phone: ${order.customer_phone}. Total: ${formatAmount(order.total_amount)}.`
     );
   };
 
   const handleWhatsAppConfirm = async () => {
     if (!order) return;
 
-    // Update status to whatsapp_initiated
     await supabase
       .from('orders')
       .update({ status: 'whatsapp_initiated' })
@@ -163,7 +176,6 @@ const OrderConfirmation = () => {
             Back to Home
           </Link>
 
-          {/* Success Header */}
           <div className="text-center space-y-4">
             <div className="w-20 h-20 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
               <CheckCircle className="h-10 w-10 text-primary" />
@@ -178,7 +190,6 @@ const OrderConfirmation = () => {
             </p>
           </div>
 
-          {/* Order Summary Card */}
           <Card>
             <CardContent className="p-6 space-y-4">
               <div className="flex items-center justify-between">
@@ -202,6 +213,10 @@ const OrderConfirmation = () => {
                   <span className="text-muted-foreground">Date</span>
                   <span>{format(new Date(order.created_at), 'MMM d, yyyy h:mm a')}</span>
                 </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Currency</span>
+                  <span className="font-medium">{order.currency}</span>
+                </div>
               </div>
 
               <Separator />
@@ -211,7 +226,7 @@ const OrderConfirmation = () => {
                 {orderItems.map((item) => (
                   <div key={item.id} className="flex justify-between text-sm">
                     <span>{item.product_name} × {item.quantity}</span>
-                    <span>KES {item.subtotal.toLocaleString()}</span>
+                    <span>{formatAmount(item.subtotal)}</span>
                   </div>
                 ))}
               </div>
@@ -221,23 +236,22 @@ const OrderConfirmation = () => {
               <div className="space-y-1">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>KES {order.subtotal.toLocaleString()}</span>
+                  <span>{formatAmount(order.subtotal)}</span>
                 </div>
                 {order.discount_amount > 0 && (
                   <div className="flex justify-between text-sm text-green-600">
                     <span>Discount {order.promotion_code && `(${order.promotion_code})`}</span>
-                    <span>-KES {order.discount_amount.toLocaleString()}</span>
+                    <span>-{formatAmount(order.discount_amount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between font-bold text-lg pt-1">
                   <span>Total</span>
-                  <span>KES {order.total_amount.toLocaleString()}</span>
+                  <span>{formatAmount(order.total_amount)}</span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* WhatsApp Confirmation - only for non-paid orders */}
           {!isPaid && (
             <Card className="border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-950/20">
               <CardContent className="p-6 space-y-4">
@@ -245,7 +259,7 @@ const OrderConfirmation = () => {
                   <MessageCircle className="h-8 w-8 mx-auto text-green-600" />
                   <h2 className="text-lg font-semibold">Confirm Your Order on WhatsApp</h2>
                   <p className="text-sm text-muted-foreground">
-                    Click the button below to send your order details via WhatsApp. We'll confirm your order and arrange delivery.
+                    Click the button below to send your order details via WhatsApp.
                   </p>
                 </div>
 
@@ -278,7 +292,6 @@ const OrderConfirmation = () => {
             </Card>
           )}
 
-          {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-3">
             <Button variant="outline" className="flex-1" onClick={() => navigate('/')}>
               Continue Shopping

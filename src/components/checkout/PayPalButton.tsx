@@ -22,43 +22,50 @@ const PayPalButton = ({ amount, currency = 'USD', onApprove, onError, disabled }
   const [sdkReady, setSdkReady] = useState(false);
   const [loading, setLoading] = useState(true);
   const buttonsRendered = useRef(false);
+  const prevCurrencyRef = useRef(currency);
 
-  // Load PayPal SDK
+  // Load or reload PayPal SDK when currency changes
   useEffect(() => {
-    const existingScript = document.getElementById('paypal-sdk');
-    if (existingScript) {
-      if (window.paypal) {
+    const loadSdk = () => {
+      setLoading(true);
+      setSdkReady(false);
+
+      // Remove existing script if currency changed
+      const existingScript = document.getElementById('paypal-sdk');
+      if (existingScript) {
+        existingScript.remove();
+        delete window.paypal;
+      }
+
+      const script = document.createElement('script');
+      script.id = 'paypal-sdk';
+      script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=${currency}`;
+      script.async = true;
+      script.onload = () => {
         setSdkReady(true);
         setLoading(false);
-      } else {
-        existingScript.addEventListener('load', () => {
-          setSdkReady(true);
-          setLoading(false);
-        });
-      }
-      return;
-    }
+      };
+      script.onerror = () => {
+        setLoading(false);
+        onError(new Error('Failed to load PayPal SDK'));
+      };
+      document.body.appendChild(script);
+    };
 
-    const script = document.createElement('script');
-    script.id = 'paypal-sdk';
-    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=${currency}`;
-    script.async = true;
-    script.onload = () => {
+    // If currency changed or first load
+    if (prevCurrencyRef.current !== currency || !window.paypal) {
+      prevCurrencyRef.current = currency;
+      loadSdk();
+    } else if (window.paypal) {
       setSdkReady(true);
       setLoading(false);
-    };
-    script.onerror = () => {
-      setLoading(false);
-      onError(new Error('Failed to load PayPal SDK'));
-    };
-    document.body.appendChild(script);
+    }
   }, [currency]);
 
   // Render PayPal buttons
   useEffect(() => {
     if (!sdkReady || !window.paypal || !containerRef.current || disabled) return;
 
-    // Clear previous buttons
     if (containerRef.current) {
       containerRef.current.innerHTML = '';
     }
@@ -95,9 +102,7 @@ const PayPalButton = ({ amount, currency = 'USD', onApprove, onError, disabled }
         onError: (err: any) => {
           onError(err);
         },
-        onCancel: () => {
-          // User cancelled - no action needed
-        },
+        onCancel: () => {},
       }).render(containerRef.current);
       buttonsRendered.current = true;
     } catch (err) {
