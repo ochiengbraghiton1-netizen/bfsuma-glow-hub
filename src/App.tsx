@@ -50,6 +50,8 @@ const BlogCategoryPage = lazy(() => import("./pages/BlogCategoryPage"));
 const CategoryPage = lazy(() => import("./pages/CategoryPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
 const FAQPage = lazy(() => import("./pages/FAQPage"));
+const CommunityPage = lazy(() => import("./pages/CommunityPage"));
+const SocialPosts = lazy(() => import("./pages/admin/SocialPosts"));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-background">
@@ -111,6 +113,7 @@ const App = () => (
                     <Route path="blog" element={<Blog />} />
                     <Route path="admins" element={<Admins />} />
                     <Route path="business-registrations" element={<BusinessRegistrations />} />
+                    <Route path="social-posts" element={<SocialPosts />} />
                   </Route>
                   <Route path="/affiliate" element={<AffiliateDashboard />} />
                   <Route path="/distributor/dashboard" element={<DistributorDashboard />} />
@@ -122,6 +125,7 @@ const App = () => (
                   <Route path="/p/:slug" element={<ProductAffiliate />} />
                   <Route path="/contact" element={<ContactPage />} />
                   <Route path="/faq" element={<FAQPage />} />
+                  <Route path="/community" element={<CommunityPage />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>

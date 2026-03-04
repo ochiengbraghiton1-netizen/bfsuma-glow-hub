@@ -13,6 +13,7 @@ import Chatbot from "@/components/Chatbot";
 import Footer from "@/components/Footer";
 import StructuredData from "@/components/StructuredData";
 import CommunityStories from "@/components/blog/CommunityStories";
+import SocialFeed from "@/components/SocialFeed";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import ExitIntentPopup from "@/components/ExitIntentPopup";
 import { useProducts } from "@/hooks/use-products";
@@ -65,6 +66,7 @@ const Index = () => {
         <Testimonials />
         <ProductShowcase />
         <CommunityStories />
+        <SocialFeed />
         <About />
         <FAQ />
         <JoinEarn />
