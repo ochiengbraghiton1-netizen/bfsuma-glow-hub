@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { Instagram, Facebook, Twitter, Video, Heart, ExternalLink } from "lucide-react";
 import Header from "@/components/Header";
@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useSocialPosts, SocialPost } from "@/hooks/use-social-posts";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 const platforms = [
@@ -30,11 +31,67 @@ const platformIcons: Record<string, typeof Instagram> = {
   tiktok: Video,
 };
 
+const ElfsightWidget = ({ widgetId }: { widgetId: string }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const scriptLoaded = useRef(false);
+
+  useEffect(() => {
+    if (!widgetId || scriptLoaded.current) return;
+
+    // Load Elfsight script once
+    if (!document.querySelector('script[src*="elfsight.com"]')) {
+      const script = document.createElement("script");
+      script.src = "https://static.elfsight.com/platform/platform.js";
+      script.async = true;
+      document.head.appendChild(script);
+    }
+    scriptLoaded.current = true;
+  }, [widgetId]);
+
+  if (!widgetId) return null;
+
+  return (
+    <div className="container mx-auto px-4 mb-16">
+      <div className="text-center mb-8">
+        <Badge variant="outline" className="mb-3 border-pink-500/30 text-pink-500 px-4 py-1">
+          <Instagram className="w-3 h-3 mr-1.5" />
+          Live Feed
+        </Badge>
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+          Follow Us on Instagram
+        </h2>
+        <p className="text-muted-foreground mt-2">
+          Latest posts from our Instagram — updated in real time
+        </p>
+      </div>
+      <div
+        ref={containerRef}
+        className={`elfsight-app-${widgetId}`}
+      />
+    </div>
+  );
+};
+
 const CommunityPage = () => {
   const [activePlatform, setActivePlatform] = useState("all");
   const { data: posts, isLoading } = useSocialPosts({
     platform: activePlatform === "all" ? undefined : activePlatform,
   });
+  const [widgetId, setWidgetId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchWidget = async () => {
+      const { data } = await supabase
+        .from("site_content")
+        .select("content")
+        .eq("section_key", "instagram_widget")
+        .maybeSingle();
+      if (data?.content) {
+        setWidgetId(data.content.trim());
+      }
+    };
+    fetchWidget();
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -89,8 +146,20 @@ const CommunityPage = () => {
           </div>
         </div>
 
-        {/* Grid */}
+        {/* Instagram Live Feed Widget */}
+        {widgetId && <ElfsightWidget widgetId={widgetId} />}
+
+        {/* Curated Grid */}
         <div className="container mx-auto px-4">
+          {posts && posts.length > 0 && (
+            <div className="text-center mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+                Curated Community Posts
+              </h2>
+              <p className="text-muted-foreground mt-2">Hand-picked stories from our community</p>
+            </div>
+          )}
+
           {isLoading ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {Array.from({ length: 8 }).map((_, i) => (
