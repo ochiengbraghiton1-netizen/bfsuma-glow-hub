@@ -32,9 +32,9 @@ const OrderTimeline = ({ status }: OrderTimelineProps) => {
 
   if (isCancelled) {
     return (
-      <div className="flex items-center gap-2 py-3 px-4 rounded-lg bg-red-500/5 border border-red-500/10">
-        <XCircle className="h-5 w-5 text-red-500 shrink-0" />
-        <span className="text-sm font-medium text-red-600 dark:text-red-400">
+      <div className="flex items-center gap-2 py-3 px-4 rounded-lg bg-destructive/5 border border-destructive/10">
+        <XCircle className="h-5 w-5 text-destructive shrink-0" />
+        <span className="text-sm font-medium text-destructive">
           This order has been cancelled
         </span>
       </div>
