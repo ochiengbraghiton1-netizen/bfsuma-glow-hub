@@ -285,13 +285,8 @@ Sent from BF SUMA ROYAL Website`;
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Check honeypot - silently reject bot submissions
     if (isBot(honeypot)) {
-      toast({
-        title: 'Order Failed',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      toast({ title: 'Order Failed', description: 'Something went wrong. Please try again.', variant: 'destructive' });
       return;
     }
 
@@ -308,104 +303,18 @@ Sent from BF SUMA ROYAL Website`;
     }
 
     if (items.length === 0) {
-      toast({
-        title: 'Cart Empty',
-        description: 'Please add items to your cart before checkout.',
-        variant: 'destructive',
-      });
+      toast({ title: 'Cart Empty', description: 'Please add items to your cart before checkout.', variant: 'destructive' });
       return;
     }
 
     setIsSubmitting(true);
-
     try {
-      // Generate order ID on client to avoid needing .select() after insert
-      // This works for both guests and signed-in users
-      const newOrderId = crypto.randomUUID();
-
-      // Save order to database for admin dashboard
-      const { error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          id: newOrderId,
-          customer_name: formData.customerName,
-          customer_email: formData.customerEmail || null,
-          customer_phone: formData.customerPhone,
-          shipping_address: formData.shippingAddress,
-          notes: formData.notes || null,
-          promotion_code: promoApplied?.code || null,
-          subtotal: subtotal,
-          discount_amount: discount,
-          total_amount: finalTotal,
-          status: 'pending_whatsapp',
-        });
-
-      if (orderError) throw orderError;
-
-      // Save order items
-      const orderItems = items.map(item => ({
-        order_id: newOrderId,
-        product_id: item.id,
-        product_name: item.name,
-        product_price: item.price,
-        quantity: item.quantity,
-        subtotal: item.price * item.quantity,
-      }));
-
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
-
-      if (itemsError) throw itemsError;
-
-      // Update promo usage count
-      if (promoApplied) {
-        const { data: promo } = await supabase
-          .from('promotions')
-          .select('usage_count')
-          .eq('code', promoApplied.code)
-          .maybeSingle();
-        
-        if (promo) {
-          await supabase
-            .from('promotions')
-            .update({ usage_count: (promo.usage_count || 0) + 1 })
-            .eq('code', promoApplied.code);
-        }
-      }
-
-      // Update product stock quantities
-      for (const item of items) {
-        await supabase.rpc('decrement_stock', { p_product_id: item.id, p_quantity: item.quantity });
-      }
-
-      // Track affiliate conversion if referral code exists
-      const storedRef = localStorage.getItem('bf_referral_code');
-      const refExpiry = localStorage.getItem('bf_referral_expiry');
-      if (storedRef && (!refExpiry || new Date(refExpiry) > new Date())) {
-        try {
-          await supabase.rpc('record_affiliate_conversion', {
-            p_referral_code: storedRef,
-            p_order_id: newOrderId,
-            p_order_total: finalTotal,
-          });
-        } catch (err) {
-          console.error('Affiliate conversion tracking error:', err);
-          // Non-blocking: order still proceeds
-        }
-      }
-
+      const newOrderId = await saveOrderToDb('pending_whatsapp');
       clearCart();
-
-      // Redirect to order confirmation page instead of WhatsApp
       navigate(`/order-confirmation/${newOrderId}`);
     } catch (error) {
       console.error('Order error:', error);
-      toast({
-        title: 'Order Failed',
-        description: 'There was an error placing your order. Please try again.',
-        variant: 'destructive',
-      });
+      toast({ title: 'Order Failed', description: 'There was an error placing your order. Please try again.', variant: 'destructive' });
     } finally {
       setIsSubmitting(false);
     }
