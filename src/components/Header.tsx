@@ -255,7 +255,29 @@ const Header = () => {
                 </SheetTitle>
               </SheetHeader>
               
-              <nav className="mt-8 flex flex-col gap-1 flex-1">
+              {/* Prominent CTAs at top */}
+              <div className="mt-6 flex flex-col gap-2 px-1">
+                <Button variant="default" size="sm" asChild onClick={() => setIsMobileMenuOpen(false)}>
+                  <a
+                    href="#products"
+                    onClick={(e) => handleNavClick(e, "#products", true)}
+                    className="flex items-center justify-center gap-2"
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                    Buy Products
+                  </a>
+                </Button>
+                <Button variant="premium" size="sm" asChild onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link to="/join-business" className="flex items-center justify-center gap-2">
+                    <UserPlus className="h-4 w-4" />
+                    Join the Business
+                  </Link>
+                </Button>
+              </div>
+
+              <Separator className="my-3 mx-1" />
+
+              <nav className="flex flex-col gap-1 flex-1">
                 {navLinks.map((link, index) => (
                   link.isAnchor ? (
                     <a
