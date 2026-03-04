@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Loader2, Package, ShoppingBag, Truck, CheckCircle, Clock, XCircle, ArrowLeft } from 'lucide-react';
+import OrderTimeline from '@/components/OrderTimeline';
 import { format } from 'date-fns';
 import { Helmet } from 'react-helmet-async';
 
@@ -162,6 +163,8 @@ const MyOrders = () => {
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
+                      {/* Order Progress Timeline */}
+                      <OrderTimeline status={order.status} />
                       <div className="space-y-2">
                         {(orderItems[order.id] || []).map((item) => (
                           <div key={item.id} className="flex justify-between items-center py-2 border-b last:border-0">
