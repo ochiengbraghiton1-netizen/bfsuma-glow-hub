@@ -7,12 +7,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, ShoppingBag, Loader2, MessageCircle, CheckCircle } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Loader2, MessageCircle, CheckCircle, CreditCard } from 'lucide-react';
 import { z } from 'zod';
 import productGeneric from '@/assets/product-generic.jpg';
 import { HoneypotField } from '@/components/ui/honeypot-field';
 import { isBot } from '@/lib/honeypot';
 import { PhoneInput, formatForWhatsApp } from '@/components/ui/phone-input';
+import PayPalButton from '@/components/checkout/PayPalButton';
 
 const WHATSAPP_NUMBER = "254795454053";
 
@@ -46,6 +47,7 @@ const Checkout = () => {
   const [orderComplete, setOrderComplete] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [honeypot, setHoneypot] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<'whatsapp' | 'paypal'>('whatsapp');
 
   const subtotal = totalPrice;
   const discount = promoApplied?.discount || 0;
@@ -149,16 +151,142 @@ Sent from BF SUMA ROYAL Website`;
     return encodeURIComponent(message);
   };
 
+  const saveOrderToDb = async (status: string) => {
+    const newOrderId = crypto.randomUUID();
+
+    const { error: orderError } = await supabase
+      .from('orders')
+      .insert({
+        id: newOrderId,
+        customer_name: formData.customerName,
+        customer_email: formData.customerEmail || null,
+        customer_phone: formData.customerPhone,
+        shipping_address: formData.shippingAddress,
+        notes: formData.notes || null,
+        promotion_code: promoApplied?.code || null,
+        subtotal: subtotal,
+        discount_amount: discount,
+        total_amount: finalTotal,
+        status,
+      });
+
+    if (orderError) throw orderError;
+
+    const orderItems = items.map(item => ({
+      order_id: newOrderId,
+      product_id: item.id,
+      product_name: item.name,
+      product_price: item.price,
+      quantity: item.quantity,
+      subtotal: item.price * item.quantity,
+    }));
+
+    const { error: itemsError } = await supabase
+      .from('order_items')
+      .insert(orderItems);
+
+    if (itemsError) throw itemsError;
+
+    // Update promo usage count
+    if (promoApplied) {
+      const { data: promo } = await supabase
+        .from('promotions')
+        .select('usage_count')
+        .eq('code', promoApplied.code)
+        .maybeSingle();
+      
+      if (promo) {
+        await supabase
+          .from('promotions')
+          .update({ usage_count: (promo.usage_count || 0) + 1 })
+          .eq('code', promoApplied.code);
+      }
+    }
+
+    // Update product stock quantities
+    for (const item of items) {
+      await supabase.rpc('decrement_stock', { p_product_id: item.id, p_quantity: item.quantity });
+    }
+
+    // Track affiliate conversion
+    const storedRef = localStorage.getItem('bf_referral_code');
+    const refExpiry = localStorage.getItem('bf_referral_expiry');
+    if (storedRef && (!refExpiry || new Date(refExpiry) > new Date())) {
+      try {
+        await supabase.rpc('record_affiliate_conversion', {
+          p_referral_code: storedRef,
+          p_order_id: newOrderId,
+          p_order_total: finalTotal,
+        });
+      } catch (err) {
+        console.error('Affiliate conversion tracking error:', err);
+      }
+    }
+
+    return newOrderId;
+  };
+
+  const handlePayPalApprove = async (paypalOrderId: string, details: any) => {
+    // Validate form first
+    const result = checkoutSchema.safeParse(formData);
+    if (!result.success) {
+      const fieldErrors: Partial<Record<keyof CheckoutFormData, string>> = {};
+      result.error.errors.forEach(err => {
+        if (err.path[0]) {
+          fieldErrors[err.path[0] as keyof CheckoutFormData] = err.message;
+        }
+      });
+      setErrors(fieldErrors);
+      toast({
+        title: 'Please fill in required fields',
+        description: 'Complete the form before paying.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (isBot(honeypot)) return;
+
+    setIsSubmitting(true);
+    try {
+      const newOrderId = await saveOrderToDb('paid');
+
+      // Update order with PayPal transaction ID in notes
+      await supabase
+        .from('orders')
+        .update({ 
+          notes: `${formData.notes || ''}\n[PayPal Transaction: ${details.id || paypalOrderId}]`.trim()
+        })
+        .eq('id', newOrderId);
+
+      clearCart();
+      navigate(`/order-confirmation/${newOrderId}`);
+    } catch (error) {
+      console.error('PayPal order save error:', error);
+      toast({
+        title: 'Order Failed',
+        description: 'Payment was received but order save failed. Please contact support.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handlePayPalError = (error: any) => {
+    console.error('PayPal error:', error);
+    toast({
+      title: 'Payment Failed',
+      description: 'There was an error with PayPal. Please try again or use WhatsApp checkout.',
+      variant: 'destructive',
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Check honeypot - silently reject bot submissions
     if (isBot(honeypot)) {
-      toast({
-        title: 'Order Failed',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      toast({ title: 'Order Failed', description: 'Something went wrong. Please try again.', variant: 'destructive' });
       return;
     }
 
@@ -175,104 +303,18 @@ Sent from BF SUMA ROYAL Website`;
     }
 
     if (items.length === 0) {
-      toast({
-        title: 'Cart Empty',
-        description: 'Please add items to your cart before checkout.',
-        variant: 'destructive',
-      });
+      toast({ title: 'Cart Empty', description: 'Please add items to your cart before checkout.', variant: 'destructive' });
       return;
     }
 
     setIsSubmitting(true);
-
     try {
-      // Generate order ID on client to avoid needing .select() after insert
-      // This works for both guests and signed-in users
-      const newOrderId = crypto.randomUUID();
-
-      // Save order to database for admin dashboard
-      const { error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          id: newOrderId,
-          customer_name: formData.customerName,
-          customer_email: formData.customerEmail || null,
-          customer_phone: formData.customerPhone,
-          shipping_address: formData.shippingAddress,
-          notes: formData.notes || null,
-          promotion_code: promoApplied?.code || null,
-          subtotal: subtotal,
-          discount_amount: discount,
-          total_amount: finalTotal,
-          status: 'pending_whatsapp',
-        });
-
-      if (orderError) throw orderError;
-
-      // Save order items
-      const orderItems = items.map(item => ({
-        order_id: newOrderId,
-        product_id: item.id,
-        product_name: item.name,
-        product_price: item.price,
-        quantity: item.quantity,
-        subtotal: item.price * item.quantity,
-      }));
-
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
-
-      if (itemsError) throw itemsError;
-
-      // Update promo usage count
-      if (promoApplied) {
-        const { data: promo } = await supabase
-          .from('promotions')
-          .select('usage_count')
-          .eq('code', promoApplied.code)
-          .maybeSingle();
-        
-        if (promo) {
-          await supabase
-            .from('promotions')
-            .update({ usage_count: (promo.usage_count || 0) + 1 })
-            .eq('code', promoApplied.code);
-        }
-      }
-
-      // Update product stock quantities
-      for (const item of items) {
-        await supabase.rpc('decrement_stock', { p_product_id: item.id, p_quantity: item.quantity });
-      }
-
-      // Track affiliate conversion if referral code exists
-      const storedRef = localStorage.getItem('bf_referral_code');
-      const refExpiry = localStorage.getItem('bf_referral_expiry');
-      if (storedRef && (!refExpiry || new Date(refExpiry) > new Date())) {
-        try {
-          await supabase.rpc('record_affiliate_conversion', {
-            p_referral_code: storedRef,
-            p_order_id: newOrderId,
-            p_order_total: finalTotal,
-          });
-        } catch (err) {
-          console.error('Affiliate conversion tracking error:', err);
-          // Non-blocking: order still proceeds
-        }
-      }
-
+      const newOrderId = await saveOrderToDb('pending_whatsapp');
       clearCart();
-
-      // Redirect to order confirmation page instead of WhatsApp
       navigate(`/order-confirmation/${newOrderId}`);
     } catch (error) {
       console.error('Order error:', error);
-      toast({
-        title: 'Order Failed',
-        description: 'There was an error placing your order. Please try again.',
-        variant: 'destructive',
-      });
+      toast({ title: 'Order Failed', description: 'There was an error placing your order. Please try again.', variant: 'destructive' });
     } finally {
       setIsSubmitting(false);
     }
@@ -425,36 +467,79 @@ Sent from BF SUMA ROYAL Website`;
                 </div>
 
                 <div className="pt-4 border-t border-border">
-                  <h3 className="font-semibold mb-3 flex items-center gap-2">
-                    <MessageCircle className="h-5 w-5 text-green-600" />
-                    Order via WhatsApp
-                  </h3>
-                  <div className="bg-green-50 dark:bg-green-950/30 rounded-xl p-4 border border-green-200 dark:border-green-800">
-                    <p className="text-sm text-muted-foreground">
-                      After submitting, your order details will be sent via WhatsApp. We'll confirm your order and arrange delivery and payment.
-                    </p>
+                  <h3 className="font-semibold mb-3">Payment Method</h3>
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('whatsapp')}
+                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all text-sm font-medium ${
+                        paymentMethod === 'whatsapp'
+                          ? 'border-primary bg-primary/5 text-primary'
+                          : 'border-border text-muted-foreground hover:border-primary/50'
+                      }`}
+                    >
+                      <MessageCircle className="h-5 w-5" />
+                      WhatsApp
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('paypal')}
+                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all text-sm font-medium ${
+                        paymentMethod === 'paypal'
+                          ? 'border-primary bg-primary/5 text-primary'
+                          : 'border-border text-muted-foreground hover:border-primary/50'
+                      }`}
+                    >
+                      <CreditCard className="h-5 w-5" />
+                      PayPal
+                    </button>
                   </div>
-                </div>
 
-                <Button 
-                  type="submit" 
-                  variant="premium" 
-                  size="lg" 
-                  className="w-full mt-6"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
+                  {paymentMethod === 'whatsapp' && (
                     <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      <MessageCircle className="h-4 w-4 mr-2" />
-                      Order via WhatsApp - KES {finalTotal.toLocaleString()}
+                      <div className="bg-muted/50 rounded-xl p-4 border border-border mb-4">
+                        <p className="text-sm text-muted-foreground">
+                          After submitting, your order details will be sent via WhatsApp. We'll confirm your order and arrange delivery and payment.
+                        </p>
+                      </div>
+                      <Button 
+                        type="submit" 
+                        variant="premium" 
+                        size="lg" 
+                        className="w-full"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          <>
+                            <MessageCircle className="h-4 w-4 mr-2" />
+                            Order via WhatsApp - KES {finalTotal.toLocaleString()}
+                          </>
+                        )}
+                      </Button>
                     </>
                   )}
-                </Button>
+
+                  {paymentMethod === 'paypal' && (
+                    <>
+                      <div className="bg-muted/50 rounded-xl p-4 border border-border mb-4">
+                        <p className="text-sm text-muted-foreground">
+                          Pay securely with PayPal. Supports credit/debit cards and PayPal balance. International customers welcome.
+                        </p>
+                      </div>
+                      <PayPalButton
+                        amount={finalTotal}
+                        onApprove={handlePayPalApprove}
+                        onError={handlePayPalError}
+                        disabled={isSubmitting || items.length === 0}
+                      />
+                    </>
+                  )}
+                </div>
               </form>
             </div>
           </div>
