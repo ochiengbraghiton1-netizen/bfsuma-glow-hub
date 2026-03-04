@@ -267,6 +267,24 @@ Sent from BF SUMA ROYAL Website`;
         } as any)
         .eq('id', newOrderId);
 
+      // GA4 purchase event — only after successful PayPal capture
+      if (typeof window !== 'undefined' && (window as any).dataLayer) {
+        (window as any).dataLayer.push({
+          event: 'purchase',
+          ecommerce: {
+            transaction_id: newOrderId,
+            value: convert(finalTotal),
+            currency: currency,
+            items: items.map(item => ({
+              item_id: item.id,
+              item_name: item.name,
+              price: convert(item.price),
+              quantity: item.quantity,
+            })),
+          },
+        });
+      }
+
       clearCart();
       navigate(`/order-confirmation/${newOrderId}`);
     } catch (error) {
