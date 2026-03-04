@@ -172,7 +172,9 @@ Sent from BF SUMA ROYAL Website`;
         total_amount: finalTotal,
         status,
         currency,
-      });
+        payment_method: paymentMethod,
+        payment_status: status === 'paid' ? 'paid' : 'pending',
+      } as any);
 
     if (orderError) throw orderError;
 
@@ -275,8 +277,11 @@ Sent from BF SUMA ROYAL Website`;
       await supabase
         .from('orders')
         .update({ 
-          notes: `${formData.notes || ''}\n[PayPal Transaction: ${details.id || paypalOrderId}]`.trim()
-        })
+          notes: `${formData.notes || ''}\n[PayPal Transaction: ${details.id || paypalOrderId}]`.trim(),
+          payment_method: 'paypal',
+          payment_status: 'paid',
+          paypal_transaction_id: details.id || paypalOrderId,
+        } as any)
         .eq('id', newOrderId);
 
       clearCart();

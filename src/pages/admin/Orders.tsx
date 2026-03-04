@@ -48,13 +48,23 @@ interface Order {
   status: string;
   notes: string | null;
   created_at: string;
+  payment_method: string;
+  payment_status: string;
+  paypal_transaction_id: string | null;
 }
 
-const statusOptions = [
+const filterOptions = [
   { value: 'all', label: 'All Orders' },
-  { value: 'paid', label: 'Paid (PayPal)' },
+  { value: 'paid_paypal', label: 'Paid (PayPal)' },
+  { value: 'whatsapp', label: 'WhatsApp Orders' },
+  { value: 'pending', label: 'Pending' },
+  { value: 'failed', label: 'Failed' },
+];
+
+const statusOptions = [
   { value: 'pending_whatsapp', label: 'Pending WhatsApp' },
   { value: 'whatsapp_initiated', label: 'WhatsApp Initiated' },
+  { value: 'paid', label: 'Paid (PayPal)' },
   { value: 'confirmed', label: 'Confirmed' },
   { value: 'completed', label: 'Completed' },
   { value: 'cancelled', label: 'Cancelled' },
@@ -70,20 +80,26 @@ const statusColors: Record<string, string> = {
   cancelled: 'bg-red-500/10 text-red-600 border-red-500/20',
 };
 
-const statusLabels: Record<string, string> = {
-  pending: 'Pending',
-  pending_whatsapp: 'Pending WhatsApp',
-  whatsapp_initiated: 'WhatsApp Initiated',
-  paid: 'Paid (PayPal)',
-  confirmed: 'Confirmed',
-  completed: 'Completed',
-  cancelled: 'Cancelled',
+const getPaymentBadge = (order: Order) => {
+  if (order.payment_status === 'failed') {
+    return <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20">Failed</Badge>;
+  }
+  if (order.payment_method === 'paypal' && order.payment_status === 'paid') {
+    return <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20">PAID (PayPal)</Badge>;
+  }
+  if (order.payment_method === 'whatsapp') {
+    return <Badge variant="outline" className="bg-orange-500/10 text-orange-600 border-orange-500/20">WhatsApp - Pending</Badge>;
+  }
+  if (order.payment_status === 'pending') {
+    return <Badge variant="outline" className="bg-muted text-muted-foreground border-border">Pending</Badge>;
+  }
+  return <Badge variant="outline">{order.payment_status}</Badge>;
 };
 
 const Orders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [activeFilter, setActiveFilter] = useState('all');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [detailsOpen, setDetailsOpen] = useState(false);
@@ -95,8 +111,14 @@ const Orders = () => {
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (statusFilter !== 'all') {
-      query = query.eq('status', statusFilter);
+    if (activeFilter === 'paid_paypal') {
+      query = query.eq('payment_method', 'paypal').eq('payment_status', 'paid');
+    } else if (activeFilter === 'whatsapp') {
+      query = query.eq('payment_method', 'whatsapp');
+    } else if (activeFilter === 'pending') {
+      query = query.eq('payment_status', 'pending');
+    } else if (activeFilter === 'failed') {
+      query = query.eq('payment_status', 'failed');
     }
 
     const { data, error } = await query;
@@ -104,7 +126,7 @@ const Orders = () => {
     if (error) {
       toast({ title: 'Error loading orders', variant: 'destructive' });
     } else {
-      setOrders(data || []);
+      setOrders((data as any[]) || []);
     }
     setLoading(false);
   };
@@ -124,7 +146,7 @@ const Orders = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, [statusFilter]);
+  }, [activeFilter]);
 
   const handleViewDetails = async (order: Order) => {
     setSelectedOrder(order);
@@ -135,7 +157,7 @@ const Orders = () => {
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     const { error } = await supabase
       .from('orders')
-      .update({ status: newStatus })
+      .update({ status: newStatus } as any)
       .eq('id', orderId);
 
     if (error) {
@@ -164,12 +186,12 @@ const Orders = () => {
           <h1 className="text-2xl font-bold">Orders</h1>
           <p className="text-muted-foreground">Manage customer orders</p>
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <Select value={activeFilter} onValueChange={setActiveFilter}>
           <SelectTrigger className="w-48">
-            <SelectValue placeholder="Filter by status" />
+            <SelectValue placeholder="Filter orders" />
           </SelectTrigger>
           <SelectContent>
-            {statusOptions.map((option) => (
+            {filterOptions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
               </SelectItem>
@@ -181,19 +203,21 @@ const Orders = () => {
       {orders.length === 0 ? (
         <div className="text-center py-12 bg-card rounded-lg border">
           <ShoppingCart className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">No orders yet</h3>
+          <h3 className="text-lg font-semibold mb-2">No orders found</h3>
           <p className="text-muted-foreground">Orders will appear here when customers make purchases</p>
         </div>
       ) : (
-        <div className="bg-card rounded-lg border">
+        <div className="bg-card rounded-lg border overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Order ID</TableHead>
                 <TableHead>Customer</TableHead>
-                <TableHead>Contact</TableHead>
                 <TableHead>Total</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>Payment Method</TableHead>
+                <TableHead>Payment Status</TableHead>
+                <TableHead>Order Status</TableHead>
+                <TableHead>PayPal Txn ID</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -205,31 +229,24 @@ const Orders = () => {
                     {order.id.slice(0, 8)}...
                   </TableCell>
                   <TableCell className="font-medium">{order.customer_name}</TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      <p>{order.customer_phone}</p>
-                      {order.customer_email && (
-                        <p className="text-muted-foreground">{order.customer_email}</p>
-                      )}
-                    </div>
-                  </TableCell>
                   <TableCell className="font-semibold">
                     KSh {order.total_amount.toLocaleString()}
                   </TableCell>
+                  <TableCell className="capitalize">{order.payment_method}</TableCell>
+                  <TableCell>{getPaymentBadge(order)}</TableCell>
                   <TableCell>
                     <Badge className={statusColors[order.status] || ''} variant="outline">
-                      {statusLabels[order.status] || order.status}
+                      {order.status.replace(/_/g, ' ')}
                     </Badge>
+                  </TableCell>
+                  <TableCell className="font-mono text-xs text-muted-foreground">
+                    {order.paypal_transaction_id ? order.paypal_transaction_id.slice(0, 12) + '...' : '—'}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {format(new Date(order.created_at), 'MMM d, yyyy')}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleViewDetails(order)}
-                    >
+                    <Button variant="ghost" size="icon" onClick={() => handleViewDetails(order)}>
                       <Eye className="h-4 w-4" />
                     </Button>
                   </TableCell>
@@ -271,7 +288,7 @@ const Orders = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {statusOptions.filter(o => o.value !== 'all').map((option) => (
+                      {statusOptions.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
                           {option.label}
                         </SelectItem>
@@ -281,24 +298,32 @@ const Orders = () => {
                 </div>
               </div>
 
-              {selectedOrder.shipping_address && (
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <h4 className="font-semibold mb-2">Shipping Address</h4>
-                  <p className="text-sm text-muted-foreground">{selectedOrder.shipping_address}</p>
+                  <h4 className="font-semibold mb-2">Payment Details</h4>
+                  <div className="space-y-1 text-sm">
+                    <p><span className="text-muted-foreground">Method:</span> <span className="capitalize">{selectedOrder.payment_method}</span></p>
+                    <p><span className="text-muted-foreground">Status:</span> {getPaymentBadge(selectedOrder)}</p>
+                    {selectedOrder.paypal_transaction_id && (
+                      <p><span className="text-muted-foreground">PayPal Txn:</span> <span className="font-mono text-xs">{selectedOrder.paypal_transaction_id}</span></p>
+                    )}
+                  </div>
                 </div>
-              )}
+                {selectedOrder.shipping_address && (
+                  <div>
+                    <h4 className="font-semibold mb-2">Shipping Address</h4>
+                    <p className="text-sm text-muted-foreground">{selectedOrder.shipping_address}</p>
+                  </div>
+                )}
+              </div>
 
               <div>
                 <h4 className="font-semibold mb-2">Order Items</h4>
                 <div className="bg-muted/50 rounded-lg p-4 space-y-2">
                   {orderItems.map((item) => (
                     <div key={item.id} className="flex justify-between items-center text-sm">
-                      <span>
-                        {item.product_name} x {item.quantity}
-                      </span>
-                      <span className="font-medium">
-                        KSh {item.subtotal.toLocaleString()}
-                      </span>
+                      <span>{item.product_name} x {item.quantity}</span>
+                      <span className="font-medium">KSh {item.subtotal.toLocaleString()}</span>
                     </div>
                   ))}
                 </div>
@@ -314,9 +339,7 @@ const Orders = () => {
                     <span className="text-muted-foreground">
                       Discount {selectedOrder.promotion_code && `(${selectedOrder.promotion_code})`}
                     </span>
-                    <span className="text-green-600">
-                      -KSh {selectedOrder.discount_amount.toLocaleString()}
-                    </span>
+                    <span className="text-green-600">-KSh {selectedOrder.discount_amount.toLocaleString()}</span>
                   </div>
                 )}
                 <div className="flex justify-between font-semibold text-lg">
