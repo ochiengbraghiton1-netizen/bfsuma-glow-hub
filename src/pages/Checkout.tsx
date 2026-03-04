@@ -47,6 +47,7 @@ const Checkout = () => {
   const [orderComplete, setOrderComplete] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [honeypot, setHoneypot] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<'whatsapp' | 'paypal'>('whatsapp');
 
   const subtotal = totalPrice;
   const discount = promoApplied?.discount || 0;
