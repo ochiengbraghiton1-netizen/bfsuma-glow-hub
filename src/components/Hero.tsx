@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, ShoppingBag, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -71,37 +70,35 @@ const Hero = () => {
           BF SUMA Royal offers trusted wellness products designed to support your health journey. Whether you're looking for quality supplements or a flexible way to earn, you've come to the right place.
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+        <div className="flex flex-col sm:flex-row gap-5 justify-center items-center w-full max-w-xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
+            initial={{ opacity: 0, y: 30, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.5, duration: 0.6, type: "spring", stiffness: 120 }}
+            className="w-full sm:w-auto"
           >
-            <Button 
+            <button
               onClick={scrollToProducts}
-              variant="premium" 
-              size="xl"
-              className="group h-16 px-12 text-xl font-bold shadow-[0_0_40px_hsl(43_96%_56%/0.5)] hover:shadow-[0_0_60px_hsl(43_96%_56%/0.7)] transition-all duration-300"
+              className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-3 h-[4.5rem] px-14 text-[1.35rem] font-extrabold tracking-wide rounded-2xl bg-accent text-accent-foreground shadow-[0_0_50px_hsl(43_96%_56%/0.6),0_8px_32px_hsl(43_96%_56%/0.35)] hover:shadow-[0_0_70px_hsl(43_96%_56%/0.8),0_12px_40px_hsl(43_96%_56%/0.5)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300 ease-out animate-cta-pulse"
             >
-              <ShoppingBag className="w-6 h-6" />
+              <ShoppingBag className="w-7 h-7" />
               Buy Products
-              <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-            </Button>
+              <ArrowRight className="w-7 h-7 group-hover:translate-x-1.5 transition-transform duration-300" />
+            </button>
           </motion.div>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.5 }}
+            initial={{ opacity: 0, y: 30, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.7, duration: 0.6, type: "spring", stiffness: 120 }}
+            className="w-full sm:w-auto"
           >
-            <Button 
+            <button
               onClick={goToJoinBusiness}
-              variant="glass" 
-              size="xl"
-              className="h-16 px-12 text-xl font-bold border-2 border-accent/40 hover:border-accent hover:shadow-[0_0_30px_hsl(43_96%_56%/0.3)] transition-all duration-300"
+              className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-3 h-[4.5rem] px-14 text-[1.35rem] font-extrabold tracking-wide rounded-2xl bg-white/15 backdrop-blur-md text-white border-2 border-accent shadow-[0_0_30px_hsl(43_96%_56%/0.25),inset_0_1px_0_hsl(0_0%_100%/0.15)] hover:bg-accent hover:text-accent-foreground hover:shadow-[0_0_50px_hsl(43_96%_56%/0.6),0_8px_32px_hsl(43_96%_56%/0.35)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300 ease-out"
             >
-              <Users className="w-6 h-6" />
+              <Users className="w-7 h-7" />
               Join the Business
-            </Button>
+            </button>
           </motion.div>
         </div>
       </div>
