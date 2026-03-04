@@ -467,36 +467,79 @@ Sent from BF SUMA ROYAL Website`;
                 </div>
 
                 <div className="pt-4 border-t border-border">
-                  <h3 className="font-semibold mb-3 flex items-center gap-2">
-                    <MessageCircle className="h-5 w-5 text-green-600" />
-                    Order via WhatsApp
-                  </h3>
-                  <div className="bg-green-50 dark:bg-green-950/30 rounded-xl p-4 border border-green-200 dark:border-green-800">
-                    <p className="text-sm text-muted-foreground">
-                      After submitting, your order details will be sent via WhatsApp. We'll confirm your order and arrange delivery and payment.
-                    </p>
+                  <h3 className="font-semibold mb-3">Payment Method</h3>
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('whatsapp')}
+                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all text-sm font-medium ${
+                        paymentMethod === 'whatsapp'
+                          ? 'border-primary bg-primary/5 text-primary'
+                          : 'border-border text-muted-foreground hover:border-primary/50'
+                      }`}
+                    >
+                      <MessageCircle className="h-5 w-5" />
+                      WhatsApp
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('paypal')}
+                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all text-sm font-medium ${
+                        paymentMethod === 'paypal'
+                          ? 'border-primary bg-primary/5 text-primary'
+                          : 'border-border text-muted-foreground hover:border-primary/50'
+                      }`}
+                    >
+                      <CreditCard className="h-5 w-5" />
+                      PayPal
+                    </button>
                   </div>
-                </div>
 
-                <Button 
-                  type="submit" 
-                  variant="premium" 
-                  size="lg" 
-                  className="w-full mt-6"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
+                  {paymentMethod === 'whatsapp' && (
                     <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      <MessageCircle className="h-4 w-4 mr-2" />
-                      Order via WhatsApp - KES {finalTotal.toLocaleString()}
+                      <div className="bg-muted/50 rounded-xl p-4 border border-border mb-4">
+                        <p className="text-sm text-muted-foreground">
+                          After submitting, your order details will be sent via WhatsApp. We'll confirm your order and arrange delivery and payment.
+                        </p>
+                      </div>
+                      <Button 
+                        type="submit" 
+                        variant="premium" 
+                        size="lg" 
+                        className="w-full"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          <>
+                            <MessageCircle className="h-4 w-4 mr-2" />
+                            Order via WhatsApp - KES {finalTotal.toLocaleString()}
+                          </>
+                        )}
+                      </Button>
                     </>
                   )}
-                </Button>
+
+                  {paymentMethod === 'paypal' && (
+                    <>
+                      <div className="bg-muted/50 rounded-xl p-4 border border-border mb-4">
+                        <p className="text-sm text-muted-foreground">
+                          Pay securely with PayPal. Supports credit/debit cards and PayPal balance. International customers welcome.
+                        </p>
+                      </div>
+                      <PayPalButton
+                        amount={finalTotal}
+                        onApprove={handlePayPalApprove}
+                        onError={handlePayPalError}
+                        disabled={isSubmitting || items.length === 0}
+                      />
+                    </>
+                  )}
+                </div>
               </form>
             </div>
           </div>
