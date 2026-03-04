@@ -168,9 +168,13 @@ const OrderConfirmation = () => {
             <div className="w-20 h-20 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
               <CheckCircle className="h-10 w-10 text-primary" />
             </div>
-            <h1 className="text-2xl font-bold">Order Created Successfully!</h1>
+            <h1 className="text-2xl font-bold">
+              {isPaid ? 'Payment Successful!' : 'Order Created Successfully!'}
+            </h1>
             <p className="text-muted-foreground max-w-md mx-auto">
-              Your order has been created successfully. To complete your order, please confirm via WhatsApp.
+              {isPaid
+                ? 'Your payment has been received. We will process your order and arrange delivery shortly.'
+                : 'Your order has been created successfully. To complete your order, please confirm via WhatsApp.'}
             </p>
           </div>
 
