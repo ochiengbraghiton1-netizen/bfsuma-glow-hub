@@ -45,6 +45,7 @@ const SocialPosts = () => {
   const [form, setForm] = useState(emptyForm);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [dragActive, setDragActive] = useState(false);
 
   const { data: posts, isLoading } = useQuery({
     queryKey: ["admin-social-posts"],
