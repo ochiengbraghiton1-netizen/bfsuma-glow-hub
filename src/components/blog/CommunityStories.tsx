@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Play, ArrowRight } from 'lucide-react';
 import { useInView } from '@/hooks/use-in-view';
-import { motion } from 'framer-motion';
 
 interface StoryPost {
   id: string;
@@ -24,7 +23,6 @@ const CommunityStories = () => {
 
   useEffect(() => {
     const fetchStories = async () => {
-      // Fetch featured published posts that are in UGC/Testimonial categories
       const { data: posts } = await supabase
         .from('blog_posts')
         .select('id, title, slug, excerpt, featured_image, video_url, published_at, is_featured')
@@ -36,7 +34,6 @@ const CommunityStories = () => {
       if (posts && posts.length > 0) {
         setStories(posts);
       } else {
-        // Fallback: get latest published posts
         const { data: latestPosts } = await supabase
           .from('blog_posts')
           .select('id, title, slug, excerpt, featured_image, video_url, published_at')
@@ -57,11 +54,8 @@ const CommunityStories = () => {
   return (
     <section ref={ref} className="py-16 px-4 md:px-8 bg-muted/30">
       <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-10"
+        <div
+          className={`text-center mb-10 transition-all duration-600 ease-out ${isInView ? 'animate-fade-in opacity-100' : 'opacity-0 translate-y-5'}`}
         >
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
             Real Stories From Our Community
@@ -69,15 +63,14 @@ const CommunityStories = () => {
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Discover how BF SUMA products are transforming lives across Kenya and beyond
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {stories.map((story, index) => (
-            <motion.div
+            <div
               key={story.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className={`transition-all duration-500 ease-out ${isInView ? 'animate-fade-in opacity-100' : 'opacity-0 translate-y-5'}`}
+              style={{ animationDelay: `${index * 100}ms` }}
             >
               <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group h-full">
                 <div className="relative aspect-video overflow-hidden bg-muted">
@@ -118,7 +111,7 @@ const CommunityStories = () => {
                   </Button>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
           ))}
         </div>
 
