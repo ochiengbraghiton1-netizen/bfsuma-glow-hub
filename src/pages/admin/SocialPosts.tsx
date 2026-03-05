@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Instagram, Facebook, Twitter, Video, ExternalLink, Upload, X, Loader2 } from "lucide-react";
+import { compressImage, formatFileSize } from "@/lib/image-compression";
 
 const platformOptions = [
   { value: "instagram", label: "Instagram", icon: Instagram },
