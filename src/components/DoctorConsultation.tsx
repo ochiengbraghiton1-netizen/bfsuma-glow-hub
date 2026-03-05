@@ -58,6 +58,8 @@ const DoctorConsultation = () => {
                 alt="BF SUMA Royal wellness expert providing personalized health consultation"
                 loading="lazy"
                 decoding="async"
+                width={600}
+                height={400}
                 className="relative rounded-3xl shadow-elegant w-full h-[400px] object-cover"
               />
             </div>

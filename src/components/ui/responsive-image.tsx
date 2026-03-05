@@ -12,6 +12,8 @@ interface ResponsiveImageProps {
   sizes?: string;
   loading?: "lazy" | "eager";
   decoding?: "async" | "sync" | "auto";
+  width?: number;
+  height?: number;
   onLoad?: () => void;
   onError?: () => void;
   fallbackSrc?: string;
@@ -44,6 +46,8 @@ const ResponsiveImage = ({
   sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
   loading = "lazy",
   decoding = "async",
+  width,
+  height,
   onLoad,
   onError,
   fallbackSrc,
@@ -78,6 +82,8 @@ const ResponsiveImage = ({
       <img
         src={imageSrc}
         alt={alt}
+        width={width}
+        height={height}
         className={`${className} ${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
         loading={loading}
         decoding={decoding}
