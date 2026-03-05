@@ -1,24 +1,27 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <link rel="preload" as="image" href="/src/assets/wellness-hero.jpg" fetchpriority="high" />
-    <!-- Google Tag Manager -->
+    <!-- Defer GTM until after page load to avoid render-blocking -->
     <script>
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-PDTHQJND');
-    </script>
-    <!-- End Google Tag Manager -->
+      window.addEventListener('load', function() {
+        // Google Tag Manager
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-PDTHQJND');
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-5S6XHDLTPF"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-5S6XHDLTPF');
+        // Google Analytics gtag.js
+        var gs = d.createElement('script');
+        gs.async = true;
+        gs.src = 'https://www.googletagmanager.com/gtag/js?id=G-5S6XHDLTPF';
+        document.head.appendChild(gs);
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', 'G-5S6XHDLTPF');
+      });
     </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -30,7 +33,7 @@
     <link rel="dns-prefetch" href="https://cdn.gpteng.co" />
     
     <!-- Preload LCP hero image for faster rendering -->
-    <link rel="preload" as="image" href="/src/assets/wellness-hero.jpg" fetchpriority="high" />
+    <link rel="preload" as="image" href="/src/assets/wellness-hero.jpg" fetchpriority="high" type="image/jpeg" />
     
     <!-- Primary Meta Tags -->
     <title>BF SUMA Royal - Premium Supplements for Better Health | Wellness Business Opportunity Kenya</title>
