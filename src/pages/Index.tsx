@@ -1,23 +1,25 @@
-import { useMemo } from "react";
+import { useMemo, lazy, Suspense } from "react";
 import Hero from "@/components/Hero";
 import Header from "@/components/Header";
-import DoctorConsultation from "@/components/DoctorConsultation";
-import ProductShowcase from "@/components/ProductShowcase";
-import Testimonials from "@/components/Testimonials";
-import JoinEarn from "@/components/JoinEarn";
-import Community from "@/components/Community";
-import About from "@/components/About";
-import FAQ from "@/components/FAQ";
-import Contact from "@/components/Contact";
-import Chatbot from "@/components/Chatbot";
 import Footer from "@/components/Footer";
 import StructuredData from "@/components/StructuredData";
-import CommunityStories from "@/components/blog/CommunityStories";
-import SocialFeed from "@/components/SocialFeed";
-import NewsletterSignup from "@/components/NewsletterSignup";
-import ExitIntentPopup from "@/components/ExitIntentPopup";
 import { useProducts } from "@/hooks/use-products";
 import { useProductRatings } from "@/hooks/use-product-ratings";
+
+// Lazy-load below-the-fold sections to reduce main-thread work
+const DoctorConsultation = lazy(() => import("@/components/DoctorConsultation"));
+const ProductShowcase = lazy(() => import("@/components/ProductShowcase"));
+const Testimonials = lazy(() => import("@/components/Testimonials"));
+const JoinEarn = lazy(() => import("@/components/JoinEarn"));
+const Community = lazy(() => import("@/components/Community"));
+const About = lazy(() => import("@/components/About"));
+const FAQ = lazy(() => import("@/components/FAQ"));
+const Contact = lazy(() => import("@/components/Contact"));
+const Chatbot = lazy(() => import("@/components/Chatbot"));
+const CommunityStories = lazy(() => import("@/components/blog/CommunityStories"));
+const SocialFeed = lazy(() => import("@/components/SocialFeed"));
+const NewsletterSignup = lazy(() => import("@/components/NewsletterSignup"));
+const ExitIntentPopup = lazy(() => import("@/components/ExitIntentPopup"));
 
 // FAQ data for structured data
 const faqData = [
