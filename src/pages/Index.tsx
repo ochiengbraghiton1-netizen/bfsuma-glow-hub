@@ -64,20 +64,21 @@ const Index = () => {
       <Header />
       <main className="pt-16"> {/* Offset for fixed header */}
         <Hero />
-        <DoctorConsultation />
-        <Testimonials />
-        <ProductShowcase />
-        <CommunityStories />
-        <SocialFeed />
-        <About />
-        <FAQ />
-        <JoinEarn />
-        <Community />
-        <Contact />
-        <NewsletterSignup />
-        <Chatbot />
-        <ExitIntentPopup />
-      </main>
+        <Suspense fallback={null}>
+          <DoctorConsultation />
+          <Testimonials />
+          <ProductShowcase />
+          <CommunityStories />
+          <SocialFeed />
+          <About />
+          <FAQ />
+          <JoinEarn />
+          <Community />
+          <Contact />
+          <NewsletterSignup />
+          <Chatbot />
+          <ExitIntentPopup />
+        </Suspense>
       <Footer />
     </div>
   );
