@@ -41,7 +41,7 @@ export default defineConfig(({ mode }) => ({
           "vendor-query": ["@tanstack/react-query"],
           "vendor-ui": ["@radix-ui/react-dialog", "@radix-ui/react-popover", "@radix-ui/react-dropdown-menu", "@radix-ui/react-tabs", "@radix-ui/react-toast"],
           "vendor-supabase": ["@supabase/supabase-js"],
-          "vendor-motion": ["framer-motion"],
+          
           "vendor-charts": ["recharts"],
         },
       },
