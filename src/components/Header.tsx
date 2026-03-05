@@ -76,14 +76,14 @@ const Header = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden lg:flex items-center gap-4 xl:gap-6">
           {navLinks.map((link) =>
             link.isAnchor ? (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href, link.isAnchor)}
-                className="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+                className="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer whitespace-nowrap"
               >
                 {link.label}
               </a>
@@ -91,7 +91,7 @@ const Header = () => {
               <Link
                 key={link.href}
                 to={link.href}
-                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                className="text-sm text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
               >
                 {link.label}
               </Link>
@@ -123,7 +123,7 @@ const Header = () => {
           <ThemeToggle />
 
           {/* Desktop auth button */}
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             {user ? (
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/account">
@@ -242,7 +242,7 @@ const Header = () => {
           {/* Mobile Menu */}
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
+              <Button variant="ghost" size="icon" className="lg:hidden">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
