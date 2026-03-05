@@ -1,10 +1,10 @@
 import { Globe, Award, Users, Heart, CheckCircle, Lightbulb, Target, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useInView } from "@/hooks/use-in-view";
 
 const timelineEvents = [
   {
@@ -124,6 +124,20 @@ const aboutPageSchema = {
   },
 };
 
+/** Animate-on-scroll wrapper using CSS animations instead of framer-motion */
+const AnimatedSection = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => {
+  const [ref, isInView] = useInView<HTMLDivElement>({ threshold: 0.1, triggerOnce: true });
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-600 ease-out ${isInView ? 'animate-fade-in opacity-100' : 'opacity-0 translate-y-4'} ${className}`}
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+};
+
 const AboutPage = () => {
   return (
     <div className="min-h-screen bg-background">
@@ -167,12 +181,7 @@ const AboutPage = () => {
       {/* Hero Section */}
       <section className="pt-24 pb-16 bg-gradient-to-b from-primary/10 to-background">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="max-w-4xl mx-auto text-center"
-          >
+          <AnimatedSection className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
               Our{" "}
               <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
@@ -183,7 +192,7 @@ const AboutPage = () => {
               From Los Angeles in 2006 to a trusted global wellness brand across 15+ countries —
               helping people live healthier lives and build brighter futures.
             </p>
-          </motion.div>
+          </AnimatedSection>
         </div>
       </section>
 
@@ -191,13 +200,7 @@ const AboutPage = () => {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-              className="bg-card rounded-2xl p-8 border border-border"
-            >
+            <AnimatedSection className="bg-card rounded-2xl p-8 border border-border">
               <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-primary/10 mb-6">
                 <Target className="w-7 h-7 text-primary" />
               </div>
@@ -206,15 +209,9 @@ const AboutPage = () => {
                 To improve the quality of life worldwide by providing effective, safe, and innovative
                 health and wellness products.
               </p>
-            </motion.div>
+            </AnimatedSection>
 
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-              className="bg-card rounded-2xl p-8 border border-border"
-            >
+            <AnimatedSection className="bg-card rounded-2xl p-8 border border-border" delay={100}>
               <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-accent/10 mb-6">
                 <Globe className="w-7 h-7 text-accent" />
               </div>
@@ -223,7 +220,7 @@ const AboutPage = () => {
                 To become a trusted global leader in wellness, empowering individuals and communities
                 across the world.
               </p>
-            </motion.div>
+            </AnimatedSection>
           </div>
         </div>
       </section>
@@ -231,18 +228,12 @@ const AboutPage = () => {
       {/* Timeline */}
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="text-center mb-12"
-          >
+          <AnimatedSection className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">The BF SUMA Story</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               A chronological journey from our founding to becoming a global wellness leader.
             </p>
-          </motion.div>
+          </AnimatedSection>
 
           <div className="max-w-4xl mx-auto relative">
             {/* Vertical line */}
@@ -251,12 +242,9 @@ const AboutPage = () => {
             {timelineEvents.map((event, index) => {
               const isEven = index % 2 === 0;
               return (
-                <motion.div
+                <AnimatedSection
                   key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.5, delay: index * 0.05, ease: "easeOut" }}
+                  delay={index * 50}
                   className={`relative flex items-start gap-6 mb-12 last:mb-0 ${
                     isEven ? "md:flex-row" : "md:flex-row-reverse"
                   }`}
@@ -296,7 +284,7 @@ const AboutPage = () => {
 
                   {/* Spacer for the other side */}
                   <div className="hidden md:block md:w-[calc(50%-4rem)]" />
-                </motion.div>
+                </AnimatedSection>
               );
             })}
           </div>
@@ -306,18 +294,12 @@ const AboutPage = () => {
       {/* Innovation Highlights */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="text-center mb-12"
-          >
+          <AnimatedSection className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Innovation & Global Reach</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Our commitment to research and development has led to major achievements.
             </p>
-          </motion.div>
+          </AnimatedSection>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
             {[
@@ -326,18 +308,15 @@ const AboutPage = () => {
               { icon: Award, value: "5", label: "International Patents" },
               { icon: CheckCircle, value: "100%", label: "U.S. Quality Standards" },
             ].map((stat, index) => (
-              <motion.div
+              <AnimatedSection
                 key={index}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
+                delay={index * 100}
                 className="bg-card rounded-2xl p-6 text-center border border-border hover:border-primary transition-all duration-300"
               >
                 <stat.icon className="w-10 h-10 text-primary mx-auto mb-3" />
                 <div className="text-3xl font-bold text-foreground mb-1">{stat.value}</div>
                 <div className="text-sm text-muted-foreground">{stat.label}</div>
-              </motion.div>
+              </AnimatedSection>
             ))}
           </div>
         </div>
@@ -346,27 +325,18 @@ const AboutPage = () => {
       {/* Core Values */}
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="text-center mb-12"
-          >
+          <AnimatedSection className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Core Values</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               The principles that guide everything we do at BF SUMA.
             </p>
-          </motion.div>
+          </AnimatedSection>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
             {coreValues.map((value, index) => (
-              <motion.div
+              <AnimatedSection
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
+                delay={index * 100}
                 className="bg-card rounded-2xl p-6 text-center border border-border hover:border-primary hover:shadow-lg transition-all duration-300"
               >
                 <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-primary/10 mb-4">
@@ -374,7 +344,7 @@ const AboutPage = () => {
                 </div>
                 <h3 className="text-lg font-bold mb-2">{value.title}</h3>
                 <p className="text-sm text-muted-foreground">{value.description}</p>
-              </motion.div>
+              </AnimatedSection>
             ))}
           </div>
         </div>
@@ -383,27 +353,18 @@ const AboutPage = () => {
       {/* Certifications */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="text-center mb-12"
-          >
+          <AnimatedSection className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Certifications & Quality</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Our commitment to quality is backed by international certifications and rigorous testing.
             </p>
-          </motion.div>
+          </AnimatedSection>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
             {certifications.map((cert, index) => (
-              <motion.div
+              <AnimatedSection
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
+                delay={index * 100}
                 className="bg-card rounded-xl p-6 border border-border flex items-start gap-4"
               >
                 <CheckCircle className="w-6 h-6 text-primary flex-shrink-0 mt-0.5" />
@@ -411,7 +372,7 @@ const AboutPage = () => {
                   <h3 className="font-bold mb-1">{cert.name}</h3>
                   <p className="text-sm text-muted-foreground">{cert.description}</p>
                 </div>
-              </motion.div>
+              </AnimatedSection>
             ))}
           </div>
         </div>
@@ -420,13 +381,7 @@ const AboutPage = () => {
       {/* CTA Section */}
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="max-w-3xl mx-auto text-center bg-gradient-to-r from-primary/10 to-accent/10 rounded-3xl p-8 md:p-12 border border-border"
-          >
+          <AnimatedSection className="max-w-3xl mx-auto text-center bg-gradient-to-r from-primary/10 to-accent/10 rounded-3xl p-8 md:p-12 border border-border">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">
               Ready to Start Your Wellness Journey?
             </h2>
@@ -441,7 +396,7 @@ const AboutPage = () => {
                 <Link to="/#products">Browse Products</Link>
               </Button>
             </div>
-          </motion.div>
+          </AnimatedSection>
         </div>
       </section>
 
