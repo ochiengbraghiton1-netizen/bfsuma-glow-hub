@@ -36,6 +36,8 @@ const JoinEarn = () => {
         alt="BF SUMA Royal business opportunity and wellness entrepreneur community"
         loading="lazy"
         decoding="async"
+        width={1920}
+        height={1080}
         className="absolute inset-0 w-full h-full object-cover"
       />
       <div className="absolute inset-0 bg-gradient-to-r from-secondary/95 via-primary/90 to-secondary/95" />
