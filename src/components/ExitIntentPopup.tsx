@@ -107,8 +107,8 @@ const ExitIntentPopup = () => {
       <DialogContent className="sm:max-w-md border-accent/30">
         {submitted ? (
           <div className="flex flex-col items-center text-center py-6 space-y-4">
-            <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-              <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
+            <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center">
+              <CheckCircle className="w-8 h-8 text-accent" />
             </div>
             <DialogHeader>
               <DialogTitle className="text-center text-2xl">Success! 🎉</DialogTitle>
