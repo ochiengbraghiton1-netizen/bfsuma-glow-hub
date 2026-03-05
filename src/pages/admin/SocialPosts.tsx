@@ -225,7 +225,20 @@ const SocialPosts = () => {
                       </Button>
                     </div>
                   )}
-                  <div className="flex gap-2 items-center">
+                  <div
+                    className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer ${
+                      dragActive ? "border-primary bg-primary/5" : "border-muted-foreground/25 hover:border-primary/50"
+                    }`}
+                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setDragActive(true); }}
+                    onDragEnter={(e) => { e.preventDefault(); e.stopPropagation(); setDragActive(true); }}
+                    onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setDragActive(false); }}
+                    onDrop={(e) => {
+                      e.preventDefault(); e.stopPropagation(); setDragActive(false);
+                      const file = e.dataTransfer.files?.[0];
+                      if (file && file.type.startsWith("image/")) handleImageUpload(file);
+                    }}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
                     <input
                       ref={fileInputRef}
                       type="file"
@@ -236,17 +249,18 @@ const SocialPosts = () => {
                         if (file) handleImageUpload(file);
                       }}
                     />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      disabled={uploading}
-                      onClick={() => fileInputRef.current?.click()}
-                    >
-                      {uploading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Upload className="h-4 w-4 mr-2" />}
-                      {uploading ? "Uploading..." : "Upload Image"}
-                    </Button>
-                    <span className="text-xs text-muted-foreground">or paste URL below</span>
+                    {uploading ? (
+                      <div className="flex flex-col items-center gap-1">
+                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                        <span className="text-sm text-muted-foreground">Uploading...</span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-1">
+                        <Upload className="h-6 w-6 text-muted-foreground" />
+                        <span className="text-sm font-medium">Drag & drop an image here, or click to browse</span>
+                        <span className="text-xs text-muted-foreground">or paste a URL below</span>
+                      </div>
+                    )}
                   </div>
                   <Input
                     value={form.image_url}
