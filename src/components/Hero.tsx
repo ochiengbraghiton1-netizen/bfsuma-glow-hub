@@ -1,11 +1,9 @@
 import { ArrowRight, Sparkles, ShoppingBag, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useIsMobile } from "@/hooks/use-mobile";
 import heroBg from "@/assets/wellness-hero.jpg";
 
 const Hero = () => {
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
   
   const scrollToProducts = () => {
     document.getElementById("products")?.scrollIntoView({ behavior: "smooth" });
@@ -33,25 +31,6 @@ const Hero = () => {
       {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-secondary/90 via-secondary/70 to-primary/80" />
       
-      {/* Floating particles - desktop only to reduce mobile paint/layout */}
-      {!isMobile && (
-        <div className="absolute inset-0 overflow-hidden">
-          {[...Array(12)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute rounded-full bg-accent/30"
-              style={{
-                width: Math.random() * 10 + 5 + "px",
-                height: Math.random() * 10 + 5 + "px",
-                left: Math.random() * 100 + "%",
-                top: Math.random() * 100 + "%",
-                animation: `float ${Math.random() * 6 + 4}s ease-in-out infinite`,
-                animationDelay: `${Math.random() * 2}s`,
-              }}
-            />
-          ))}
-        </div>
-      )}
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center animate-fade-in">
