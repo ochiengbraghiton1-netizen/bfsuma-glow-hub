@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Instagram, Facebook, Twitter, Video, ExternalLink, Upload, X, Loader2 } from "lucide-react";
+import { compressImage, formatFileSize } from "@/lib/image-compression";
 
 const platformOptions = [
   { value: "instagram", label: "Instagram", icon: Instagram },
@@ -129,13 +130,20 @@ const SocialPosts = () => {
   const handleImageUpload = async (file: File) => {
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop();
+      const originalSize = file.size;
+      const compressed = await compressImage(file, 1200, 1200, 0.8);
+      const saved = originalSize - compressed.size;
+
+      const ext = compressed.name.split(".").pop();
       const path = `${crypto.randomUUID()}.${ext}`;
-      const { error } = await supabase.storage.from("social-posts").upload(path, file);
+      const { error } = await supabase.storage.from("social-posts").upload(path, compressed);
       if (error) throw error;
       const { data: urlData } = supabase.storage.from("social-posts").getPublicUrl(path);
       setForm((prev) => ({ ...prev, image_url: urlData.publicUrl }));
-      toast({ title: "Image uploaded" });
+      const desc = saved > 0
+        ? `Compressed from ${formatFileSize(originalSize)} to ${formatFileSize(compressed.size)} (saved ${formatFileSize(saved)})`
+        : `Uploaded ${formatFileSize(compressed.size)}`;
+      toast({ title: "Image uploaded", description: desc });
     } catch (err: any) {
       toast({ title: "Upload failed", description: err.message, variant: "destructive" });
     } finally {
