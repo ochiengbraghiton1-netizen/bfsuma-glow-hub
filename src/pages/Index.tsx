@@ -79,6 +79,7 @@ const Index = () => {
           <Chatbot />
           <ExitIntentPopup />
         </Suspense>
+      </main>
       <Footer />
     </div>
   );
