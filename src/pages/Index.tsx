@@ -6,7 +6,7 @@ import StructuredData from "@/components/StructuredData";
 import { useProducts } from "@/hooks/use-products";
 import { useProductRatings } from "@/hooks/use-product-ratings";
 
-// Lazy-load below-the-fold sections to reduce main-thread work
+// Lazy-load below-the-fold sections
 const DoctorConsultation = lazy(() => import("@/components/DoctorConsultation"));
 const ProductShowcase = lazy(() => import("@/components/ProductShowcase"));
 const Testimonials = lazy(() => import("@/components/Testimonials"));
@@ -62,20 +62,30 @@ const Index = () => {
     <div className="min-h-screen">
       <StructuredData faqs={faqData} products={products} productRatings={productRatings} />
       <Header />
-      <main className="pt-16"> {/* Offset for fixed header */}
+      <main className="pt-16">
         <Hero />
+        {/* Priority below-fold: testimonials + products */}
         <Suspense fallback={null}>
           <DoctorConsultation />
           <Testimonials />
           <ProductShowcase />
+        </Suspense>
+        {/* Secondary content - deferred further */}
+        <Suspense fallback={null}>
           <CommunityStories />
           <SocialFeed />
           <About />
           <FAQ />
+        </Suspense>
+        {/* Tertiary content */}
+        <Suspense fallback={null}>
           <JoinEarn />
           <Community />
           <Contact />
           <NewsletterSignup />
+        </Suspense>
+        {/* Interactive overlays - lowest priority */}
+        <Suspense fallback={null}>
           <Chatbot />
           <ExitIntentPopup />
         </Suspense>
