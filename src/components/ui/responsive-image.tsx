@@ -12,6 +12,8 @@ interface ResponsiveImageProps {
   sizes?: string;
   loading?: "lazy" | "eager";
   decoding?: "async" | "sync" | "auto";
+  width?: number;
+  height?: number;
   onLoad?: () => void;
   onError?: () => void;
   fallbackSrc?: string;
