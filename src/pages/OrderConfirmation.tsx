@@ -146,6 +146,7 @@ const OrderConfirmation = () => {
 
   const statusLabel: Record<string, string> = {
     pending_whatsapp: 'Awaiting WhatsApp Confirmation',
+    pending_payment: 'Pending Payment',
     whatsapp_initiated: 'WhatsApp Opened',
     confirmed: 'Confirmed',
     completed: 'Completed',
@@ -156,6 +157,7 @@ const OrderConfirmation = () => {
 
   const statusColor: Record<string, string> = {
     pending_whatsapp: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
+    pending_payment: 'bg-orange-500/10 text-orange-600 border-orange-500/20',
     whatsapp_initiated: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
     confirmed: 'bg-green-500/10 text-green-600 border-green-500/20',
     completed: 'bg-green-500/10 text-green-600 border-green-500/20',
