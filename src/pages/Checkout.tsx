@@ -15,6 +15,7 @@ import { isBot } from '@/lib/honeypot';
 import { PhoneInput, formatForWhatsApp } from '@/components/ui/phone-input';
 import PayPalButton from '@/components/checkout/PayPalButton';
 import CurrencySelector from '@/components/checkout/CurrencySelector';
+import SecureCheckoutBadges from '@/components/checkout/SecureCheckoutBadges';
 import { useCurrency } from '@/hooks/use-currency';
 
 const WHATSAPP_NUMBER = "254795454053";
@@ -586,6 +587,8 @@ Sent from BF SUMA ROYAL Website`;
                       />
                     </>
                   )}
+
+                  <SecureCheckoutBadges />
                 </div>
               </form>
             </div>
