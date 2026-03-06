@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -54,7 +54,9 @@ const isMobileDevice = (): boolean => {
 const OrderConfirmation = () => {
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+  const isSuccessRoute = location.pathname.startsWith('/order-success');
   const [order, setOrder] = useState<Order | null>(null);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -183,11 +185,11 @@ const OrderConfirmation = () => {
               <CheckCircle className="h-10 w-10 text-primary" />
             </div>
             <h1 className="text-2xl font-bold">
-              {isPaid ? 'Payment Successful!' : 'Order Created Successfully!'}
+              {isPaid ? 'Payment Successful! Thank You! 🎉' : 'Order Created Successfully!'}
             </h1>
             <p className="text-muted-foreground max-w-md mx-auto">
               {isPaid
-                ? 'Your payment has been received. We will process your order and arrange delivery shortly.'
+                ? 'Your payment has been received and your order is confirmed. We will process your order and arrange delivery shortly. A confirmation email has been sent to you.'
                 : 'Your order has been created successfully. To complete your order, please confirm via WhatsApp.'}
             </p>
           </div>
@@ -220,6 +222,15 @@ const OrderConfirmation = () => {
                   <span className="font-medium">{order.currency}</span>
                 </div>
               </div>
+
+              {order.shipping_address && (
+                <>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Delivery Address</span>
+                    <span className="font-medium text-right max-w-[60%]">{order.shipping_address}</span>
+                  </div>
+                </>
+              )}
 
               <Separator />
 

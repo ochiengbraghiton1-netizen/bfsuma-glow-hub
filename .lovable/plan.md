@@ -1,47 +1,77 @@
 
+## Plan: Add SEO-Friendly Alt Text and Update Meta Tags
 
-## Analysis
+### Current State Analysis
 
-Most of the requested functionality is already implemented in the current codebase:
+**Images Missing Alt Text:**
+1. **Hero background** (`Hero.tsx`): Currently `alt=""` - This is the LCP (Largest Contentful Paint) image and should have descriptive alt text for SEO
+2. **Join & Earn background** (`JoinEarn.tsx`): Currently `alt=""` - decorative but could benefit from alt text
+3. **Community background** (`Community.tsx`): Currently `alt=""` - decorative but could benefit from alt text
 
-- **Order saved before PayPal** -- `saveOrderToDb('pending_payment')` runs before PayPal opens
-- **Status updated to "Paid"** -- `handlePayPalApprove` updates status to `paid` with PayPal transaction ID
-- **Cart cleared** -- `clearCart()` called after successful payment
-- **GA4 purchase event** -- Already fires with `transaction_id`, `value`, `currency`, and `items`
-- **Order summary page** -- `/order-confirmation/:orderId` already shows order ID, products, customer details, total, and a "Payment Successful" message for paid orders
+**Images with Alt Text (OK):**
+- Doctor consultation image: `alt="Wellness consultation"` - could be improved
+- Product cards: Use `alt={name}` - good, dynamically uses product name
 
-### What needs to be added
-
-1. **`/order-success` route** -- Add as an alias/redirect so PayPal redirects go to a clean URL. After payment, navigate to `/order-success/:orderId` instead of `/order-confirmation/:orderId`. Both routes can share the same component, or we rename the existing one.
-
-2. **Confirmation email to customer** -- This is the only truly missing feature. It requires a backend function to send a transactional email after successful PayPal payment, containing order details, delivery address, and contact info.
+**Meta Tags:**
+- The `index.html` title and description don't fully align with the new hero messaging
 
 ---
 
-## Plan
+### Changes Required
 
-### 1. Add `/order-success` route
-- Add a new route `/order-success/:orderId` in `App.tsx` pointing to the existing `OrderConfirmation` component
-- Update `Checkout.tsx` `handlePayPalApprove` to navigate to `/order-success/:orderId` instead of `/order-confirmation/:orderId`
-- Keep `/order-confirmation/:orderId` working for WhatsApp orders
-- Update the page heading logic: show "Payment Successful! Thank You!" for paid orders on the success route
+#### 1. Hero.tsx - Add Alt Text to Hero Image
+```text
+Current:  alt=""
+Updated:  alt="BF SUMA Royal premium wellness supplements and natural health products display"
+```
 
-### 2. Send order confirmation email via backend function
-- Create an edge function `send-order-confirmation` that:
-  - Accepts order ID
-  - Fetches order + order items from the database
-  - Sends a formatted HTML email to the customer with: order ID, product list, total amount, delivery address, and BF SUMA ROYAL contact info
-  - Uses the Lovable AI-supported email approach (transactional email via the platform)
-- Call this edge function from `handlePayPalApprove` after updating the order status to `paid`
-- Only send if customer email is provided
+#### 2. DoctorConsultation.tsx - Improve Alt Text
+```text
+Current:  alt="Wellness consultation"
+Updated:  alt="BF SUMA Royal wellness expert providing personalized health consultation"
+```
 
-### 3. Minor UX improvements on success page
-- Add a more prominent "Thank you for your purchase" message for PayPal-paid orders
-- Display delivery address on the confirmation page for paid orders
+#### 3. JoinEarn.tsx - Add Alt Text to Background
+```text
+Current:  alt=""
+Updated:  alt="BF SUMA Royal business opportunity and wellness entrepreneur community"
+```
 
-### Files to modify
-- `src/App.tsx` -- add `/order-success/:orderId` route
-- `src/pages/Checkout.tsx` -- change PayPal success navigation to `/order-success/`
-- `src/pages/OrderConfirmation.tsx` -- enhance paid order display, add delivery address
-- `supabase/functions/send-order-confirmation/index.ts` -- new edge function for email
+#### 4. Community.tsx - Add Alt Text to Background
+```text
+Current:  alt=""
+Updated:  alt="BF SUMA Royal wellness community training and mentorship program"
+```
 
+#### 5. index.html - Update Meta Title and Description
+
+**Title:**
+```text
+Current:  "BF SUMA ROYAL Kenya - Premium Natural Supplements & Wellness Business Opportunity"
+Updated:  "BF SUMA Royal - Premium Supplements for Better Health | Wellness Business Opportunity Kenya"
+```
+
+**Meta Description:**
+```text
+Current:  "Discover BF SUMA ROYAL's premium natural health supplements in Kenya..."
+Updated:  "BF SUMA Royal offers trusted wellness products designed to support your health journey. Premium supplements backed by a real business opportunity. Shop NMN Capsules, ArthroXtra, Ganoderma & more in Kenya."
+```
+
+**Open Graph Title and Description** will also be updated to match.
+
+---
+
+### Technical Details
+
+All changes are simple string replacements in the following files:
+- `src/components/Hero.tsx` (line 24)
+- `src/components/DoctorConsultation.tsx` (line 58)
+- `src/components/JoinEarn.tsx` (line 37)
+- `src/components/Community.tsx` (line 17)
+- `index.html` (lines 21, 22, 29, 30, 35, 36)
+
+### SEO Benefits
+- Improved image indexing for Google Image Search
+- Better accessibility for screen readers
+- Meta tags aligned with hero content for consistent messaging
+- Keywords included: "BF SUMA Royal", "supplements", "wellness", "business opportunity", "Kenya"

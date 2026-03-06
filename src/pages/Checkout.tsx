@@ -294,9 +294,16 @@ Sent from BF SUMA ROYAL Website`;
         });
       }
 
+      // Send confirmation email if customer provided email
+      if (formData.customerEmail) {
+        supabase.functions.invoke('send-order-confirmation', {
+          body: { orderId: dbOrderId },
+        }).catch(err => console.error('Email send error:', err));
+      }
+
       clearCart();
       setPendingPaypalOrderId(null);
-      navigate(`/order-confirmation/${dbOrderId}`);
+      navigate(`/order-success/${dbOrderId}`, { replace: true });
     } catch (error) {
       console.error('PayPal order update error:', error);
       toast({

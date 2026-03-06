@@ -87,6 +87,7 @@ const App = () => (
                   <Route path="/account/orders" element={<MyOrders />} />
                   <Route path="/order-tracking" element={<OrderTracking />} />
                   <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
+                  <Route path="/order-success/:orderId" element={<OrderConfirmation />} />
                   <Route path="/checkout" element={<Checkout />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/auth/callback" element={<AuthCallback />} />
