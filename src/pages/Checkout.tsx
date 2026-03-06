@@ -233,7 +233,9 @@ Sent from BF SUMA ROYAL Website`;
     return newOrderId;
   };
 
-  const handlePayPalApprove = async (paypalOrderId: string, details: any) => {
+  const [pendingPaypalOrderId, setPendingPaypalOrderId] = useState<string | null>(null);
+
+  const handlePayPalCreateOrder = async () => {
     const result = checkoutSchema.safeParse(formData);
     if (!result.success) {
       const fieldErrors: Partial<Record<keyof CheckoutFormData, string>> = {};
@@ -243,36 +245,43 @@ Sent from BF SUMA ROYAL Website`;
         }
       });
       setErrors(fieldErrors);
-      toast({
-        title: 'Please fill in required fields',
-        description: 'Complete the form before paying.',
-        variant: 'destructive',
-      });
-      return;
+      throw new Error('Please fill in required fields');
     }
 
-    if (isBot(honeypot)) return;
+    if (isBot(honeypot)) throw new Error('Validation failed');
 
+    // Save order as pending_payment BEFORE PayPal redirect
+    if (!pendingPaypalOrderId) {
+      const newOrderId = await saveOrderToDb('pending_payment');
+      setPendingPaypalOrderId(newOrderId);
+    }
+  };
+
+  const handlePayPalApprove = async (paypalOrderId: string, details: any) => {
     setIsSubmitting(true);
     try {
-      const newOrderId = await saveOrderToDb('paid');
+      const dbOrderId = pendingPaypalOrderId;
+      if (!dbOrderId) {
+        throw new Error('No pending order found');
+      }
 
       await supabase
         .from('orders')
         .update({ 
-          notes: `${formData.notes || ''}\n[PayPal Transaction: ${details.id || paypalOrderId}]`.trim(),
-          payment_method: 'paypal',
+          status: 'paid',
           payment_status: 'paid',
+          payment_method: 'paypal',
           paypal_transaction_id: details.id || paypalOrderId,
+          notes: `${formData.notes || ''}\n[PayPal Transaction: ${details.id || paypalOrderId}]`.trim(),
         } as any)
-        .eq('id', newOrderId);
+        .eq('id', dbOrderId);
 
-      // GA4 purchase event — only after successful PayPal capture
+      // GA4 purchase event
       if (typeof window !== 'undefined' && (window as any).dataLayer) {
         (window as any).dataLayer.push({
           event: 'purchase',
           ecommerce: {
-            transaction_id: newOrderId,
+            transaction_id: dbOrderId,
             value: convert(finalTotal),
             currency: currency,
             items: items.map(item => ({
@@ -286,12 +295,13 @@ Sent from BF SUMA ROYAL Website`;
       }
 
       clearCart();
-      navigate(`/order-confirmation/${newOrderId}`);
+      setPendingPaypalOrderId(null);
+      navigate(`/order-confirmation/${dbOrderId}`);
     } catch (error) {
-      console.error('PayPal order save error:', error);
+      console.error('PayPal order update error:', error);
       toast({
         title: 'Order Failed',
-        description: 'Payment was received but order save failed. Please contact support.',
+        description: 'Payment was received but order update failed. Please contact support.',
         variant: 'destructive',
       });
     } finally {
@@ -562,6 +572,7 @@ Sent from BF SUMA ROYAL Website`;
                       <PayPalButton
                         amount={convert(finalTotal)}
                         currency={currency}
+                        onCreateOrder={handlePayPalCreateOrder}
                         onApprove={handlePayPalApprove}
                         onError={handlePayPalError}
                         disabled={isSubmitting || items.length === 0}
