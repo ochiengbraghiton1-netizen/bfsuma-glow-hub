@@ -6,6 +6,7 @@ const PAYPAL_CLIENT_ID = 'AUfjZUjWnYi8mc-NdnscH1Q-c00Sr681sVjFhUZ5SZmc9w4-5AwztO
 interface PayPalButtonProps {
   amount: number;
   currency?: string;
+  onCreateOrder?: () => Promise<void>;
   onApprove: (orderId: string, details: any) => Promise<void>;
   onError: (error: any) => void;
   disabled?: boolean;
@@ -17,7 +18,7 @@ declare global {
   }
 }
 
-const PayPalButton = ({ amount, currency = 'USD', onApprove, onError, disabled }: PayPalButtonProps) => {
+const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onError, disabled }: PayPalButtonProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [sdkReady, setSdkReady] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -80,7 +81,10 @@ const PayPalButton = ({ amount, currency = 'USD', onApprove, onError, disabled }
           label: 'paypal',
           height: 48,
         },
-        createOrder: (_data: any, actions: any) => {
+        createOrder: async (_data: any, actions: any) => {
+          if (onCreateOrder) {
+            await onCreateOrder();
+          }
           return actions.order.create({
             purchase_units: [{
               amount: {
