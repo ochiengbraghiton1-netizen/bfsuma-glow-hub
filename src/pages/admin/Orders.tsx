@@ -57,11 +57,13 @@ const filterOptions = [
   { value: 'all', label: 'All Orders' },
   { value: 'paid_paypal', label: 'Paid (PayPal)' },
   { value: 'whatsapp', label: 'WhatsApp Orders' },
+  { value: 'pending_payment', label: 'Pending Payment (Abandoned)' },
   { value: 'pending', label: 'Pending' },
   { value: 'failed', label: 'Failed' },
 ];
 
 const statusOptions = [
+  { value: 'pending_payment', label: 'Pending Payment' },
   { value: 'pending_whatsapp', label: 'Pending WhatsApp' },
   { value: 'whatsapp_initiated', label: 'WhatsApp Initiated' },
   { value: 'paid', label: 'Paid (PayPal)' },
@@ -72,6 +74,7 @@ const statusOptions = [
 
 const statusColors: Record<string, string> = {
   pending: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
+  pending_payment: 'bg-orange-500/10 text-orange-600 border-orange-500/20',
   pending_whatsapp: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
   whatsapp_initiated: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
   paid: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
@@ -115,6 +118,8 @@ const Orders = () => {
       query = query.eq('payment_method', 'paypal').eq('payment_status', 'paid');
     } else if (activeFilter === 'whatsapp') {
       query = query.eq('payment_method', 'whatsapp');
+    } else if (activeFilter === 'pending_payment') {
+      query = query.eq('status', 'pending_payment');
     } else if (activeFilter === 'pending') {
       query = query.eq('payment_status', 'pending');
     } else if (activeFilter === 'failed') {
