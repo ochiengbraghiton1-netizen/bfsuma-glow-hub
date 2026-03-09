@@ -73,8 +73,15 @@ const Footer = () => {
           </div>
         </div>
 
+        {/* Compliance Disclaimer */}
+        <div className="pt-8 border-t border-white/20 mb-4">
+          <p className="text-[11px] italic text-center" style={{ color: '#888888' }}>
+            * These statements have not been evaluated by any food or drug regulatory authority. This product is not intended to diagnose, treat, cure, or prevent any disease. Results may vary. Always consult a qualified healthcare professional before starting any supplement regimen.
+          </p>
+        </div>
+
         {/* Social Media & Copyright */}
-        <div className="pt-8 border-t border-white/20 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-white/60 text-sm text-center md:text-left">
             © 2026 BF SUMA Royal | Kakamega
           </p>
