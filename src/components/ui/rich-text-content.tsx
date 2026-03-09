@@ -1,16 +1,27 @@
+import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
+import { autoLinkProducts, ProductLinkInfo } from '@/lib/auto-link-products';
 
 interface RichTextContentProps {
   content: string;
   className?: string;
+  /** When provided, product names in the content will be auto-linked */
+  autoLinkProductList?: ProductLinkInfo[];
 }
 
 /**
  * RichTextContent component for rendering HTML content from the rich text editor.
  * Uses Tailwind Typography (prose) classes for proper formatting of headings, lists, etc.
  */
-const RichTextContent = ({ content, className }: RichTextContentProps) => {
+const RichTextContent = ({ content, className, autoLinkProductList }: RichTextContentProps) => {
   if (!content) return null;
+
+  const processedContent = useMemo(() => {
+    if (autoLinkProductList && autoLinkProductList.length > 0) {
+      return autoLinkProducts(content, autoLinkProductList);
+    }
+    return content;
+  }, [content, autoLinkProductList]);
 
   return (
     <div
@@ -32,7 +43,7 @@ const RichTextContent = ({ content, className }: RichTextContentProps) => {
         // Blockquotes
         'prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:my-4',
         // Links
-        'prose-a:text-primary prose-a:underline prose-a:cursor-pointer prose-a:hover:text-primary/80',
+        'prose-a:text-primary prose-a:no-underline prose-a:cursor-pointer prose-a:hover:text-primary/80',
         // Code
         'prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm',
         'prose-pre:bg-muted prose-pre:p-4 prose-pre:rounded-lg prose-pre:my-4',
@@ -44,9 +55,11 @@ const RichTextContent = ({ content, className }: RichTextContentProps) => {
         '[&_u]:underline',
         // Strikethrough
         '[&_s]:line-through',
+        // Product autolinks - hover underline
+        '[&_.product-autolink]:no-underline [&_.product-autolink:hover]:border-b [&_.product-autolink:hover]:border-primary',
         className
       )}
-      dangerouslySetInnerHTML={{ __html: content }}
+      dangerouslySetInnerHTML={{ __html: processedContent }}
     />
   );
 };
