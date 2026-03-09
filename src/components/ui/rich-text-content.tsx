@@ -22,6 +22,8 @@ const RichTextContent = ({ content, className, autoLinkProductList }: RichTextCo
     return content;
   }, [content, autoLinkProductList]);
 
+  if (!content) return null;
+
   return (
     <div
       className={cn(
