@@ -77,6 +77,7 @@ const Chatbot = () => {
     }
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const quickReplies = [
@@ -90,19 +91,19 @@ const Chatbot = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleQuickReply = (action: string) => {
-    if (isLoading) return;
-    const userText = quickReplies.find(r => r.action === action)?.text || "";
-    const userMsg: Message = { role: "user", content: userText };
+  const sendMessage = (userText: string, action?: string) => {
+    if (isLoading || !userText.trim()) return;
+    const userMsg: Message = { role: "user", content: userText.trim() };
     setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
+    setInput("");
 
     let assistantSoFar = "";
     const upsertAssistant = (chunk: string) => {
       assistantSoFar += chunk;
       setMessages(prev => {
         const last = prev[prev.length - 1];
-        if (last?.role === "assistant" && prev.length > 1 && prev[prev.length - 2]?.content === userText) {
+        if (last?.role === "assistant" && prev.length > 1 && prev[prev.length - 2]?.content === userText.trim()) {
           return prev.map((m, i) => (i === prev.length - 1 ? { ...m, content: assistantSoFar } : m));
         }
         return [...prev, { role: "assistant", content: assistantSoFar }];
@@ -119,6 +120,11 @@ const Chatbot = () => {
         setIsLoading(false);
       },
     });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    sendMessage(input);
   };
 
   const openWhatsApp = () => {
@@ -177,29 +183,54 @@ const Chatbot = () => {
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="p-4 border-t border-border bg-background">
-            <p className="text-xs text-muted-foreground mb-3">Quick replies:</p>
-            <div className="grid grid-cols-2 gap-2 mb-3">
-              {quickReplies.map((reply, index) => (
-                <Button
-                  key={index}
-                  onClick={() => handleQuickReply(reply.action)}
-                  variant="outline"
-                  size="sm"
-                  className="text-xs h-auto py-2"
-                  disabled={isLoading}
-                >
-                  {reply.text}
-                </Button>
-              ))}
-            </div>
+          <div className="p-3 border-t border-border bg-background space-y-2">
+            {messages.length <= 1 && (
+              <>
+                <p className="text-xs text-muted-foreground">Quick replies:</p>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {quickReplies.map((reply, index) => (
+                    <Button
+                      key={index}
+                      onClick={() => sendMessage(reply.text, reply.action)}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs h-auto py-1.5"
+                      disabled={isLoading}
+                    >
+                      {reply.text}
+                    </Button>
+                  ))}
+                </div>
+              </>
+            )}
+
+            <form onSubmit={handleSubmit} className="flex gap-2">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Type your question..."
+                disabled={isLoading}
+                className="flex-1 h-9 rounded-full border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+              />
+              <Button
+                type="submit"
+                variant="hero"
+                size="icon"
+                className="h-9 w-9 rounded-full shrink-0"
+                disabled={isLoading || !input.trim()}
+              >
+                <Send className="w-4 h-4" />
+              </Button>
+            </form>
 
             <Button
               onClick={openWhatsApp}
-              variant="hero"
-              className="w-full"
+              variant="outline"
+              size="sm"
+              className="w-full text-xs"
             >
-              <Send className="w-4 h-4" />
+              <Send className="w-3 h-3" />
               Chat with our team on WhatsApp
             </Button>
           </div>
