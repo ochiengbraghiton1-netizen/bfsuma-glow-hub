@@ -133,7 +133,7 @@ const Contact = () => {
           <div className="animate-scale-in" style={{ animationDelay: "0.1s" }}>
             <Card className="overflow-hidden border-border h-full min-h-[500px]">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.0876!2d34.7523!3d0.2827!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x178109f27bba9c3d%3A0x5b9a8c9f0e8c9f0e!2sKakamega!5e0!3m2!1sen!2ske!4v1234567890123"
+                src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3989.8!2d34.7602944!3d0.2818048!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMMKwMTYnNTQuNSJOIDM0wrA0NSczNi4zIkU!5e0!3m2!1sen!2ske"
                 width="100%"
                 height="100%"
                 style={{ border: 0, minHeight: "500px" }}

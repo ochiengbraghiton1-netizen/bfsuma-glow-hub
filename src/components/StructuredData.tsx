@@ -64,8 +64,7 @@ const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps)
     "description": "Premium wellness supplements and natural health products in Kenya. Quality supplements backed by a real business opportunity.",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "JKUAT Towers, Westlands",
-      "addressLocality": "Nairobi",
+      "addressLocality": "Kakamega",
       "addressCountry": "KE"
     },
     "priceRange": "KSh 1,500 - KSh 15,000",
