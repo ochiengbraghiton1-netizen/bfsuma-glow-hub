@@ -38,8 +38,7 @@ const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps)
     "slogan": "Premium Supplements for Better Health",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "JKUAT Towers, Westlands",
-      "addressLocality": "Nairobi",
+      "addressLocality": "Kakamega",
       "addressCountry": "KE"
     },
     "contactPoint": {
@@ -49,23 +48,23 @@ const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps)
       "availableLanguage": ["English", "Swahili"]
     },
     "sameAs": [
-      "https://www.facebook.com/profile.php?id=100067452825041",
-      "https://www.instagram.com/ochiengbraghiton254"
+      "https://www.facebook.com/share/1G6uTXLkpw/",
+      "https://www.instagram.com/bf_suma_royal",
+      "https://www.tiktok.com/@bfsumaroyal"
     ]
   };
 
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "HealthAndBeautyBusiness",
-    "name": "BF SUMA Royal Kenya - Braghiton Ochieng",
+    "name": "BF SUMA Royal Kenya",
     "image": "https://bfsuma-glow-hub.lovable.app/og-image.png",
     "url": "https://bfsuma-glow-hub.lovable.app",
     "telephone": "+254795454053",
     "description": "Premium wellness supplements and natural health products in Kenya. Quality supplements backed by a real business opportunity.",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "JKUAT Towers, Westlands",
-      "addressLocality": "Nairobi",
+      "addressLocality": "Kakamega",
       "addressCountry": "KE"
     },
     "priceRange": "KSh 1,500 - KSh 15,000",

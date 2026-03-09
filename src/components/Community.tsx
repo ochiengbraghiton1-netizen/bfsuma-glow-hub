@@ -65,7 +65,7 @@ const Community = () => {
             className="group animate-scale-in"
           >
             <MessageCircle className="w-5 h-5" />
-            Chat with Braghiton
+            Chat with our team on WhatsApp
           </Button>
         </div>
       </div>

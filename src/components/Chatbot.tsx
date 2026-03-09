@@ -1,16 +1,83 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { MessageCircle, X, Send } from "lucide-react";
+import { MessageCircle, X, Send, Loader2 } from "lucide-react";
+
+const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-assistant`;
+
+type Message = { role: "user" | "assistant"; content: string };
+
+async function streamChat({
+  messages,
+  action,
+  onDelta,
+  onDone,
+  onError,
+}: {
+  messages: Message[];
+  action?: string;
+  onDelta: (text: string) => void;
+  onDone: () => void;
+  onError: (err: string) => void;
+}) {
+  try {
+    const resp = await fetch(CHAT_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+      },
+      body: JSON.stringify({ messages, action }),
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({ error: "Something went wrong" }));
+      onError(err.error || "Something went wrong");
+      return;
+    }
+
+    if (!resp.body) { onError("No response"); return; }
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+
+      let idx: number;
+      while ((idx = buffer.indexOf("\n")) !== -1) {
+        let line = buffer.slice(0, idx);
+        buffer = buffer.slice(idx + 1);
+        if (line.endsWith("\r")) line = line.slice(0, -1);
+        if (!line.startsWith("data: ")) continue;
+        const json = line.slice(6).trim();
+        if (json === "[DONE]") { onDone(); return; }
+        try {
+          const parsed = JSON.parse(json);
+          const content = parsed.choices?.[0]?.delta?.content;
+          if (content) onDelta(content);
+        } catch { /* partial chunk */ }
+      }
+    }
+    onDone();
+  } catch {
+    onError("Connection failed. Please try again.");
+  }
+}
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     {
-      type: "bot",
-      text: "Hello! I'm here to help you with BF SUMA ROYAL products and business opportunities. How can I assist you today?"
+      role: "assistant",
+      content: "Hello! Welcome to BF SUMA Royal. I'm here to help you learn about our wellness products, pricing, and business opportunities. How can I assist you today?"
     }
   ]);
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const quickReplies = [
     { text: "Product inquiries", action: "products" },
@@ -19,25 +86,39 @@ const Chatbot = () => {
     { text: "Contact details", action: "contact" }
   ];
 
-  const handleQuickReply = (action: string) => {
-    let response = "";
-    
-    switch(action) {
-      case "products":
-        response = "We offer premium health supplements including NMN Capsules, ArthroXtra, X Power Man, Ganoderma Spores, and more. Would you like to talk directly to Braghiton on WhatsApp for detailed information?";
-        break;
-      case "prices":
-        response = "Our products range from KSh 4,914 to KSh 22,113. For a complete price list and special offers, would you like to connect on WhatsApp?";
-        break;
-      case "join":
-        response = "Great choice! As a BF SUMA ROYAL distributor, you can earn commissions, bonuses, and build a wellness business. Would you like to talk to Braghiton on WhatsApp to get started?";
-        break;
-      case "contact":
-        response = "Contact Braghiton Ochieng:\n📱 WhatsApp: +254 795 454053\n✉️ Email: braghiton.ochieng.125@gmail.com\n📍 JKUAT Towers, Westlands, Nairobi";
-        break;
-    }
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-    setMessages([...messages, { type: "user", text: quickReplies.find(r => r.action === action)?.text || "" }, { type: "bot", text: response }]);
+  const handleQuickReply = (action: string) => {
+    if (isLoading) return;
+    const userText = quickReplies.find(r => r.action === action)?.text || "";
+    const userMsg: Message = { role: "user", content: userText };
+    setMessages(prev => [...prev, userMsg]);
+    setIsLoading(true);
+
+    let assistantSoFar = "";
+    const upsertAssistant = (chunk: string) => {
+      assistantSoFar += chunk;
+      setMessages(prev => {
+        const last = prev[prev.length - 1];
+        if (last?.role === "assistant" && prev.length > 1 && prev[prev.length - 2]?.content === userText) {
+          return prev.map((m, i) => (i === prev.length - 1 ? { ...m, content: assistantSoFar } : m));
+        }
+        return [...prev, { role: "assistant", content: assistantSoFar }];
+      });
+    };
+
+    streamChat({
+      messages: [...messages, userMsg],
+      action,
+      onDelta: upsertAssistant,
+      onDone: () => setIsLoading(false),
+      onError: (err) => {
+        setMessages(prev => [...prev, { role: "assistant", content: err }]);
+        setIsLoading(false);
+      },
+    });
   };
 
   const openWhatsApp = () => {
@@ -46,7 +127,6 @@ const Chatbot = () => {
 
   return (
     <>
-      {/* Chat Button */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
         variant="hero"
@@ -56,10 +136,8 @@ const Chatbot = () => {
         {isOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
       </Button>
 
-      {/* Chat Window */}
       {isOpen && (
         <Card className="fixed bottom-24 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] h-[500px] flex flex-col shadow-elegant animate-scale-in border-border">
-          {/* Header */}
           <div className="bg-gradient-to-r from-primary to-accent p-4 rounded-t-2xl text-white">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
@@ -72,27 +150,33 @@ const Chatbot = () => {
             </div>
           </div>
 
-          {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-muted/20">
             {messages.map((message, index) => (
-              <div 
+              <div
                 key={index}
-                className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
+                className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
               >
-                <div 
+                <div
                   className={`max-w-[80%] p-3 rounded-2xl ${
-                    message.type === "user" 
-                      ? "bg-primary text-primary-foreground" 
+                    message.role === "user"
+                      ? "bg-primary text-primary-foreground"
                       : "bg-card text-foreground border border-border"
                   }`}
                 >
-                  <p className="text-sm whitespace-pre-line">{message.text}</p>
+                  <p className="text-sm whitespace-pre-line">{message.content}</p>
                 </div>
               </div>
             ))}
+            {isLoading && messages[messages.length - 1]?.role === "user" && (
+              <div className="flex justify-start">
+                <div className="bg-card text-foreground border border-border p-3 rounded-2xl">
+                  <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Replies */}
           <div className="p-4 border-t border-border bg-background">
             <p className="text-xs text-muted-foreground mb-3">Quick replies:</p>
             <div className="grid grid-cols-2 gap-2 mb-3">
@@ -103,19 +187,20 @@ const Chatbot = () => {
                   variant="outline"
                   size="sm"
                   className="text-xs h-auto py-2"
+                  disabled={isLoading}
                 >
                   {reply.text}
                 </Button>
               ))}
             </div>
-            
-            <Button 
+
+            <Button
               onClick={openWhatsApp}
               variant="hero"
               className="w-full"
             >
               <Send className="w-4 h-4" />
-              Talk to Braghiton on WhatsApp
+              Chat with our team on WhatsApp
             </Button>
           </div>
         </Card>
