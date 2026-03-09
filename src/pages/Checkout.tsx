@@ -663,6 +663,9 @@ Sent from BF SUMA ROYAL Website`;
                   <span>Total</span>
                   <span className="text-primary">{formatCurrency(finalTotal)}</span>
                 </div>
+                <p className="text-xs text-muted-foreground text-center pt-2">
+                  All prices are in Kenyan Shillings (KSh)
+                </p>
               </div>
             </div>
           </div>
