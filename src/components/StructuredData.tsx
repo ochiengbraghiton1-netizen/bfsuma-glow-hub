@@ -48,8 +48,9 @@ const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps)
       "availableLanguage": ["English", "Swahili"]
     },
     "sameAs": [
-      "https://www.facebook.com/profile.php?id=100067452825041",
-      "https://www.instagram.com/ochiengbraghiton254"
+      "https://www.facebook.com/share/1G6uTXLkpw/",
+      "https://www.instagram.com/bf_suma_royal",
+      "https://www.tiktok.com/@bfsumaroyal"
     ]
   };
 
