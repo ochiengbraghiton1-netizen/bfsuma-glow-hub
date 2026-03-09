@@ -20,7 +20,7 @@ const CURRENCIES: Record<CurrencyCode, CurrencyInfo> = {
 
 export const CURRENCY_OPTIONS: CurrencyCode[] = ['USD', 'KES', 'EUR', 'GBP'];
 
-export const useCurrency = (defaultCurrency: CurrencyCode = 'USD') => {
+export const useCurrency = (defaultCurrency: CurrencyCode = 'KES') => {
   const [currency, setCurrency] = useState<CurrencyCode>(defaultCurrency);
 
   const info = useMemo(() => CURRENCIES[currency], [currency]);

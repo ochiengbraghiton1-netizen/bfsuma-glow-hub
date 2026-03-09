@@ -35,7 +35,7 @@ const Checkout = () => {
   const { items, totalPrice, clearCart } = useCart();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { currency, setCurrency, convert, format: formatCurrency } = useCurrency('USD');
+  const { currency, setCurrency, convert, format: formatCurrency } = useCurrency('KES');
   
   const [formData, setFormData] = useState<CheckoutFormData>({
     customerName: '',
@@ -663,6 +663,9 @@ Sent from BF SUMA ROYAL Website`;
                   <span>Total</span>
                   <span className="text-primary">{formatCurrency(finalTotal)}</span>
                 </div>
+                <p className="text-xs text-muted-foreground text-center pt-2">
+                  All prices are in Kenyan Shillings (KSh)
+                </p>
               </div>
             </div>
           </div>
