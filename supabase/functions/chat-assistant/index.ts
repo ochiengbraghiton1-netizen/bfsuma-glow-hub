@@ -48,7 +48,7 @@ BUSINESS INFO:
 - Location: Kakamega, Kenya
 - Phone/WhatsApp: +254 795 454053
 - Email: bfsumaroyal@gmail.com
-- Website: bfsuma-glow-hub.lovable.app
+- Website: bfsumaroyal.com
 
 PRODUCT CATALOG (current prices in KSh):
 ${productList}
