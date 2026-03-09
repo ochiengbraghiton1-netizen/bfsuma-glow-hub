@@ -427,7 +427,7 @@ const BlogPostView = ({ slug }: { slug: string }) => {
             <BlogPostUGC post={post} relatedProducts={relatedProducts} />
           ) : (
             <>
-              <RichTextContent content={post.content || ''} className="prose-lg" />
+              <RichTextContent content={post.content || ''} className="prose-lg" autoLinkProductList={allProducts} />
 
               {/* Share / CTA */}
               <div className="mt-12 pt-8 border-t">
