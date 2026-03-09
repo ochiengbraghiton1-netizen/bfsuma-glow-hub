@@ -14,9 +14,8 @@ interface RichTextContentProps {
  * Uses Tailwind Typography (prose) classes for proper formatting of headings, lists, etc.
  */
 const RichTextContent = ({ content, className, autoLinkProductList }: RichTextContentProps) => {
-  if (!content) return null;
-
   const processedContent = useMemo(() => {
+    if (!content) return '';
     if (autoLinkProductList && autoLinkProductList.length > 0) {
       return autoLinkProducts(content, autoLinkProductList);
     }
