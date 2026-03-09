@@ -59,7 +59,7 @@ const ContactPage = () => {
                 </span>
               </h1>
               <p className="text-xl text-muted-foreground">
-                Connect with Braghiton Ochieng - Your BF SUMA Kenya Partner
+                Your Trusted BF SUMA Kenya Partner
               </p>
             </div>
 
