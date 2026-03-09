@@ -37,7 +37,7 @@ const ContactPage = () => {
   const contactInfo = [
     { icon: Phone, label: "WhatsApp", value: "+254 795 454053", link: "https://wa.me/254795454053" },
     { icon: Mail, label: "Email", value: "bfsumaroyal@gmail.com", link: "mailto:bfsumaroyal@gmail.com" },
-    { icon: MapPin, label: "Location", value: "Kakamega, Kenya", link: "https://maps.app.goo.gl/y1wra5v27cTtqDhm7" },
+    { icon: MapPin, label: "Location", value: "Kakamega, Kenya", link: "https://maps.app.goo.gl/xm2gawF5Qhppqdfv5" },
   ];
 
   const socialLinks = [
