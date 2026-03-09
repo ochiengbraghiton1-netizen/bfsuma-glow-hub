@@ -433,6 +433,9 @@ const BlogPostView = ({ slug }: { slug: string }) => {
                   </div>
                 </div>
               </div>
+
+              {/* Related Products */}
+              <BlogRelatedProducts products={relatedProducts} />
             </>
           )}
         </div>
