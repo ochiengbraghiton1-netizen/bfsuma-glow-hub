@@ -201,6 +201,16 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
               </div>
             </div>
             
+            {/* Compliance Disclaimer */}
+            <div 
+              className="pt-2 opacity-0 animate-stagger-fade"
+              style={{ animationDelay: '520ms' }}
+            >
+              <p className="text-[11px] italic" style={{ color: '#888888' }}>
+                * These statements have not been evaluated by any food or drug regulatory authority. This product is not intended to diagnose, treat, cure, or prevent any disease. Results may vary. Always consult a qualified healthcare professional before starting any supplement regimen.
+              </p>
+            </div>
+
             {/* CTA Buttons */}
             <div 
               className="pt-4 space-y-3 opacity-0 animate-cta-enter"
