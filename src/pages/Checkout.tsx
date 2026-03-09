@@ -35,7 +35,7 @@ const Checkout = () => {
   const { items, totalPrice, clearCart } = useCart();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { currency, setCurrency, convert, format: formatCurrency } = useCurrency('USD');
+  const { currency, setCurrency, convert, format: formatCurrency } = useCurrency('KES');
   
   const [formData, setFormData] = useState<CheckoutFormData>({
     customerName: '',
