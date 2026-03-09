@@ -57,7 +57,7 @@ const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps)
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "HealthAndBeautyBusiness",
-    "name": "BF SUMA Royal Kenya - Braghiton Ochieng",
+    "name": "BF SUMA Royal Kenya",
     "image": "https://bfsuma-glow-hub.lovable.app/og-image.png",
     "url": "https://bfsuma-glow-hub.lovable.app",
     "telephone": "+254795454053",
