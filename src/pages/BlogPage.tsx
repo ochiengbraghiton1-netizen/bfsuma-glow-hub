@@ -12,6 +12,7 @@ import { Helmet } from 'react-helmet-async';
 import RichTextContent from '@/components/ui/rich-text-content';
 import BlogPostUGC from '@/components/blog/BlogPostUGC';
 import SocialShareButtons from '@/components/blog/SocialShareButtons';
+import BlogRelatedProducts from '@/components/blog/BlogRelatedProducts';
 import { stripHtmlTags } from '@/lib/html-utils';
 import { SITE_BASE_URL } from '@/config/routes';
 
