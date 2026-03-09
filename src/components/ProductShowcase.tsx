@@ -1,11 +1,19 @@
 import { useState, useMemo } from "react";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import ProductCard from "./ProductCard";
 import ProductDetailModal from "./ProductDetailModal";
-import { useProducts, formatPrice, DatabaseProduct } from "@/hooks/use-products";
+import ProductSortDropdown, { SortOption } from "./products/ProductSortDropdown";
+import ProductFilters, {
+  FilterState,
+  defaultFilters,
+  getActiveFilterCount,
+  MobileFilterButton,
+} from "./products/ProductFilters";
+import { useProducts, formatPrice, DatabaseProduct, getStockStatus } from "@/hooks/use-products";
 
 // Product image imports
 import nmnCapsules from "@/assets/products/nmn-capsules.jpg";
@@ -22,7 +30,6 @@ import youthEssence from "@/assets/products/youth-essence.jpg";
 import sumaGrand from "@/assets/products/suma-grand.jpg";
 import vitaminC from "@/assets/products/vitamin-c.jpg";
 
-// Map product names to local images
 const productImageMap: Record<string, string> = {
   "NMN Capsules": nmnCapsules,
   "Ganoderma Spore Capsules": ganodermaSpores,
@@ -45,31 +52,82 @@ const ProductShowcase = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
+  const [sortOption, setSortOption] = useState<SortOption>("featured");
+  const [filters, setFilters] = useState<FilterState>(defaultFilters);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
+  const activeFilterCount = getActiveFilterCount(filters);
 
   const handleProductClick = (product: DatabaseProduct) => {
     setSelectedProduct(product);
     setModalOpen(true);
   };
 
-  const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
+  const clearFilters = () => setFilters(defaultFilters);
+
+  const filteredAndSortedProducts = useMemo(() => {
+    let result = products.filter((product) => {
+      // Search
       const matchesSearch =
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.benefit?.toLowerCase().includes(searchQuery.toLowerCase());
+
+      // Category
       const matchesCategory =
         activeCategory === "all" ||
         product.category?.slug === activeCategory ||
         product.categories.some((cat) => cat.slug === activeCategory);
-      return matchesSearch && matchesCategory;
+
+      // Health concerns - match against category names and benefit text
+      const matchesConcern =
+        filters.healthConcerns.length === 0 ||
+        filters.healthConcerns.some(
+          (concern) =>
+            product.category?.name.toLowerCase().includes(concern.toLowerCase()) ||
+            product.categories.some((cat) =>
+              cat.name.toLowerCase().includes(concern.toLowerCase())
+            ) ||
+            product.benefit?.toLowerCase().includes(concern.toLowerCase()) ||
+            product.name.toLowerCase().includes(concern.toLowerCase())
+        );
+
+      // Price range
+      const minPrice = filters.priceMin ? Number(filters.priceMin) : 0;
+      const maxPrice = filters.priceMax ? Number(filters.priceMax) : Infinity;
+      const matchesPrice = product.price >= minPrice && product.price <= maxPrice;
+
+      // Availability
+      const stock = getStockStatus(product.stock_quantity, product.low_stock_threshold, product.track_inventory);
+      const matchesAvailability = !filters.inStockOnly || stock.status !== "out-of-stock";
+
+      return matchesSearch && matchesCategory && matchesConcern && matchesPrice && matchesAvailability;
     });
-  }, [products, searchQuery, activeCategory]);
+
+    // Sorting
+    switch (sortOption) {
+      case "price-asc":
+        result.sort((a, b) => a.price - b.price);
+        break;
+      case "price-desc":
+        result.sort((a, b) => b.price - a.price);
+        break;
+      case "newest":
+        // Products don't have created_at exposed, sort by name desc as proxy
+        result.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case "popular":
+        // No popularity metric, keep default order
+        break;
+      case "featured":
+      default:
+        break;
+    }
+
+    return result;
+  }, [products, searchQuery, activeCategory, sortOption, filters]);
 
   const getProductImage = (product: DatabaseProduct) => {
-    // Prioritize database image_url (from admin uploads) over hardcoded local images
-    // This ensures admin-uploaded images are displayed correctly
-    if (product.image_url) {
-      return product.image_url;
-    }
+    if (product.image_url) return product.image_url;
     return productImageMap[product.name] || undefined;
   };
 
@@ -115,7 +173,7 @@ const ProductShowcase = () => {
           </div>
 
           {/* Category Filters */}
-          <div className="flex flex-wrap justify-center gap-2">
+          <div className="flex flex-wrap justify-center gap-2 mb-4">
             <Button
               variant={activeCategory === "all" ? "default" : "outline"}
               size="sm"
@@ -140,50 +198,117 @@ const ProductShowcase = () => {
               </Button>
             ))}
           </div>
+
+          {/* Sort + Filter Controls */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <MobileFilterButton
+                activeCount={activeFilterCount}
+                onClick={() => setMobileFiltersOpen(true)}
+              />
+              {activeFilterCount > 0 && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <span className="bg-primary/10 text-primary px-2.5 py-1 rounded-full text-xs font-medium">
+                    {activeFilterCount} filter{activeFilterCount !== 1 ? "s" : ""} applied
+                  </span>
+                  <button
+                    onClick={clearFilters}
+                    className="text-destructive hover:underline text-xs"
+                  >
+                    Clear all
+                  </button>
+                </div>
+              )}
+            </div>
+            <ProductSortDropdown value={sortOption} onChange={setSortOption} />
+          </div>
         </div>
 
-        {/* Products Grid */}
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-card rounded-2xl overflow-hidden">
-                <Skeleton className="h-56 w-full" />
-                <div className="p-5 space-y-3">
-                  <Skeleton className="h-5 w-3/4" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-2/3" />
-                  <Skeleton className="h-6 w-24" />
-                  <Skeleton className="h-10 w-full rounded-full" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : filteredProducts.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">
-            <p>No products found. Try a different search or category.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                id={product.id}
-                name={product.name}
-                price={formatPrice(product.price)}
-                numericPrice={product.price}
-                benefit={product.benefit || ""}
-                description={product.description || undefined}
-                image={getProductImage(product)}
-                category={product.category?.name}
-                stockQuantity={product.stock_quantity}
-                lowStockThreshold={product.low_stock_threshold}
-                trackInventory={product.track_inventory}
-                onClick={() => handleProductClick(product)}
+        {/* Main Content: Sidebar + Grid */}
+        <div className="flex gap-8">
+          {/* Desktop Filter Sidebar */}
+          <aside className="hidden lg:block w-64 shrink-0">
+            <div className="sticky top-52 bg-card border border-border/50 rounded-2xl p-5">
+              <h3 className="font-semibold text-foreground mb-4 text-sm uppercase tracking-wider">
+                Filters
+              </h3>
+              <ProductFilters
+                filters={filters}
+                onChange={setFilters}
+                onClear={clearFilters}
               />
-            ))}
+            </div>
+          </aside>
+
+          {/* Products Grid */}
+          <div className="flex-1 min-w-0">
+            {isLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="bg-card rounded-2xl overflow-hidden">
+                    <Skeleton className="h-56 w-full" />
+                    <div className="p-5 space-y-3">
+                      <Skeleton className="h-5 w-3/4" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-2/3" />
+                      <Skeleton className="h-6 w-24" />
+                      <Skeleton className="h-10 w-full rounded-full" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : filteredAndSortedProducts.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                <p>No products found. Try a different search, category, or filter.</p>
+                {activeFilterCount > 0 && (
+                  <Button variant="link" onClick={clearFilters} className="mt-2 text-primary">
+                    Clear all filters
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredAndSortedProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    id={product.id}
+                    name={product.name}
+                    price={formatPrice(product.price)}
+                    numericPrice={product.price}
+                    benefit={product.benefit || ""}
+                    description={product.description || undefined}
+                    image={getProductImage(product)}
+                    category={product.category?.name}
+                    stockQuantity={product.stock_quantity}
+                    lowStockThreshold={product.low_stock_threshold}
+                    trackInventory={product.track_inventory}
+                    onClick={() => handleProductClick(product)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
+
+      {/* Mobile Filter Sheet */}
+      <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
+        <SheetContent side="left" className="w-[300px] sm:w-[350px]">
+          <SheetHeader>
+            <SheetTitle>Filters</SheetTitle>
+          </SheetHeader>
+          <div className="mt-6">
+            <ProductFilters
+              filters={filters}
+              onChange={setFilters}
+              onClear={() => {
+                clearFilters();
+                setMobileFiltersOpen(false);
+              }}
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* Product Detail Modal */}
       <ProductDetailModal
