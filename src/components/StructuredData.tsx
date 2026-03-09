@@ -38,8 +38,7 @@ const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps)
     "slogan": "Premium Supplements for Better Health",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "JKUAT Towers, Westlands",
-      "addressLocality": "Nairobi",
+      "addressLocality": "Kakamega",
       "addressCountry": "KE"
     },
     "contactPoint": {
