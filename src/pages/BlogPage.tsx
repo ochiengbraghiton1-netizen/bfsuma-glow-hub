@@ -223,6 +223,7 @@ const BlogList = () => {
 const BlogPostView = ({ slug }: { slug: string }) => {
   const [post, setPost] = useState<BlogPostWithCategories | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<RelatedProduct[]>([]);
+  const [allProducts, setAllProducts] = useState<{ name: string; slug: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
@@ -273,6 +274,21 @@ const BlogPostView = ({ slug }: { slug: string }) => {
           .eq('is_active', true);
 
         setRelatedProducts(products || []);
+      }
+
+      // Fetch all active product names for auto-linking
+      const { data: allProds } = await supabase
+        .from('products')
+        .select('name')
+        .eq('is_active', true);
+
+      if (allProds) {
+        setAllProducts(
+          allProds.map((p) => ({
+            name: p.name,
+            slug: p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+          }))
+        );
       }
 
       setLoading(false);
@@ -411,7 +427,7 @@ const BlogPostView = ({ slug }: { slug: string }) => {
             <BlogPostUGC post={post} relatedProducts={relatedProducts} />
           ) : (
             <>
-              <RichTextContent content={post.content || ''} className="prose-lg" />
+              <RichTextContent content={post.content || ''} className="prose-lg" autoLinkProductList={allProducts} />
 
               {/* Share / CTA */}
               <div className="mt-12 pt-8 border-t">
