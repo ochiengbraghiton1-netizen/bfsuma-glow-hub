@@ -26,7 +26,7 @@ const Contact = () => {
       icon: MapPin,
       label: "Location",
       value: "Kakamega, Kenya",
-      link: "https://maps.app.goo.gl/y1wra5v27cTtqDhm7"
+      link: "https://maps.app.goo.gl/xm2gawF5Qhppqdfv5"
     }
   ];
 
