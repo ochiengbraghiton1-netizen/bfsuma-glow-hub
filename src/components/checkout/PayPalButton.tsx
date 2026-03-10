@@ -40,7 +40,7 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
 
       const script = document.createElement('script');
       script.id = 'paypal-sdk';
-      script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=${currency}`;
+      script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=${currency}&enable-funding=card&components=buttons`;
       script.async = true;
       script.onload = () => {
         setSdkReady(true);
