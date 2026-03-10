@@ -78,7 +78,7 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
           layout: 'vertical',
           color: 'gold',
           shape: 'rect',
-          label: 'paypal',
+          label: 'pay',
           height: 48,
         },
         createOrder: async (_data: any, actions: any) => {
