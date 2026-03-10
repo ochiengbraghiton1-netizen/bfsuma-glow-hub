@@ -1,77 +1,34 @@
 
-## Plan: Add SEO-Friendly Alt Text and Update Meta Tags
 
-### Current State Analysis
+## PayPal Credit/Debit Card Fields Not Appearing — Diagnosis & Fix
 
-**Images Missing Alt Text:**
-1. **Hero background** (`Hero.tsx`): Currently `alt=""` - This is the LCP (Largest Contentful Paint) image and should have descriptive alt text for SEO
-2. **Join & Earn background** (`JoinEarn.tsx`): Currently `alt=""` - decorative but could benefit from alt text
-3. **Community background** (`Community.tsx`): Currently `alt=""` - decorative but could benefit from alt text
+### The Problem
+The PayPal "Debit or Credit Card" button renders, but when clicked, the card input fields (card number, expiry, CVV) do not appear. This is happening because the current integration only loads the `buttons` component, which does not include the hosted card fields needed for inline card entry.
 
-**Images with Alt Text (OK):**
-- Doctor consultation image: `alt="Wellness consultation"` - could be improved
-- Product cards: Use `alt={name}` - good, dynamically uses product name
+### Root Cause
+The PayPal SDK is loaded with `components=buttons` only. For the credit/debit card fields to render inline (without redirecting to PayPal), the SDK needs the `hosted-fields` component AND your PayPal business account must have **Advanced Credit and Debit Card Payments** enabled.
 
-**Meta Tags:**
-- The `index.html` title and description don't fully align with the new hero messaging
+However, there's a simpler approach: **remove the `enable-funding=card` parameter** and instead rely on PayPal's built-in card processing within the PayPal popup window. When a user clicks "Pay with PayPal", they can enter a card directly in the PayPal modal — no advanced account features required.
 
----
+### Plan
 
-### Changes Required
+**Option A — Use PayPal's built-in card handling (Recommended, no PayPal dashboard changes needed):**
 
-#### 1. Hero.tsx - Add Alt Text to Hero Image
-```text
-Current:  alt=""
-Updated:  alt="BF SUMA Royal premium wellness supplements and natural health products display"
-```
+1. **Update `PayPalButton.tsx`**: Remove `enable-funding=card` from the SDK URL. The standard PayPal button already allows users to pay with a card through the PayPal popup/modal. This works on all PayPal accounts.
 
-#### 2. DoctorConsultation.tsx - Improve Alt Text
-```text
-Current:  alt="Wellness consultation"
-Updated:  alt="BF SUMA Royal wellness expert providing personalized health consultation"
-```
+2. **Update button label**: Change the style `label` from `'paypal'` to `'pay'` so the button says "Pay Now" instead of "PayPal", making it clearer that cards are accepted.
 
-#### 3. JoinEarn.tsx - Add Alt Text to Background
-```text
-Current:  alt=""
-Updated:  alt="BF SUMA Royal business opportunity and wellness entrepreneur community"
-```
+**Option B — Enable Advanced Card Fields (requires PayPal dashboard action):**
 
-#### 4. Community.tsx - Add Alt Text to Background
-```text
-Current:  alt=""
-Updated:  alt="BF SUMA Royal wellness community training and mentorship program"
-```
+If you specifically want inline card fields on your page (not inside PayPal's popup):
 
-#### 5. index.html - Update Meta Title and Description
+1. Log into your PayPal Developer Dashboard at https://developer.paypal.com
+2. Go to **Apps & Credentials** → select your REST app
+3. Scroll to **Features** → enable **"Advanced Credit and Debit Card Payments"**
+4. PayPal may require you to submit a request — approval can take 1-3 business days
+5. Once approved, update the SDK to use `components=buttons,hosted-fields` and implement the hosted fields rendering
 
-**Title:**
-```text
-Current:  "BF SUMA ROYAL Kenya - Premium Natural Supplements & Wellness Business Opportunity"
-Updated:  "BF SUMA Royal - Premium Supplements for Better Health | Wellness Business Opportunity Kenya"
-```
+### Recommendation
 
-**Meta Description:**
-```text
-Current:  "Discover BF SUMA ROYAL's premium natural health supplements in Kenya..."
-Updated:  "BF SUMA Royal offers trusted wellness products designed to support your health journey. Premium supplements backed by a real business opportunity. Shop NMN Capsules, ArthroXtra, Ganoderma & more in Kenya."
-```
+**Option A** is the quickest fix — one small code change and cards will work immediately through PayPal's secure modal. Option B gives a nicer inline experience but requires PayPal account approval.
 
-**Open Graph Title and Description** will also be updated to match.
-
----
-
-### Technical Details
-
-All changes are simple string replacements in the following files:
-- `src/components/Hero.tsx` (line 24)
-- `src/components/DoctorConsultation.tsx` (line 58)
-- `src/components/JoinEarn.tsx` (line 37)
-- `src/components/Community.tsx` (line 17)
-- `index.html` (lines 21, 22, 29, 30, 35, 36)
-
-### SEO Benefits
-- Improved image indexing for Google Image Search
-- Better accessibility for screen readers
-- Meta tags aligned with hero content for consistent messaging
-- Keywords included: "BF SUMA Royal", "supplements", "wellness", "business opportunity", "Kenya"
