@@ -40,7 +40,7 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
 
       const script = document.createElement('script');
       script.id = 'paypal-sdk';
-      script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=${currency}&enable-funding=card&components=buttons`;
+      script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=${currency}`;
       script.async = true;
       script.onload = () => {
         setSdkReady(true);
@@ -78,7 +78,7 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
           layout: 'vertical',
           color: 'gold',
           shape: 'rect',
-          label: 'paypal',
+          label: 'pay',
           height: 48,
         },
         createOrder: async (_data: any, actions: any) => {
