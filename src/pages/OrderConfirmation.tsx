@@ -62,6 +62,7 @@ const OrderConfirmation = () => {
   const [orderItems, setOrderItems] = useState<OrderItem[]>(navState?.orderItems || []);
   const [loading, setLoading] = useState(!navState?.order);
   const [copied, setCopied] = useState(false);
+  const [whatsappSent, setWhatsappSent] = useState(false);
 
   useEffect(() => {
     if (!orderId) {
