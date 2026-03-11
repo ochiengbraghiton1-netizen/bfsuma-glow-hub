@@ -679,7 +679,7 @@ Sent from BF SUMA ROYAL Website`;
                           Pay securely with PayPal in <strong>USD</strong>. Supports credit/debit cards and PayPal balance.
                           {currency !== 'USD' && (
                             <span className="block mt-1 text-xs">
-                              Your total of {formatCurrency(finalTotal)} will be charged as ${convert(finalTotal).toFixed(2)} USD.
+                              Your total of {formatCurrency(finalTotal)} will be charged as ${paypalUsdAmount.toFixed(2)} USD.
                             </span>
                           )}
                         </p>
