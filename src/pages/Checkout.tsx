@@ -24,7 +24,7 @@ const CHECKOUT_STORAGE_KEY = "bf_checkout_form";
 const checkoutSchema = z.object({
   customerName: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
   customerEmail: z.string().trim().email('Invalid email address').max(255).optional().or(z.literal('')),
-  customerPhone: z.string().trim().min(7, 'Phone number is too short').max(20).regex(/^\+\d{7,15}$/, 'Please enter a valid phone number'),
+  customerPhone: z.string().trim().min(7, 'Phone number is too short').max(20).transform(v => v.replace(/[\s\-]/g, '')).pipe(z.string().regex(/^\+\d{7,15}$/, 'Please enter a valid phone number')),
   shippingAddress: z.string().trim().min(10, 'Please enter a complete address').max(500),
   notes: z.string().trim().max(500).optional(),
   promoCode: z.string().trim().max(50).optional(),
