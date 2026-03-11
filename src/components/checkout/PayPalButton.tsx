@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { Loader2 } from 'lucide-react';
 
 const PAYPAL_CLIENT_ID = 'AUfjZUjWnYi8mc-NdnscH1Q-c00Sr681sVjFhUZ5SZmc9w4-5AwztOk_Sdf-_TpkY8T0SMHVFKGXzN1R';
@@ -22,8 +22,20 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
   const containerRef = useRef<HTMLDivElement>(null);
   const [sdkReady, setSdkReady] = useState(false);
   const [loading, setLoading] = useState(true);
-  const buttonsRendered = useRef(false);
   const prevCurrencyRef = useRef(currency);
+
+  // Use refs for callbacks so PayPal buttons always call the latest version
+  const onCreateOrderRef = useRef(onCreateOrder);
+  const onApproveRef = useRef(onApprove);
+  const onErrorRef = useRef(onError);
+  const amountRef = useRef(amount);
+  const currencyRef = useRef(currency);
+
+  useEffect(() => { onCreateOrderRef.current = onCreateOrder; }, [onCreateOrder]);
+  useEffect(() => { onApproveRef.current = onApprove; }, [onApprove]);
+  useEffect(() => { onErrorRef.current = onError; }, [onError]);
+  useEffect(() => { amountRef.current = amount; }, [amount]);
+  useEffect(() => { currencyRef.current = currency; }, [currency]);
 
   // Load or reload PayPal SDK when currency changes
   useEffect(() => {
@@ -31,7 +43,6 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
       setLoading(true);
       setSdkReady(false);
 
-      // Remove existing script if currency changed
       const existingScript = document.getElementById('paypal-sdk');
       if (existingScript) {
         existingScript.remove();
@@ -40,7 +51,7 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
 
       const script = document.createElement('script');
       script.id = 'paypal-sdk';
-      script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=${currency}&disable-funding=card`;
+      script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=${currency}&enable-funding=card`;
       script.async = true;
       script.onload = () => {
         setSdkReady(true);
@@ -53,7 +64,6 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
       document.body.appendChild(script);
     };
 
-    // If currency changed or first load
     if (prevCurrencyRef.current !== currency || !window.paypal) {
       prevCurrencyRef.current = currency;
       loadSdk();
@@ -70,7 +80,6 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
     if (containerRef.current) {
       containerRef.current.innerHTML = '';
     }
-    buttonsRendered.current = false;
 
     try {
       window.paypal.Buttons({
@@ -82,14 +91,15 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
           height: 48,
         },
         createOrder: async (_data: any, actions: any) => {
-          if (onCreateOrder) {
-            await onCreateOrder();
+          // Use refs to get latest callback and values
+          if (onCreateOrderRef.current) {
+            await onCreateOrderRef.current();
           }
           return actions.order.create({
             purchase_units: [{
               amount: {
-                value: amount.toFixed(2),
-                currency_code: currency,
+                value: amountRef.current.toFixed(2),
+                currency_code: currencyRef.current,
               },
               description: 'BF SUMA ROYAL Order',
             }],
@@ -98,21 +108,20 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
         onApprove: async (data: any, actions: any) => {
           try {
             const details = await actions.order.capture();
-            await onApprove(data.orderID, details);
+            await onApproveRef.current(data.orderID, details);
           } catch (err) {
-            onError(err);
+            onErrorRef.current(err);
           }
         },
         onError: (err: any) => {
-          onError(err);
+          onErrorRef.current(err);
         },
         onCancel: () => {},
       }).render(containerRef.current);
-      buttonsRendered.current = true;
     } catch (err) {
       onError(err);
     }
-  }, [sdkReady, amount, currency, disabled]);
+  }, [sdkReady, disabled]);
 
   if (loading) {
     return (
