@@ -387,10 +387,15 @@ Sent from BF SUMA ROYAL Website`;
   };
 
   const handlePayPalError = (error: any) => {
-    console.error('PayPal error:', error);
+    console.error('PayPal error details:', {
+      message: error?.message,
+      name: error?.name,
+      stack: error?.stack,
+      full: error,
+    });
     toast({
       title: 'Payment Failed',
-      description: 'There was an error with PayPal. Please try again or use WhatsApp checkout.',
+      description: error?.message || 'There was an error with PayPal. Please try again or use WhatsApp checkout.',
       variant: 'destructive',
     });
   };

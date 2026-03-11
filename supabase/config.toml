@@ -7,3 +7,5 @@ project_id = "sboaeutgckyiwunfmxqp"
     verify_jwt = false
   [functions.sitemap]
     verify_jwt = false
+  [functions.get-paypal-client-id]
+    verify_jwt = false

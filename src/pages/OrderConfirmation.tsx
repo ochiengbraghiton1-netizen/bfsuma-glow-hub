@@ -152,8 +152,11 @@ const OrderConfirmation = () => {
     setOrder(prev => prev ? { ...prev, status: 'whatsapp_initiated' } : null);
 
     const message = generateWhatsAppMessage();
-    // Use universal wa.me link for both desktop and mobile
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+    // Detect desktop vs mobile for best WhatsApp experience
+    const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const url = isMobile
+      ? `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`
+      : `https://web.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${message}`;
     window.open(url, '_blank');
 
     // Re-enable after a short delay to prevent spam clicks
