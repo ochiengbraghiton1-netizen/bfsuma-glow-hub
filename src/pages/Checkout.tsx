@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -236,8 +236,13 @@ Sent from BF SUMA ROYAL Website`;
 
   const [pendingPaypalOrderId, setPendingPaypalOrderId] = useState<string | null>(null);
 
-  const handlePayPalCreateOrder = async () => {
-    const result = checkoutSchema.safeParse(formData);
+  // Keep a ref to formData so PayPal callbacks always read the latest values
+  const formDataRef = useRef(formData);
+  formDataRef.current = formData;
+
+  const handlePayPalCreateOrder = useCallback(async () => {
+    const currentFormData = formDataRef.current;
+    const result = checkoutSchema.safeParse(currentFormData);
     if (!result.success) {
       const fieldErrors: Partial<Record<keyof CheckoutFormData, string>> = {};
       result.error.errors.forEach(err => {
@@ -249,6 +254,8 @@ Sent from BF SUMA ROYAL Website`;
       throw new Error('Please fill in required fields');
     }
 
+    setErrors({});
+
     if (isBot(honeypot)) throw new Error('Validation failed');
 
     // Save order as pending_payment BEFORE PayPal redirect
@@ -256,7 +263,7 @@ Sent from BF SUMA ROYAL Website`;
       const newOrderId = await saveOrderToDb('pending_payment');
       setPendingPaypalOrderId(newOrderId);
     }
-  };
+  }, [pendingPaypalOrderId, honeypot]);
 
   const handlePayPalApprove = async (paypalOrderId: string, details: any) => {
     setIsSubmitting(true);
