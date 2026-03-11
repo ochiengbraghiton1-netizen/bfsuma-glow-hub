@@ -47,9 +47,6 @@ interface Order {
 
 const formatOrderId = (id: string) => `BF-${id.slice(0, 4).toUpperCase()}`;
 
-const isMobileDevice = (): boolean => {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-};
 
 const OrderConfirmation = () => {
   const { orderId } = useParams<{ orderId: string }>();
@@ -65,6 +62,7 @@ const OrderConfirmation = () => {
   const [orderItems, setOrderItems] = useState<OrderItem[]>(navState?.orderItems || []);
   const [loading, setLoading] = useState(!navState?.order);
   const [copied, setCopied] = useState(false);
+  const [whatsappSent, setWhatsappSent] = useState(false);
 
   useEffect(() => {
     if (!orderId) {
@@ -139,23 +137,27 @@ const OrderConfirmation = () => {
     );
   };
 
+
   const handleWhatsAppConfirm = async () => {
-    if (!order) return;
+    if (!order || whatsappSent) return;
+    setWhatsappSent(true);
 
     // Update status - may fail for guests due to RLS, that's OK
-    await supabase
+    supabase
       .from('orders')
       .update({ status: 'whatsapp_initiated' })
-      .eq('id', order.id);
+      .eq('id', order.id)
+      .then(() => {});
 
     setOrder(prev => prev ? { ...prev, status: 'whatsapp_initiated' } : null);
 
     const message = generateWhatsAppMessage();
-    const url = isMobileDevice()
-      ? `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`
-      : `https://web.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${message}`;
-
+    // Use universal wa.me link for both desktop and mobile
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
     window.open(url, '_blank');
+
+    // Re-enable after a short delay to prevent spam clicks
+    setTimeout(() => setWhatsappSent(false), 3000);
   };
 
   const copyPhoneNumber = () => {

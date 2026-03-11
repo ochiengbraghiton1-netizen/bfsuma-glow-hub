@@ -81,6 +81,10 @@ const Checkout = () => {
   const discount = promoApplied?.discount || 0;
   const finalTotal = subtotal - discount;
 
+  // PayPal always uses USD - convert KES to USD using the rate
+  const kesToUsdRate = 0.0077;
+  const paypalUsdAmount = Math.round(finalTotal * kesToUsdRate * 100) / 100;
+
   const handleInputChange = (field: keyof CheckoutFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
@@ -666,12 +670,17 @@ Sent from BF SUMA ROYAL Website`;
                     <>
                       <div className="bg-muted/50 rounded-xl p-4 border border-border mb-4">
                         <p className="text-sm text-muted-foreground">
-                          Pay securely with PayPal in <strong>{currency}</strong>. Supports credit/debit cards and PayPal balance.
+                          Pay securely with PayPal in <strong>USD</strong>. Supports credit/debit cards and PayPal balance.
+                          {currency !== 'USD' && (
+                            <span className="block mt-1 text-xs">
+                              Your total of {formatCurrency(finalTotal)} will be charged as ${convert(finalTotal).toFixed(2)} USD.
+                            </span>
+                          )}
                         </p>
                       </div>
                       <PayPalButton
-                        amount={convert(finalTotal)}
-                        currency={currency}
+                        amount={paypalUsdAmount}
+                        currency="USD"
                         onCreateOrder={handlePayPalCreateOrder}
                         onApprove={handlePayPalApprove}
                         onError={handlePayPalError}
