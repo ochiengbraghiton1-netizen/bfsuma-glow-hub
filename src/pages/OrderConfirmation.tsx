@@ -137,7 +137,6 @@ const OrderConfirmation = () => {
     );
   };
 
-  const [whatsappSent, setWhatsappSent] = useState(false);
 
   const handleWhatsAppConfirm = async () => {
     if (!order || whatsappSent) return;
