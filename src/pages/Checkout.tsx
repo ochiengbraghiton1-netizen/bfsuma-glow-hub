@@ -283,6 +283,7 @@ Sent from BF SUMA ROYAL Website`;
         }
       });
       setErrors(fieldErrors);
+      console.error('PayPal validation failed:', result.error.errors);
       throw new Error('Please fill in required fields');
     }
 
