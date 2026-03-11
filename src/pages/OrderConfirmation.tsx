@@ -47,9 +47,6 @@ interface Order {
 
 const formatOrderId = (id: string) => `BF-${id.slice(0, 4).toUpperCase()}`;
 
-const isMobileDevice = (): boolean => {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-};
 
 const OrderConfirmation = () => {
   const { orderId } = useParams<{ orderId: string }>();
