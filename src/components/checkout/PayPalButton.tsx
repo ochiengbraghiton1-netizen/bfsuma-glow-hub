@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 
 const PAYPAL_CLIENT_ID = 'AUfjZUjWnYi8mc-NdnscH1Q-c00Sr681sVjFhUZ5SZmc9w4-5AwztOk_Sdf-_TpkY8T0SMHVFKGXzN1R';
@@ -51,7 +51,7 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
 
       const script = document.createElement('script');
       script.id = 'paypal-sdk';
-      script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=${currency}&enable-funding=card`;
+      script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=${currency}&intent=capture&components=buttons&enable-funding=card`;
       script.async = true;
       script.onload = () => {
         setSdkReady(true);
@@ -96,6 +96,7 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
             await onCreateOrderRef.current();
           }
           return actions.order.create({
+            intent: 'CAPTURE',
             purchase_units: [{
               amount: {
                 value: amountRef.current.toFixed(2),
@@ -103,6 +104,9 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
               },
               description: 'BF SUMA ROYAL Order',
             }],
+            application_context: {
+              shipping_preference: 'NO_SHIPPING',
+            },
           });
         },
         onApprove: async (data: any, actions: any) => {

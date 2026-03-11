@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -19,6 +19,7 @@ import SecureCheckoutBadges from '@/components/checkout/SecureCheckoutBadges';
 import { useCurrency } from '@/hooks/use-currency';
 
 const WHATSAPP_NUMBER = "254795454053";
+const CHECKOUT_STORAGE_KEY = "bf_checkout_form";
 
 const checkoutSchema = z.object({
   customerName: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
@@ -31,20 +32,38 @@ const checkoutSchema = z.object({
 
 type CheckoutFormData = z.infer<typeof checkoutSchema>;
 
-const Checkout = () => {
-  const { items, totalPrice, clearCart } = useCart();
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const { currency, setCurrency, convert, format: formatCurrency } = useCurrency('KES');
-  
-  const [formData, setFormData] = useState<CheckoutFormData>({
+const loadCheckoutForm = (): CheckoutFormData => {
+  try {
+    const stored = sessionStorage.getItem(CHECKOUT_STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return {
+        customerName: parsed.customerName || '',
+        customerEmail: parsed.customerEmail || '',
+        customerPhone: parsed.customerPhone || '+254',
+        shippingAddress: parsed.shippingAddress || '',
+        notes: parsed.notes || '',
+        promoCode: parsed.promoCode || '',
+      };
+    }
+  } catch { /* ignore */ }
+  return {
     customerName: '',
     customerEmail: '',
     customerPhone: '+254',
     shippingAddress: '',
     notes: '',
     promoCode: '',
-  });
+  };
+};
+
+const Checkout = () => {
+  const { items, totalPrice, clearCart } = useCart();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const { currency, setCurrency, convert, format: formatCurrency } = useCurrency('KES');
+  
+  const [formData, setFormData] = useState<CheckoutFormData>(loadCheckoutForm);
   const [errors, setErrors] = useState<Partial<Record<keyof CheckoutFormData, string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [promoApplied, setPromoApplied] = useState<{ discount: number; code: string } | null>(null);
@@ -52,6 +71,11 @@ const Checkout = () => {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [honeypot, setHoneypot] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'whatsapp' | 'paypal'>('whatsapp');
+
+  // Persist form data to sessionStorage on every change
+  useEffect(() => {
+    sessionStorage.setItem(CHECKOUT_STORAGE_KEY, JSON.stringify(formData));
+  }, [formData]);
 
   const subtotal = totalPrice;
   const discount = promoApplied?.discount || 0;
@@ -155,18 +179,22 @@ Sent from BF SUMA ROYAL Website`;
     return encodeURIComponent(message);
   };
 
-  const saveOrderToDb = async (status: string) => {
+  const saveOrderToDb = async (status: string, currentFormData?: CheckoutFormData) => {
+    const fd = currentFormData || formData;
     const newOrderId = crypto.randomUUID();
+
+    // Get current user if logged in
+    const { data: { user } } = await supabase.auth.getUser();
 
     const { error: orderError } = await supabase
       .from('orders')
       .insert({
         id: newOrderId,
-        customer_name: formData.customerName,
-        customer_email: formData.customerEmail || null,
-        customer_phone: formData.customerPhone,
-        shipping_address: formData.shippingAddress,
-        notes: formData.notes || null,
+        customer_name: fd.customerName,
+        customer_email: fd.customerEmail || null,
+        customer_phone: fd.customerPhone,
+        shipping_address: fd.shippingAddress,
+        notes: fd.notes || null,
         promotion_code: promoApplied?.code || null,
         subtotal: subtotal,
         discount_amount: discount,
@@ -175,6 +203,7 @@ Sent from BF SUMA ROYAL Website`;
         currency,
         payment_method: paymentMethod,
         payment_status: status === 'paid' ? 'paid' : 'pending',
+        user_id: user?.id || null,
       } as any);
 
     if (orderError) throw orderError;
@@ -230,7 +259,6 @@ Sent from BF SUMA ROYAL Website`;
       }
     }
 
-
     return newOrderId;
   };
 
@@ -260,10 +288,10 @@ Sent from BF SUMA ROYAL Website`;
 
     // Save order as pending_payment BEFORE PayPal redirect
     if (!pendingPaypalOrderId) {
-      const newOrderId = await saveOrderToDb('pending_payment');
+      const newOrderId = await saveOrderToDb('pending_payment', currentFormData);
       setPendingPaypalOrderId(newOrderId);
     }
-  }, [pendingPaypalOrderId, honeypot]);
+  }, [pendingPaypalOrderId, honeypot, subtotal, discount, finalTotal, currency, paymentMethod, promoApplied, items]);
 
   const handlePayPalApprove = async (paypalOrderId: string, details: any) => {
     setIsSubmitting(true);
@@ -310,8 +338,37 @@ Sent from BF SUMA ROYAL Website`;
       }
 
       clearCart();
+      sessionStorage.removeItem(CHECKOUT_STORAGE_KEY);
       setPendingPaypalOrderId(null);
-      navigate(`/order-success/${dbOrderId}`, { replace: true });
+      
+      // Pass order data via navigation state so confirmation page works without DB fetch
+      navigate(`/order-success/${dbOrderId}`, { 
+        replace: true,
+        state: {
+          order: {
+            id: dbOrderId,
+            customer_name: formData.customerName,
+            customer_email: formData.customerEmail || null,
+            customer_phone: formData.customerPhone,
+            shipping_address: formData.shippingAddress,
+            subtotal,
+            discount_amount: discount,
+            total_amount: finalTotal,
+            promotion_code: promoApplied?.code || null,
+            status: 'paid',
+            currency,
+            notes: formData.notes || null,
+            created_at: new Date().toISOString(),
+          },
+          orderItems: items.map(item => ({
+            id: item.id,
+            product_name: item.name,
+            product_price: item.price,
+            quantity: item.quantity,
+            subtotal: item.price * item.quantity,
+          })),
+        },
+      });
     } catch (error) {
       console.error('PayPal order update error:', error);
       toast({
@@ -361,8 +418,36 @@ Sent from BF SUMA ROYAL Website`;
     setIsSubmitting(true);
     try {
       const newOrderId = await saveOrderToDb('pending_whatsapp');
+      
+      // Pass order data via navigation state so confirmation page works without DB fetch
+      const orderState = {
+        order: {
+          id: newOrderId,
+          customer_name: formData.customerName,
+          customer_email: formData.customerEmail || null,
+          customer_phone: formData.customerPhone,
+          shipping_address: formData.shippingAddress,
+          subtotal,
+          discount_amount: discount,
+          total_amount: finalTotal,
+          promotion_code: promoApplied?.code || null,
+          status: 'pending_whatsapp',
+          currency,
+          notes: formData.notes || null,
+          created_at: new Date().toISOString(),
+        },
+        orderItems: items.map(item => ({
+          id: item.id,
+          product_name: item.name,
+          product_price: item.price,
+          quantity: item.quantity,
+          subtotal: item.price * item.quantity,
+        })),
+      };
+
       clearCart();
-      navigate(`/order-confirmation/${newOrderId}`);
+      sessionStorage.removeItem(CHECKOUT_STORAGE_KEY);
+      navigate(`/order-confirmation/${newOrderId}`, { state: orderState });
     } catch (error) {
       console.error('Order error:', error);
       toast({ title: 'Order Failed', description: 'There was an error placing your order. Please try again.', variant: 'destructive' });

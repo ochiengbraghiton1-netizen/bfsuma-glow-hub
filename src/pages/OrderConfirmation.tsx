@@ -57,9 +57,13 @@ const OrderConfirmation = () => {
   const location = useLocation();
   const { toast } = useToast();
   const isSuccessRoute = location.pathname.startsWith('/order-success');
-  const [order, setOrder] = useState<Order | null>(null);
-  const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  
+  // Try to get order data from navigation state first (works for guests)
+  const navState = location.state as { order?: Order; orderItems?: OrderItem[] } | null;
+  
+  const [order, setOrder] = useState<Order | null>(navState?.order || null);
+  const [orderItems, setOrderItems] = useState<OrderItem[]>(navState?.orderItems || []);
+  const [loading, setLoading] = useState(!navState?.order);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -67,31 +71,55 @@ const OrderConfirmation = () => {
       navigate('/');
       return;
     }
-    fetchOrder();
+    // Only fetch from DB if we don't have navigation state data
+    if (!navState?.order) {
+      fetchOrder();
+    }
   }, [orderId]);
 
   const fetchOrder = async () => {
-    const { data: orderData, error: orderError } = await supabase
-      .from('orders')
-      .select('*')
-      .eq('id', orderId!)
-      .maybeSingle();
+    try {
+      const { data: orderData, error: orderError } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('id', orderId!)
+        .maybeSingle();
 
-    if (orderError || !orderData) {
-      toast({ title: 'Order not found', variant: 'destructive' });
-      navigate('/');
-      return;
+      if (orderError || !orderData) {
+        // For guests, RLS may block the SELECT. Show a generic confirmation instead.
+        console.warn('Could not fetch order (may be RLS restriction for guest):', orderError?.message);
+        setOrder({
+          id: orderId!,
+          customer_name: 'Customer',
+          customer_email: null,
+          customer_phone: '',
+          shipping_address: null,
+          subtotal: 0,
+          discount_amount: 0,
+          total_amount: 0,
+          promotion_code: null,
+          status: isSuccessRoute ? 'paid' : 'pending_whatsapp',
+          notes: null,
+          created_at: new Date().toISOString(),
+          currency: 'KES',
+        });
+        setLoading(false);
+        return;
+      }
+
+      setOrder(orderData as Order);
+
+      const { data: items } = await supabase
+        .from('order_items')
+        .select('*')
+        .eq('order_id', orderId!);
+
+      setOrderItems(items || []);
+    } catch (err) {
+      console.error('Error fetching order:', err);
+    } finally {
+      setLoading(false);
     }
-
-    setOrder(orderData as Order);
-
-    const { data: items } = await supabase
-      .from('order_items')
-      .select('*')
-      .eq('order_id', orderId!);
-
-    setOrderItems(items || []);
-    setLoading(false);
   };
 
   const formatAmount = (amount: number) => {
@@ -103,7 +131,9 @@ const OrderConfirmation = () => {
   const generateWhatsAppMessage = () => {
     if (!order) return '';
     const shortId = formatOrderId(order.id);
-    const productNames = orderItems.map(i => `${i.product_name} x${i.quantity}`).join(', ');
+    const productNames = orderItems.length > 0
+      ? orderItems.map(i => `${i.product_name} x${i.quantity}`).join(', ')
+      : 'See order details';
     return encodeURIComponent(
       `Hello BF Suma, I am confirming Order #${shortId} for ${productNames}. My name is ${order.customer_name}. Phone: ${order.customer_phone}. Total: ${formatAmount(order.total_amount)}.`
     );
@@ -112,6 +142,7 @@ const OrderConfirmation = () => {
   const handleWhatsAppConfirm = async () => {
     if (!order) return;
 
+    // Update status - may fail for guests due to RLS, that's OK
     await supabase
       .from('orders')
       .update({ status: 'whatsapp_initiated' })
@@ -232,36 +263,42 @@ const OrderConfirmation = () => {
                 </>
               )}
 
-              <Separator />
-
-              <div className="space-y-2">
-                <p className="font-semibold text-sm">Items</p>
-                {orderItems.map((item) => (
-                  <div key={item.id} className="flex justify-between text-sm">
-                    <span>{item.product_name} × {item.quantity}</span>
-                    <span>{formatAmount(item.subtotal)}</span>
+              {orderItems.length > 0 && (
+                <>
+                  <Separator />
+                  <div className="space-y-2">
+                    <p className="font-semibold text-sm">Items</p>
+                    {orderItems.map((item) => (
+                      <div key={item.id} className="flex justify-between text-sm">
+                        <span>{item.product_name} × {item.quantity}</span>
+                        <span>{formatAmount(item.subtotal)}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </>
+              )}
 
-              <Separator />
-
-              <div className="space-y-1">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Subtotal</span>
-                  <span>{formatAmount(order.subtotal)}</span>
-                </div>
-                {order.discount_amount > 0 && (
-                  <div className="flex justify-between text-sm text-green-600">
-                    <span>Discount {order.promotion_code && `(${order.promotion_code})`}</span>
-                    <span>-{formatAmount(order.discount_amount)}</span>
+              {order.total_amount > 0 && (
+                <>
+                  <Separator />
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Subtotal</span>
+                      <span>{formatAmount(order.subtotal)}</span>
+                    </div>
+                    {order.discount_amount > 0 && (
+                      <div className="flex justify-between text-sm text-green-600">
+                        <span>Discount {order.promotion_code && `(${order.promotion_code})`}</span>
+                        <span>-{formatAmount(order.discount_amount)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between font-bold text-lg pt-1">
+                      <span>Total</span>
+                      <span>{formatAmount(order.total_amount)}</span>
+                    </div>
                   </div>
-                )}
-                <div className="flex justify-between font-bold text-lg pt-1">
-                  <span>Total</span>
-                  <span>{formatAmount(order.total_amount)}</span>
-                </div>
-              </div>
+                </>
+              )}
             </CardContent>
           </Card>
 
