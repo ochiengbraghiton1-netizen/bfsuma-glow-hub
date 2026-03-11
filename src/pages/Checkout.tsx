@@ -81,6 +81,10 @@ const Checkout = () => {
   const discount = promoApplied?.discount || 0;
   const finalTotal = subtotal - discount;
 
+  // PayPal always uses USD - convert KES to USD using the rate
+  const kesToUsdRate = 0.0077;
+  const paypalUsdAmount = Math.round(finalTotal * kesToUsdRate * 100) / 100;
+
   const handleInputChange = (field: keyof CheckoutFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {

@@ -139,23 +139,28 @@ const OrderConfirmation = () => {
     );
   };
 
+  const [whatsappSent, setWhatsappSent] = useState(false);
+
   const handleWhatsAppConfirm = async () => {
-    if (!order) return;
+    if (!order || whatsappSent) return;
+    setWhatsappSent(true);
 
     // Update status - may fail for guests due to RLS, that's OK
-    await supabase
+    supabase
       .from('orders')
       .update({ status: 'whatsapp_initiated' })
-      .eq('id', order.id);
+      .eq('id', order.id)
+      .then(() => {});
 
     setOrder(prev => prev ? { ...prev, status: 'whatsapp_initiated' } : null);
 
     const message = generateWhatsAppMessage();
-    const url = isMobileDevice()
-      ? `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`
-      : `https://web.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${message}`;
-
+    // Use universal wa.me link for both desktop and mobile
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
     window.open(url, '_blank');
+
+    // Re-enable after a short delay to prevent spam clicks
+    setTimeout(() => setWhatsappSent(false), 3000);
   };
 
   const copyPhoneNumber = () => {
