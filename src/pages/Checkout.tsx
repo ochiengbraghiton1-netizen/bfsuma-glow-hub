@@ -24,7 +24,7 @@ const CHECKOUT_STORAGE_KEY = "bf_checkout_form";
 const checkoutSchema = z.object({
   customerName: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
   customerEmail: z.string().trim().email('Invalid email address').max(255).optional().or(z.literal('')),
-  customerPhone: z.string().trim().min(7, 'Phone number is too short').max(20).regex(/^\+\d{7,15}$/, 'Please enter a valid phone number'),
+  customerPhone: z.string().trim().min(7, 'Phone number is too short').max(20).transform(v => v.replace(/[\s\-]/g, '')).pipe(z.string().regex(/^\+\d{7,15}$/, 'Please enter a valid phone number')),
   shippingAddress: z.string().trim().min(10, 'Please enter a complete address').max(500),
   notes: z.string().trim().max(500).optional(),
   promoCode: z.string().trim().max(50).optional(),
@@ -283,6 +283,7 @@ Sent from BF SUMA ROYAL Website`;
         }
       });
       setErrors(fieldErrors);
+      console.error('PayPal validation failed:', result.error.errors);
       throw new Error('Please fill in required fields');
     }
 
@@ -386,10 +387,15 @@ Sent from BF SUMA ROYAL Website`;
   };
 
   const handlePayPalError = (error: any) => {
-    console.error('PayPal error:', error);
+    console.error('PayPal error details:', {
+      message: error?.message,
+      name: error?.name,
+      stack: error?.stack,
+      full: error,
+    });
     toast({
       title: 'Payment Failed',
-      description: 'There was an error with PayPal. Please try again or use WhatsApp checkout.',
+      description: error?.message || 'There was an error with PayPal. Please try again or use WhatsApp checkout.',
       variant: 'destructive',
     });
   };

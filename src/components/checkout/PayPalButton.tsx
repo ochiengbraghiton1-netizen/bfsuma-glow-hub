@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Loader2 } from 'lucide-react';
-
-const PAYPAL_CLIENT_ID = 'AUfjZUjWnYi8mc-NdnscH1Q-c00Sr681sVjFhUZ5SZmc9w4-5AwztOk_Sdf-_TpkY8T0SMHVFKGXzN1R';
+import { supabase } from '@/integrations/supabase/client';
 
 interface PayPalButtonProps {
   amount: number;
@@ -22,9 +21,9 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
   const containerRef = useRef<HTMLDivElement>(null);
   const [sdkReady, setSdkReady] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [clientId, setClientId] = useState<string | null>(null);
   const prevCurrencyRef = useRef(currency);
 
-  // Use refs for callbacks so PayPal buttons always call the latest version
   const onCreateOrderRef = useRef(onCreateOrder);
   const onApproveRef = useRef(onApprove);
   const onErrorRef = useRef(onError);
@@ -37,8 +36,31 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
   useEffect(() => { amountRef.current = amount; }, [amount]);
   useEffect(() => { currencyRef.current = currency; }, [currency]);
 
-  // Load or reload PayPal SDK when currency changes
+  // Fetch PayPal Client ID from backend
   useEffect(() => {
+    const fetchClientId = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('get-paypal-client-id');
+        if (error || !data?.clientId) {
+          console.error('Failed to fetch PayPal Client ID:', error);
+          onError(new Error('PayPal is not configured. Please contact support.'));
+          setLoading(false);
+          return;
+        }
+        setClientId(data.clientId);
+      } catch (err) {
+        console.error('PayPal config error:', err);
+        onError(new Error('Failed to load PayPal configuration'));
+        setLoading(false);
+      }
+    };
+    fetchClientId();
+  }, []);
+
+  // Load or reload PayPal SDK when currency or clientId changes
+  useEffect(() => {
+    if (!clientId) return;
+
     const loadSdk = () => {
       setLoading(true);
       setSdkReady(false);
@@ -51,7 +73,8 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
 
       const script = document.createElement('script');
       script.id = 'paypal-sdk';
-      script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=${currency}&intent=capture&components=buttons&enable-funding=card`;
+      // Removed enable-funding=card — cards are handled inside the PayPal popup
+      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=${currency}&intent=capture&components=buttons`;
       script.async = true;
       script.onload = () => {
         setSdkReady(true);
@@ -59,7 +82,8 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
       };
       script.onerror = () => {
         setLoading(false);
-        onError(new Error('Failed to load PayPal SDK'));
+        console.error('PayPal SDK script failed to load');
+        onError(new Error('Failed to load PayPal. Please try again or use WhatsApp checkout.'));
       };
       document.body.appendChild(script);
     };
@@ -71,7 +95,7 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
       setSdkReady(true);
       setLoading(false);
     }
-  }, [currency]);
+  }, [currency, clientId]);
 
   // Render PayPal buttons
   useEffect(() => {
@@ -91,7 +115,6 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
           height: 48,
         },
         createOrder: async (_data: any, actions: any) => {
-          // Use refs to get latest callback and values
           if (onCreateOrderRef.current) {
             await onCreateOrderRef.current();
           }
@@ -114,15 +137,20 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
             const details = await actions.order.capture();
             await onApproveRef.current(data.orderID, details);
           } catch (err) {
+            console.error('PayPal capture error:', err);
             onErrorRef.current(err);
           }
         },
         onError: (err: any) => {
+          console.error('PayPal button error:', err);
           onErrorRef.current(err);
         },
-        onCancel: () => {},
+        onCancel: () => {
+          console.log('PayPal payment cancelled by user');
+        },
       }).render(containerRef.current);
     } catch (err) {
+      console.error('PayPal render error:', err);
       onError(err);
     }
   }, [sdkReady, disabled]);
@@ -132,6 +160,14 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
       <div className="flex items-center justify-center py-6">
         <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         <span className="ml-2 text-sm text-muted-foreground">Loading PayPal...</span>
+      </div>
+    );
+  }
+
+  if (!clientId) {
+    return (
+      <div className="text-center py-4 text-sm text-destructive">
+        PayPal is currently unavailable. Please use WhatsApp checkout.
       </div>
     );
   }
