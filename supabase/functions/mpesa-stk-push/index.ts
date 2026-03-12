@@ -18,18 +18,42 @@ async function getAccessToken(): Promise<string> {
     throw new Error("M-Pesa credentials not configured");
   }
 
+  console.log("Generating M-Pesa access token...");
+  console.log("Consumer Key length:", consumerKey.length);
+  console.log("Consumer Key starts with:", consumerKey.substring(0, 6) + "...");
+
   const auth = btoa(`${consumerKey}:${consumerSecret}`);
+  
   const res = await fetch(
     `${MPESA_BASE_URL}/oauth/v1/generate?grant_type=client_credentials`,
-    { headers: { Authorization: `Basic ${auth}` } }
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Basic ${auth}`,
+      },
+    }
   );
 
+  const responseText = await res.text();
+  console.log("Token response status:", res.status);
+  console.log("Token response body:", responseText);
+
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Failed to get access token: ${text}`);
+    throw new Error(`Failed to get access token (HTTP ${res.status}): ${responseText}`);
   }
 
-  const data = await res.json();
+  let data;
+  try {
+    data = JSON.parse(responseText);
+  } catch {
+    throw new Error(`Invalid JSON from token endpoint: ${responseText}`);
+  }
+
+  if (!data.access_token) {
+    throw new Error(`No access_token in response: ${responseText}`);
+  }
+
+  console.log("Access token obtained successfully, length:", data.access_token.length);
   return data.access_token;
 }
 
@@ -52,12 +76,13 @@ serve(async (req) => {
     let formattedPhone = phone.replace(/[^0-9]/g, "");
     if (formattedPhone.startsWith("0")) {
       formattedPhone = "254" + formattedPhone.slice(1);
-    } else if (formattedPhone.startsWith("+")) {
-      formattedPhone = formattedPhone.slice(1);
     }
     if (!formattedPhone.startsWith("254")) {
       formattedPhone = "254" + formattedPhone;
     }
+
+    console.log("Formatted phone:", formattedPhone);
+    console.log("Amount:", amount, "Order:", orderId);
 
     const accessToken = await getAccessToken();
 
@@ -85,6 +110,8 @@ serve(async (req) => {
       TransactionDesc: `Payment for order ${orderId.slice(0, 8)}`,
     };
 
+    console.log("STK Push payload:", JSON.stringify(stkPayload));
+
     const stkRes = await fetch(
       `${MPESA_BASE_URL}/mpesa/stkpush/v1/processrequest`,
       {
@@ -97,7 +124,19 @@ serve(async (req) => {
       }
     );
 
-    const stkData = await stkRes.json();
+    const stkText = await stkRes.text();
+    console.log("STK Push response status:", stkRes.status);
+    console.log("STK Push response:", stkText);
+
+    let stkData;
+    try {
+      stkData = JSON.parse(stkText);
+    } catch {
+      return new Response(
+        JSON.stringify({ error: "Invalid response from M-Pesa", details: stkText }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     if (stkData.ResponseCode !== "0") {
       return new Response(
