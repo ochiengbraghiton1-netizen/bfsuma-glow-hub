@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, ShoppingBag, Loader2, MessageCircle, CheckCircle, CreditCard } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Loader2, MessageCircle, CheckCircle, CreditCard, Phone } from 'lucide-react';
 import { z } from 'zod';
 import productGeneric from '@/assets/product-generic.jpg';
 import { HoneypotField } from '@/components/ui/honeypot-field';
@@ -16,6 +16,7 @@ import { PhoneInput, formatForWhatsApp } from '@/components/ui/phone-input';
 import PayPalButton from '@/components/checkout/PayPalButton';
 import CurrencySelector from '@/components/checkout/CurrencySelector';
 import SecureCheckoutBadges from '@/components/checkout/SecureCheckoutBadges';
+import MpesaPayment from '@/components/checkout/MpesaPayment';
 import { useCurrency } from '@/hooks/use-currency';
 
 const WHATSAPP_NUMBER = "254795454053";
@@ -70,7 +71,7 @@ const Checkout = () => {
   const [orderComplete, setOrderComplete] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [honeypot, setHoneypot] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState<'whatsapp' | 'paypal'>('whatsapp');
+  const [paymentMethod, setPaymentMethod] = useState<'whatsapp' | 'mpesa' | 'paypal'>('mpesa');
 
   // Persist form data to sessionStorage on every change
   useEffect(() => {
@@ -616,7 +617,19 @@ Sent from BF SUMA ROYAL Website`;
 
                 <div className="pt-4 border-t border-border">
                   <h3 className="font-semibold mb-3">Payment Method</h3>
-                  <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="grid grid-cols-3 gap-3 mb-4">
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('mpesa')}
+                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all text-sm font-medium ${
+                        paymentMethod === 'mpesa'
+                          ? 'border-[#4CAF50] bg-[#4CAF50]/5 text-[#4CAF50]'
+                          : 'border-border text-muted-foreground hover:border-[#4CAF50]/50'
+                      }`}
+                    >
+                      <Phone className="h-5 w-5" />
+                      M-Pesa
+                    </button>
                     <button
                       type="button"
                       onClick={() => setPaymentMethod('whatsapp')}
@@ -642,6 +655,72 @@ Sent from BF SUMA ROYAL Website`;
                       PayPal
                     </button>
                   </div>
+
+                  {paymentMethod === 'mpesa' && (
+                    <MpesaPayment
+                      amount={finalTotal}
+                      orderId={pendingPaypalOrderId}
+                      onCreateOrder={async () => {
+                        const currentFormData = formDataRef.current;
+                        const result = checkoutSchema.safeParse(currentFormData);
+                        if (!result.success) {
+                          const fieldErrors: Partial<Record<keyof CheckoutFormData, string>> = {};
+                          result.error.errors.forEach(err => {
+                            if (err.path[0]) {
+                              fieldErrors[err.path[0] as keyof CheckoutFormData] = err.message;
+                            }
+                          });
+                          setErrors(fieldErrors);
+                          throw new Error('Please fill in required fields');
+                        }
+                        setErrors({});
+                        if (isBot(honeypot)) throw new Error('Validation failed');
+                        const newOrderId = await saveOrderToDb('pending_payment', currentFormData);
+                        setPendingPaypalOrderId(newOrderId);
+                        return newOrderId;
+                      }}
+                      onPaymentSuccess={(oid, receipt) => {
+                        clearCart();
+                        sessionStorage.removeItem(CHECKOUT_STORAGE_KEY);
+                        navigate(`/order-success/${oid}`, {
+                          replace: true,
+                          state: {
+                            order: {
+                              id: oid,
+                              customer_name: formData.customerName,
+                              customer_email: formData.customerEmail || null,
+                              customer_phone: formData.customerPhone,
+                              shipping_address: formData.shippingAddress,
+                              subtotal,
+                              discount_amount: discount,
+                              total_amount: finalTotal,
+                              promotion_code: promoApplied?.code || null,
+                              status: 'paid',
+                              currency,
+                              notes: `M-Pesa Receipt: ${receipt}`,
+                              created_at: new Date().toISOString(),
+                            },
+                            orderItems: items.map(item => ({
+                              id: item.id,
+                              product_name: item.name,
+                              product_price: item.price,
+                              quantity: item.quantity,
+                              subtotal: item.price * item.quantity,
+                            })),
+                          },
+                        });
+                      }}
+                      onPaymentFailed={(error) => {
+                        toast({
+                          title: 'Payment Failed',
+                          description: error,
+                          variant: 'destructive',
+                        });
+                      }}
+                      disabled={isSubmitting || items.length === 0}
+                      defaultPhone={formData.customerPhone}
+                    />
+                  )}
 
                   {paymentMethod === 'whatsapp' && (
                     <>
