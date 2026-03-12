@@ -71,7 +71,7 @@ const Checkout = () => {
   const [orderComplete, setOrderComplete] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [honeypot, setHoneypot] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState<'whatsapp' | 'paypal'>('whatsapp');
+  const [paymentMethod, setPaymentMethod] = useState<'whatsapp' | 'mpesa' | 'paypal'>('mpesa');
 
   // Persist form data to sessionStorage on every change
   useEffect(() => {
