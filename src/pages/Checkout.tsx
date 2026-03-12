@@ -656,7 +656,72 @@ Sent from BF SUMA ROYAL Website`;
                     </button>
                   </div>
 
-                  {paymentMethod === 'whatsapp' && (
+                  {paymentMethod === 'mpesa' && (
+                    <MpesaPayment
+                      amount={finalTotal}
+                      orderId={pendingPaypalOrderId}
+                      onCreateOrder={async () => {
+                        const currentFormData = formDataRef.current;
+                        const result = checkoutSchema.safeParse(currentFormData);
+                        if (!result.success) {
+                          const fieldErrors: Partial<Record<keyof CheckoutFormData, string>> = {};
+                          result.error.errors.forEach(err => {
+                            if (err.path[0]) {
+                              fieldErrors[err.path[0] as keyof CheckoutFormData] = err.message;
+                            }
+                          });
+                          setErrors(fieldErrors);
+                          throw new Error('Please fill in required fields');
+                        }
+                        setErrors({});
+                        if (isBot(honeypot)) throw new Error('Validation failed');
+                        const newOrderId = await saveOrderToDb('pending_payment', currentFormData);
+                        setPendingPaypalOrderId(newOrderId);
+                        return newOrderId;
+                      }}
+                      onPaymentSuccess={(oid, receipt) => {
+                        clearCart();
+                        sessionStorage.removeItem(CHECKOUT_STORAGE_KEY);
+                        navigate(`/order-success/${oid}`, {
+                          replace: true,
+                          state: {
+                            order: {
+                              id: oid,
+                              customer_name: formData.customerName,
+                              customer_email: formData.customerEmail || null,
+                              customer_phone: formData.customerPhone,
+                              shipping_address: formData.shippingAddress,
+                              subtotal,
+                              discount_amount: discount,
+                              total_amount: finalTotal,
+                              promotion_code: promoApplied?.code || null,
+                              status: 'paid',
+                              currency,
+                              notes: `M-Pesa Receipt: ${receipt}`,
+                              created_at: new Date().toISOString(),
+                            },
+                            orderItems: items.map(item => ({
+                              id: item.id,
+                              product_name: item.name,
+                              product_price: item.price,
+                              quantity: item.quantity,
+                              subtotal: item.price * item.quantity,
+                            })),
+                          },
+                        });
+                      }}
+                      onPaymentFailed={(error) => {
+                        toast({
+                          title: 'Payment Failed',
+                          description: error,
+                          variant: 'destructive',
+                        });
+                      }}
+                      disabled={isSubmitting || items.length === 0}
+                      defaultPhone={formData.customerPhone}
+                    />
+                  )}
+
                     <>
                       <div className="bg-muted/50 rounded-xl p-4 border border-border mb-4">
                         <p className="text-sm text-muted-foreground">
