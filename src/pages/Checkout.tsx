@@ -16,6 +16,7 @@ import { PhoneInput, formatForWhatsApp } from '@/components/ui/phone-input';
 import PayPalButton from '@/components/checkout/PayPalButton';
 import CurrencySelector from '@/components/checkout/CurrencySelector';
 import SecureCheckoutBadges from '@/components/checkout/SecureCheckoutBadges';
+import MpesaPayment from '@/components/checkout/MpesaPayment';
 import { useCurrency } from '@/hooks/use-currency';
 
 const WHATSAPP_NUMBER = "254795454053";
