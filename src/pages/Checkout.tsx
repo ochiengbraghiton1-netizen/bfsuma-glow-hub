@@ -722,7 +722,7 @@ Sent from BF SUMA ROYAL Website`;
                     />
                   )}
 
-                    <>
+                  {paymentMethod === 'whatsapp' && (
                       <div className="bg-muted/50 rounded-xl p-4 border border-border mb-4">
                         <p className="text-sm text-muted-foreground">
                           After submitting, your order details will be sent via WhatsApp. We'll confirm your order and arrange delivery and payment.
