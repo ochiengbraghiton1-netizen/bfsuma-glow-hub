@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, ShoppingBag, Loader2, MessageCircle, CheckCircle, CreditCard } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Loader2, MessageCircle, CheckCircle, CreditCard, Phone } from 'lucide-react';
 import { z } from 'zod';
 import productGeneric from '@/assets/product-generic.jpg';
 import { HoneypotField } from '@/components/ui/honeypot-field';
