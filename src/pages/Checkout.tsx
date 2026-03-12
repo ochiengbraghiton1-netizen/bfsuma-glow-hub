@@ -617,7 +617,19 @@ Sent from BF SUMA ROYAL Website`;
 
                 <div className="pt-4 border-t border-border">
                   <h3 className="font-semibold mb-3">Payment Method</h3>
-                  <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="grid grid-cols-3 gap-3 mb-4">
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('mpesa')}
+                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all text-sm font-medium ${
+                        paymentMethod === 'mpesa'
+                          ? 'border-[#4CAF50] bg-[#4CAF50]/5 text-[#4CAF50]'
+                          : 'border-border text-muted-foreground hover:border-[#4CAF50]/50'
+                      }`}
+                    >
+                      <Phone className="h-5 w-5" />
+                      M-Pesa
+                    </button>
                     <button
                       type="button"
                       onClick={() => setPaymentMethod('whatsapp')}
