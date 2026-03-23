@@ -86,8 +86,25 @@ Deno.serve(async (req) => {
       return generateUrlEntry(loc, "weekly", 0.8, lastmod);
     });
 
+    // Fetch published blog posts
+    const { data: blogPosts, error: blogError } = await supabase
+      .from("blog_posts")
+      .select("slug, updated_at, published_at")
+      .eq("status", "published")
+      .order("published_at", { ascending: false });
+
+    if (blogError) {
+      console.error("Error fetching blog posts:", blogError);
+    }
+
+    const blogEntries = (blogPosts || []).map((post) => {
+      const loc = `${SITE_BASE_URL}/blog/${post.slug}`;
+      const lastmod = (post.updated_at || post.published_at)?.split("T")[0];
+      return generateUrlEntry(loc, "weekly", 0.7, lastmod);
+    });
+
     // Combine all entries
-    const allEntries = [...staticEntries, ...categoryEntries, ...productEntries].join("\n");
+    const allEntries = [...staticEntries, ...categoryEntries, ...productEntries, ...blogEntries].join("\n");
 
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
