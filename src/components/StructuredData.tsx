@@ -129,7 +129,7 @@ const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps)
         "@type": "Product",
         "name": product.name,
         "description": product.description || `Premium ${product.name} wellness supplement by BF SUMA Royal`,
-        "image": product.image_url || "https://bfsuma-glow-hub.lovable.app/og-image.png",
+        "image": product.image_url || "https://bfsumaroyal.com/og-image.png",
         "sku": product.name.toLowerCase().replace(/\s+/g, '-'),
         "brand": {
           "@type": "Brand",
