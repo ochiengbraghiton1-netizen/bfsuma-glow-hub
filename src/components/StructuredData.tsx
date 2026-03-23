@@ -150,7 +150,7 @@ const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps)
         },
         "offers": {
           "@type": "Offer",
-          "url": "https://bfsuma-glow-hub.lovable.app/#products",
+          "url": "https://bfsumaroyal.com/#products",
           "priceCurrency": "KES",
           "price": product.price.toString(),
           "priceValidUntil": priceValidUntilStr,
