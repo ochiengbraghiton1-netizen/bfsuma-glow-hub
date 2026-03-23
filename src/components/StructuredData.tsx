@@ -99,11 +99,11 @@ const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps)
     "@type": "WebSite",
     "name": "BF SUMA Royal",
     "alternateName": "BF SUMA Royal Kenya",
-    "url": "https://bfsuma-glow-hub.lovable.app",
+    "url": "https://bfsumaroyal.com",
     "description": "Premium Supplements for Better Health - Backed by a Real Business Opportunity",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://bfsuma-glow-hub.lovable.app/?search={search_term_string}",
+      "target": "https://bfsumaroyal.com/?search={search_term_string}",
       "query-input": "required name=search_term_string"
     }
   };
