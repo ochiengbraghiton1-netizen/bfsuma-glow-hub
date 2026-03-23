@@ -108,9 +108,14 @@ const BlogList = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Blog | BF SUMA Kenya - Health & Wellness Tips</title>
-        <meta name="description" content="Read the latest health tips, wellness advice, and product insights from BF SUMA Kenya." />
+       <Helmet>
+        <title>Health & Wellness Blog | BF SUMA Royal Kenya</title>
+        <meta name="description" content="Read health tips, wellness advice, and product insights from BF SUMA Royal Kenya. Stay informed about natural supplements." />
+        <link rel="canonical" href="https://bfsumaroyal.com/blog" />
+        <meta property="og:title" content="Health & Wellness Blog | BF SUMA Royal Kenya" />
+        <meta property="og:description" content="Read health tips, wellness advice, and product insights from BF SUMA Royal Kenya." />
+        <meta property="og:url" content="https://bfsumaroyal.com/blog" />
+        <meta property="og:type" content="website" />
       </Helmet>
 
       <section className="py-16 px-4 md:px-8">
