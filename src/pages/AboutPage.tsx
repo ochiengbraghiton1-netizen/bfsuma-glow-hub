@@ -103,8 +103,8 @@ const aboutPageSchema = {
     },
     numberOfEmployees: "1000+",
     areaServed: "15+ Countries",
-    url: "https://bfsuma-glow-hub.lovable.app",
-    logo: "https://bfsuma-glow-hub.lovable.app/favicon.png",
+    url: "https://bfsumaroyal.com",
+    logo: "https://bfsumaroyal.com/favicon.png",
     sameAs: [
       "https://www.facebook.com/share/1G6uTXLkpw/",
       "https://www.instagram.com/bf_suma_royal",
