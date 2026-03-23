@@ -31,9 +31,9 @@ const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps)
     "@type": "Organization",
     "name": "BF SUMA Royal",
     "alternateName": "BF SUMA ROYAL Kenya",
-    "url": "https://bfsuma-glow-hub.lovable.app",
-    "logo": "https://bfsuma-glow-hub.lovable.app/favicon.png",
-    "image": "https://bfsuma-glow-hub.lovable.app/og-image.png",
+    "url": "https://bfsumaroyal.com",
+    "logo": "https://bfsumaroyal.com/favicon.png",
+    "image": "https://bfsumaroyal.com/og-image.png",
     "description": "BF SUMA Royal offers trusted wellness products designed to support your health journey. Premium supplements backed by a real business opportunity in Kenya.",
     "slogan": "Premium Supplements for Better Health",
     "address": {
