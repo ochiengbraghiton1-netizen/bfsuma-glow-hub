@@ -58,8 +58,8 @@ const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps)
     "@context": "https://schema.org",
     "@type": "HealthAndBeautyBusiness",
     "name": "BF SUMA Royal Kenya",
-    "image": "https://bfsuma-glow-hub.lovable.app/og-image.png",
-    "url": "https://bfsuma-glow-hub.lovable.app",
+    "image": "https://bfsumaroyal.com/og-image.png",
+    "url": "https://bfsumaroyal.com",
     "telephone": "+254795454053",
     "description": "Premium wellness supplements and natural health products in Kenya. Quality supplements backed by a real business opportunity.",
     "address": {
