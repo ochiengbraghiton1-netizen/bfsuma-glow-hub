@@ -95,16 +95,11 @@ const CommunityPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Helmet>
-        <title>Community - BF SUMA ROYAL | Social Proof & Stories</title>
-        <meta
-          name="description"
-          content="See real stories from the BF SUMA ROYAL community. Customer testimonials, product reviews, and success stories from Instagram, Facebook, TikTok and more."
-        />
-        <meta property="og:title" content="BF SUMA ROYAL Community" />
-        <meta property="og:description" content="Real stories from our wellness community across social media." />
-        <meta property="og:type" content="website" />
-      </Helmet>
+      <PageSEO
+        title="Community | BF SUMA Royal Kenya Stories"
+        description="See real stories from the BF SUMA Royal community. Customer testimonials, product reviews, and success stories."
+        path="/community"
+      />
 
       <Header />
 
