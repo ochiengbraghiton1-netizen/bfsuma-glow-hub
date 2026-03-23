@@ -86,7 +86,7 @@ const aboutPageSchema = {
   name: "About BF SUMA ROYAL Kenya - Our Journey Since 2006",
   description:
     "Discover BF SUMA's journey from Los Angeles in 2006 to becoming a trusted global wellness brand across 15+ countries. Learn about our mission, vision, and 15+ years of impact in Africa.",
-  url: "https://bfsuma-glow-hub.lovable.app/about",
+  url: "https://bfsumaroyal.com/about",
   mainEntity: {
     "@type": "Organization",
     name: "BF SUMA ROYAL Kenya",
