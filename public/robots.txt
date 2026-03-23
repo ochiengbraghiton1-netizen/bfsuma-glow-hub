@@ -19,3 +19,8 @@ Sitemap: https://bfsumaroyal.com/sitemap.xml
 # Disallow admin and private routes
 Disallow: /admin
 Disallow: /affiliate
+Disallow: /distributor
+Disallow: /auth
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /account

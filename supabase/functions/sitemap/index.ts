@@ -13,8 +13,11 @@ const staticRoutes = [
   { path: "/", changefreq: "weekly", priority: 1.0 },
   { path: "/about", changefreq: "monthly", priority: 0.8 },
   { path: "/join-business", changefreq: "monthly", priority: 0.8 },
-  { path: "/checkout", changefreq: "monthly", priority: 0.6 },
-  { path: "/auth", changefreq: "monthly", priority: 0.5 },
+  { path: "/blog", changefreq: "daily", priority: 0.9 },
+  { path: "/contact", changefreq: "monthly", priority: 0.7 },
+  { path: "/faq", changefreq: "monthly", priority: 0.7 },
+  { path: "/community", changefreq: "weekly", priority: 0.6 },
+  { path: "/category", changefreq: "weekly", priority: 0.7 },
 ];
 
 function generateUrlEntry(loc: string, changefreq: string, priority: number, lastmod?: string): string {
