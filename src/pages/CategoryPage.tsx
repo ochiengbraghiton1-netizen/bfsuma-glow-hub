@@ -195,8 +195,9 @@ const CategoryPage = () => {
   return (
     <HelmetProvider>
       <Helmet>
-        <title>{category?.name} Products | BF Suma</title>
-        <meta name="description" content={category?.description || `Browse ${category?.name} products from BF Suma.`} />
+        <title>{category?.name} Supplements | BF SUMA Royal Kenya</title>
+        <meta name="description" content={category?.description || `Browse ${category?.name} natural health supplements from BF SUMA Royal Kenya.`} />
+        <link rel="canonical" href={`https://bfsumaroyal.com/category/${slug}`} />
       </Helmet>
       <div className="min-h-screen flex flex-col">
         <Header />

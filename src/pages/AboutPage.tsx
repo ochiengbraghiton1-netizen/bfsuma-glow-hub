@@ -143,37 +143,27 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>About BF SUMA ROYAL Kenya - Our Journey Since 2006</title>
+        <title>About BF SUMA Royal Kenya | Our Journey Since 2006</title>
         <meta
           name="description"
-          content="Discover BF SUMA's journey from Los Angeles in 2006 to becoming a trusted global wellness brand. Learn about our 15+ years of impact in Africa, mission, vision, and core values."
+          content="Discover BF SUMA's journey from Los Angeles in 2006 to a trusted global wellness brand in 15+ countries. Learn about our mission, values, and certifications."
         />
-        <meta
-          name="keywords"
-          content="BF SUMA history, BF SUMA journey, wellness company Kenya, natural supplements manufacturer, BF SUMA Africa, health products Kenya, GMP certified supplements"
-        />
-        <link rel="canonical" href="https://bfsuma-glow-hub.lovable.app/about" />
+        <link rel="canonical" href="https://bfsumaroyal.com/about" />
 
         {/* Open Graph */}
-        <meta property="og:title" content="About BF SUMA ROYAL Kenya - Our Journey Since 2006" />
-        <meta
-          property="og:description"
-          content="From Los Angeles in 2006 to 15+ countries today. Discover BF SUMA's journey of innovation, growth, and wellness impact across Africa."
-        />
-        <meta property="og:url" content="https://bfsuma-glow-hub.lovable.app/about" />
+        <meta property="og:title" content="About BF SUMA Royal Kenya | Our Journey Since 2006" />
+        <meta property="og:description" content="From Los Angeles in 2006 to 15+ countries today. Discover BF SUMA's journey of innovation and wellness impact." />
+        <meta property="og:url" content="https://bfsumaroyal.com/about" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://bfsuma-glow-hub.lovable.app/og-image.png" />
-        <meta property="og:site_name" content="BF SUMA ROYAL Kenya" />
+        <meta property="og:image" content="https://bfsumaroyal.com/og-image.png" />
+        <meta property="og:site_name" content="BF SUMA Royal" />
         <meta property="og:locale" content="en_KE" />
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="About BF SUMA ROYAL Kenya - Our Journey Since 2006" />
-        <meta
-          name="twitter:description"
-          content="From Los Angeles in 2006 to 15+ countries today. Discover BF SUMA's journey of innovation and wellness impact."
-        />
-        <meta name="twitter:image" content="https://bfsuma-glow-hub.lovable.app/og-image.png" />
+        <meta name="twitter:title" content="About BF SUMA Royal Kenya | Our Journey Since 2006" />
+        <meta name="twitter:description" content="From Los Angeles in 2006 to 15+ countries today. Discover BF SUMA's journey of innovation and wellness impact." />
+        <meta name="twitter:image" content="https://bfsumaroyal.com/og-image.png" />
 
         <script type="application/ld+json">{JSON.stringify(aboutPageSchema)}</script>
       </Helmet>
