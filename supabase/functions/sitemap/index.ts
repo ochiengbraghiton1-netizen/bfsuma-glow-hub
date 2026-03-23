@@ -13,8 +13,11 @@ const staticRoutes = [
   { path: "/", changefreq: "weekly", priority: 1.0 },
   { path: "/about", changefreq: "monthly", priority: 0.8 },
   { path: "/join-business", changefreq: "monthly", priority: 0.8 },
-  { path: "/checkout", changefreq: "monthly", priority: 0.6 },
-  { path: "/auth", changefreq: "monthly", priority: 0.5 },
+  { path: "/blog", changefreq: "daily", priority: 0.9 },
+  { path: "/contact", changefreq: "monthly", priority: 0.7 },
+  { path: "/faq", changefreq: "monthly", priority: 0.7 },
+  { path: "/community", changefreq: "weekly", priority: 0.6 },
+  { path: "/category", changefreq: "weekly", priority: 0.7 },
 ];
 
 function generateUrlEntry(loc: string, changefreq: string, priority: number, lastmod?: string): string {
@@ -83,8 +86,25 @@ Deno.serve(async (req) => {
       return generateUrlEntry(loc, "weekly", 0.8, lastmod);
     });
 
+    // Fetch published blog posts
+    const { data: blogPosts, error: blogError } = await supabase
+      .from("blog_posts")
+      .select("slug, updated_at, published_at")
+      .eq("status", "published")
+      .order("published_at", { ascending: false });
+
+    if (blogError) {
+      console.error("Error fetching blog posts:", blogError);
+    }
+
+    const blogEntries = (blogPosts || []).map((post) => {
+      const loc = `${SITE_BASE_URL}/blog/${post.slug}`;
+      const lastmod = (post.updated_at || post.published_at)?.split("T")[0];
+      return generateUrlEntry(loc, "weekly", 0.7, lastmod);
+    });
+
     // Combine all entries
-    const allEntries = [...staticEntries, ...categoryEntries, ...productEntries].join("\n");
+    const allEntries = [...staticEntries, ...categoryEntries, ...productEntries, ...blogEntries].join("\n");
 
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

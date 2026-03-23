@@ -135,8 +135,9 @@ const CategoryPage = () => {
     return (
       <HelmetProvider>
         <Helmet>
-          <title>Product Categories | BF Suma</title>
-          <meta name="description" content="Browse our product categories for health and wellness supplements." />
+          <title>Product Categories | BF SUMA Royal Kenya</title>
+          <meta name="description" content="Browse BF SUMA Royal product categories for natural health and wellness supplements in Kenya." />
+          <link rel="canonical" href="https://bfsumaroyal.com/category" />
         </Helmet>
         <div className="min-h-screen flex flex-col">
           <Header />
@@ -194,8 +195,9 @@ const CategoryPage = () => {
   return (
     <HelmetProvider>
       <Helmet>
-        <title>{category?.name} Products | BF Suma</title>
-        <meta name="description" content={category?.description || `Browse ${category?.name} products from BF Suma.`} />
+        <title>{category?.name} Supplements | BF SUMA Royal Kenya</title>
+        <meta name="description" content={category?.description || `Browse ${category?.name} natural health supplements from BF SUMA Royal Kenya.`} />
+        <link rel="canonical" href={`https://bfsumaroyal.com/category/${slug}`} />
       </Helmet>
       <div className="min-h-screen flex flex-col">
         <Header />

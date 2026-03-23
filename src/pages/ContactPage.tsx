@@ -8,6 +8,7 @@ import { MapPin, Phone, Mail, Facebook, Instagram, Send } from "lucide-react";
 import { toast } from "sonner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import PageSEO from "@/components/PageSEO";
 
 const TikTokIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -26,7 +27,6 @@ const ContactPage = () => {
       return;
     }
     setIsSubmitting(true);
-    // Open WhatsApp with the message content as fallback
     const msg = `Hello BF Suma Royal,\n\nName: ${formData.name}\nEmail: ${formData.email}\nSubject: ${formData.subject}\n\nMessage:\n${formData.message}`;
     window.open(`https://wa.me/254795454053?text=${encodeURIComponent(msg)}`, "_blank");
     toast.success("Redirecting to WhatsApp to send your message!");
@@ -48,6 +48,11 @@ const ContactPage = () => {
 
   return (
     <div className="min-h-screen">
+      <PageSEO
+        title="Contact BF SUMA Royal | Orders & Support Kenya"
+        description="Get in touch with BF SUMA Royal for product inquiries, orders, and support. Chat with our team on WhatsApp or visit our location."
+        path="/contact"
+      />
       <Header />
       <main className="pt-16">
         <section className="py-24 bg-background">
@@ -94,7 +99,7 @@ const ContactPage = () => {
               {/* Contact Info */}
               <div className="space-y-6">
                 <Card className="p-8 border-border hover:border-primary transition-all duration-300 hover:shadow-glow">
-                  <h3 className="text-2xl font-bold mb-6 text-foreground">Contact Information</h3>
+                  <h2 className="text-2xl font-bold mb-6 text-foreground">Contact Information</h2>
                   <div className="space-y-4">
                     {contactInfo.map((info, index) => {
                       const Icon = info.icon;
@@ -129,7 +134,7 @@ const ContactPage = () => {
                 <Card className="overflow-hidden border-border min-h-[300px]">
                   <iframe
                     src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3989.8!2d34.7602944!3d0.2818048!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMMKwMTYnNTQuNSJOIDM0wrA0NSczNi4zIkU!5e0!3m2!1sen!2ske"
-                    width="100%" height="100%" style={{ border: 0, minHeight: "300px" }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Kakamega Location"
+                    width="100%" height="100%" style={{ border: 0, minHeight: "300px" }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="BF SUMA Royal location in Kakamega, Kenya"
                   />
                 </Card>
               </div>

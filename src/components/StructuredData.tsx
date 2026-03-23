@@ -31,9 +31,9 @@ const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps)
     "@type": "Organization",
     "name": "BF SUMA Royal",
     "alternateName": "BF SUMA ROYAL Kenya",
-    "url": "https://bfsuma-glow-hub.lovable.app",
-    "logo": "https://bfsuma-glow-hub.lovable.app/favicon.png",
-    "image": "https://bfsuma-glow-hub.lovable.app/og-image.png",
+    "url": "https://bfsumaroyal.com",
+    "logo": "https://bfsumaroyal.com/favicon.png",
+    "image": "https://bfsumaroyal.com/og-image.png",
     "description": "BF SUMA Royal offers trusted wellness products designed to support your health journey. Premium supplements backed by a real business opportunity in Kenya.",
     "slogan": "Premium Supplements for Better Health",
     "address": {
@@ -58,8 +58,8 @@ const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps)
     "@context": "https://schema.org",
     "@type": "HealthAndBeautyBusiness",
     "name": "BF SUMA Royal Kenya",
-    "image": "https://bfsuma-glow-hub.lovable.app/og-image.png",
-    "url": "https://bfsuma-glow-hub.lovable.app",
+    "image": "https://bfsumaroyal.com/og-image.png",
+    "url": "https://bfsumaroyal.com",
     "telephone": "+254795454053",
     "description": "Premium wellness supplements and natural health products in Kenya. Quality supplements backed by a real business opportunity.",
     "address": {
@@ -99,11 +99,11 @@ const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps)
     "@type": "WebSite",
     "name": "BF SUMA Royal",
     "alternateName": "BF SUMA Royal Kenya",
-    "url": "https://bfsuma-glow-hub.lovable.app",
+    "url": "https://bfsumaroyal.com",
     "description": "Premium Supplements for Better Health - Backed by a Real Business Opportunity",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://bfsuma-glow-hub.lovable.app/?search={search_term_string}",
+      "target": "https://bfsumaroyal.com/?search={search_term_string}",
       "query-input": "required name=search_term_string"
     }
   };
@@ -129,7 +129,7 @@ const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps)
         "@type": "Product",
         "name": product.name,
         "description": product.description || `Premium ${product.name} wellness supplement by BF SUMA Royal`,
-        "image": product.image_url || "https://bfsuma-glow-hub.lovable.app/og-image.png",
+        "image": product.image_url || "https://bfsumaroyal.com/og-image.png",
         "sku": product.name.toLowerCase().replace(/\s+/g, '-'),
         "brand": {
           "@type": "Brand",
@@ -150,7 +150,7 @@ const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps)
         },
         "offers": {
           "@type": "Offer",
-          "url": "https://bfsuma-glow-hub.lovable.app/#products",
+          "url": "https://bfsumaroyal.com/#products",
           "priceCurrency": "KES",
           "price": product.price.toString(),
           "priceValidUntil": priceValidUntilStr,
