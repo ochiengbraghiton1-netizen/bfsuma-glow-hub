@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, ShoppingBag, Loader2, MessageCircle, CheckCircle, CreditCard, Phone } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Loader2, MessageCircle, CheckCircle, CreditCard, Phone, MapPin } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { z } from 'zod';
 import productGeneric from '@/assets/product-generic.jpg';
 import { HoneypotField } from '@/components/ui/honeypot-field';
@@ -21,6 +22,16 @@ import { useCurrency } from '@/hooks/use-currency';
 
 const WHATSAPP_NUMBER = "254795454053";
 const CHECKOUT_STORAGE_KEY = "bf_checkout_form";
+
+type DeliveryLocation = 'nairobi' | 'outside_nairobi';
+const SHIPPING_FEES: Record<DeliveryLocation, number> = {
+  nairobi: 200,
+  outside_nairobi: 350,
+};
+const DELIVERY_LABELS: Record<DeliveryLocation, string> = {
+  nairobi: 'Nairobi',
+  outside_nairobi: 'Outside Nairobi',
+};
 
 const checkoutSchema = z.object({
   customerName: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
@@ -72,6 +83,7 @@ const Checkout = () => {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [honeypot, setHoneypot] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'whatsapp' | 'mpesa' | 'paypal'>('mpesa');
+  const [deliveryLocation, setDeliveryLocation] = useState<DeliveryLocation>('nairobi');
 
   // Persist form data to sessionStorage on every change
   useEffect(() => {
@@ -80,7 +92,8 @@ const Checkout = () => {
 
   const subtotal = totalPrice;
   const discount = promoApplied?.discount || 0;
-  const finalTotal = subtotal - discount;
+  const shippingFee = SHIPPING_FEES[deliveryLocation];
+  const finalTotal = subtotal - discount + shippingFee;
 
   // PayPal always uses USD - convert KES to USD using the rate
   const kesToUsdRate = 0.0077;
@@ -171,8 +184,10 @@ ${itemsList}
 💰 *Order Summary (${currency}):*
 Subtotal: ${formatCurrency(subtotal)}
 ${discount > 0 ? `Discount (${promoApplied?.code}): -${formatCurrency(discount)}` : ''}
+Shipping (${DELIVERY_LABELS[deliveryLocation]}): ${formatCurrency(shippingFee)}
 *Total: ${formatCurrency(finalTotal)}*
 
+📍 *Delivery Location:* ${DELIVERY_LABELS[deliveryLocation]}
 📍 *Delivery Address:*
 ${formData.shippingAddress}
 
@@ -199,7 +214,7 @@ Sent from BF SUMA ROYAL Website`;
         customer_email: fd.customerEmail || null,
         customer_phone: fd.customerPhone,
         shipping_address: fd.shippingAddress,
-        notes: fd.notes || null,
+        notes: [fd.notes, `Delivery: ${DELIVERY_LABELS[deliveryLocation]} (Shipping: KSh ${shippingFee})`].filter(Boolean).join('\n'),
         promotion_code: promoApplied?.code || null,
         subtotal: subtotal,
         discount_amount: discount,
@@ -590,6 +605,25 @@ Sent from BF SUMA ROYAL Website`;
                 </div>
 
                 <div>
+                  <Label htmlFor="deliveryLocation" className="flex items-center gap-1.5">
+                    <MapPin className="h-3.5 w-3.5" />
+                    Delivery Location *
+                  </Label>
+                  <Select value={deliveryLocation} onValueChange={(v) => setDeliveryLocation(v as DeliveryLocation)}>
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Select delivery location" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="nairobi">Nairobi — KSh 200</SelectItem>
+                      <SelectItem value="outside_nairobi">Outside Nairobi — KSh 350</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    Delivery fees may vary slightly depending on your exact location. Final confirmation will be provided after order.
+                  </p>
+                </div>
+
+                <div>
                   <Label htmlFor="shippingAddress">Delivery Address *</Label>
                   <Textarea
                     id="shippingAddress"
@@ -845,6 +879,10 @@ Sent from BF SUMA ROYAL Website`;
                     <span>-{formatCurrency(discount)}</span>
                   </div>
                 )}
+                <div className="flex justify-between text-muted-foreground">
+                  <span>Shipping ({DELIVERY_LABELS[deliveryLocation]})</span>
+                  <span>{formatCurrency(shippingFee)}</span>
+                </div>
                 <div className="flex justify-between text-lg font-bold pt-2">
                   <span>Total</span>
                   <span className="text-primary">{formatCurrency(finalTotal)}</span>
