@@ -8,6 +8,7 @@ import { getStockStatus } from "@/hooks/use-products";
 import productGeneric from "@/assets/product-generic.jpg";
 import RichTextContent from "@/components/ui/rich-text-content";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { generateProductAltText } from "@/lib/image-seo";
 
 interface ProductDetailModalProps {
   product: {
