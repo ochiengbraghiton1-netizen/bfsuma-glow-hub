@@ -163,6 +163,11 @@ const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps)
           },
           "shippingDetails": {
             "@type": "OfferShippingDetails",
+            "shippingRate": {
+              "@type": "MonetaryAmount",
+              "value": "300",
+              "currency": "KES"
+            },
             "shippingDestination": {
               "@type": "DefinedRegion",
               "addressCountry": "KE"
@@ -171,15 +176,15 @@ const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps)
               "@type": "ShippingDeliveryTime",
               "handlingTime": {
                 "@type": "QuantitativeValue",
-                "minValue": "1",
-                "maxValue": "2",
-                "unitCode": "d"
+                "minValue": 1,
+                "maxValue": 2,
+                "unitCode": "DAY"
               },
               "transitTime": {
                 "@type": "QuantitativeValue",
-                "minValue": "1",
-                "maxValue": "3",
-                "unitCode": "d"
+                "minValue": 2,
+                "maxValue": 5,
+                "unitCode": "DAY"
               }
             }
           }
