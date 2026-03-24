@@ -348,12 +348,13 @@ const BlogPostView = ({ slug }: { slug: string }) => {
             '@type': 'BlogPosting',
             headline: post.title,
             description: stripHtmlTags(post.excerpt),
-            image: post.featured_image,
+            image: post.featured_image || undefined,
             datePublished: post.published_at,
             dateModified: post.created_at,
-            ...(post.video_url && { video: { '@type': 'VideoObject', contentUrl: post.video_url, name: post.title } }),
-            author: { '@type': 'Organization', name: 'BF SUMA Kenya' },
-            publisher: { '@type': 'Organization', name: 'BF SUMA Kenya' },
+            ...(post.video_url && { video: { '@type': 'VideoObject', contentUrl: post.video_url, name: post.title, description: stripHtmlTags(post.excerpt) } }),
+            author: { '@type': 'Organization', name: 'BF SUMA Royal Kenya', url: 'https://bfsumaroyal.com' },
+            publisher: { '@type': 'Organization', name: 'BF SUMA Royal Kenya', url: 'https://bfsumaroyal.com', logo: { '@type': 'ImageObject', url: 'https://bfsumaroyal.com/favicon.png' } },
+            mainEntityOfPage: { '@type': 'WebPage', '@id': `https://bfsumaroyal.com/blog/${post.slug}` },
           })}
         </script>
       </Helmet>
