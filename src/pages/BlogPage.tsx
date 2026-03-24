@@ -15,6 +15,7 @@ import SocialShareButtons from '@/components/blog/SocialShareButtons';
 import BlogRelatedProducts from '@/components/blog/BlogRelatedProducts';
 import { stripHtmlTags } from '@/lib/html-utils';
 import { SITE_BASE_URL } from '@/config/routes';
+import { generateBlogAltText } from '@/lib/image-seo';
 
 interface BlogCategory {
   id: string;
