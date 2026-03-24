@@ -605,6 +605,25 @@ Sent from BF SUMA ROYAL Website`;
                 </div>
 
                 <div>
+                  <Label htmlFor="deliveryLocation" className="flex items-center gap-1.5">
+                    <MapPin className="h-3.5 w-3.5" />
+                    Delivery Location *
+                  </Label>
+                  <Select value={deliveryLocation} onValueChange={(v) => setDeliveryLocation(v as DeliveryLocation)}>
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Select delivery location" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="nairobi">Nairobi — KSh 200</SelectItem>
+                      <SelectItem value="outside_nairobi">Outside Nairobi — KSh 350</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    Delivery fees may vary slightly depending on your exact location. Final confirmation will be provided after order.
+                  </p>
+                </div>
+
+                <div>
                   <Label htmlFor="shippingAddress">Delivery Address *</Label>
                   <Textarea
                     id="shippingAddress"
