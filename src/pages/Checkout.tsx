@@ -92,7 +92,8 @@ const Checkout = () => {
 
   const subtotal = totalPrice;
   const discount = promoApplied?.discount || 0;
-  const finalTotal = subtotal - discount;
+  const shippingFee = SHIPPING_FEES[deliveryLocation];
+  const finalTotal = subtotal - discount + shippingFee;
 
   // PayPal always uses USD - convert KES to USD using the rate
   const kesToUsdRate = 0.0077;
