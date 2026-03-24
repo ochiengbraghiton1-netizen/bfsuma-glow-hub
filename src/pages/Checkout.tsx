@@ -23,6 +23,16 @@ import { useCurrency } from '@/hooks/use-currency';
 const WHATSAPP_NUMBER = "254795454053";
 const CHECKOUT_STORAGE_KEY = "bf_checkout_form";
 
+type DeliveryLocation = 'nairobi' | 'outside_nairobi';
+const SHIPPING_FEES: Record<DeliveryLocation, number> = {
+  nairobi: 200,
+  outside_nairobi: 350,
+};
+const DELIVERY_LABELS: Record<DeliveryLocation, string> = {
+  nairobi: 'Nairobi',
+  outside_nairobi: 'Outside Nairobi',
+};
+
 const checkoutSchema = z.object({
   customerName: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
   customerEmail: z.string().trim().email('Invalid email address').max(255).optional().or(z.literal('')),
