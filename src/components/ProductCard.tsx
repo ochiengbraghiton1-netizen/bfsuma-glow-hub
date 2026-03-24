@@ -7,6 +7,7 @@ import { useCart } from "@/contexts/CartContext";
 import { getStockStatus } from "@/hooks/use-products";
 import ResponsiveImage from "@/components/ui/responsive-image";
 import productGeneric from "@/assets/product-generic.jpg";
+import { generateProductAltText } from "@/lib/image-seo";
 
 interface ProductCardProps {
   id: string;
@@ -30,7 +31,8 @@ const ProductCard = ({
   price,
   numericPrice,
   benefit, 
-  image, 
+  image,
+  category,
   certifications = ["GMP", "Halal"],
   stockQuantity = 0,
   lowStockThreshold = 10,
@@ -84,7 +86,7 @@ const ProductCard = ({
         >
           <ResponsiveImage 
             src={image || productGeneric}
-            alt={`BF SUMA Royal ${name} - natural health supplement`}
+            alt={generateProductAltText(name, category)}
             loading="lazy"
             decoding="async"
             width={400}

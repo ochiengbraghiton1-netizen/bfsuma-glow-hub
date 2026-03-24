@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { generateProductAltText } from "@/lib/image-seo";
 
 interface FAQItem {
   question: string;

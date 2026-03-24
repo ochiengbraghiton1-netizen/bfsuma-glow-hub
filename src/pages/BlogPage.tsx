@@ -15,6 +15,7 @@ import SocialShareButtons from '@/components/blog/SocialShareButtons';
 import BlogRelatedProducts from '@/components/blog/BlogRelatedProducts';
 import { stripHtmlTags } from '@/lib/html-utils';
 import { SITE_BASE_URL } from '@/config/routes';
+import { generateBlogAltText } from '@/lib/image-seo';
 
 interface BlogCategory {
   id: string;
@@ -163,7 +164,7 @@ const BlogList = () => {
                     <div className="relative aspect-video overflow-hidden bg-muted">
                       <img
                         src={post.featured_image}
-                        alt={post.title}
+                        alt={generateBlogAltText(post.title)}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                       />
@@ -347,12 +348,13 @@ const BlogPostView = ({ slug }: { slug: string }) => {
             '@type': 'BlogPosting',
             headline: post.title,
             description: stripHtmlTags(post.excerpt),
-            image: post.featured_image,
+            image: post.featured_image || undefined,
             datePublished: post.published_at,
             dateModified: post.created_at,
-            ...(post.video_url && { video: { '@type': 'VideoObject', contentUrl: post.video_url, name: post.title } }),
-            author: { '@type': 'Organization', name: 'BF SUMA Kenya' },
-            publisher: { '@type': 'Organization', name: 'BF SUMA Kenya' },
+            ...(post.video_url && { video: { '@type': 'VideoObject', contentUrl: post.video_url, name: post.title, description: stripHtmlTags(post.excerpt) } }),
+            author: { '@type': 'Organization', name: 'BF SUMA Royal Kenya', url: 'https://bfsumaroyal.com' },
+            publisher: { '@type': 'Organization', name: 'BF SUMA Royal Kenya', url: 'https://bfsumaroyal.com', logo: { '@type': 'ImageObject', url: 'https://bfsumaroyal.com/favicon.png' } },
+            mainEntityOfPage: { '@type': 'WebPage', '@id': `https://bfsumaroyal.com/blog/${post.slug}` },
           })}
         </script>
       </Helmet>
@@ -390,7 +392,7 @@ const BlogPostView = ({ slug }: { slug: string }) => {
             if (post.featured_image) {
               return (
                 <div className="aspect-video overflow-hidden rounded-lg mb-8">
-                  <img src={post.featured_image} alt={post.title} className="w-full h-full object-cover" />
+                  <img src={post.featured_image} alt={generateBlogAltText(post.title)} className="w-full h-full object-cover" />
                 </div>
               );
             }

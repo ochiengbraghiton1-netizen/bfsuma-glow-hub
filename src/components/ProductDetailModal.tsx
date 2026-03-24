@@ -8,6 +8,7 @@ import { getStockStatus } from "@/hooks/use-products";
 import productGeneric from "@/assets/product-generic.jpg";
 import RichTextContent from "@/components/ui/rich-text-content";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { generateProductAltText } from "@/lib/image-seo";
 
 interface ProductDetailModalProps {
   product: {
@@ -87,7 +88,7 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
           <div className="relative h-56 md:h-full min-h-[250px] md:min-h-[300px] overflow-hidden">
             <img 
               src={product.image || productGeneric}
-              alt={product.name}
+              alt={generateProductAltText(product.name)}
               className="w-full h-full object-cover animate-modal-image-focus"
               style={{ animationDelay: '100ms' }}
             />
