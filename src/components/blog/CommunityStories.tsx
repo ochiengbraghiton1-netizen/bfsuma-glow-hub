@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Play, ArrowRight } from 'lucide-react';
 import { useInView } from '@/hooks/use-in-view';
+import { generateBlogAltText } from '@/lib/image-seo';
 
 interface StoryPost {
   id: string;
