@@ -879,6 +879,10 @@ Sent from BF SUMA ROYAL Website`;
                     <span>-{formatCurrency(discount)}</span>
                   </div>
                 )}
+                <div className="flex justify-between text-muted-foreground">
+                  <span>Shipping ({DELIVERY_LABELS[deliveryLocation]})</span>
+                  <span>{formatCurrency(shippingFee)}</span>
+                </div>
                 <div className="flex justify-between text-lg font-bold pt-2">
                   <span>Total</span>
                   <span className="text-primary">{formatCurrency(finalTotal)}</span>
