@@ -214,7 +214,7 @@ Sent from BF SUMA ROYAL Website`;
         customer_email: fd.customerEmail || null,
         customer_phone: fd.customerPhone,
         shipping_address: fd.shippingAddress,
-        notes: fd.notes || null,
+        notes: [fd.notes, `Delivery: ${DELIVERY_LABELS[deliveryLocation]} (Shipping: KSh ${shippingFee})`].filter(Boolean).join('\n'),
         promotion_code: promoApplied?.code || null,
         subtotal: subtotal,
         discount_amount: discount,
