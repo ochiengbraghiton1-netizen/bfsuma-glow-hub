@@ -184,8 +184,10 @@ ${itemsList}
 💰 *Order Summary (${currency}):*
 Subtotal: ${formatCurrency(subtotal)}
 ${discount > 0 ? `Discount (${promoApplied?.code}): -${formatCurrency(discount)}` : ''}
+Shipping (${DELIVERY_LABELS[deliveryLocation]}): ${formatCurrency(shippingFee)}
 *Total: ${formatCurrency(finalTotal)}*
 
+📍 *Delivery Location:* ${DELIVERY_LABELS[deliveryLocation]}
 📍 *Delivery Address:*
 ${formData.shippingAddress}
 
