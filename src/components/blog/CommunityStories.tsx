@@ -78,7 +78,7 @@ const CommunityStories = () => {
                   {story.featured_image ? (
                     <img
                       src={story.featured_image}
-                      alt={story.title}
+                      alt={generateBlogAltText(story.title)}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />

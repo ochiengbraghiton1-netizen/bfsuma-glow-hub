@@ -88,7 +88,7 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
           <div className="relative h-56 md:h-full min-h-[250px] md:min-h-[300px] overflow-hidden">
             <img 
               src={product.image || productGeneric}
-              alt={product.name}
+              alt={generateProductAltText(product.name)}
               className="w-full h-full object-cover animate-modal-image-focus"
               style={{ animationDelay: '100ms' }}
             />

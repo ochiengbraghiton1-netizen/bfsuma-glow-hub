@@ -85,7 +85,7 @@ const ProductCard = ({
         >
           <ResponsiveImage 
             src={image || productGeneric}
-            alt={`BF SUMA Royal ${name} - natural health supplement`}
+            alt={generateProductAltText(name, category)}
             loading="lazy"
             decoding="async"
             width={400}

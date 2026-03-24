@@ -391,7 +391,7 @@ const BlogPostView = ({ slug }: { slug: string }) => {
             if (post.featured_image) {
               return (
                 <div className="aspect-video overflow-hidden rounded-lg mb-8">
-                  <img src={post.featured_image} alt={post.title} className="w-full h-full object-cover" />
+                  <img src={post.featured_image} alt={generateBlogAltText(post.title)} className="w-full h-full object-cover" />
                 </div>
               );
             }
