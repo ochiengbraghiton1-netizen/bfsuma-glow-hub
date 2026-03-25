@@ -37,6 +37,8 @@ interface Order {
   created_at: string;
   payment_method: string;
   payment_status: string;
+  delivery_location: string | null;
+  shipping_fee: number;
 }
 
 const statusConfig: Record<string, { icon: typeof Package; color: string; label: string }> = {
