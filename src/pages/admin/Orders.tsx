@@ -51,6 +51,8 @@ interface Order {
   payment_method: string;
   payment_status: string;
   paypal_transaction_id: string | null;
+  delivery_location: string | null;
+  shipping_fee: number;
 }
 
 const filterOptions = [
@@ -60,6 +62,8 @@ const filterOptions = [
   { value: 'pending_payment', label: 'Pending Payment (Abandoned)' },
   { value: 'pending', label: 'Pending' },
   { value: 'failed', label: 'Failed' },
+  { value: 'nairobi', label: 'Nairobi Delivery' },
+  { value: 'outside_nairobi', label: 'Outside Nairobi' },
 ];
 
 const statusOptions = [
@@ -124,6 +128,10 @@ const Orders = () => {
       query = query.eq('payment_status', 'pending');
     } else if (activeFilter === 'failed') {
       query = query.eq('payment_status', 'failed');
+    } else if (activeFilter === 'nairobi') {
+      query = query.eq('delivery_location', 'Nairobi');
+    } else if (activeFilter === 'outside_nairobi') {
+      query = query.eq('delivery_location', 'Outside Nairobi');
     }
 
     const { data, error } = await query;
@@ -218,11 +226,12 @@ const Orders = () => {
               <TableRow>
                 <TableHead>Order ID</TableHead>
                 <TableHead>Customer</TableHead>
+                <TableHead>Subtotal</TableHead>
+                <TableHead>Shipping</TableHead>
                 <TableHead>Total</TableHead>
-                <TableHead>Payment Method</TableHead>
-                <TableHead>Payment Status</TableHead>
-                <TableHead>Order Status</TableHead>
-                <TableHead>PayPal Txn ID</TableHead>
+                <TableHead>Delivery</TableHead>
+                <TableHead>Payment</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -234,18 +243,23 @@ const Orders = () => {
                     {order.id.slice(0, 8)}...
                   </TableCell>
                   <TableCell className="font-medium">{order.customer_name}</TableCell>
+                  <TableCell>KSh {order.subtotal.toLocaleString()}</TableCell>
+                  <TableCell>KSh {(order.shipping_fee || 0).toLocaleString()}</TableCell>
                   <TableCell className="font-semibold">
                     KSh {order.total_amount.toLocaleString()}
                   </TableCell>
-                  <TableCell className="capitalize">{order.payment_method}</TableCell>
+                  <TableCell>
+                    {order.delivery_location ? (
+                      <Badge variant="outline" className="text-xs">
+                        {order.delivery_location}
+                      </Badge>
+                    ) : '—'}
+                  </TableCell>
                   <TableCell>{getPaymentBadge(order)}</TableCell>
                   <TableCell>
                     <Badge className={statusColors[order.status] || ''} variant="outline">
                       {order.status.replace(/_/g, ' ')}
                     </Badge>
-                  </TableCell>
-                  <TableCell className="font-mono text-xs text-muted-foreground">
-                    {order.paypal_transaction_id ? order.paypal_transaction_id.slice(0, 12) + '...' : '—'}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {format(new Date(order.created_at), 'MMM d, yyyy')}
@@ -314,12 +328,16 @@ const Orders = () => {
                     )}
                   </div>
                 </div>
-                {selectedOrder.shipping_address && (
-                  <div>
-                    <h4 className="font-semibold mb-2">Shipping Address</h4>
-                    <p className="text-sm text-muted-foreground">{selectedOrder.shipping_address}</p>
+                <div>
+                  <h4 className="font-semibold mb-2">Delivery Details</h4>
+                  <div className="space-y-1 text-sm">
+                    <p><span className="text-muted-foreground">Location:</span> {selectedOrder.delivery_location || '—'}</p>
+                    <p><span className="text-muted-foreground">Shipping Fee:</span> KSh {(selectedOrder.shipping_fee || 0).toLocaleString()}</p>
+                    {selectedOrder.shipping_address && (
+                      <p><span className="text-muted-foreground">Address:</span> {selectedOrder.shipping_address}</p>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
 
               <div>
@@ -347,6 +365,10 @@ const Orders = () => {
                     <span className="text-green-600">-KSh {selectedOrder.discount_amount.toLocaleString()}</span>
                   </div>
                 )}
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Shipping ({selectedOrder.delivery_location || '—'})</span>
+                  <span>KSh {(selectedOrder.shipping_fee || 0).toLocaleString()}</span>
+                </div>
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Total</span>
                   <span>KSh {selectedOrder.total_amount.toLocaleString()}</span>

@@ -214,7 +214,7 @@ Sent from BF SUMA ROYAL Website`;
         customer_email: fd.customerEmail || null,
         customer_phone: fd.customerPhone,
         shipping_address: fd.shippingAddress,
-        notes: [fd.notes, `Delivery: ${DELIVERY_LABELS[deliveryLocation]} (Shipping: KSh ${shippingFee})`].filter(Boolean).join('\n'),
+        notes: fd.notes || null,
         promotion_code: promoApplied?.code || null,
         subtotal: subtotal,
         discount_amount: discount,
@@ -224,6 +224,8 @@ Sent from BF SUMA ROYAL Website`;
         payment_method: paymentMethod,
         payment_status: status === 'paid' ? 'paid' : 'pending',
         user_id: user?.id || null,
+        delivery_location: DELIVERY_LABELS[deliveryLocation],
+        shipping_fee: shippingFee,
       } as any);
 
     if (orderError) throw orderError;

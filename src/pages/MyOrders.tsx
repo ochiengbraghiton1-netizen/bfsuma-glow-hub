@@ -37,6 +37,8 @@ interface Order {
   created_at: string;
   payment_method: string;
   payment_status: string;
+  delivery_location: string | null;
+  shipping_fee: number;
 }
 
 const statusConfig: Record<string, { icon: typeof Package; color: string; label: string }> = {
@@ -192,6 +194,23 @@ const MyOrders = () => {
                             <p className="font-medium">KSh {item.subtotal.toLocaleString()}</p>
                           </div>
                         ))}
+                      </div>
+                      <Separator />
+                      <div className="space-y-1 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Subtotal</span>
+                          <span>KSh {order.subtotal.toLocaleString()}</span>
+                        </div>
+                        {order.discount_amount > 0 && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Discount</span>
+                            <span className="text-green-600">-KSh {order.discount_amount.toLocaleString()}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Shipping ({order.delivery_location || '—'})</span>
+                          <span>KSh {(order.shipping_fee || 0).toLocaleString()}</span>
+                        </div>
                       </div>
                       <Separator />
                       <div className="flex justify-between font-semibold">

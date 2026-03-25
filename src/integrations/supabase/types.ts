@@ -567,6 +567,7 @@ export type Database = {
           customer_email: string | null
           customer_name: string
           customer_phone: string
+          delivery_location: string | null
           discount_amount: number
           id: string
           notes: string | null
@@ -575,6 +576,7 @@ export type Database = {
           paypal_transaction_id: string | null
           promotion_code: string | null
           shipping_address: string | null
+          shipping_fee: number
           status: string
           subtotal: number
           total_amount: number
@@ -587,6 +589,7 @@ export type Database = {
           customer_email?: string | null
           customer_name: string
           customer_phone: string
+          delivery_location?: string | null
           discount_amount?: number
           id?: string
           notes?: string | null
@@ -595,6 +598,7 @@ export type Database = {
           paypal_transaction_id?: string | null
           promotion_code?: string | null
           shipping_address?: string | null
+          shipping_fee?: number
           status?: string
           subtotal?: number
           total_amount?: number
@@ -607,6 +611,7 @@ export type Database = {
           customer_email?: string | null
           customer_name?: string
           customer_phone?: string
+          delivery_location?: string | null
           discount_amount?: number
           id?: string
           notes?: string | null
@@ -615,6 +620,7 @@ export type Database = {
           paypal_transaction_id?: string | null
           promotion_code?: string | null
           shipping_address?: string | null
+          shipping_fee?: number
           status?: string
           subtotal?: number
           total_amount?: number
