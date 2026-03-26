@@ -1,6 +1,5 @@
 import { ArrowRight, Sparkles, ShoppingBag, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import heroBg from "@/assets/wellness-hero.jpg";
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -19,7 +18,7 @@ const Hero = () => {
     >
       {/* Hero background image - LCP element */}
       <img
-        src={heroBg}
+        src="/images/wellness-hero.jpg"
         alt="BF SUMA Royal premium wellness supplements and natural health products display"
         loading="eager"
         decoding="sync"
@@ -27,6 +26,7 @@ const Hero = () => {
         className="absolute inset-0 w-full h-full object-cover"
         width={1920}
         height={1080}
+        sizes="100vw"
         style={{ objectPosition: "center" }}
       />
       {/* Overlay */}
