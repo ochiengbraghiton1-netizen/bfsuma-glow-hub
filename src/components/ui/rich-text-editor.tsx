@@ -165,7 +165,10 @@ const RichTextEditor = ({
     content: content || '',
     onUpdate: ({ editor }) => {
       isInternalUpdate.current = true;
-      onChange(editor.getHTML());
+      const html = editor.getHTML();
+      onChange(html);
+      const matches = html.match(/<h1[\s>]/g);
+      setH1Count(matches ? matches.length : 0);
     },
     immediatelyRender: false,
     editorProps: {
