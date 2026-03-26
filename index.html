@@ -32,7 +32,8 @@
     <link rel="preconnect" href="https://cdn.gpteng.co" crossorigin />
     <link rel="dns-prefetch" href="https://cdn.gpteng.co" />
     
-    <!-- Preload hint removed: Vite hashes asset paths in production, so static preload won't match. The hero img uses fetchpriority="high" instead. -->
+    <!-- Preload LCP hero image - in public/ so path is stable across builds -->
+    <link rel="preload" as="image" href="/images/wellness-hero.jpg" fetchpriority="high" />
     
     <!-- Primary Meta Tags -->
     <title>BF SUMA Royal | Premium Health Supplements Kenya</title>
