@@ -229,7 +229,7 @@ const BlogList = () => {
 const BlogPostView = ({ slug }: { slug: string }) => {
   const [post, setPost] = useState<BlogPostWithCategories | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<RelatedProduct[]>([]);
-  const [allProducts, setAllProducts] = useState<{ name: string; slug: string }[]>([]);
+  const [allProducts, setAllProducts] = useState<{ name: string; slug: string; keywords?: string[] }[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
