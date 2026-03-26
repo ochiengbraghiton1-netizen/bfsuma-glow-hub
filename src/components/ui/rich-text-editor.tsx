@@ -386,7 +386,14 @@ const RichTextEditor = ({
         </div>
       </div>
 
-      {/* HTML Debug Panel */}
+      {/* H1 SEO Warning */}
+      {h1Count > 1 && (
+        <div className="flex items-center gap-2 px-3 py-2 border-t border-destructive/30 bg-destructive/10 text-destructive text-sm">
+          <AlertTriangle className="h-4 w-4 shrink-0" />
+          <span>SEO Warning: {h1Count} H1 headings detected. Use only <strong>one H1</strong> per page for best SEO. Use H2/H3 for subsections.</span>
+        </div>
+      )}
+
       {showHtml && (
         <div className="border-t border-input">
           <div className="flex items-center justify-between px-3 py-1.5 bg-muted/50">
