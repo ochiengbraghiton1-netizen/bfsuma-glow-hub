@@ -1,32 +1,45 @@
+import { useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import { generateProductAltText } from "@/lib/image-seo";
+import { useProducts } from "@/hooks/use-products";
+import { useProductRatings } from "@/hooks/use-product-ratings";
 
-interface FAQItem {
-  question: string;
-  answer: string;
-}
+const faqData = [
+  {
+    question: "What is BF SUMA Royal?",
+    answer: "BF SUMA Royal is a global health and wellness company offering premium natural supplements backed by scientific research. We operate in over 40 countries, helping people improve their health while providing legitimate business opportunities through our network marketing model."
+  },
+  {
+    question: "Are BF SUMA Royal products safe and certified?",
+    answer: "Yes, all BF SUMA Royal products are manufactured in GMP-certified facilities and undergo rigorous quality testing. Our products are made from 100% natural ingredients and are certified by relevant health authorities. We hold HALAL certification for applicable products."
+  },
+  {
+    question: "How does the BF SUMA Royal business opportunity work?",
+    answer: "You can join as a BF SUMA Royal distributor by paying a one-time registration fee of KES 7,000. As a member, you earn through product sales commissions, team bonuses, and leadership rewards. There's no requirement to buy large inventories - you can start small and grow at your own pace."
+  },
+  {
+    question: "Is BF SUMA Royal a pyramid scheme?",
+    answer: "No, BF SUMA Royal is a legitimate network marketing company. Unlike pyramid schemes, our income is based on actual product sales, not recruitment alone. We sell real health products with genuine value, and our compensation plan rewards both sales and team building ethically."
+  },
+  {
+    question: "What products does BF SUMA Royal offer?",
+    answer: "We offer a wide range of natural health supplements including: NMN Capsules for cellular health, Ganoderma Spore Capsules for immunity, ArthroXtra for joint support, Feminegy for women's health, X-Power Man for men's vitality, and many more specialized wellness products."
+  },
+  {
+    question: "How much can I earn with BF SUMA Royal?",
+    answer: "Earnings vary based on your effort and team size. New distributors can earn 15-30% commission on personal sales. As you build a team and advance in rank, you unlock additional bonuses. Top performers earn significant monthly incomes, but results depend on individual commitment."
+  },
+  {
+    question: "How do I get started as a BF SUMA Royal distributor in Kenya?",
+    answer: "Getting started is simple: 1) Register through our website or contact us on WhatsApp, 2) Pay the KES 7,000 registration fee, 3) Receive your membership and starter resources, 4) Begin sharing products and building your team with our full support."
+  }
+];
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  description?: string;
-  image_url?: string;
-}
+const StructuredData = () => {
+  const { products } = useProducts();
+  const productIds = useMemo(() => products.map(p => p.id), [products]);
+  const { data: productRatings } = useProductRatings(productIds);
 
-interface ProductRating {
-  productId: string;
-  reviewCount: number;
-  averageRating: number;
-}
-
-interface StructuredDataProps {
-  faqs?: FAQItem[];
-  products?: Product[];
-  productRatings?: Record<string, ProductRating>;
-}
-
-const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps) => {
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -193,10 +206,10 @@ const StructuredData = ({ faqs, products, productRatings }: StructuredDataProps)
     }))
   } : null;
 
-  const faqSchema = faqs && faqs.length > 0 ? {
+  const faqSchema = faqData.length > 0 ? {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": faqs.map(faq => ({
+    "mainEntity": faqData.map(faq => ({
       "@type": "Question",
       "name": faq.question,
       "acceptedAnswer": {
