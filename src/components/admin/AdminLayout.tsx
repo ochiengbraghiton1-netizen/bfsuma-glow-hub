@@ -22,6 +22,7 @@ import {
   Search,
   Settings,
   BookOpen,
+  KeyRound,
 } from 'lucide-react';
 import { Instagram, MailOpen } from 'lucide-react';
 
@@ -43,6 +44,7 @@ const navItems = [
   { to: '/admin/admins', icon: Shield, label: 'Manage Admins' },
   { to: '/admin/social-posts', icon: Instagram, label: 'Social / UGC' },
   { to: '/admin/leads', icon: MailOpen, label: 'Leads' },
+  { to: '/admin/product-keywords', icon: KeyRound, label: 'Product Keywords' },
 ];
 
 const AdminLayout = () => {

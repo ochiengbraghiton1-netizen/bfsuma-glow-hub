@@ -229,7 +229,7 @@ const BlogList = () => {
 const BlogPostView = ({ slug }: { slug: string }) => {
   const [post, setPost] = useState<BlogPostWithCategories | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<RelatedProduct[]>([]);
-  const [allProducts, setAllProducts] = useState<{ name: string; slug: string }[]>([]);
+  const [allProducts, setAllProducts] = useState<{ name: string; slug: string; keywords?: string[] }[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
@@ -282,17 +282,29 @@ const BlogPostView = ({ slug }: { slug: string }) => {
         setRelatedProducts(products || []);
       }
 
-      // Fetch all active product names for auto-linking
+      // Fetch all active product names + keywords for auto-linking
       const { data: allProds } = await supabase
         .from('products')
-        .select('name')
+        .select('id, name')
         .eq('is_active', true);
 
       if (allProds) {
+        // Fetch keywords for all products
+        const { data: keywordsData } = await supabase
+          .from('product_keywords' as any)
+          .select('product_id, keyword');
+
+        const keywordMap = new Map<string, string[]>();
+        for (const kw of (keywordsData || []) as any[]) {
+          if (!keywordMap.has(kw.product_id)) keywordMap.set(kw.product_id, []);
+          keywordMap.get(kw.product_id)!.push(kw.keyword);
+        }
+
         setAllProducts(
           allProds.map((p) => ({
             name: p.name,
             slug: p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+            keywords: keywordMap.get(p.id) || [],
           }))
         );
       }

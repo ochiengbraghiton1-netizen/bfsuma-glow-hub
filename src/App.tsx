@@ -53,6 +53,7 @@ const FAQPage = lazy(() => import("./pages/FAQPage"));
 const CommunityPage = lazy(() => import("./pages/CommunityPage"));
 const SocialPosts = lazy(() => import("./pages/admin/SocialPosts"));
 const Leads = lazy(() => import("./pages/admin/Leads"));
+const ProductKeywords = lazy(() => import("./pages/admin/ProductKeywords"));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-background">
@@ -117,6 +118,7 @@ const App = () => (
                     <Route path="business-registrations" element={<BusinessRegistrations />} />
                     <Route path="social-posts" element={<SocialPosts />} />
                     <Route path="leads" element={<Leads />} />
+                    <Route path="product-keywords" element={<ProductKeywords />} />
                   </Route>
                   <Route path="/affiliate" element={<AffiliateDashboard />} />
                   <Route path="/distributor/dashboard" element={<DistributorDashboard />} />
