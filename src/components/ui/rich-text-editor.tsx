@@ -34,6 +34,7 @@ import {
   AlignCenter,
   AlignRight,
   FileCode,
+  AlertTriangle,
 } from 'lucide-react';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import {
@@ -104,6 +105,7 @@ const RichTextEditor = ({
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [uploading, setUploading] = useState(false);
   const [showHtml, setShowHtml] = useState(false);
+  const [h1Count, setH1Count] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -163,7 +165,10 @@ const RichTextEditor = ({
     content: content || '',
     onUpdate: ({ editor }) => {
       isInternalUpdate.current = true;
-      onChange(editor.getHTML());
+      const html = editor.getHTML();
+      onChange(html);
+      const matches = html.match(/<h1[\s>]/g);
+      setH1Count(matches ? matches.length : 0);
     },
     immediatelyRender: false,
     editorProps: {
@@ -198,6 +203,11 @@ const RichTextEditor = ({
       editor.commands.setContent(content || '');
     }
     isInternalUpdate.current = false;
+    // Sync h1 count on external content load
+    if (content) {
+      const matches = content.match(/<h1[\s>]/g);
+      setH1Count(matches ? matches.length : 0);
+    }
   }, [content, editor]);
 
   const addLink = useCallback(() => {
@@ -381,7 +391,14 @@ const RichTextEditor = ({
         </div>
       </div>
 
-      {/* HTML Debug Panel */}
+      {/* H1 SEO Warning */}
+      {h1Count > 1 && (
+        <div className="flex items-center gap-2 px-3 py-2 border-t border-destructive/30 bg-destructive/10 text-destructive text-sm">
+          <AlertTriangle className="h-4 w-4 shrink-0" />
+          <span>SEO Warning: {h1Count} H1 headings detected. Use only <strong>one H1</strong> per page for best SEO. Use H2/H3 for subsections.</span>
+        </div>
+      )}
+
       {showHtml && (
         <div className="border-t border-input">
           <div className="flex items-center justify-between px-3 py-1.5 bg-muted/50">
