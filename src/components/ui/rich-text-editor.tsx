@@ -203,6 +203,11 @@ const RichTextEditor = ({
       editor.commands.setContent(content || '');
     }
     isInternalUpdate.current = false;
+    // Sync h1 count on external content load
+    if (content) {
+      const matches = content.match(/<h1[\s>]/g);
+      setH1Count(matches ? matches.length : 0);
+    }
   }, [content, editor]);
 
   const addLink = useCallback(() => {
