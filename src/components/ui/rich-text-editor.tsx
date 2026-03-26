@@ -103,6 +103,7 @@ const RichTextEditor = ({
   const [youtubeDialogOpen, setYoutubeDialogOpen] = useState(false);
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [showHtml, setShowHtml] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -111,8 +112,24 @@ const RichTextEditor = ({
       StarterKit.configure({
         heading: {
           levels: [1, 2, 3, 4, 5, 6],
+          HTMLAttributes: {},
         },
-        codeBlock: false, // we use our own or StarterKit's built-in
+        bulletList: {
+          HTMLAttributes: {},
+          keepMarks: true,
+          keepAttributes: false,
+        },
+        orderedList: {
+          HTMLAttributes: {},
+          keepMarks: true,
+          keepAttributes: false,
+        },
+        listItem: {
+          HTMLAttributes: {},
+        },
+        blockquote: {
+          HTMLAttributes: {},
+        },
       }),
       Underline,
       TextAlign.configure({
@@ -348,6 +365,13 @@ const RichTextEditor = ({
         <MenuButton onClick={() => editor.chain().focus().redo().run()} title="Redo">
           <Redo className="h-4 w-4" />
         </MenuButton>
+
+        <Divider />
+
+        {/* HTML Debug */}
+        <MenuButton onClick={() => setShowHtml(!showHtml)} isActive={showHtml} title="View HTML Source">
+          <Code className="h-4 w-4" />
+        </MenuButton>
       </div>
 
       {/* Editor content area - desktop optimized */}
@@ -356,6 +380,18 @@ const RichTextEditor = ({
           <EditorContent editor={editor} />
         </div>
       </div>
+
+      {/* HTML Debug Panel */}
+      {showHtml && (
+        <div className="border-t border-input">
+          <div className="flex items-center justify-between px-3 py-1.5 bg-muted/50">
+            <span className="text-xs font-medium text-muted-foreground">HTML Source</span>
+          </div>
+          <pre className="p-3 text-xs font-mono overflow-auto max-h-[200px] bg-muted/20 whitespace-pre-wrap break-all">
+            {editor.getHTML()}
+          </pre>
+        </div>
+      )}
 
       {/* Link Dialog */}
       <Dialog open={linkDialogOpen} onOpenChange={setLinkDialogOpen}>
