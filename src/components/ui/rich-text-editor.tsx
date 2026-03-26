@@ -105,6 +105,7 @@ const RichTextEditor = ({
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [uploading, setUploading] = useState(false);
   const [showHtml, setShowHtml] = useState(false);
+  const [h1Count, setH1Count] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
