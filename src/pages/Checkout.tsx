@@ -201,72 +201,34 @@ Sent from BF SUMA ROYAL Website`;
 
   const saveOrderToDb = async (status: string, currentFormData?: CheckoutFormData) => {
     const fd = currentFormData || formData;
-    const newOrderId = crypto.randomUUID();
 
-    // Get current user if logged in
-    const { data: { user } } = await supabase.auth.getUser();
+    // Determine payment method to send
+    const pm = status === 'pending_whatsapp' ? 'whatsapp' : paymentMethod;
 
-    const { error: orderError } = await supabase
-      .from('orders')
-      .insert({
-        id: newOrderId,
+    const { data, error } = await supabase.functions.invoke('create-order', {
+      body: {
         customer_name: fd.customerName,
-        customer_email: fd.customerEmail || null,
         customer_phone: fd.customerPhone,
+        customer_email: fd.customerEmail || undefined,
         shipping_address: fd.shippingAddress,
-        notes: fd.notes || null,
-        promotion_code: promoApplied?.code || null,
-        subtotal: subtotal,
-        discount_amount: discount,
-        total_amount: finalTotal,
-        status,
-        currency,
-        payment_method: paymentMethod,
-        payment_status: status === 'paid' ? 'paid' : 'pending',
-        user_id: user?.id || null,
+        notes: fd.notes || undefined,
+        promotion_code: promoApplied?.code || undefined,
         delivery_location: DELIVERY_LABELS[deliveryLocation],
-        shipping_fee: shippingFee,
-      } as any);
+        payment_method: pm,
+        currency,
+        items: items.map(item => ({
+          product_id: item.id,
+          quantity: item.quantity,
+        })),
+      },
+    });
 
-    if (orderError) throw orderError;
+    if (error) throw error;
+    if (data?.error) throw new Error(data.error);
 
-    const orderItems = items.map(item => ({
-      order_id: newOrderId,
-      product_id: item.id,
-      product_name: item.name,
-      product_price: item.price,
-      quantity: item.quantity,
-      subtotal: item.price * item.quantity,
-    }));
+    const newOrderId = data.order_id;
 
-    const { error: itemsError } = await supabase
-      .from('order_items')
-      .insert(orderItems);
-
-    if (itemsError) throw itemsError;
-
-    // Update promo usage count
-    if (promoApplied) {
-      const { data: promo } = await supabase
-        .from('promotions')
-        .select('usage_count')
-        .eq('code', promoApplied.code)
-        .maybeSingle();
-      
-      if (promo) {
-        await supabase
-          .from('promotions')
-          .update({ usage_count: (promo.usage_count || 0) + 1 })
-          .eq('code', promoApplied.code);
-      }
-    }
-
-    // Update product stock quantities
-    for (const item of items) {
-      await supabase.rpc('decrement_stock', { p_product_id: item.id, p_quantity: item.quantity });
-    }
-
-    // Track affiliate conversion
+    // Track affiliate conversion client-side (uses localStorage)
     const storedRef = localStorage.getItem('bf_referral_code');
     const refExpiry = localStorage.getItem('bf_referral_expiry');
     if (storedRef && (!refExpiry || new Date(refExpiry) > new Date())) {
@@ -274,7 +236,7 @@ Sent from BF SUMA ROYAL Website`;
         await supabase.rpc('record_affiliate_conversion', {
           p_referral_code: storedRef,
           p_order_id: newOrderId,
-          p_order_total: finalTotal,
+          p_order_total: data.total_amount,
         });
       } catch (err) {
         console.error('Affiliate conversion tracking error:', err);
