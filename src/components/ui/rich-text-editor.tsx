@@ -34,6 +34,7 @@ import {
   AlignCenter,
   AlignRight,
   FileCode,
+  AlertTriangle,
 } from 'lucide-react';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import {
