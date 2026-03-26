@@ -111,8 +111,24 @@ const RichTextEditor = ({
       StarterKit.configure({
         heading: {
           levels: [1, 2, 3, 4, 5, 6],
+          HTMLAttributes: {},
         },
-        codeBlock: false, // we use our own or StarterKit's built-in
+        bulletList: {
+          HTMLAttributes: {},
+          keepMarks: true,
+          keepAttributes: false,
+        },
+        orderedList: {
+          HTMLAttributes: {},
+          keepMarks: true,
+          keepAttributes: false,
+        },
+        listItem: {
+          HTMLAttributes: {},
+        },
+        blockquote: {
+          HTMLAttributes: {},
+        },
       }),
       Underline,
       TextAlign.configure({
