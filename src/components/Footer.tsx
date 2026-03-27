@@ -59,6 +59,11 @@ const Footer = () => {
                 { href: "/mombasa", label: "Mombasa" },
                 { href: "/kisumu", label: "Kisumu" },
                 { href: "/nakuru", label: "Nakuru" },
+                { href: "/eldoret", label: "Eldoret" },
+                { href: "/thika", label: "Thika" },
+                { href: "/nyeri", label: "Nyeri" },
+                { href: "/machakos", label: "Machakos" },
+                { href: "/kitale", label: "Kitale" },
                 { href: "/kakamega", label: "Kakamega" },
               ].map((loc) => (
                 <li key={loc.href}>

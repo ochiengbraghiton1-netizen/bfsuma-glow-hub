@@ -155,6 +155,46 @@ export const routes: RouteConfig[] = [
     title: 'Health Supplements in Kakamega Kenya | BF Suma Royal',
     description: 'Buy health supplements in Kakamega, Kenya — our home base. Same-day delivery! Boost energy & wellness naturally. Order via WhatsApp today!',
   },
+  {
+    path: '/eldoret',
+    includeInSitemap: true,
+    changefreq: 'monthly',
+    priority: 0.8,
+    title: 'Health Supplements in Eldoret Kenya | BF Suma Royal',
+    description: 'Buy health supplements in Eldoret, Kenya. Fuel your active highland lifestyle with premium wellness products. Fast 1-2 day delivery. Order now!',
+  },
+  {
+    path: '/thika',
+    includeInSitemap: true,
+    changefreq: 'monthly',
+    priority: 0.8,
+    title: 'Health Supplements in Thika Kenya | BF Suma Royal',
+    description: 'Buy natural health supplements in Thika, Kenya. Boost energy & immunity near the Superhighway. Fast 24-hour delivery. Order via WhatsApp!',
+  },
+  {
+    path: '/nyeri',
+    includeInSitemap: true,
+    changefreq: 'monthly',
+    priority: 0.8,
+    title: 'Health Supplements in Nyeri Kenya | BF Suma Royal',
+    description: 'Buy premium supplements in Nyeri, Kenya. Support your highland wellness with joint care & immunity boosters. Fast 1-2 day delivery. Order today!',
+  },
+  {
+    path: '/machakos',
+    includeInSitemap: true,
+    changefreq: 'monthly',
+    priority: 0.8,
+    title: 'Health Supplements in Machakos Kenya | BF Suma Royal',
+    description: 'Buy wellness supplements in Machakos, Kenya. Boost immunity & energy in the semi-arid climate. Fast 24-hour delivery. Order via WhatsApp!',
+  },
+  {
+    path: '/kitale',
+    includeInSitemap: true,
+    changefreq: 'monthly',
+    priority: 0.8,
+    title: 'Health Supplements in Kitale Kenya | BF Suma Royal',
+    description: 'Buy natural supplements in Kitale, Kenya. Support your farming lifestyle with joint care & immune boosters. Delivery in 2-3 days. Order now!',
+  },
 ];
 
 /**
