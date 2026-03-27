@@ -154,17 +154,12 @@ const StoriesInsights = () => {
         </div>
 
         {/* Grid */}
-        <div
-          className={cn(
-            "grid gap-6 sm:grid-cols-2 lg:grid-cols-3 transition-all duration-700 delay-200",
-            isInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          )}
-        >
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item, i) => (
             <Card
               key={item.id}
-              className="overflow-hidden group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 h-full flex flex-col"
-              style={{ animation: isInView ? `fade-in 0.4s ease-out ${i * 0.08}s both` : undefined }}
+              className="overflow-hidden group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 h-full flex flex-col animate-fade-in"
+              style={{ animationDelay: `${i * 80}ms` }}
             >
               {/* Image */}
               <div className="relative aspect-video overflow-hidden bg-muted">
