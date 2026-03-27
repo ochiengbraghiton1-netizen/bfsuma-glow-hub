@@ -146,7 +146,7 @@ const AboutPage = () => {
         <title>About BF SUMA Royal Kenya | Our Journey Since 2006</title>
         <meta
           name="description"
-          content="Discover BF SUMA's journey from Los Angeles in 2006 to a trusted global wellness brand in 15+ countries. Learn about our mission, values, and certifications."
+          content="Discover BF SUMA Royal's journey from Los Angeles (2006) to a global wellness brand in 15+ countries. GMP, ISO, and Halal certified supplements."
         />
         <link rel="canonical" href="https://bfsumaroyal.com/about" />
 

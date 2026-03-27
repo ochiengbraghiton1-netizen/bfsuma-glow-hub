@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -497,6 +498,11 @@ Sent from BF SUMA ROYAL Website`;
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Checkout | BF SUMA Royal Kenya</title>
+        <meta name="description" content="Complete your BF SUMA Royal order securely. Pay via M-Pesa, PayPal, or WhatsApp. Fast delivery across Kenya with order tracking." />
+        <meta name="robots" content="noindex" />
+      </Helmet>
       <header className="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center">
           <Button variant="ghost" onClick={() => navigate('/')} className="gap-2">

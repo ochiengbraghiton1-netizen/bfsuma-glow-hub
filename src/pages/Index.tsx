@@ -1,4 +1,5 @@
 import { lazy, Suspense } from "react";
+import { Helmet } from "react-helmet-async";
 import Hero from "@/components/Hero";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -22,6 +23,16 @@ const StructuredData = lazy(() => import("@/components/StructuredData"));
 const Index = () => {
   return (
     <div className="min-h-screen">
+      <Helmet>
+        <title>BF SUMA Royal Kenya | Natural Health Supplements & Business</title>
+        <meta name="description" content="Discover natural health supplements in Kenya. Boost energy, balance hormones, and improve wellness. Shop now at BF SUMA Royal." />
+        <link rel="canonical" href="https://bfsumaroyal.com/" />
+        <meta property="og:title" content="BF SUMA Royal Kenya | Natural Health Supplements & Business" />
+        <meta property="og:description" content="Discover natural health supplements in Kenya. Boost energy, balance hormones, and improve wellness. Shop now at BF SUMA Royal." />
+        <meta property="og:url" content="https://bfsumaroyal.com/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://bfsumaroyal.com/og-image.png" />
+      </Helmet>
       <Header />
       <main className="pt-16">
         <Hero />

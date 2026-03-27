@@ -52,9 +52,9 @@ const Testimonials = () => {
 
         {/* Testimonials */}
         <div className="text-center mb-8">
-          <h3 className="text-2xl font-bold text-foreground mb-2">
+          <h2 className="text-2xl font-bold text-foreground mb-2">
             Trusted by Thousands
-          </h3>
+          </h2>
           <p className="text-muted-foreground">
             Real results from real customers
           </p>

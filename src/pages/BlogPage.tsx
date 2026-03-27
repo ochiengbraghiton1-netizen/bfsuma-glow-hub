@@ -111,7 +111,7 @@ const BlogList = () => {
     <>
        <Helmet>
         <title>Health & Wellness Blog | BF SUMA Royal Kenya</title>
-        <meta name="description" content="Read health tips, wellness advice, and product insights from BF SUMA Royal Kenya. Stay informed about natural supplements." />
+        <meta name="description" content="Read expert health tips, supplement guides, and wellness advice from BF SUMA Royal Kenya. Stay informed and shop natural products." />
         <link rel="canonical" href="https://bfsumaroyal.com/blog" />
         <meta property="og:title" content="Health & Wellness Blog | BF SUMA Royal Kenya" />
         <meta property="og:description" content="Read health tips, wellness advice, and product insights from BF SUMA Royal Kenya." />
