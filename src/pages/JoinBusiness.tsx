@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { Helmet } from 'react-helmet-async';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -161,6 +162,14 @@ const JoinBusiness = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+      <Helmet>
+        <title>Join BF SUMA Royal Business Kenya | Earn with Wellness</title>
+        <meta name="description" content="Start your BF SUMA Royal distributor business in Kenya for KES 7,000. Earn commissions selling natural supplements. Register today!" />
+        <link rel="canonical" href="https://bfsumaroyal.com/join-business" />
+        <meta property="og:title" content="Join BF SUMA Royal Business Kenya | Earn with Wellness" />
+        <meta property="og:description" content="Start your BF SUMA Royal distributor business in Kenya for KES 7,000. Earn commissions selling natural supplements." />
+        <meta property="og:url" content="https://bfsumaroyal.com/join-business" />
+      </Helmet>
       {/* Header */}
       <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
