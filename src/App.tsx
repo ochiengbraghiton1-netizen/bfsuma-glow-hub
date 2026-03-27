@@ -56,6 +56,7 @@ const Leads = lazy(() => import("./pages/admin/Leads"));
 const ProductKeywords = lazy(() => import("./pages/admin/ProductKeywords"));
 const LocationLanding = lazy(() => import("./pages/LocationLanding"));
 const ReturnPolicy = lazy(() => import("./pages/ReturnPolicy"));
+const TermsConditions = lazy(() => import("./pages/TermsConditions"));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-background">
@@ -134,6 +135,7 @@ const App = () => (
                   <Route path="/faq" element={<FAQPage />} />
                   <Route path="/community" element={<CommunityPage />} />
                   <Route path="/return-policy" element={<ReturnPolicy />} />
+                  <Route path="/terms" element={<TermsConditions />} />
                   <Route path="/:city" element={<LocationLanding />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>

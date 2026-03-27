@@ -51,6 +51,11 @@ const Footer = () => {
                 </a>
               </li>
               <li>
+                <a href="/terms" className="text-white/80 hover:text-accent transition-colors">
+                  Terms & Conditions
+                </a>
+              </li>
+              <li>
                 <a href="/join-business" className="text-white/80 hover:text-accent transition-colors">
                   Join & Earn
                 </a>

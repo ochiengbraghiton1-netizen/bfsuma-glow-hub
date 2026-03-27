@@ -188,6 +188,22 @@ export const routes: RouteConfig[] = [
     description: 'Buy wellness supplements in Machakos, Kenya. Boost immunity & energy in the semi-arid climate. Fast 24-hour delivery. Order via WhatsApp!',
   },
   {
+    path: '/return-policy',
+    includeInSitemap: true,
+    changefreq: 'monthly',
+    priority: 0.5,
+    title: 'Return & Exchange Policy | BF SUMA Royal Kenya',
+    description: "BF SUMA Royal's return and exchange policy. Request exchanges within 72 hours. Covers online and international orders with hassle-free process.",
+  },
+  {
+    path: '/terms',
+    includeInSitemap: true,
+    changefreq: 'monthly',
+    priority: 0.5,
+    title: 'Terms & Conditions | BF SUMA Royal Kenya',
+    description: 'Read the Terms & Conditions for using BF SUMA Royal website and services. Covers accounts, billing, shipping, and dispute resolution under Kenyan law.',
+  },
+  {
     path: '/kitale',
     includeInSitemap: true,
     changefreq: 'monthly',
