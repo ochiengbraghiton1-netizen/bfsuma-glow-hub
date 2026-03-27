@@ -232,12 +232,7 @@ const StoriesInsights = () => {
         </div>
 
         {/* CTA */}
-        <div
-          className={cn(
-            "text-center mt-10 transition-all duration-700 delay-400",
-            isInView ? "opacity-100" : "opacity-0"
-          )}
-        >
+        <div className="text-center mt-10">
           <Button asChild variant="hero" size="lg" className="rounded-full">
             <Link to="/blog">
               View All Stories
