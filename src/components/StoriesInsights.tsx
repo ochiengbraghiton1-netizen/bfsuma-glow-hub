@@ -77,7 +77,7 @@ const StoriesInsights = () => {
   const [blogItems, setBlogItems] = useState<StoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const { data: socialPosts } = useSocialPosts({ featured: true, limit: 6 });
-  const [ref, isInView] = useInView<HTMLElement>({ threshold: 0.1 });
+  
 
   useEffect(() => {
     const fetchBlogs = async () => {
