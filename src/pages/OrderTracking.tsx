@@ -122,8 +122,11 @@ const OrderTracking = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <Helmet>
+        <title>Track Your Order | BF SUMA Royal Kenya</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
       <Header />
-      
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto space-y-8">
           {/* Header */}
