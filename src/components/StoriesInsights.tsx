@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useSocialPosts } from "@/hooks/use-social-posts";
-import { useInView } from "@/hooks/use-in-view";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -78,7 +77,7 @@ const StoriesInsights = () => {
   const [blogItems, setBlogItems] = useState<StoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const { data: socialPosts } = useSocialPosts({ featured: true, limit: 6 });
-  const [ref, isInView] = useInView<HTMLElement>({ threshold: 0.1 });
+  
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -134,15 +133,10 @@ const StoriesInsights = () => {
   if (loading && items.length === 0) return null;
 
   return (
-    <section ref={ref} className="py-20 bg-muted/30">
+    <section className="py-20 bg-muted/30">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div
-          className={cn(
-            "text-center mb-12 transition-all duration-700",
-            isInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-          )}
-        >
+        <div className="text-center mb-12 animate-fade-in">
           <Badge variant="outline" className="mb-4 border-primary/30 text-primary px-4 py-1">
             <BookOpen className="w-3.5 h-3.5 mr-1.5" />
             Stories & Insights
@@ -159,17 +153,12 @@ const StoriesInsights = () => {
         </div>
 
         {/* Grid */}
-        <div
-          className={cn(
-            "grid gap-6 sm:grid-cols-2 lg:grid-cols-3 transition-all duration-700 delay-200",
-            isInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          )}
-        >
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item, i) => (
             <Card
               key={item.id}
-              className="overflow-hidden group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 h-full flex flex-col"
-              style={{ animation: isInView ? `fade-in 0.4s ease-out ${i * 0.08}s both` : undefined }}
+              className="overflow-hidden group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 h-full flex flex-col animate-fade-in"
+              style={{ animationDelay: `${i * 80}ms` }}
             >
               {/* Image */}
               <div className="relative aspect-video overflow-hidden bg-muted">
@@ -242,12 +231,7 @@ const StoriesInsights = () => {
         </div>
 
         {/* CTA */}
-        <div
-          className={cn(
-            "text-center mt-10 transition-all duration-700 delay-400",
-            isInView ? "opacity-100" : "opacity-0"
-          )}
-        >
+        <div className="text-center mt-10">
           <Button asChild variant="hero" size="lg" className="rounded-full">
             <Link to="/blog">
               View All Stories
