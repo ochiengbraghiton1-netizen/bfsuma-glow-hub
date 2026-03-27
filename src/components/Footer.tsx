@@ -51,6 +51,23 @@ const Footer = () => {
                 </a>
               </li>
             </ul>
+
+            <h4 className="font-bold mt-6 mb-3 text-accent">We Deliver To</h4>
+            <ul className="space-y-1.5">
+              {[
+                { href: "/nairobi", label: "Nairobi" },
+                { href: "/mombasa", label: "Mombasa" },
+                { href: "/kisumu", label: "Kisumu" },
+                { href: "/nakuru", label: "Nakuru" },
+                { href: "/kakamega", label: "Kakamega" },
+              ].map((loc) => (
+                <li key={loc.href}>
+                  <a href={loc.href} className="text-white/80 hover:text-accent transition-colors text-sm">
+                    Supplements in {loc.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
 
           {/* Contact Info */}

@@ -115,6 +115,46 @@ export const routes: RouteConfig[] = [
     title: 'Community | BF SUMA Royal Kenya Stories',
     description: 'Real testimonials and success stories from BF SUMA Royal users in Kenya. See how our supplements transform health and build businesses.',
   },
+  {
+    path: '/nairobi',
+    includeInSitemap: true,
+    changefreq: 'monthly',
+    priority: 0.8,
+    title: 'Health Supplements in Nairobi Kenya | BF Suma Royal',
+    description: 'Buy premium health supplements in Nairobi, Kenya. Boost energy, immunity & wellness with BF Suma Royal. Fast delivery within 24 hours. Order now!',
+  },
+  {
+    path: '/mombasa',
+    includeInSitemap: true,
+    changefreq: 'monthly',
+    priority: 0.8,
+    title: 'Health Supplements in Mombasa Kenya | BF Suma Royal',
+    description: 'Buy natural health supplements in Mombasa, Kenya. Stay hydrated & energized in the coastal climate. Fast 1-2 day delivery. Order via WhatsApp!',
+  },
+  {
+    path: '/kisumu',
+    includeInSitemap: true,
+    changefreq: 'monthly',
+    priority: 0.8,
+    title: 'Health Supplements in Kisumu Kenya | BF Suma Royal',
+    description: 'Buy health supplements in Kisumu, Kenya. Boost immunity & energy by Lake Victoria. Fast 1-2 day delivery across Kisumu County. Order today!',
+  },
+  {
+    path: '/nakuru',
+    includeInSitemap: true,
+    changefreq: 'monthly',
+    priority: 0.8,
+    title: 'Health Supplements in Nakuru Kenya | BF Suma Royal',
+    description: 'Buy wellness supplements in Nakuru, Kenya. Strengthen immunity in the Rift Valley climate. Fast 1-2 day delivery. Order via WhatsApp now!',
+  },
+  {
+    path: '/kakamega',
+    includeInSitemap: true,
+    changefreq: 'monthly',
+    priority: 0.8,
+    title: 'Health Supplements in Kakamega Kenya | BF Suma Royal',
+    description: 'Buy health supplements in Kakamega, Kenya — our home base. Same-day delivery! Boost energy & wellness naturally. Order via WhatsApp today!',
+  },
 ];
 
 /**
