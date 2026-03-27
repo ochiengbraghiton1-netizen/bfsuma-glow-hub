@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, ShoppingBag, Loader2, MessageCircle, CheckCircle, CreditCard, Phone, MapPin } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Loader2, MessageCircle, CheckCircle, CreditCard, MapPin } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { z } from 'zod';
 import productGeneric from '@/assets/product-generic.jpg';
@@ -18,7 +18,7 @@ import { PhoneInput, formatForWhatsApp } from '@/components/ui/phone-input';
 import PayPalButton from '@/components/checkout/PayPalButton';
 import CurrencySelector from '@/components/checkout/CurrencySelector';
 import SecureCheckoutBadges from '@/components/checkout/SecureCheckoutBadges';
-import MpesaPayment from '@/components/checkout/MpesaPayment';
+
 import { useCurrency } from '@/hooks/use-currency';
 
 const WHATSAPP_NUMBER = "254795454053";
@@ -83,7 +83,7 @@ const Checkout = () => {
   const [orderComplete, setOrderComplete] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [honeypot, setHoneypot] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState<'whatsapp' | 'mpesa' | 'paypal'>('mpesa');
+  const [paymentMethod, setPaymentMethod] = useState<'whatsapp' | 'paypal'>('whatsapp');
   const [deliveryLocation, setDeliveryLocation] = useState<DeliveryLocation>('nairobi');
 
   // Persist form data to sessionStorage on every change
@@ -167,35 +167,29 @@ const Checkout = () => {
 
   const generateWhatsAppMessage = (orderId: string) => {
     const itemsList = items.map(item => 
-      `• ${item.name} x${item.quantity} - ${formatCurrency(item.price * item.quantity)}`
-    ).join('\n');
+      `Product: ${item.name}\nQuantity: ${item.quantity}\nPrice: KES ${(item.price * item.quantity).toLocaleString()}`
+    ).join('\n\n');
 
-    const message = `🛒 *NEW ORDER - BF SUMA ROYAL*
+    const message = `Hello, I'd like to place an order:
 
-📋 *Order ID:* ${orderId.slice(0, 8).toUpperCase()}
-
-👤 *Customer Details:*
-Name: ${formData.customerName}
-Phone: ${formData.customerPhone}
-${formData.customerEmail ? `Email: ${formData.customerEmail}` : ''}
-
-📦 *Products:*
 ${itemsList}
 
-💰 *Order Summary (${currency}):*
-Subtotal: ${formatCurrency(subtotal)}
-${discount > 0 ? `Discount (${promoApplied?.code}): -${formatCurrency(discount)}` : ''}
-Shipping (${DELIVERY_LABELS[deliveryLocation]}): ${formatCurrency(shippingFee)}
-*Total: ${formatCurrency(finalTotal)}*
+Order ID: ${orderId.slice(0, 8).toUpperCase()}
+Total: KES ${finalTotal.toLocaleString()}
+${discount > 0 ? `Discount (${promoApplied?.code}): -KES ${discount.toLocaleString()}\n` : ''}Shipping (${DELIVERY_LABELS[deliveryLocation]}): KES ${shippingFee.toLocaleString()}
 
-📍 *Delivery Location:* ${DELIVERY_LABELS[deliveryLocation]}
-📍 *Delivery Address:*
-${formData.shippingAddress}
+Name: ${formData.customerName}
+Phone Number: ${formData.customerPhone}
+${formData.customerEmail ? `Email: ${formData.customerEmail}\n` : ''}Location (City/Area): ${formData.shippingAddress}
 
-${formData.notes ? `📝 *Notes:* ${formData.notes}` : ''}
+Preferred Delivery Option:
+${deliveryLocation === 'nairobi' ? '✅ Home Delivery' : '✅ Home Delivery (Outside Nairobi)'}
 
----
-Sent from BF SUMA ROYAL Website`;
+Payment Method:
+M-Pesa
+${formData.notes ? `\nNotes: ${formData.notes}` : ''}
+
+Please confirm availability and send payment instructions. Thank you.`;
 
     return encodeURIComponent(message);
   };
@@ -500,7 +494,7 @@ Sent from BF SUMA ROYAL Website`;
     <div className="min-h-screen bg-background">
       <Helmet>
         <title>Checkout | BF SUMA Royal Kenya</title>
-        <meta name="description" content="Complete your BF SUMA Royal order securely. Pay via M-Pesa, PayPal, or WhatsApp. Fast delivery across Kenya with order tracking." />
+        <meta name="description" content="Complete your BF SUMA Royal order securely. Pay via WhatsApp or PayPal. Fast delivery across Kenya with order tracking." />
         <meta name="robots" content="noindex" />
       </Helmet>
       <header className="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50">
@@ -621,137 +615,63 @@ Sent from BF SUMA ROYAL Website`;
 
                 <div className="pt-4 border-t border-border">
                   <h3 className="font-semibold mb-3">Payment Method</h3>
-                  <div className="grid grid-cols-3 gap-3 mb-4">
-                    <button
-                      type="button"
-                      onClick={() => setPaymentMethod('mpesa')}
-                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all text-sm font-medium ${
-                        paymentMethod === 'mpesa'
-                          ? 'border-[#4CAF50] bg-[#4CAF50]/5 text-[#4CAF50]'
-                          : 'border-border text-muted-foreground hover:border-[#4CAF50]/50'
-                      }`}
-                    >
-                      <Phone className="h-5 w-5" />
-                      M-Pesa
-                    </button>
+                  <div className="grid grid-cols-2 gap-3 mb-4">
                     <button
                       type="button"
                       onClick={() => setPaymentMethod('whatsapp')}
-                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all text-sm font-medium ${
+                      className={`flex flex-col items-center justify-center gap-1.5 p-4 rounded-xl border-2 transition-all text-sm font-medium ${
                         paymentMethod === 'whatsapp'
-                          ? 'border-primary bg-primary/5 text-primary'
-                          : 'border-border text-muted-foreground hover:border-primary/50'
+                          ? 'border-[#25D366] bg-[#25D366]/5 text-[#25D366]'
+                          : 'border-border text-muted-foreground hover:border-[#25D366]/50'
                       }`}
                     >
                       <MessageCircle className="h-5 w-5" />
-                      WhatsApp
+                      <span>Order via WhatsApp</span>
+                      <span className="text-xs opacity-70">(M-Pesa Available)</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setPaymentMethod('paypal')}
-                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all text-sm font-medium ${
+                      className={`flex flex-col items-center justify-center gap-1.5 p-4 rounded-xl border-2 transition-all text-sm font-medium ${
                         paymentMethod === 'paypal'
-                          ? 'border-primary bg-primary/5 text-primary'
-                          : 'border-border text-muted-foreground hover:border-primary/50'
+                          ? 'border-[#0070ba] bg-[#0070ba]/5 text-[#0070ba]'
+                          : 'border-border text-muted-foreground hover:border-[#0070ba]/50'
                       }`}
                     >
                       <CreditCard className="h-5 w-5" />
-                      PayPal
+                      <span>PayPal</span>
+                      <span className="text-xs opacity-70">Cards & PayPal</span>
                     </button>
                   </div>
 
-                  {paymentMethod === 'mpesa' && (
-                    <MpesaPayment
-                      amount={finalTotal}
-                      orderId={pendingPaypalOrderId}
-                      onCreateOrder={async () => {
-                        const currentFormData = formDataRef.current;
-                        const result = checkoutSchema.safeParse(currentFormData);
-                        if (!result.success) {
-                          const fieldErrors: Partial<Record<keyof CheckoutFormData, string>> = {};
-                          result.error.errors.forEach(err => {
-                            if (err.path[0]) {
-                              fieldErrors[err.path[0] as keyof CheckoutFormData] = err.message;
-                            }
-                          });
-                          setErrors(fieldErrors);
-                          throw new Error('Please fill in required fields');
-                        }
-                        setErrors({});
-                        if (isBot(honeypot)) throw new Error('Validation failed');
-                        const newOrderId = await saveOrderToDb('pending_payment', currentFormData);
-                        setPendingPaypalOrderId(newOrderId);
-                        return newOrderId;
-                      }}
-                      onPaymentSuccess={(oid, receipt) => {
-                        clearCart();
-                        sessionStorage.removeItem(CHECKOUT_STORAGE_KEY);
-                        navigate(`/order-success/${oid}`, {
-                          replace: true,
-                          state: {
-                            order: {
-                              id: oid,
-                              customer_name: formData.customerName,
-                              customer_email: formData.customerEmail || null,
-                              customer_phone: formData.customerPhone,
-                              shipping_address: formData.shippingAddress,
-                              subtotal,
-                              discount_amount: discount,
-                              total_amount: finalTotal,
-                              promotion_code: promoApplied?.code || null,
-                              status: 'paid',
-                              currency,
-                              notes: `M-Pesa Receipt: ${receipt}`,
-                              created_at: new Date().toISOString(),
-                            },
-                            orderItems: items.map(item => ({
-                              id: item.id,
-                              product_name: item.name,
-                              product_price: item.price,
-                              quantity: item.quantity,
-                              subtotal: item.price * item.quantity,
-                            })),
-                          },
-                        });
-                      }}
-                      onPaymentFailed={(error) => {
-                        toast({
-                          title: 'Payment Failed',
-                          description: error,
-                          variant: 'destructive',
-                        });
-                      }}
-                      disabled={isSubmitting || items.length === 0}
-                      defaultPhone={formData.customerPhone}
-                    />
-                  )}
-
                   {paymentMethod === 'whatsapp' && (
                     <>
-                      <div className="bg-muted/50 rounded-xl p-4 border border-border mb-4">
-                        <p className="text-sm text-muted-foreground">
-                          After submitting, your order details will be sent via WhatsApp. We'll confirm your order and arrange delivery and payment.
+                      <div className="bg-[#25D366]/5 rounded-xl p-4 border border-[#25D366]/20 mb-4">
+                        <p className="text-sm text-foreground/80">
+                          Place your order and complete payment via M-Pesa on WhatsApp. Your order details will be pre-filled for a quick, seamless experience.
                         </p>
                       </div>
                       <Button 
                         type="submit" 
-                        variant="premium" 
                         size="lg" 
-                        className="w-full"
+                        className="w-full bg-[#25D366] hover:bg-[#20BD5A] text-white text-base font-semibold py-6"
                         disabled={isSubmitting}
                       >
                         {isSubmitting ? (
                           <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            <Loader2 className="h-5 w-5 mr-2 animate-spin" />
                             Processing...
                           </>
                         ) : (
                           <>
-                            <MessageCircle className="h-4 w-4 mr-2" />
-                            Order via WhatsApp - {formatCurrency(finalTotal)}
+                            <MessageCircle className="h-5 w-5 mr-2" />
+                            Order on WhatsApp — {formatCurrency(finalTotal)}
                           </>
                         )}
                       </Button>
+                      <p className="text-xs text-center text-muted-foreground mt-3">
+                        ⚡ Fast response • 🚚 Delivery across Kenya • 💚 Pay via M-Pesa
+                      </p>
                     </>
                   )}
 
