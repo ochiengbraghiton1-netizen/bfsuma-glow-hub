@@ -48,8 +48,7 @@ const Index = () => {
         </Suspense>
         {/* Secondary content - deferred further */}
         <Suspense fallback={null}>
-          <CommunityStories />
-          <SocialFeed />
+          <StoriesInsights />
           <About />
           <FAQ />
         </Suspense>
