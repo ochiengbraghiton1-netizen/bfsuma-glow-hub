@@ -93,7 +93,9 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="max-h-60">
-            {COUNTRY_CODES.map((cc) => (
+            {COUNTRY_CODES.filter((cc, i, arr) =>
+              arr.findIndex((c) => c.dial === cc.dial) === i
+            ).map((cc) => (
               <SelectItem key={cc.code} value={cc.dial}>
                 <span className="flex items-center gap-2">
                   <span>{cc.flag}</span>

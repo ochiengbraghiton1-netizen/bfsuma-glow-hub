@@ -12,15 +12,18 @@ Allow: /
 
 User-agent: *
 Allow: /
-
-# Sitemap (dynamic - generated from edge function)
-Sitemap: https://bfsumaroyal.com/sitemap.xml
-
-# Disallow admin and private routes
 Disallow: /admin
+Disallow: /admin/*
 Disallow: /affiliate
+Disallow: /affiliate/*
 Disallow: /distributor
+Disallow: /distributor/*
 Disallow: /auth
+Disallow: /auth/*
 Disallow: /forgot-password
 Disallow: /reset-password
 Disallow: /account
+Disallow: /account/*
+
+# Sitemap (dynamic - generated from edge function)
+Sitemap: https://bfsumaroyal.com/sitemap.xml
