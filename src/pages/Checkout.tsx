@@ -18,6 +18,8 @@ import { PhoneInput, formatForWhatsApp } from '@/components/ui/phone-input';
 import PayPalButton from '@/components/checkout/PayPalButton';
 import CurrencySelector from '@/components/checkout/CurrencySelector';
 import SecureCheckoutBadges from '@/components/checkout/SecureCheckoutBadges';
+import ReturnPolicySummary from '@/components/ReturnPolicySummary';
+import TrustBadgesInline from '@/components/TrustBadgesInline';
 
 import { useCurrency } from '@/hooks/use-currency';
 
@@ -698,6 +700,10 @@ Please confirm availability and send payment instructions. Thank you.`;
                     </>
                   )}
 
+                  <TrustBadgesInline />
+                  <div className="mt-4">
+                    <ReturnPolicySummary />
+                  </div>
                   <SecureCheckoutBadges />
                 </div>
               </form>
