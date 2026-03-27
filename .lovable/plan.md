@@ -1,77 +1,64 @@
 
-## Plan: Add SEO-Friendly Alt Text and Update Meta Tags
 
-### Current State Analysis
+## Plan: Create a Site Health-Check Endpoint for TestSprite
 
-**Images Missing Alt Text:**
-1. **Hero background** (`Hero.tsx`): Currently `alt=""` - This is the LCP (Largest Contentful Paint) image and should have descriptive alt text for SEO
-2. **Join & Earn background** (`JoinEarn.tsx`): Currently `alt=""` - decorative but could benefit from alt text
-3. **Community background** (`Community.tsx`): Currently `alt=""` - decorative but could benefit from alt text
+### What you'll get
 
-**Images with Alt Text (OK):**
-- Doctor consultation image: `alt="Wellness consultation"` - could be improved
-- Product cards: Use `alt={name}` - good, dynamically uses product name
+A single backend endpoint that TestSprite can call to:
+1. **Crawl all pages** — returns every public URL on the site
+2. **Check site health** — verifies database connectivity and edge function availability
+3. **Serve as the single "API for the entire site"** that TestSprite needs
 
-**Meta Tags:**
-- The `index.html` title and description don't fully align with the new hero messaging
+### The endpoint
 
----
+**URL:** `https://sboaeutgckyiwunfmxqp.supabase.co/functions/v1/site-health`
 
-### Changes Required
-
-#### 1. Hero.tsx - Add Alt Text to Hero Image
-```text
-Current:  alt=""
-Updated:  alt="BF SUMA Royal premium wellness supplements and natural health products display"
+**Response (JSON):**
+```json
+{
+  "status": "healthy",
+  "timestamp": "2026-03-28T01:30:00Z",
+  "database": "connected",
+  "site_url": "https://bfsumaroyal.com",
+  "pages": [
+    { "url": "https://bfsumaroyal.com/", "title": "Homepage", "priority": 1.0 },
+    { "url": "https://bfsumaroyal.com/about", "title": "About", "priority": 0.8 },
+    ...all 20+ public pages...
+  ],
+  "dynamic_pages": {
+    "products": 12,
+    "blog_posts": 5,
+    "categories": 4
+  },
+  "edge_functions": ["sitemap", "chat-assistant", "create-order", "mpesa-stk-push"]
+}
 ```
 
-#### 2. DoctorConsultation.tsx - Improve Alt Text
-```text
-Current:  alt="Wellness consultation"
-Updated:  alt="BF SUMA Royal wellness expert providing personalized health consultation"
+### Implementation steps
+
+1. **Create `supabase/functions/site-health/index.ts`**
+   - No JWT required (public endpoint for testing tools)
+   - Queries the database to check connectivity
+   - Returns all static routes from a hardcoded list (mirrors `routes.ts`)
+   - Counts active products, published blog posts, and categories
+   - Lists available edge functions
+
+2. **Add config to `supabase/config.toml`**
+   - Add `[functions.site-health]` with `verify_jwt = false`
+
+### How to use with TestSprite
+
+Once built, enter this as your API endpoint in TestSprite:
+```
+https://sboaeutgckyiwunfmxqp.supabase.co/functions/v1/site-health
 ```
 
-#### 3. JoinEarn.tsx - Add Alt Text to Background
-```text
-Current:  alt=""
-Updated:  alt="BF SUMA Royal business opportunity and wellness entrepreneur community"
-```
+TestSprite can then use the `pages` array to crawl every URL on your site and run its full test suite.
 
-#### 4. Community.tsx - Add Alt Text to Background
-```text
-Current:  alt=""
-Updated:  alt="BF SUMA Royal wellness community training and mentorship program"
-```
+### Technical details
 
-#### 5. index.html - Update Meta Title and Description
+- Edge function uses Supabase service role key (server-side only) for DB checks
+- No authentication required — returns only public page URLs
+- Response includes counts of dynamic content so TestSprite can verify content exists
+- CORS headers included for flexibility
 
-**Title:**
-```text
-Current:  "BF SUMA ROYAL Kenya - Premium Natural Supplements & Wellness Business Opportunity"
-Updated:  "BF SUMA Royal - Premium Supplements for Better Health | Wellness Business Opportunity Kenya"
-```
-
-**Meta Description:**
-```text
-Current:  "Discover BF SUMA ROYAL's premium natural health supplements in Kenya..."
-Updated:  "BF SUMA Royal offers trusted wellness products designed to support your health journey. Premium supplements backed by a real business opportunity. Shop NMN Capsules, ArthroXtra, Ganoderma & more in Kenya."
-```
-
-**Open Graph Title and Description** will also be updated to match.
-
----
-
-### Technical Details
-
-All changes are simple string replacements in the following files:
-- `src/components/Hero.tsx` (line 24)
-- `src/components/DoctorConsultation.tsx` (line 58)
-- `src/components/JoinEarn.tsx` (line 37)
-- `src/components/Community.tsx` (line 17)
-- `index.html` (lines 21, 22, 29, 30, 35, 36)
-
-### SEO Benefits
-- Improved image indexing for Google Image Search
-- Better accessibility for screen readers
-- Meta tags aligned with hero content for consistent messaging
-- Keywords included: "BF SUMA Royal", "supplements", "wellness", "business opportunity", "Kenya"
