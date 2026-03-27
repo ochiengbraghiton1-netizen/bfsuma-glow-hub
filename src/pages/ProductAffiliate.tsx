@@ -190,9 +190,9 @@ const ProductAffiliate = () => {
     "out-of-stock": "bg-red-500/10 text-red-600 dark:text-red-400",
   };
 
-  const seoTitle = `${product.name} - BF SUMA ROYAL`;
+  const seoTitle = `Buy ${product.name} in Kenya | BF SUMA Royal`;
   const plainDescription = stripHtmlTags(product.benefit || product.description);
-  const seoDescription = truncateText(plainDescription || `Buy ${product.name} from BF SUMA ROYAL. Premium health & wellness supplement.`, 160);
+  const seoDescription = truncateText(plainDescription || `Buy ${product.name} in Kenya. Natural health supplement for better wellness. Order now via WhatsApp for fast SOMA delivery.`, 160);
   const seoImage = product.image_url || `${window.location.origin}/og-image.png`;
   const canonicalUrl = `${window.location.origin}/p/${slug}`;
 
@@ -265,7 +265,7 @@ const ProductAffiliate = () => {
             <div className="relative rounded-2xl overflow-hidden bg-muted/30 aspect-square">
               <img
                 src={product.image_url || productGeneric}
-                alt={product.name}
+                alt={`${product.name} - BF SUMA Royal natural health supplement`}
                 className="w-full h-full object-cover"
               />
               <button
