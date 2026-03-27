@@ -8,6 +8,9 @@ import Footer from "@/components/Footer";
 const DoctorConsultation = lazy(() => import("@/components/DoctorConsultation"));
 const ProductShowcase = lazy(() => import("@/components/ProductShowcase"));
 const Testimonials = lazy(() => import("@/components/Testimonials"));
+const ExpertAuthority = lazy(() => import("@/components/ExpertAuthority"));
+const CaseStudies = lazy(() => import("@/components/CaseStudies"));
+const CertificationsBadges = lazy(() => import("@/components/CertificationsBadges"));
 const JoinEarn = lazy(() => import("@/components/JoinEarn"));
 const Community = lazy(() => import("@/components/Community"));
 const About = lazy(() => import("@/components/About"));
@@ -39,7 +42,9 @@ const Index = () => {
         {/* Priority below-fold: testimonials + products */}
         <Suspense fallback={null}>
           <DoctorConsultation />
+          <ExpertAuthority />
           <Testimonials />
+          <CaseStudies />
           <ProductShowcase />
         </Suspense>
         {/* Secondary content - deferred further */}
@@ -55,6 +60,7 @@ const Index = () => {
           <Community />
           <Contact />
           <NewsletterSignup />
+          <CertificationsBadges />
         </Suspense>
         {/* Interactive overlays + structured data - lowest priority */}
         <Suspense fallback={null}>
