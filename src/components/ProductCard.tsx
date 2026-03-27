@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Heart, Eye } from "lucide-react";
+import { ShoppingCart, Heart, Eye, Shield, CheckCircle } from "lucide-react";
 import { useInView } from "@/hooks/use-in-view";
 import { useState } from "react";
 import { useCart } from "@/contexts/CartContext";
@@ -200,6 +200,11 @@ const ProductCard = ({
           <ShoppingCart className="w-4 h-4 mr-2" />
           {isOutOfStock ? "Out of Stock" : "Add to Cart"}
         </Button>
+        <div className="flex items-center justify-center gap-2 mt-2 text-[10px] text-muted-foreground">
+          <span className="flex items-center gap-0.5"><CheckCircle className="w-3 h-3 text-primary" />Verified</span>
+          <span>•</span>
+          <span className="flex items-center gap-0.5"><Shield className="w-3 h-3 text-primary" />Secure</span>
+        </div>
       </div>
     </Card>
   );
