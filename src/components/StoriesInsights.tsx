@@ -137,12 +137,7 @@ const StoriesInsights = () => {
     <section ref={ref} className="py-20 bg-muted/30">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div
-          className={cn(
-            "text-center mb-12 transition-all duration-700",
-            isInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-          )}
-        >
+        <div className="text-center mb-12 animate-fade-in">
           <Badge variant="outline" className="mb-4 border-primary/30 text-primary px-4 py-1">
             <BookOpen className="w-3.5 h-3.5 mr-1.5" />
             Stories & Insights
