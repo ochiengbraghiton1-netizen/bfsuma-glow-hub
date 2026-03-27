@@ -8,7 +8,7 @@ const FAQPage = () => {
     <div className="min-h-screen">
       <PageSEO
         title="FAQ | BF SUMA Royal Kenya - Common Questions"
-        description="Frequently asked questions about BF SUMA Royal products, business opportunity, and distributor program in Kenya."
+        description="Get answers about BF SUMA Royal supplements, distributor program, and business opportunity in Kenya. Start your wellness journey today."
         path="/faq"
       />
       <Header />

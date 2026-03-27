@@ -97,7 +97,7 @@ const CommunityPage = () => {
     <div className="min-h-screen flex flex-col bg-background">
       <PageSEO
         title="Community | BF SUMA Royal Kenya Stories"
-        description="See real stories from the BF SUMA Royal community. Customer testimonials, product reviews, and success stories."
+        description="Real testimonials and success stories from BF SUMA Royal users in Kenya. See how our supplements transform health and build businesses."
         path="/community"
       />
 
