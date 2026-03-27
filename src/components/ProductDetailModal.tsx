@@ -1,7 +1,8 @@
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, X, Shield, Leaf, Check, Heart, AlertTriangle } from "lucide-react";
+import { ShoppingCart, X, Shield, Leaf, Check, Heart, AlertTriangle, CheckCircle, Truck } from "lucide-react";
+import ReturnPolicySummary from "@/components/ReturnPolicySummary";
 import { useCart } from "@/contexts/CartContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getStockStatus } from "@/hooks/use-products";
@@ -227,6 +228,22 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
                 <ShoppingCart className="w-5 h-5" />
                 {isOutOfStock ? "Out of Stock" : "Add to Cart"}
               </Button>
+              {/* Trust badges */}
+              <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <CheckCircle className="w-3.5 h-3.5 text-primary" />
+                  Trusted across Kenya
+                </span>
+                <span className="flex items-center gap-1">
+                  <Shield className="w-3.5 h-3.5 text-primary" />
+                  Secure Checkout
+                </span>
+                <span className="flex items-center gap-1">
+                  <Truck className="w-3.5 h-3.5 text-primary" />
+                  M-Pesa on WhatsApp
+                </span>
+              </div>
+              <ReturnPolicySummary />
               <p className="text-xs text-muted-foreground text-center">
                 Free shipping on orders over KSh 10,000
               </p>
