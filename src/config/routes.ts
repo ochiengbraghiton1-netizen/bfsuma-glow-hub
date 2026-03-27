@@ -107,6 +107,14 @@ export const routes: RouteConfig[] = [
     title: 'FAQ | BF SUMA Royal Kenya - Common Questions',
     description: 'Get answers about BF SUMA Royal supplements, distributor program, and business opportunity in Kenya. Start your wellness journey today.',
   },
+  {
+    path: '/community',
+    includeInSitemap: true,
+    changefreq: 'daily',
+    priority: 0.7,
+    title: 'Community | BF SUMA Royal Kenya Stories',
+    description: 'Real testimonials and success stories from BF SUMA Royal users in Kenya. See how our supplements transform health and build businesses.',
+  },
 ];
 
 /**
