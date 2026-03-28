@@ -185,10 +185,8 @@ const EarningsCalculator = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-primary-foreground/80 text-sm font-medium">Estimated Monthly Earnings</p>
-                    <p className="text-4xl md:text-5xl font-bold mt-1">{formatUSD(earnings.total)}</p>
-                    <p className="text-primary-foreground/70 text-sm mt-2">
-                      Total Group PV: {earnings.totalGroupPV.toLocaleString()} PV
-                    </p>
+                    <AnimatedTotal value={earnings.total} />
+                    <AnimatedGroupPV value={earnings.totalGroupPV} />
                   </div>
                   <TrendingUp className="h-12 w-12 text-primary-foreground/30" />
                 </div>
