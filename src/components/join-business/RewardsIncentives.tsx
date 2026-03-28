@@ -1,7 +1,9 @@
 import { Plane, Car, Trophy, Star, Gift, Sparkles, Store } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import travelImage from '@/assets/travel-reward.jpg';
-import carImage from '@/assets/car-reward.jpg';
+import travelImage from '@/assets/travel-reward.webp';
+import carImage from '@/assets/car-reward.webp';
+import recognitionImage from '@/assets/recognition-event.webp';
+import carFleetImage from '@/assets/car-award-fleet.webp';
 
 const RewardsIncentives = () => {
   return (
@@ -98,7 +100,27 @@ const RewardsIncentives = () => {
           </Card>
         </div>
 
-        {/* 7 Star Special Support */}
+        {/* Real photos gallery */}
+        <div className="grid grid-cols-2 gap-4 mb-12 rounded-2xl overflow-hidden">
+          <img
+            src={carFleetImage}
+            alt="BF Suma car awards fleet at recognition event"
+            className="w-full h-40 md:h-56 object-cover rounded-xl"
+            loading="lazy"
+            width={800}
+            height={533}
+          />
+          <img
+            src={recognitionImage}
+            alt="BF Suma Thrive 2025 recognition rally with top performers"
+            className="w-full h-40 md:h-56 object-cover rounded-xl"
+            loading="lazy"
+            width={800}
+            height={533}
+          />
+        </div>
+
+
         <div className="mb-12 p-6 rounded-2xl bg-accent/5 border border-accent/20">
           <div className="flex items-start gap-3">
             <Sparkles className="h-6 w-6 text-accent mt-1 flex-shrink-0" />
