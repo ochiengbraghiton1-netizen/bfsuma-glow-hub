@@ -2,7 +2,8 @@ import { lazy, Suspense } from "react";
 import { Helmet } from "react-helmet-async";
 import Hero from "@/components/Hero";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
+const Footer = lazy(() => import("@/components/Footer"));
 
 // Lazy-load below-the-fold sections
 const DoctorConsultation = lazy(() => import("@/components/DoctorConsultation"));
@@ -39,27 +40,33 @@ const Index = () => {
       <main className="pt-16">
         <Hero />
         {/* Priority below-fold: testimonials + products */}
-        <Suspense fallback={null}>
-          <DoctorConsultation />
-          <ExpertAuthority />
-          <Testimonials />
-          <CaseStudies />
-          <ProductShowcase />
-        </Suspense>
+        <div className="content-auto">
+          <Suspense fallback={null}>
+            <DoctorConsultation />
+            <ExpertAuthority />
+            <Testimonials />
+            <CaseStudies />
+            <ProductShowcase />
+          </Suspense>
+        </div>
         {/* Secondary content - deferred further */}
-        <Suspense fallback={null}>
-          <StoriesInsights />
-          <About />
-          <FAQ />
-        </Suspense>
+        <div className="content-auto">
+          <Suspense fallback={null}>
+            <StoriesInsights />
+            <About />
+            <FAQ />
+          </Suspense>
+        </div>
         {/* Tertiary content */}
-        <Suspense fallback={null}>
-          <JoinEarn />
-          <Community />
-          <Contact />
-          <NewsletterSignup />
-          <CertificationsBadges />
-        </Suspense>
+        <div className="content-auto">
+          <Suspense fallback={null}>
+            <JoinEarn />
+            <Community />
+            <Contact />
+            <NewsletterSignup />
+            <CertificationsBadges />
+          </Suspense>
+        </div>
         {/* Interactive overlays + structured data - lowest priority */}
         <Suspense fallback={null}>
           <StructuredData />
@@ -67,7 +74,9 @@ const Index = () => {
           <ExitIntentPopup />
         </Suspense>
       </main>
-      <Footer />
+      <Suspense fallback={null}>
+        <Footer />
+      </Suspense>
     </div>
   );
 };
