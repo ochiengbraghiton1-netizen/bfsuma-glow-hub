@@ -40,27 +40,33 @@ const Index = () => {
       <main className="pt-16">
         <Hero />
         {/* Priority below-fold: testimonials + products */}
-        <Suspense fallback={null}>
-          <DoctorConsultation />
-          <ExpertAuthority />
-          <Testimonials />
-          <CaseStudies />
-          <ProductShowcase />
-        </Suspense>
+        <div className="content-auto">
+          <Suspense fallback={null}>
+            <DoctorConsultation />
+            <ExpertAuthority />
+            <Testimonials />
+            <CaseStudies />
+            <ProductShowcase />
+          </Suspense>
+        </div>
         {/* Secondary content - deferred further */}
-        <Suspense fallback={null}>
-          <StoriesInsights />
-          <About />
-          <FAQ />
-        </Suspense>
+        <div className="content-auto">
+          <Suspense fallback={null}>
+            <StoriesInsights />
+            <About />
+            <FAQ />
+          </Suspense>
+        </div>
         {/* Tertiary content */}
-        <Suspense fallback={null}>
-          <JoinEarn />
-          <Community />
-          <Contact />
-          <NewsletterSignup />
-          <CertificationsBadges />
-        </Suspense>
+        <div className="content-auto">
+          <Suspense fallback={null}>
+            <JoinEarn />
+            <Community />
+            <Contact />
+            <NewsletterSignup />
+            <CertificationsBadges />
+          </Suspense>
+        </div>
         {/* Interactive overlays + structured data - lowest priority */}
         <Suspense fallback={null}>
           <StructuredData />
