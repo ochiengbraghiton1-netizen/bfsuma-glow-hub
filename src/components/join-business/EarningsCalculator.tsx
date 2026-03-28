@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useAnimatedNumber } from '@/hooks/use-animated-number';
 import { Calculator, TrendingUp, DollarSign, Users, Star, Info } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
