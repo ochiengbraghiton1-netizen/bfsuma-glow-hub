@@ -6,7 +6,7 @@ import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
 import { Loader2, ArrowLeft, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { HelmetProvider, Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet-async';
 
 interface Category {
   id: string;
@@ -133,7 +133,7 @@ const CategoryPage = () => {
   // Show category listing if no slug
   if (!slug) {
     return (
-      <HelmetProvider>
+      <>
         <Helmet>
           <title>Product Categories | BF SUMA Royal Kenya</title>
           <meta name="description" content="Browse BF SUMA Royal product categories for natural health and wellness supplements in Kenya." />
@@ -187,13 +187,13 @@ const CategoryPage = () => {
           </main>
           <Footer />
         </div>
-      </HelmetProvider>
+      </>
     );
   }
 
   // Show products in category
   return (
-    <HelmetProvider>
+    <>
       <Helmet>
         <title>{category?.name} Supplements | BF SUMA Royal Kenya</title>
         <meta name="description" content={category?.description || `Browse ${category?.name} natural health supplements from BF SUMA Royal Kenya.`} />
@@ -244,7 +244,7 @@ const CategoryPage = () => {
         </main>
         <Footer />
       </div>
-    </HelmetProvider>
+    </>
   );
 };
 

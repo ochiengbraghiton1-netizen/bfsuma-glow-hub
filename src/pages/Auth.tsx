@@ -134,8 +134,8 @@ const Auth = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-accent/10 flex items-center justify-center p-4">
       <Helmet>
         <title>Sign In | BF SUMA Royal Kenya</title>
-        <meta name="description" content="Sign in or create your BF SUMA Royal account. Manage orders, track deliveries, and access exclusive distributor tools in Kenya." />
-        <link rel="canonical" href="https://bfsumaroyal.com/auth" />
+        <meta name="description" content="Sign in or create your BF SUMA Royal account." />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
