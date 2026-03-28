@@ -101,6 +101,7 @@ const JoinBusiness = () => {
       <StarLevels />
       <SupportSystem />
       <RewardsIncentives />
+      <EarningsCalculator />
       <WhyJoin />
       <CTABanner />
       <JoinFAQ />
