@@ -5,6 +5,7 @@ import { ArrowLeft, Users } from 'lucide-react';
 import HeroSection from '@/components/join-business/HeroSection';
 import HowItWorks from '@/components/join-business/HowItWorks';
 import StarLevels from '@/components/join-business/StarLevels';
+import IncomeStreamsGraphic from '@/components/join-business/IncomeStreamsGraphic';
 import SupportSystem from '@/components/join-business/SupportSystem';
 import RewardsIncentives from '@/components/join-business/RewardsIncentives';
 import WhyJoin from '@/components/join-business/WhyJoin';
@@ -98,6 +99,7 @@ const JoinBusiness = () => {
 
       <HeroSection />
       <HowItWorks />
+      <IncomeStreamsGraphic />
       <StarLevels />
       <SupportSystem />
       <RewardsIncentives />
