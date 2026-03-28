@@ -1,4 +1,4 @@
-import { Plane, Car, Trophy, Star, Gift, Sparkles } from 'lucide-react';
+import { Plane, Car, Trophy, Star, Gift, Sparkles, Store } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import travelImage from '@/assets/travel-reward.jpg';
 import carImage from '@/assets/car-reward.jpg';
@@ -74,22 +74,24 @@ const RewardsIncentives = () => {
                 <h3 className="text-xl font-bold text-foreground">Car Awards</h3>
               </div>
               <p className="text-muted-foreground mb-4">
-                Top performers who reach Senior Diamond Leader and above qualify for car incentives worth up to US$12,500.
+                Top performers qualify for car incentives worth up to US$25,000:
               </p>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2">
                   <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
                   <span className="text-muted-foreground">
-                    <strong className="text-foreground">Normal Car Award (US$12,500):</strong> For Senior Diamond Leaders with 3+ active 7-Star downlines and yearly group sales of 120,000+ PV
+                    <strong className="text-foreground">Normal Car Award (US$12,500):</strong> For Senior Diamond Leaders with 10-Star+ rank, 3+ active 7-Star downlines, and yearly PGV of 120,000+ PV
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-muted-foreground">Must maintain 10-Star or above rank and stay active every month</span>
+                  <span className="text-muted-foreground">
+                    <strong className="text-foreground">Luxury Car Award (US$25,000):</strong> For Crown Leaders and above with 11-Star+ rank, 3+ active 7-Star downlines, and yearly PGV of 120,000+ PV
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-muted-foreground">Part of BF Suma's global reward program — assessed once per BF Suma Value Year</span>
+                  <span className="text-muted-foreground">Must stay active every month — assessed once per BF Suma Value Year</span>
                 </li>
               </ul>
             </CardContent>
@@ -109,6 +111,24 @@ const RewardsIncentives = () => {
                 <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">7-Star rank required</span>
                 <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">2+ 7-Star downlines</span>
                 <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">1,500+ PV minimum</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Special Store Service Bonus */}
+        <div className="mb-12 p-6 rounded-2xl bg-secondary/5 border border-secondary/20">
+          <div className="flex items-start gap-3">
+            <Store className="h-6 w-6 text-secondary mt-1 flex-shrink-0" />
+            <div>
+              <h3 className="text-lg font-bold text-foreground mb-2">Special Store Service Bonus (SSSB) — Up to 6%</h3>
+              <p className="text-sm text-muted-foreground mb-3">
+                Successful leaders can qualify to operate a BF Suma special store. You'll earn a monthly bonus of up to 6% based on your store's total PV performance — including operation allowance, maintenance allowance, and a performance bonus.
+              </p>
+              <div className="flex flex-wrap gap-4 text-sm">
+                <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">2–6% total bonus</span>
+                <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">Based on monthly store TPV</span>
+                <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">Reviewed each value month</span>
               </div>
             </div>
           </div>

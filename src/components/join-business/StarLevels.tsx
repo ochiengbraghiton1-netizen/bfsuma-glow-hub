@@ -2,20 +2,21 @@ import { Star, Crown, Award, TrendingUp, Users, Globe } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 const beginnerLevels = [
-  { rank: '1 Star', condition: 'Starter Kit', bonus: '0%', description: 'You just joined — welcome! Start by buying and selling products.' },
-  { rank: '2 Star', condition: 'Build your first sales', bonus: '5%', description: 'You begin earning performance bonuses as your sales grow.' },
-  { rank: '3 Star', condition: 'Consistent sales volume', bonus: '9%', description: 'Your network is building. Enjoy higher bonuses on team performance.' },
-  { rank: '4 Star', condition: 'Growing team sales', bonus: '13%', description: 'You\'re leading a team. Your earnings increase with your team\'s success.' },
-  { rank: '5 Star', condition: 'Strong sales team', bonus: '17–22%', description: 'You\'re a proven leader. Your team generates serious income for you.' },
-  { rank: '6 Star', condition: 'Qualified downline leaders', bonus: '28%', description: 'You\'ve reached the highest star rank. Massive bonuses and leadership status.' },
+  { rank: '1 Star', condition: 'Purchase starter kit (US$200)', bonus: '0%', description: 'You just joined — welcome! Start by buying and selling products.' },
+  { rank: '2 Star', condition: '3 pax, ≥20 PV each', bonus: '5%', description: 'You begin earning performance bonuses as your personal sales grow.' },
+  { rank: '3 Star', condition: '≥300 PV, ≥20 PV personal', bonus: '9%', description: 'Your network is building. Enjoy higher bonuses on team performance.' },
+  { rank: '4 Star', condition: '≥1,000 PV, ≥30 PV personal', bonus: '13%', description: 'You\'re leading a team. Your earnings increase with your team\'s success.' },
+  { rank: '5 Star', condition: '≥3,000 PV, ≥40 PV personal', bonus: '17%', description: 'You\'re a proven leader. Your team generates serious income for you.' },
+  { rank: '6 Star', condition: '≥8,000 PV, ≥50 PV personal', bonus: '22%', description: 'Strong team performance unlocks major bonuses and recognition.' },
 ];
 
 const leaderLevels = [
-  { rank: 'Senior Leader (SL)', condition: '1 qualified leader', bonus: '5% LDB', icon: Award },
-  { rank: 'Diamond Leader (DL)', condition: '2 qualified leaders', bonus: '10% LDB', icon: Award },
-  { rank: 'Senior Diamond (SDL)', condition: '3 qualified leaders', bonus: '15% LDB', icon: Crown },
-  { rank: 'Crown Leader (CL)', condition: '4 qualified leaders', bonus: '20% LDB', icon: Crown },
-  { rank: 'Senior Crown Leader (SCL)', condition: '5 qualified leaders', bonus: '25% LDB', icon: Crown },
+  { rank: '7 Star (Leader)', condition: '≥10,000 PV, ≥50 PV personal', bonus: '28% OPB', icon: Award },
+  { rank: 'Senior Leader (SL)', condition: '1 qualified leader, ≥100 PV', bonus: '5% LDB', icon: Award },
+  { rank: 'Diamond Leader (DL)', condition: '2 qualified leaders, ≥100 PV', bonus: '8–10% LDB', icon: Award },
+  { rank: 'Senior Diamond (SDL)', condition: '3 qualified leaders, ≥100 PV', bonus: '15% LDB', icon: Crown },
+  { rank: 'Crown Leader (CL)', condition: '4 qualified leaders, ≥100 PV', bonus: '20% LDB', icon: Crown },
+  { rank: 'Senior Crown Leader (SCL)', condition: '5 qualified leaders, ≥265 PV', bonus: '25% LDB', icon: Crown },
 ];
 
 const StarLevels = () => {
@@ -35,7 +36,7 @@ const StarLevels = () => {
         <div className="mb-12">
           <div className="flex items-center gap-3 mb-6">
             <Star className="h-6 w-6 text-accent" />
-            <h3 className="text-xl font-bold text-foreground">Star Levels 1–6 (Beginner to Intermediate)</h3>
+            <h3 className="text-xl font-bold text-foreground">Star Levels 1–6 (Building Your Foundation)</h3>
           </div>
           <p className="text-muted-foreground mb-6">
             Every distributor starts at 1 Star. As your personal and team sales grow, you advance through the star levels and earn higher bonuses.
