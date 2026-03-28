@@ -24,6 +24,10 @@ Disallow: /forgot-password
 Disallow: /reset-password
 Disallow: /account
 Disallow: /account/*
+Disallow: /checkout
+Disallow: /order-tracking
+Disallow: /order-confirmation
+Disallow: /order-success
 
 # Sitemap (dynamic - generated from edge function)
 Sitemap: https://bfsumaroyal.com/sitemap.xml

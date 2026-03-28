@@ -102,7 +102,7 @@ const Footer = () => {
 
         {/* Compliance Disclaimer */}
         <div className="pt-8 border-t border-white/20 mb-4">
-          <p className="text-[11px] italic text-center" style={{ color: '#888888' }}>
+          <p className="text-[11px] italic text-center text-muted-foreground/60">
             * These statements have not been evaluated by any food or drug regulatory authority. This product is not intended to diagnose, treat, cure, or prevent any disease. Results may vary. Always consult a qualified healthcare professional before starting any supplement regimen.
           </p>
         </div>
