@@ -17,25 +17,28 @@ const Hero = () => {
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
       {/* Hero background image - LCP element */}
-      <img
-        src="/images/wellness-hero.jpg"
-        alt="BF SUMA Royal premium wellness supplements and natural health products display"
-        loading="eager"
-        decoding="sync"
-        fetchPriority="high"
-        className="absolute inset-0 w-full h-full object-cover"
-        width={1920}
-        height={1080}
-        sizes="100vw"
-        style={{ objectPosition: "center" }}
-      />
+      <picture>
+        <source srcSet="/images/wellness-hero.webp" type="image/webp" />
+        <img
+          src="/images/wellness-hero.jpg"
+          alt="BF SUMA Royal premium wellness supplements and natural health products display"
+          loading="eager"
+          decoding="sync"
+          fetchPriority="high"
+          className="absolute inset-0 w-full h-full object-cover"
+          width={1920}
+          height={1080}
+          sizes="100vw"
+          style={{ objectPosition: "center" }}
+        />
+      </picture>
       {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-secondary/90 via-secondary/70 to-primary/80" />
       
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 text-center animate-fade-in">
-        <div className="flex items-center justify-center gap-2 mb-6 animate-scale-in">
+      <div className="relative z-10 container mx-auto px-4 text-center">
+        <div className="flex items-center justify-center gap-2 mb-6">
           <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-accent animate-glow" />
           <span className="text-accent font-semibold uppercase tracking-wider text-xs md:text-sm">
             Trusted Wellness Products

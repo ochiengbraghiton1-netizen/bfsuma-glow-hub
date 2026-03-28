@@ -2,7 +2,8 @@ import { lazy, Suspense } from "react";
 import { Helmet } from "react-helmet-async";
 import Hero from "@/components/Hero";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
+const Footer = lazy(() => import("@/components/Footer"));
 
 // Lazy-load below-the-fold sections
 const DoctorConsultation = lazy(() => import("@/components/DoctorConsultation"));
@@ -67,7 +68,9 @@ const Index = () => {
           <ExitIntentPopup />
         </Suspense>
       </main>
-      <Footer />
+      <Suspense fallback={null}>
+        <Footer />
+      </Suspense>
     </div>
   );
 };
