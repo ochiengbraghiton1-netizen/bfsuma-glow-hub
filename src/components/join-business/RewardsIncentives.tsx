@@ -1,7 +1,7 @@
 import { Plane, Car, Trophy, Star, Gift, Sparkles, Store } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import travelImage from '@/assets/travel-reward.jpg';
-import carImage from '@/assets/car-reward.jpg';
+import travelImage from '@/assets/travel-reward.webp';
+import carImage from '@/assets/car-reward.webp';
 
 const RewardsIncentives = () => {
   return (
