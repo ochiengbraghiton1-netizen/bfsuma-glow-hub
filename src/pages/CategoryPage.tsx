@@ -132,8 +132,7 @@ const CategoryPage = () => {
 
   // Show category listing if no slug
   if (!slug) {
-    return (
-      <HelmetProvider>
+      <>
         <Helmet>
           <title>Product Categories | BF SUMA Royal Kenya</title>
           <meta name="description" content="Browse BF SUMA Royal product categories for natural health and wellness supplements in Kenya." />
@@ -187,13 +186,13 @@ const CategoryPage = () => {
           </main>
           <Footer />
         </div>
-      </HelmetProvider>
+      </>
     );
   }
 
   // Show products in category
   return (
-    <HelmetProvider>
+    <>
       <Helmet>
         <title>{category?.name} Supplements | BF SUMA Royal Kenya</title>
         <meta name="description" content={category?.description || `Browse ${category?.name} natural health supplements from BF SUMA Royal Kenya.`} />
@@ -244,7 +243,7 @@ const CategoryPage = () => {
         </main>
         <Footer />
       </div>
-    </HelmetProvider>
+    </>
   );
 };
 
