@@ -1,4 +1,4 @@
-import { Star, Crown, Award, TrendingUp } from 'lucide-react';
+import { Star, Crown, Award, TrendingUp, Users, Globe } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 const beginnerLevels = [
