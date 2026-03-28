@@ -132,6 +132,7 @@ const CategoryPage = () => {
 
   // Show category listing if no slug
   if (!slug) {
+    return (
       <>
         <Helmet>
           <title>Product Categories | BF SUMA Royal Kenya</title>
