@@ -84,6 +84,43 @@ const StarLevels = () => {
           </div>
         </div>
 
+        {/* Additional Bonuses for Leaders */}
+        <div className="mt-12 grid sm:grid-cols-2 gap-6">
+          <div className="p-6 rounded-2xl bg-accent/5 border border-accent/20">
+            <div className="flex items-start gap-3">
+              <Users className="h-6 w-6 text-accent mt-1 flex-shrink-0" />
+              <div>
+                <h4 className="font-semibold text-foreground mb-2">Leader Sponsoring Bonus (LSB) — 6.5%</h4>
+                <p className="text-sm text-muted-foreground mb-3">
+                  As a Senior Leader or above, you earn extra bonuses from the sales of qualified leaders you've personally developed — across up to 3 generations of your network.
+                </p>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• <strong className="text-foreground">1st Generation:</strong> 5–10% based on your rank</li>
+                  <li>• <strong className="text-foreground">2nd Generation:</strong> 5–10% based on your rank</li>
+                  <li>• <strong className="text-foreground">3rd Generation:</strong> 3–6% for top leaders</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-secondary/5 border border-secondary/20">
+            <div className="flex items-start gap-3">
+              <Globe className="h-6 w-6 text-secondary mt-1 flex-shrink-0" />
+              <div>
+                <h4 className="font-semibold text-foreground mb-2">Leader Global Bonus (LGB) — 3%</h4>
+                <p className="text-sm text-muted-foreground mb-3">
+                  BF Suma sets aside 3% of total company sales into a global bonus pool. Senior Diamond Leaders and above share in this pool — giving you a slice of the company's worldwide success.
+                </p>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• Available to SDL, CL, and SCL ranks</li>
+                  <li>• Distributed equally and proportionally</li>
+                  <li>• Maximum 1.5% (SDL), 2.5% (CL), 3% (SCL)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Simple explainer */}
         <div className="mt-10 p-6 rounded-2xl bg-primary/5 border border-primary/20">
           <div className="flex items-start gap-3">
@@ -93,7 +130,7 @@ const StarLevels = () => {
               <p className="text-sm text-muted-foreground">
                 You earn bonuses based on the difference between your rank's percentage and your team members' percentages. 
                 For example, if you're at 28% and your direct team member is at 9%, you earn 19% on their team's sales volume. 
-                The higher you rise, the bigger the gap — and the bigger your earnings.
+                The higher you rise, the bigger the gap — and the bigger your earnings. At the top, you also unlock sponsoring bonuses, departure bonuses, and a share of global company profits.
               </p>
             </div>
           </div>
