@@ -74,22 +74,24 @@ const RewardsIncentives = () => {
                 <h3 className="text-xl font-bold text-foreground">Car Awards</h3>
               </div>
               <p className="text-muted-foreground mb-4">
-                Top performers who reach Senior Diamond Leader and above qualify for car incentives worth up to US$12,500.
+                Top performers qualify for car incentives worth up to US$25,000:
               </p>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2">
                   <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
                   <span className="text-muted-foreground">
-                    <strong className="text-foreground">Normal Car Award (US$12,500):</strong> For Senior Diamond Leaders with 3+ active 7-Star downlines and yearly group sales of 120,000+ PV
+                    <strong className="text-foreground">Normal Car Award (US$12,500):</strong> For Senior Diamond Leaders with 10-Star+ rank, 3+ active 7-Star downlines, and yearly PGV of 120,000+ PV
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-muted-foreground">Must maintain 10-Star or above rank and stay active every month</span>
+                  <span className="text-muted-foreground">
+                    <strong className="text-foreground">Luxury Car Award (US$25,000):</strong> For Crown Leaders and above with 11-Star+ rank, 3+ active 7-Star downlines, and yearly PGV of 120,000+ PV
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-muted-foreground">Part of BF Suma's global reward program — assessed once per BF Suma Value Year</span>
+                  <span className="text-muted-foreground">Must stay active every month — assessed once per BF Suma Value Year</span>
                 </li>
               </ul>
             </CardContent>
