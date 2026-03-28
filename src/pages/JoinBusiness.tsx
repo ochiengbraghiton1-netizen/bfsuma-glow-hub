@@ -8,6 +8,7 @@ import StarLevels from '@/components/join-business/StarLevels';
 import SupportSystem from '@/components/join-business/SupportSystem';
 import RewardsIncentives from '@/components/join-business/RewardsIncentives';
 import WhyJoin from '@/components/join-business/WhyJoin';
+import EarningsCalculator from '@/components/join-business/EarningsCalculator';
 import JoinFAQ from '@/components/join-business/JoinFAQ';
 import CTABanner from '@/components/join-business/CTABanner';
 import RegistrationFormSection from '@/components/join-business/RegistrationFormSection';
