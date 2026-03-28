@@ -118,6 +118,7 @@ const JoinBusiness = () => {
         <meta property="og:url" content="https://bfsumaroyal.com/join-business" />
         <meta property="og:type" content="website" />
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(webPageSchema)}</script>
       </Helmet>
 
       {/* Sticky Header */}
