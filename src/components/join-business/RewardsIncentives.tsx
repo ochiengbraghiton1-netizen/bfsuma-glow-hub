@@ -1,4 +1,4 @@
-import { Plane, Car, Trophy, Star, Gift, Sparkles } from 'lucide-react';
+import { Plane, Car, Trophy, Star, Gift, Sparkles, Store } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import travelImage from '@/assets/travel-reward.jpg';
 import carImage from '@/assets/car-reward.jpg';
@@ -111,6 +111,24 @@ const RewardsIncentives = () => {
                 <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">7-Star rank required</span>
                 <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">2+ 7-Star downlines</span>
                 <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">1,500+ PV minimum</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Special Store Service Bonus */}
+        <div className="mb-12 p-6 rounded-2xl bg-secondary/5 border border-secondary/20">
+          <div className="flex items-start gap-3">
+            <Store className="h-6 w-6 text-secondary mt-1 flex-shrink-0" />
+            <div>
+              <h3 className="text-lg font-bold text-foreground mb-2">Special Store Service Bonus (SSSB) — Up to 6%</h3>
+              <p className="text-sm text-muted-foreground mb-3">
+                Successful leaders can qualify to operate a BF Suma special store. You'll earn a monthly bonus of up to 6% based on your store's total PV performance — including operation allowance, maintenance allowance, and a performance bonus.
+              </p>
+              <div className="flex flex-wrap gap-4 text-sm">
+                <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">2–6% total bonus</span>
+                <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">Based on monthly store TPV</span>
+                <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">Reviewed each value month</span>
               </div>
             </div>
           </div>
