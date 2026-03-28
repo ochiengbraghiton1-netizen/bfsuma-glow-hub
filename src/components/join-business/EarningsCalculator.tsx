@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useAnimatedNumber } from '@/hooks/use-animated-number';
 import { Calculator, TrendingUp, DollarSign, Users, Star, Info } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
@@ -184,10 +185,8 @@ const EarningsCalculator = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-primary-foreground/80 text-sm font-medium">Estimated Monthly Earnings</p>
-                    <p className="text-4xl md:text-5xl font-bold mt-1">{formatUSD(earnings.total)}</p>
-                    <p className="text-primary-foreground/70 text-sm mt-2">
-                      Total Group PV: {earnings.totalGroupPV.toLocaleString()} PV
-                    </p>
+                    <AnimatedTotal value={earnings.total} />
+                    <AnimatedGroupPV value={earnings.totalGroupPV} />
                   </div>
                   <TrendingUp className="h-12 w-12 text-primary-foreground/30" />
                 </div>
@@ -253,25 +252,46 @@ const EarningsCalculator = () => {
   );
 };
 
-const EarningRow = ({ label, value, tooltip, active }: { label: string; value: number; tooltip: string; active: boolean }) => (
-  <TooltipProvider>
-    <div className={`flex items-center justify-between py-2 px-3 rounded-lg transition-colors ${active ? 'bg-muted/50' : 'opacity-40'}`}>
-      <div className="flex items-center gap-2">
-        <span className={`text-sm ${active ? 'text-foreground' : 'text-muted-foreground'}`}>{label}</span>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-          </TooltipTrigger>
-          <TooltipContent side="top" className="max-w-[220px]">
-            <p className="text-xs">{tooltip}</p>
-          </TooltipContent>
-        </Tooltip>
+const AnimatedTotal = ({ value }: { value: number }) => {
+  const animated = useAnimatedNumber(value, 500);
+  return (
+    <p className="text-4xl md:text-5xl font-bold mt-1 tabular-nums">
+      US${Math.round(animated).toLocaleString()}
+    </p>
+  );
+};
+
+const AnimatedGroupPV = ({ value }: { value: number }) => {
+  const animated = useAnimatedNumber(value, 400);
+  return (
+    <p className="text-primary-foreground/70 text-sm mt-2 tabular-nums">
+      Total Group PV: {Math.round(animated).toLocaleString()} PV
+    </p>
+  );
+};
+
+const EarningRow = ({ label, value, tooltip, active }: { label: string; value: number; tooltip: string; active: boolean }) => {
+  const animated = useAnimatedNumber(value, 350);
+  return (
+    <TooltipProvider>
+      <div className={`flex items-center justify-between py-2 px-3 rounded-lg transition-colors ${active ? 'bg-muted/50' : 'opacity-40'}`}>
+        <div className="flex items-center gap-2">
+          <span className={`text-sm ${active ? 'text-foreground' : 'text-muted-foreground'}`}>{label}</span>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-[220px]">
+              <p className="text-xs">{tooltip}</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+        <span className={`text-sm font-semibold tabular-nums ${active ? 'text-foreground' : 'text-muted-foreground'}`}>
+          US${Math.round(animated).toLocaleString()}
+        </span>
       </div>
-      <span className={`text-sm font-semibold ${active ? 'text-foreground' : 'text-muted-foreground'}`}>
-        US${value.toFixed(0)}
-      </span>
-    </div>
-  </TooltipProvider>
-);
+    </TooltipProvider>
+  );
+};
 
 export default EarningsCalculator;
