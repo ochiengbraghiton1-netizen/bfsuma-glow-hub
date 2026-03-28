@@ -1,5 +1,7 @@
 import { Star, Crown, Award, TrendingUp, Users, Globe } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import RankProgressionGraphic from './RankProgressionGraphic';
+import NetworkTreeGraphic from './NetworkTreeGraphic';
 
 const beginnerLevels = [
   { rank: '1 Star', condition: 'Purchase starter kit (US$200)', bonus: '0%', description: 'You just joined — welcome! Start by buying and selling products.' },
@@ -31,6 +33,9 @@ const StarLevels = () => {
             As you sell more products and build your team, you move up through levels — unlocking bigger bonuses and rewards at each stage.
           </p>
         </div>
+
+        {/* Visual Rank Progression Ladder */}
+        <RankProgressionGraphic />
 
         {/* Beginner to Intermediate */}
         <div className="mb-12">
@@ -122,20 +127,8 @@ const StarLevels = () => {
           </div>
         </div>
 
-        {/* Simple explainer */}
-        <div className="mt-10 p-6 rounded-2xl bg-primary/5 border border-primary/20">
-          <div className="flex items-start gap-3">
-            <TrendingUp className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
-            <div>
-              <h4 className="font-semibold text-foreground mb-2">How Your Earnings Grow</h4>
-              <p className="text-sm text-muted-foreground">
-                You earn bonuses based on the difference between your rank's percentage and your team members' percentages. 
-                For example, if you're at 28% and your direct team member is at 9%, you earn 19% on their team's sales volume. 
-                The higher you rise, the bigger the gap — and the bigger your earnings. At the top, you also unlock sponsoring bonuses, departure bonuses, and a share of global company profits.
-              </p>
-            </div>
-          </div>
-        </div>
+        {/* Network Tree Diagram — visual explainer */}
+        <NetworkTreeGraphic />
       </div>
     </section>
   );
