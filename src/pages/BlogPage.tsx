@@ -345,28 +345,65 @@ const BlogPostView = ({ slug }: { slug: string }) => {
   const readingTime = Math.max(1, Math.ceil(wordCount / 200));
   const metaDescription = post.meta_description || stripHtmlTags(post.excerpt) || '';
 
+  const canonicalUrl = `https://bfsumaroyal.com/blog/${post.slug}`;
+  const articleImage = post.featured_image || 'https://bfsumaroyal.com/og-image.png';
+
   return (
     <>
       <Helmet>
         <title>{post.meta_title || post.title} | BF SUMA Kenya</title>
         <meta name="description" content={metaDescription} />
-        {post.featured_image && <meta property="og:image" content={post.featured_image} />}
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:image" content={articleImage} />
         <meta property="og:title" content={post.meta_title || post.title} />
         <meta property="og:description" content={metaDescription} />
         <meta property="og:type" content="article" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="article:published_time" content={post.published_at || post.created_at} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={post.meta_title || post.title} />
+        <meta name="twitter:description" content={metaDescription} />
+        <meta name="twitter:image" content={articleImage} />
         <script type="application/ld+json">
           {JSON.stringify({
             '@context': 'https://schema.org',
-            '@type': 'BlogPosting',
+            '@type': 'Article',
             headline: post.title,
-            description: stripHtmlTags(post.excerpt),
-            image: post.featured_image || undefined,
-            datePublished: post.published_at,
-            dateModified: post.created_at,
-            ...(post.video_url && { video: { '@type': 'VideoObject', contentUrl: post.video_url, name: post.title, description: stripHtmlTags(post.excerpt) } }),
-            author: { '@type': 'Organization', name: 'BF SUMA Royal Kenya', url: 'https://bfsumaroyal.com' },
-            publisher: { '@type': 'Organization', name: 'BF SUMA Royal Kenya', url: 'https://bfsumaroyal.com', logo: { '@type': 'ImageObject', url: 'https://bfsumaroyal.com/favicon.png' } },
-            mainEntityOfPage: { '@type': 'WebPage', '@id': `https://bfsumaroyal.com/blog/${post.slug}` },
+            description: metaDescription || stripHtmlTags(post.excerpt) || undefined,
+            image: articleImage,
+            url: canonicalUrl,
+            datePublished: post.published_at || post.created_at,
+            dateModified: post.published_at || post.created_at,
+            wordCount: wordCount,
+            articleSection: post.categories?.map(c => c.name) || undefined,
+            ...(post.video_url && {
+              video: {
+                '@type': 'VideoObject',
+                contentUrl: post.video_url,
+                name: post.title,
+                description: metaDescription || stripHtmlTags(post.excerpt) || undefined,
+                thumbnailUrl: articleImage,
+                uploadDate: post.published_at || post.created_at,
+              },
+            }),
+            author: {
+              '@type': 'Organization',
+              name: 'BF SUMA Royal Kenya',
+              url: 'https://bfsumaroyal.com',
+            },
+            publisher: {
+              '@type': 'Organization',
+              name: 'BF SUMA Royal Kenya',
+              url: 'https://bfsumaroyal.com',
+              logo: {
+                '@type': 'ImageObject',
+                url: 'https://bfsumaroyal.com/favicon.png',
+              },
+            },
+            mainEntityOfPage: {
+              '@type': 'WebPage',
+              '@id': canonicalUrl,
+            },
           })}
         </script>
       </Helmet>
