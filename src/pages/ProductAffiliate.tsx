@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,7 @@ import { useCart } from "@/contexts/CartContext";
 import { formatPrice, getStockStatus } from "@/hooks/use-products";
 import RichTextContent from "@/components/ui/rich-text-content";
 import ProductReviews from "@/components/ProductReviews";
+import { useProductRatings } from "@/hooks/use-product-ratings";
 import RelatedBlogPosts from "@/components/blog/RelatedBlogPosts";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -31,6 +32,7 @@ interface ProductData {
   low_stock_threshold: number;
   track_inventory: boolean;
   pv_value: number;
+  sku: string | null;
 }
 
 const ProductAffiliate = () => {
@@ -39,6 +41,9 @@ const ProductAffiliate = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { addToCart, toggleFavorite, isFavorite } = useCart();
+  const productIds = useMemo(() => product ? [product.id] : [], [product]);
+  const { data: productRatings } = useProductRatings(productIds);
+  const ratings = product ? productRatings?.[product.id] : undefined;
 
   useEffect(() => {
     if (!slug) {
@@ -108,7 +113,7 @@ const ProductAffiliate = () => {
         // 4) Fetch full product
         const { data: prod, error: prodErr } = await supabase
           .from("products")
-          .select("id, name, price, benefit, description, image_url, stock_quantity, low_stock_threshold, track_inventory, pv_value")
+          .select("id, name, price, benefit, description, image_url, stock_quantity, low_stock_threshold, track_inventory, pv_value, sku")
           .eq("id", productId)
           .eq("is_active", true)
           .maybeSingle();
@@ -173,6 +178,7 @@ const ProductAffiliate = () => {
   const favorite = isFavorite(product.id);
   const formattedPrice = formatPrice(product.price);
 
+
   const handleAddToCart = () => {
     if (isOutOfStock) return;
     addToCart({
@@ -225,25 +231,41 @@ const ProductAffiliate = () => {
             "@context": "https://schema.org",
             "@type": "Product",
             name: product.name,
-            description: plainDescription || undefined,
+            description: plainDescription || `Premium ${product.name} wellness supplement by BF SUMA Royal`,
             image: seoImage,
             url: canonicalUrl,
-            brand: { "@type": "Brand", name: "BF SUMA" },
-            sku: product.id,
+            sku: product.sku || product.id,
+            brand: { "@type": "Brand", name: "BF SUMA Royal" },
+            ...(ratings && ratings.reviewCount > 0 ? {
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: ratings.averageRating.toString(),
+                reviewCount: ratings.reviewCount.toString(),
+                bestRating: "5",
+                worstRating: "1",
+              },
+            } : {}),
             offers: {
               "@type": "Offer",
-              price: product.price,
+              price: product.price.toString(),
               priceCurrency: "KES",
               availability: isOutOfStock
                 ? "https://schema.org/OutOfStock"
                 : "https://schema.org/InStock",
               url: canonicalUrl,
-              priceValidUntil: new Date(Date.now() + 90 * 86400000).toISOString().split("T")[0],
+              priceValidUntil: new Date(Date.now() + 365 * 86400000).toISOString().split("T")[0],
+              itemCondition: "https://schema.org/NewCondition",
+              seller: { "@type": "Organization", name: "BF SUMA Royal Kenya" },
               shippingDetails: {
                 "@type": "OfferShippingDetails",
+                shippingRate: { "@type": "MonetaryAmount", value: "300", currency: "KES" },
                 shippingDestination: { "@type": "DefinedRegion", addressCountry: "KE" },
+                deliveryTime: {
+                  "@type": "ShippingDeliveryTime",
+                  handlingTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 2, unitCode: "DAY" },
+                  transitTime: { "@type": "QuantitativeValue", minValue: 2, maxValue: 5, unitCode: "DAY" },
+                },
               },
-              itemCondition: "https://schema.org/NewCondition",
             },
           })}
         </script>
