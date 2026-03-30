@@ -8,6 +8,7 @@ import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import { TextStyle } from '@tiptap/extension-text-style';
 import FontSize from '@/lib/tiptap-font-size';
+import LineHeight from '@/lib/tiptap-line-height';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -139,6 +140,7 @@ const RichTextEditor = ({
       }),
       TextStyle,
       FontSize,
+      LineHeight,
       Underline,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
@@ -313,6 +315,30 @@ const RichTextEditor = ({
           <option value="32px">32px</option>
           <option value="36px">36px</option>
           <option value="48px">48px</option>
+        </select>
+
+        {/* Line spacing selector */}
+        <select
+          value={editor.getAttributes('paragraph').lineHeight || editor.getAttributes('heading').lineHeight || ''}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val) {
+              editor.chain().focus().setLineHeight(val).run();
+            } else {
+              editor.chain().focus().unsetLineHeight().run();
+            }
+          }}
+          className="h-8 rounded-md border border-input bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring shrink-0"
+          title="Line Spacing"
+        >
+          <option value="">Spacing</option>
+          <option value="1">1.0×</option>
+          <option value="1.25">1.25×</option>
+          <option value="1.5">1.5×</option>
+          <option value="1.75">1.75×</option>
+          <option value="2">2.0×</option>
+          <option value="2.5">2.5×</option>
+          <option value="3">3.0×</option>
         </select>
 
         <Divider />
