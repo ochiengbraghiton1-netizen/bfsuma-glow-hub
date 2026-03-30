@@ -41,6 +41,9 @@ const ProductAffiliate = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { addToCart, toggleFavorite, isFavorite } = useCart();
+  const productIds = useMemo(() => product ? [product.id] : [], [product]);
+  const { data: productRatings } = useProductRatings(productIds);
+  const ratings = product ? productRatings?.[product.id] : undefined;
 
   useEffect(() => {
     if (!slug) {
