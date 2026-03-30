@@ -37,6 +37,7 @@ const RichTextContent = ({ content, className, autoLinkProductList }: RichTextCo
         'prose-h6:text-sm prose-h6:font-bold prose-h6:mb-1 prose-h6:mt-2',
         // Paragraphs
         'prose-p:my-2 prose-p:leading-relaxed',
+        '[&_p:empty]:min-h-[1.5em] [&_p:empty]:before:content-["\\00a0"]',
         // Lists
         'prose-ul:my-3 prose-ul:pl-6 prose-ul:list-disc',
         'prose-ol:my-3 prose-ol:pl-6 prose-ol:list-decimal',
