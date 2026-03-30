@@ -103,14 +103,10 @@ const Header = () => {
           {/* Desktop CTA buttons */}
           <div className="hidden lg:flex items-center gap-2">
             <Button variant="default" size="sm" asChild>
-              <a
-                href="#products"
-                onClick={(e) => handleNavClick(e, "#products", true)}
-                className="flex items-center gap-1.5"
-              >
+              <Link to="/products" className="flex items-center gap-1.5">
                 <ShoppingCart className="h-4 w-4" />
                 Buy Products
-              </a>
+              </Link>
             </Button>
             <Button variant="premium" size="sm" asChild>
               <Link to="/join-business" className="flex items-center gap-1.5">
@@ -259,14 +255,10 @@ const Header = () => {
               {/* Prominent CTAs at top */}
               <div className="mt-6 flex flex-col gap-2 px-1">
                 <Button variant="default" size="sm" asChild onClick={() => setIsMobileMenuOpen(false)}>
-                  <a
-                    href="#products"
-                    onClick={(e) => handleNavClick(e, "#products", true)}
-                    className="flex items-center justify-center gap-2"
-                  >
+                  <Link to="/products" className="flex items-center justify-center gap-2">
                     <ShoppingCart className="h-4 w-4" />
                     Buy Products
-                  </a>
+                  </Link>
                 </Button>
                 <Button variant="premium" size="sm" asChild onClick={() => setIsMobileMenuOpen(false)}>
                   <Link to="/join-business" className="flex items-center justify-center gap-2">
