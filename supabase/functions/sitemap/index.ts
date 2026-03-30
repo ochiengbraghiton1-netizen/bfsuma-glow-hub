@@ -113,7 +113,10 @@ ${allEntries}
 
     return new Response(sitemap, {
       status: 200,
-      headers: corsHeaders,
+      headers: {
+        ...corsHeaders,
+        "Cache-Control": "public, max-age=1800, s-maxage=1800",
+      },
     });
   } catch (error) {
     console.error("Sitemap generation error:", error);
