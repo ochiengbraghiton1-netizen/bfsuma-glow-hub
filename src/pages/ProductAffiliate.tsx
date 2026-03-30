@@ -8,6 +8,7 @@ import { useCart } from "@/contexts/CartContext";
 import { formatPrice, getStockStatus } from "@/hooks/use-products";
 import RichTextContent from "@/components/ui/rich-text-content";
 import ProductReviews from "@/components/ProductReviews";
+import { useProductRatings } from "@/hooks/use-product-ratings";
 import RelatedBlogPosts from "@/components/blog/RelatedBlogPosts";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
