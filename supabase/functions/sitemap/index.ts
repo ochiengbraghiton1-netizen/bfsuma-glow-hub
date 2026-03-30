@@ -18,6 +18,19 @@ const staticRoutes = [
   { path: "/faq", changefreq: "monthly", priority: 0.7 },
   { path: "/community", changefreq: "weekly", priority: 0.6 },
   { path: "/category", changefreq: "weekly", priority: 0.7 },
+  { path: "/return-policy", changefreq: "monthly", priority: 0.5 },
+  { path: "/terms", changefreq: "monthly", priority: 0.5 },
+  // Location pages
+  { path: "/nairobi", changefreq: "monthly", priority: 0.8 },
+  { path: "/mombasa", changefreq: "monthly", priority: 0.8 },
+  { path: "/kisumu", changefreq: "monthly", priority: 0.8 },
+  { path: "/nakuru", changefreq: "monthly", priority: 0.8 },
+  { path: "/kakamega", changefreq: "monthly", priority: 0.8 },
+  { path: "/eldoret", changefreq: "monthly", priority: 0.8 },
+  { path: "/thika", changefreq: "monthly", priority: 0.8 },
+  { path: "/nyeri", changefreq: "monthly", priority: 0.8 },
+  { path: "/machakos", changefreq: "monthly", priority: 0.8 },
+  { path: "/kitale", changefreq: "monthly", priority: 0.8 },
 ];
 
 function generateUrlEntry(loc: string, changefreq: string, priority: number, lastmod?: string): string {
