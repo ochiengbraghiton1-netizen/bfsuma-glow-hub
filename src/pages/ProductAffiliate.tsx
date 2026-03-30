@@ -32,6 +32,7 @@ interface ProductData {
   low_stock_threshold: number;
   track_inventory: boolean;
   pv_value: number;
+  sku: string | null;
 }
 
 const ProductAffiliate = () => {
