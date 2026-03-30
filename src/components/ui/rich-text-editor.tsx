@@ -332,7 +332,12 @@ const RichTextEditor = ({
         <MenuButton onClick={() => editor.chain().focus().toggleOrderedList().run()} isActive={editor.isActive('orderedList')} title="Numbered List">
           <ListOrdered className="h-4 w-4" />
         </MenuButton>
-        <MenuButton onClick={() => editor.chain().focus().toggleBlockquote().run()} isActive={editor.isActive('blockquote')} title="Quote">
+        <MenuButton onClick={() => editor.chain().focus().sinkListItem('listItem').run()} disabled={!editor.can().sinkListItem('listItem')} title="Indent (Tab)">
+          <Indent className="h-4 w-4" />
+        </MenuButton>
+        <MenuButton onClick={() => editor.chain().focus().liftListItem('listItem').run()} disabled={!editor.can().liftListItem('listItem')} title="Outdent (Shift+Tab)">
+          <Outdent className="h-4 w-4" />
+        </MenuButton>
           <Quote className="h-4 w-4" />
         </MenuButton>
         <MenuButton onClick={() => editor.chain().focus().toggleCodeBlock().run()} isActive={editor.isActive('codeBlock')} title="Code Block">
