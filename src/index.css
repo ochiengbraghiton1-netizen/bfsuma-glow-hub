@@ -209,6 +209,23 @@ All colors MUST be HSL.
   margin: 0;
 }
 
+/* Nested lists */
+.ProseMirror ul ul {
+  list-style-type: circle;
+}
+
+.ProseMirror ul ul ul {
+  list-style-type: square;
+}
+
+.ProseMirror ol ol {
+  list-style-type: lower-alpha;
+}
+
+.ProseMirror ol ol ol {
+  list-style-type: lower-roman;
+}
+
 .ProseMirror blockquote {
   border-left: 4px solid hsl(var(--primary));
   padding-left: 1rem;
