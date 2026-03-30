@@ -178,9 +178,6 @@ const ProductAffiliate = () => {
   const favorite = isFavorite(product.id);
   const formattedPrice = formatPrice(product.price);
 
-  const productIds = useMemo(() => [product.id], [product.id]);
-  const { data: productRatings } = useProductRatings(productIds);
-  const ratings = productRatings?.[product.id];
 
   const handleAddToCart = () => {
     if (isOutOfStock) return;
