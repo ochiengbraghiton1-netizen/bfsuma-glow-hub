@@ -130,12 +130,14 @@ const App = () => (
                   <Route path="/blog/:slug" element={<BlogPage />} />
                   <Route path="/category" element={<CategoryPage />} />
                   <Route path="/category/:slug" element={<CategoryPage />} />
+                  <Route path="/products" element={<CategoryPage />} />
                   <Route path="/p/:slug" element={<ProductAffiliate />} />
                   <Route path="/contact" element={<ContactPage />} />
                   <Route path="/faq" element={<FAQPage />} />
                   <Route path="/community" element={<CommunityPage />} />
                   <Route path="/return-policy" element={<ReturnPolicy />} />
                   <Route path="/terms" element={<TermsConditions />} />
+                  <Route path="/my-orders" element={<MyOrders />} />
                   <Route path="/:city" element={<LocationLanding />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
