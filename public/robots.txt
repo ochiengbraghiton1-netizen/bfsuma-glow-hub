@@ -28,6 +28,8 @@ Disallow: /checkout
 Disallow: /order-tracking
 Disallow: /order-confirmation
 Disallow: /order-success
+Disallow: /my-orders
+Disallow: /auth-callback
 
 # Sitemap (dynamic - generated from edge function)
 Sitemap: https://bfsumaroyal.com/sitemap.xml
