@@ -230,25 +230,41 @@ const ProductAffiliate = () => {
             "@context": "https://schema.org",
             "@type": "Product",
             name: product.name,
-            description: plainDescription || undefined,
+            description: plainDescription || `Premium ${product.name} wellness supplement by BF SUMA Royal`,
             image: seoImage,
             url: canonicalUrl,
-            brand: { "@type": "Brand", name: "BF SUMA" },
-            sku: product.id,
+            sku: product.sku || product.id,
+            brand: { "@type": "Brand", name: "BF SUMA Royal" },
+            ...(ratings && ratings.reviewCount > 0 ? {
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: ratings.averageRating.toString(),
+                reviewCount: ratings.reviewCount.toString(),
+                bestRating: "5",
+                worstRating: "1",
+              },
+            } : {}),
             offers: {
               "@type": "Offer",
-              price: product.price,
+              price: product.price.toString(),
               priceCurrency: "KES",
               availability: isOutOfStock
                 ? "https://schema.org/OutOfStock"
                 : "https://schema.org/InStock",
               url: canonicalUrl,
-              priceValidUntil: new Date(Date.now() + 90 * 86400000).toISOString().split("T")[0],
+              priceValidUntil: new Date(Date.now() + 365 * 86400000).toISOString().split("T")[0],
+              itemCondition: "https://schema.org/NewCondition",
+              seller: { "@type": "Organization", name: "BF SUMA Royal Kenya" },
               shippingDetails: {
                 "@type": "OfferShippingDetails",
+                shippingRate: { "@type": "MonetaryAmount", value: "300", currency: "KES" },
                 shippingDestination: { "@type": "DefinedRegion", addressCountry: "KE" },
+                deliveryTime: {
+                  "@type": "ShippingDeliveryTime",
+                  handlingTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 2, unitCode: "DAY" },
+                  transitTime: { "@type": "QuantitativeValue", minValue: 2, maxValue: 5, unitCode: "DAY" },
+                },
               },
-              itemCondition: "https://schema.org/NewCondition",
             },
           })}
         </script>
