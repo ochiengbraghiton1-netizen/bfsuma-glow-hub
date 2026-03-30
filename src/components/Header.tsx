@@ -11,7 +11,7 @@ import bfSumaLogo from "@/assets/bf-suma-logo-new.png";
 import { Separator } from "@/components/ui/separator";
 
 const navLinks = [
-  { href: "#products", label: "Products", isAnchor: true },
+  { href: "/products", label: "Shop", isAnchor: false },
   { href: "/about", label: "About", isAnchor: false },
   { href: "/community", label: "Community", isAnchor: false },
   { href: "/blog", label: "Blog", isAnchor: false },
