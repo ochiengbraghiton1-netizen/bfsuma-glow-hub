@@ -140,6 +140,7 @@ const RichTextEditor = ({
       }),
       TextStyle,
       FontSize,
+      LineHeight,
       Underline,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
