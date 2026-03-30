@@ -288,6 +288,35 @@ const RichTextEditor = ({
 
       {/* Sticky Toolbar */}
       <div className="sticky top-0 z-10 flex flex-wrap items-center gap-0.5 p-2 border-b border-input bg-muted/50 backdrop-blur-sm rounded-t-lg">
+        {/* Font size selector */}
+        <select
+          value={editor.getAttributes('textStyle').fontSize || ''}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val) {
+              editor.chain().focus().setFontSize(val).run();
+            } else {
+              editor.chain().focus().unsetFontSize().run();
+            }
+          }}
+          className="h-8 rounded-md border border-input bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring shrink-0"
+          title="Font Size"
+        >
+          <option value="">Default</option>
+          <option value="12px">12px</option>
+          <option value="14px">14px</option>
+          <option value="16px">16px</option>
+          <option value="18px">18px</option>
+          <option value="20px">20px</option>
+          <option value="24px">24px</option>
+          <option value="28px">28px</option>
+          <option value="32px">32px</option>
+          <option value="36px">36px</option>
+          <option value="48px">48px</option>
+        </select>
+
+        <Divider />
+
         {/* Text formatting */}
         <MenuButton onClick={() => editor.chain().focus().toggleBold().run()} isActive={editor.isActive('bold')} title="Bold (Ctrl+B)">
           <Bold className="h-4 w-4" />
