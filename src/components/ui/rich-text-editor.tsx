@@ -137,6 +137,8 @@ const RichTextEditor = ({
           HTMLAttributes: {},
         },
       }),
+      TextStyle,
+      FontSize,
       Underline,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
