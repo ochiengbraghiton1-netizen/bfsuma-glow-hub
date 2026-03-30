@@ -110,7 +110,7 @@ const ProductAffiliate = () => {
         // 4) Fetch full product
         const { data: prod, error: prodErr } = await supabase
           .from("products")
-          .select("id, name, price, benefit, description, image_url, stock_quantity, low_stock_threshold, track_inventory, pv_value")
+          .select("id, name, price, benefit, description, image_url, stock_quantity, low_stock_threshold, track_inventory, pv_value, sku")
           .eq("id", productId)
           .eq("is_active", true)
           .maybeSingle();
