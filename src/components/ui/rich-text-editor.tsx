@@ -8,6 +8,7 @@ import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import { TextStyle } from '@tiptap/extension-text-style';
 import FontSize from '@/lib/tiptap-font-size';
+import LineHeight from '@/lib/tiptap-line-height';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
