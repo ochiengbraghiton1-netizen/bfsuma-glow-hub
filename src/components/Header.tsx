@@ -7,7 +7,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import ThemeToggle from "./ThemeToggle";
 import productGeneric from "@/assets/product-generic.jpg";
-import bfSumaLogo from "@/assets/bf-suma-logo-new.png";
+import bfSumaLogo from "@/assets/bf-suma-logo-new-sm.webp";
 import { Separator } from "@/components/ui/separator";
 
 const navLinks = [
