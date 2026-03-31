@@ -95,6 +95,18 @@
     </noscript>
     <!-- End Google Tag Manager (noscript) -->
     <div id="root"></div>
+    <!-- Static hero shell for instant FCP/LCP before React hydrates -->
+    <div class="hero-shell" aria-hidden="true">
+      <picture>
+        <source srcset="/images/wellness-hero.webp" type="image/webp" />
+        <img src="/images/wellness-hero.jpg" alt="" width="1920" height="1080" fetchpriority="high" decoding="sync" />
+      </picture>
+      <div class="overlay"></div>
+      <div class="content">
+        <h1>Premium Supplements for Better Health<br><span class="accent">Backed by a Real Business Opportunity</span></h1>
+        <p>BF SUMA Royal offers trusted wellness products designed to support your health journey.</p>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
