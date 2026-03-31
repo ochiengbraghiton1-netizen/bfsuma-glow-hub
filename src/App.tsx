@@ -80,8 +80,10 @@ const App = () => (
       <CartProvider>
         <AuthProvider>
           <TooltipProvider>
-            <Toaster />
-            <Sonner />
+            <Suspense fallback={null}>
+              <Toaster />
+              <Sonner />
+            </Suspense>
             <BrowserRouter>
               <ReferralTracker />
               <GTMPageView />
