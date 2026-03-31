@@ -1,8 +1,8 @@
 import { Award } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import expertAmina from "@/assets/expert-amina.jpg";
-import expertDavid from "@/assets/expert-david.jpg";
-import expertFaith from "@/assets/expert-faith.jpg";
+import expertAmina from "@/assets/expert-amina.webp";
+import expertDavid from "@/assets/expert-david.webp";
+import expertFaith from "@/assets/expert-faith.webp";
 
 const experts = [
   {

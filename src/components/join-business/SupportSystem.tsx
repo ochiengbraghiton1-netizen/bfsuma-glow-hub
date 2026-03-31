@@ -1,5 +1,5 @@
 import { GraduationCap, HeartHandshake, BookOpen, Headphones } from 'lucide-react';
-import mentorshipImage from '@/assets/support-mentorship.jpg';
+import mentorshipImage from '@/assets/support-mentorship.webp';
 
 const supports = [
   {

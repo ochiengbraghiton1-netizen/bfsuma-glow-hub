@@ -6,7 +6,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import ThemeToggle from "./ThemeToggle";
-import productGeneric from "@/assets/product-generic.jpg";
+import productGeneric from "@/assets/product-generic.webp";
 import bfSumaLogo from "@/assets/bf-suma-logo-new-sm.webp";
 import { Separator } from "@/components/ui/separator";
 

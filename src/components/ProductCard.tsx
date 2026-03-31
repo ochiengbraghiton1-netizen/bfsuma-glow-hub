@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useCart } from "@/contexts/CartContext";
 import { getStockStatus } from "@/hooks/use-products";
 import ResponsiveImage from "@/components/ui/responsive-image";
-import productGeneric from "@/assets/product-generic.jpg";
+import productGeneric from "@/assets/product-generic.webp";
 import { generateProductAltText } from "@/lib/image-seo";
 
 interface ProductCardProps {

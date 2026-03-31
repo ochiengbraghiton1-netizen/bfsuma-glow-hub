@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { MessageCircle, Stethoscope, Heart, Calendar, ArrowLeft } from "lucide-react";
-import doctorImg from "@/assets/doctor-consultation.jpg";
+import doctorImg from "@/assets/doctor-consultation.webp";
 import ConsultationForm, { ConsultationData } from "@/components/consultation/ConsultationForm";
 import ConsultationSuccess from "@/components/consultation/ConsultationSuccess";
 
