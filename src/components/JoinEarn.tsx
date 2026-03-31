@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { TrendingUp, Users, Award, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import joinEarnBg from "@/assets/join-earn-bg.jpg";
+import joinEarnBg from "@/assets/join-earn-bg.webp";
 
 const JoinEarn = () => {
   const navigate = useNavigate();

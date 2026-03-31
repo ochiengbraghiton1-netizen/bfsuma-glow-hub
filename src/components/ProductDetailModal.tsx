@@ -6,7 +6,7 @@ import ReturnPolicySummary from "@/components/ReturnPolicySummary";
 import { useCart } from "@/contexts/CartContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getStockStatus } from "@/hooks/use-products";
-import productGeneric from "@/assets/product-generic.jpg";
+import productGeneric from "@/assets/product-generic.webp";
 import RichTextContent from "@/components/ui/rich-text-content";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { generateProductAltText } from "@/lib/image-seo";

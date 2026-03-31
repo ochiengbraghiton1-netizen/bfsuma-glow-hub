@@ -9,11 +9,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowRight, BookOpen, Users, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-import fallback1 from "@/assets/fallback-story-1.jpg";
-import fallback2 from "@/assets/fallback-story-2.jpg";
-import fallback3 from "@/assets/fallback-story-3.jpg";
-import fallback4 from "@/assets/fallback-story-4.jpg";
-import fallback5 from "@/assets/fallback-story-5.jpg";
+import fallback1 from "@/assets/fallback-story-1.webp";
+import fallback2 from "@/assets/fallback-story-2.webp";
+import fallback3 from "@/assets/fallback-story-3.webp";
+import fallback4 from "@/assets/fallback-story-4.webp";
+import fallback5 from "@/assets/fallback-story-5.webp";
 
 interface StoryItem {
   id: string;
