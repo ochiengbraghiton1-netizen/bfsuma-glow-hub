@@ -1,6 +1,4 @@
 import { lazy, Suspense } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -10,6 +8,10 @@ import { CartProvider } from "@/contexts/CartContext";
 import { useReferral } from "@/hooks/use-referral";
 import GTMPageView from "@/components/GTMPageView";
 import { Loader2 } from "lucide-react";
+
+// Lazy-load non-critical UI overlays
+const Toaster = lazy(() => import("@/components/ui/toaster").then(m => ({ default: m.Toaster })));
+const Sonner = lazy(() => import("@/components/ui/sonner").then(m => ({ default: m.Toaster })));
 
 // Critical route – loaded eagerly
 import Index from "./pages/Index";
