@@ -16,19 +16,19 @@ import ProductFilters, {
 import { useProducts, formatPrice, DatabaseProduct, getStockStatus } from "@/hooks/use-products";
 
 // Product image imports
-import nmnCapsules from "@/assets/products/nmn-capsules.jpg";
-import ganodermaSpores from "@/assets/products/ganoderma-spores.jpg";
-import yunzhiCapsules from "@/assets/products/yunzhi-capsules.jpg";
-import arthroxtra from "@/assets/products/arthroxtra.jpg";
-import gluzojoint from "@/assets/products/gluzojoint.jpg";
-import xPowerMan from "@/assets/products/x-power-man.jpg";
-import feminegy from "@/assets/products/feminegy.jpg";
-import femiCalcium from "@/assets/products/femi-calcium.jpg";
-import detoxilive from "@/assets/products/detoxilive.jpg";
-import ezXlim from "@/assets/products/ez-xlim.jpg";
-import youthEssence from "@/assets/products/youth-essence.jpg";
-import sumaGrand from "@/assets/products/suma-grand.jpg";
-import vitaminC from "@/assets/products/vitamin-c.jpg";
+import nmnCapsules from "@/assets/products/nmn-capsules.webp";
+import ganodermaSpores from "@/assets/products/ganoderma-spores.webp";
+import yunzhiCapsules from "@/assets/products/yunzhi-capsules.webp";
+import arthroxtra from "@/assets/products/arthroxtra.webp";
+import gluzojoint from "@/assets/products/gluzojoint.webp";
+import xPowerMan from "@/assets/products/x-power-man.webp";
+import feminegy from "@/assets/products/feminegy.webp";
+import femiCalcium from "@/assets/products/femi-calcium.webp";
+import detoxilive from "@/assets/products/detoxilive.webp";
+import ezXlim from "@/assets/products/ez-xlim.webp";
+import youthEssence from "@/assets/products/youth-essence.webp";
+import sumaGrand from "@/assets/products/suma-grand.webp";
+import vitaminC from "@/assets/products/vitamin-c.webp";
 
 const productImageMap: Record<string, string> = {
   "NMN Capsules": nmnCapsules,
