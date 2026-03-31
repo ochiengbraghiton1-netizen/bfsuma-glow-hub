@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { MessageCircle, GraduationCap, Heart } from "lucide-react";
-import communityBg from "@/assets/community-bg.jpg";
+import communityBg from "@/assets/community-bg.webp";
 
 const Community = () => {
   const openWhatsApp = () => {
