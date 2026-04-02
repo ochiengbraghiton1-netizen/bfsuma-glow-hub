@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart, Heart, Eye, Shield, CheckCircle } from "lucide-react";
 import { useInView } from "@/hooks/use-in-view";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { getStockStatus } from "@/hooks/use-products";
 import ResponsiveImage from "@/components/ui/responsive-image";
