@@ -79,7 +79,7 @@ const ProductCard = ({
       {/* Product Image */}
       <div 
         className="relative overflow-hidden cursor-pointer"
-        onClick={onClick}
+        onClick={onClick || (slug ? () => navigate(`/product/${slug}`) : undefined)}
       >
         <div
           className={`
