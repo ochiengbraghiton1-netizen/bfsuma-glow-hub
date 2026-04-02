@@ -13,7 +13,7 @@ import { Loader2 } from "lucide-react";
 const Toaster = lazy(() => import("@/components/ui/toaster").then(m => ({ default: m.Toaster })));
 const Sonner = lazy(() => import("@/components/ui/sonner").then(m => ({ default: m.Toaster })));
 const Chatbot = lazy(() => import("@/components/Chatbot"));
-const StickyConsultationCTA = lazy(() => import("@/components/StickyConsultationCTA"));
+
 
 // Critical route – loaded eagerly
 import Index from "./pages/Index";
@@ -151,7 +151,7 @@ const App = () => (
                 </Routes>
                 <Suspense fallback={null}>
                   <Chatbot />
-                  <StickyConsultationCTA />
+                  
                 </Suspense>
               </Suspense>
             </BrowserRouter>
