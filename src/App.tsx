@@ -148,6 +148,9 @@ const App = () => (
                   <Route path="/:city" element={<LocationLanding />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
+                <Suspense fallback={null}>
+                  <Chatbot />
+                </Suspense>
               </Suspense>
             </BrowserRouter>
           </TooltipProvider>
