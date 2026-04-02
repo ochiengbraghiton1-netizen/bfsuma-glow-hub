@@ -51,6 +51,7 @@ export const useProducts = () => {
           low_stock_threshold,
           track_inventory,
           is_active,
+          slug,
           sku,
           category_id,
           categories (
