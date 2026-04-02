@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import { ShoppingCart, Plus, Minus, Trash2, Menu, UserPlus, LogIn, LogOut, User, LayoutDashboard } from "lucide-react";
+import { ShoppingCart, Plus, Minus, Trash2, Menu, UserPlus, LogIn, LogOut, User, LayoutDashboard, Stethoscope } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useCart } from "@/contexts/CartContext";
@@ -102,6 +102,17 @@ const Header = () => {
         <div className="flex items-center gap-2 md:gap-3">
           {/* Desktop CTA buttons */}
           <div className="hidden lg:flex items-center gap-2">
+            <Button variant="outline" size="sm" asChild>
+              <a
+                href="https://wa.me/254795454053?text=Hi%2C%20I'd%20like%20to%20book%20a%20free%20health%20consultation."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5"
+              >
+                <Stethoscope className="h-4 w-4" />
+                Book Consultation
+              </a>
+            </Button>
             <Button variant="default" size="sm" asChild>
               <Link to="/products" className="flex items-center gap-1.5">
                 <ShoppingCart className="h-4 w-4" />
@@ -254,6 +265,17 @@ const Header = () => {
               
               {/* Prominent CTAs at top */}
               <div className="mt-6 flex flex-col gap-2 px-1">
+                <Button size="sm" asChild onClick={() => setIsMobileMenuOpen(false)}>
+                  <a
+                    href="https://wa.me/254795454053?text=Hi%2C%20I'd%20like%20to%20book%20a%20free%20health%20consultation."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2"
+                  >
+                    <Stethoscope className="h-4 w-4" />
+                    Book Consultation
+                  </a>
+                </Button>
                 <Button variant="default" size="sm" asChild onClick={() => setIsMobileMenuOpen(false)}>
                   <Link to="/products" className="flex items-center justify-center gap-2">
                     <ShoppingCart className="h-4 w-4" />
