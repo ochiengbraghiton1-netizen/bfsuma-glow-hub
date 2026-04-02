@@ -74,7 +74,7 @@ const Index = () => {
         {/* Interactive overlays + structured data - lowest priority */}
         <Suspense fallback={null}>
           <StructuredData />
-          <Chatbot />
+          
           <ExitIntentPopup />
         </Suspense>
       </main>
