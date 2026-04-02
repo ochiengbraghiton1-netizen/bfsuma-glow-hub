@@ -105,6 +105,88 @@
     </noscript>
     <!-- End Google Tag Manager (noscript) -->
     <div id="root"></div>
+
+    <!--
+      SEO fallback: Static content visible to crawlers before React hydrates.
+      Hidden once #root renders via CSS rule: #root:not(:empty) ~ .seo-fallback { display:none }
+    -->
+    <div class="seo-fallback" style="position:absolute;left:-9999px;overflow:hidden">
+      <nav aria-label="Site navigation">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/products">Products</a></li>
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/faq">FAQ</a></li>
+          <li><a href="/join-business">Join Business</a></li>
+          <li><a href="/community">Community</a></li>
+          <li><a href="/category">Categories</a></li>
+          <li><a href="/return-policy">Return Policy</a></li>
+          <li><a href="/terms">Terms &amp; Conditions</a></li>
+        </ul>
+      </nav>
+
+      <main>
+        <h1>BF SUMA Royal — Premium Health Supplements Kenya</h1>
+        <p>Premium natural supplements to support immunity and wellness. BF SUMA Royal offers trusted products backed by GMP, ISO, Halal, and FDA certifications. Order via WhatsApp for fast delivery across Kenya.</p>
+
+        <section>
+          <h2>Our Products</h2>
+          <div itemscope itemtype="https://schema.org/ItemList">
+            <meta itemprop="name" content="BF SUMA Royal Products" />
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="1" /><h3><a href="/product/arthroxtra" itemprop="url"><span itemprop="name">Arthroxtra</span></a></h3><p itemprop="description">Supports joint flexibility and smooth movement</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="7020">KSh 7,020</span></div></div>
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="2" /><h3><a href="/product/cerebrain-tablets" itemprop="url"><span itemprop="name">Cerebrain Tablets</span></a></h3><p itemprop="description">Supports cognitive wellness and mental clarity</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="4387">KSh 4,387</span></div></div>
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="3" /><h3><a href="/product/detoxilive" itemprop="url"><span itemprop="name">Detoxilive</span></a></h3><p itemprop="description">Supports gentle liver and body cleansing</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="2632">KSh 2,632</span></div></div>
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="4" /><h3><a href="/product/ez-xlim" itemprop="url"><span itemprop="name">EZ-Xlim</span></a></h3><p itemprop="description">Healthy weight management support</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="9126">KSh 9,126</span></div></div>
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="5" /><h3><a href="/product/femi-calcium-d3" itemprop="url"><span itemprop="name">Femi Calcium D3</span></a></h3><p itemprop="description">Supports strong bones and hormonal balance</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="3510">KSh 3,510</span></div></div>
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="6" /><h3><a href="/product/feminegy-capsules" itemprop="url"><span itemprop="name">Feminegy Capsules</span></a></h3><p itemprop="description">Complete women's wellness solution</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="5265">KSh 5,265</span></div></div>
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="7" /><h3><a href="/product/ganoderma-spore-oil-60s" itemprop="url"><span itemprop="name">Ganoderma Spore Oil</span></a></h3><p itemprop="description">Immune system powerhouse with ancient wisdom</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="22464">KSh 22,464</span></div></div>
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="8" /><h3><a href="/product/gluzojoint-f-capsules" itemprop="url"><span itemprop="name">GluzoJoint-F Capsules</span></a></h3><p itemprop="description">Promotes strong bones and connective tissues</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="4914">KSh 4,914</span></div></div>
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="9" /><h3><a href="/product/nmn-sharp-mind" itemprop="url"><span itemprop="name">NMN Sharp Mind</span></a></h3><p itemprop="description">Supports advanced cognitive wellness</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="28080">KSh 28,080</span></div></div>
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="10" /><h3><a href="/product/suma-grand" itemprop="url"><span itemprop="name">SUMA GRAND</span></a></h3><p itemprop="description">Supports skin renewal and radiance</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="22113">KSh 22,113</span></div></div>
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="11" /><h3><a href="/product/vitamin-c-chewable" itemprop="url"><span itemprop="name">Vitamin C Chewable</span></a></h3><p itemprop="description">Supports a healthy immune system</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="3510">KSh 3,510</span></div></div>
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="12" /><h3><a href="/product/x-power-man-capsules" itemprop="url"><span itemprop="name">X-Power Man Capsules</span></a></h3><p itemprop="description">Natural vitality enhancement for men</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="7371">KSh 7,371</span></div></div>
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="13" /><h3><a href="/product/yunzhi-capsules" itemprop="url"><span itemprop="name">Yunzhi Capsules</span></a></h3><p itemprop="description">Supports immune system wellness</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="5090">KSh 5,090</span></div></div>
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="14" /><h3><a href="/product/youth-essence-lotion" itemprop="url"><span itemprop="name">Youth Essence Lotion</span></a></h3><p itemprop="description">Premium anti-aging skincare support</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="3375">KSh 3,375</span></div></div>
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="15" /><h3><a href="/product/constirelax" itemprop="url"><span itemprop="name">ConstiRelax</span></a></h3><p itemprop="description">Supports healthy digestion and regularity</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="5200">KSh 5,200</span></div></div>
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="16" /><h3><a href="/product/prostatrelax" itemprop="url"><span itemprop="name">ProstatRelax</span></a></h3><p itemprop="description">Support Sexual Health</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="4212">KSh 4,212</span></div></div>
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="17" /><h3><a href="/product/relivin-tea" itemprop="url"><span itemprop="name">Relivin Tea</span></a></h3><p itemprop="description">Supports cardiovascular wellness</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="3160">KSh 3,160</span></div></div>
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="18" /><h3><a href="/product/gym-effect" itemprop="url"><span itemprop="name">Gym Effect</span></a></h3><p itemprop="description">Supports blood sugar balance and metabolic wellness</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="3800">KSh 3,800</span></div></div>
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="19" /><h3><a href="/product/micr02-cycle" itemprop="url"><span itemprop="name">Micr02 Cycle</span></a></h3><p itemprop="description">Promotes heart and cardiovascular health</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="3861">KSh 3,861</span></div></div>
+            <div itemprop="itemListElement" itemscope itemtype="https://schema.org/Product"><meta itemprop="position" content="20" /><h3><a href="/product/drts" itemprop="url"><span itemprop="name">Dr.Ts</span></a></h3><p itemprop="description">Strengthen enamel and remove plaque</p><div itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="KES" /><span itemprop="price" content="998">KSh 998</span></div></div>
+          </div>
+        </section>
+
+        <section>
+          <h2>About BF SUMA Royal</h2>
+          <p>BF SUMA is a global health and wellness company founded in 2006 in Los Angeles, USA. We provide premium natural supplements certified by GMP, ISO 22000, Halal, and FDA. Our mission is to make natural health solutions accessible to everyone in Kenya and across East Africa.</p>
+          <p><a href="/about">Learn more about BF SUMA Royal</a></p>
+        </section>
+
+        <section>
+          <h2>Locations We Serve</h2>
+          <ul>
+            <li><a href="/nairobi">Nairobi</a></li>
+            <li><a href="/mombasa">Mombasa</a></li>
+            <li><a href="/kisumu">Kisumu</a></li>
+            <li><a href="/nakuru">Nakuru</a></li>
+            <li><a href="/eldoret">Eldoret</a></li>
+            <li><a href="/thika">Thika</a></li>
+            <li><a href="/nyeri">Nyeri</a></li>
+            <li><a href="/machakos">Machakos</a></li>
+            <li><a href="/kakamega">Kakamega</a></li>
+            <li><a href="/kitale">Kitale</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Contact Us</h2>
+          <p>Have questions? <a href="/contact">Contact our team</a> or chat with us on WhatsApp for fast support.</p>
+        </section>
+      </main>
+    </div>
+
     <!-- Static hero shell for instant FCP/LCP before React hydrates -->
     <div class="hero-shell" aria-hidden="true">
       <picture>
