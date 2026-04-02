@@ -138,8 +138,12 @@ const Products = () => {
       return;
     }
 
+    const generateSlug = (name: string) =>
+      name.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim();
+
     const productData = {
       name: formData.name.trim(),
+      slug: generateSlug(formData.name.trim()),
       price: parseFloat(formData.price),
       benefit: formData.benefit?.trim() || null,
       description: formData.description?.trim() || null,
@@ -162,7 +166,7 @@ const Products = () => {
       error = result.error;
       productId = editingProduct.id;
     } else {
-      const result = await supabase.from('products').insert(productData).select('id').single();
+      const result = await supabase.from('products').insert([productData]).select('id').single();
       error = result.error;
       productId = result.data?.id || null;
     }

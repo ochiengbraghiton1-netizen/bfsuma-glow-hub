@@ -12,6 +12,7 @@ export interface DatabaseProduct {
   low_stock_threshold: number;
   track_inventory: boolean;
   is_active: boolean;
+  slug: string;
   sku: string | null;
   category: {
     id: string;
@@ -50,6 +51,7 @@ export const useProducts = () => {
           low_stock_threshold,
           track_inventory,
           is_active,
+          slug,
           sku,
           category_id,
           categories (
@@ -81,6 +83,7 @@ export const useProducts = () => {
       return data.map((product) => ({
         id: product.id,
         name: product.name,
+        slug: product.slug,
         price: Number(product.price),
         benefit: product.benefit,
         description: product.description,

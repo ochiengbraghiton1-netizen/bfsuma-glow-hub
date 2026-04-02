@@ -19,6 +19,7 @@ interface Category {
 interface Product {
   id: string;
   name: string;
+  slug: string;
   price: number;
   benefit: string | null;
   description: string | null;
@@ -86,7 +87,7 @@ const CategoryPage = () => {
 
       const { data, error } = await supabase
         .from('products')
-        .select('id, name, price, benefit, description, image_url, stock_quantity, low_stock_threshold, track_inventory')
+        .select('id, name, slug, price, benefit, description, image_url, stock_quantity, low_stock_threshold, track_inventory')
         .in('id', productIds)
         .eq('is_active', true)
         .order('name');
@@ -228,6 +229,7 @@ const CategoryPage = () => {
                     key={product.id}
                     id={product.id}
                     name={product.name}
+                    slug={product.slug}
                     price={`KSh ${product.price.toLocaleString()}`}
                     numericPrice={product.price}
                     benefit={product.benefit || ''}

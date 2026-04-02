@@ -3,11 +3,12 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Eye } from 'lucide-react';
 import { formatPrice } from '@/hooks/use-products';
-import productGeneric from '@/assets/product-generic.jpg';
+import productGeneric from '@/assets/product-generic.webp';
 
 interface RelatedProduct {
   id: string;
   name: string;
+  slug?: string;
   price: number;
   benefit: string | null;
   image_url: string | null;
@@ -50,7 +51,7 @@ const BlogRelatedProducts = ({ products }: BlogRelatedProductsProps) => {
                 {formatPrice(product.price)}
               </p>
               <Button asChild variant="default" className="w-full mt-4 rounded-full">
-                <Link to={`/p/${product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
+                <Link to={`/product/${product.slug || product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
                   <Eye className="w-4 h-4 mr-2" />
                   View Product
                 </Link>

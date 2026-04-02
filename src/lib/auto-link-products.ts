@@ -139,7 +139,7 @@ export function autoLinkProducts(
       linkedTerms.add(termKey);
 
       const slug = rule.product.slug || nameToSlug(rule.product.name);
-      const href = `/p/${slug}`;
+      const href = `/product/${slug}`;
 
       const isFirstForProduct = !firstLinkedProducts.has(productId);
       const badge = isFirstForProduct

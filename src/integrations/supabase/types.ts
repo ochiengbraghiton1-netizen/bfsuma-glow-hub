@@ -844,6 +844,7 @@ export type Database = {
           price: number
           pv_value: number
           sku: string | null
+          slug: string
           stock_quantity: number
           track_inventory: boolean
           updated_at: string
@@ -861,6 +862,7 @@ export type Database = {
           price: number
           pv_value?: number
           sku?: string | null
+          slug: string
           stock_quantity?: number
           track_inventory?: boolean
           updated_at?: string
@@ -878,6 +880,7 @@ export type Database = {
           price?: number
           pv_value?: number
           sku?: string | null
+          slug?: string
           stock_quantity?: number
           track_inventory?: boolean
           updated_at?: string

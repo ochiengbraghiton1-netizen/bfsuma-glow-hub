@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart, Heart, Eye, Shield, CheckCircle } from "lucide-react";
 import { useInView } from "@/hooks/use-in-view";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { getStockStatus } from "@/hooks/use-products";
 import ResponsiveImage from "@/components/ui/responsive-image";
@@ -12,6 +13,7 @@ import { generateProductAltText } from "@/lib/image-seo";
 interface ProductCardProps {
   id: string;
   name: string;
+  slug?: string;
   price: string;
   numericPrice: number;
   benefit: string;
@@ -28,6 +30,7 @@ interface ProductCardProps {
 const ProductCard = ({ 
   id,
   name, 
+  slug,
   price,
   numericPrice,
   benefit, 
@@ -42,6 +45,7 @@ const ProductCard = ({
   const [ref, isInView] = useInView<HTMLDivElement>({ threshold: 0.6, triggerOnce: true });
   const [isHovering, setIsHovering] = useState(false);
   const { addToCart, toggleFavorite, isFavorite } = useCart();
+  const navigate = useNavigate();
 
   const stockStatus = getStockStatus(stockQuantity, lowStockThreshold, trackInventory);
   const isOutOfStock = stockStatus.status === "out-of-stock";
@@ -75,7 +79,7 @@ const ProductCard = ({
       {/* Product Image */}
       <div 
         className="relative overflow-hidden cursor-pointer"
-        onClick={onClick}
+        onClick={onClick || (slug ? () => navigate(`/product/${slug}`) : undefined)}
       >
         <div
           className={`

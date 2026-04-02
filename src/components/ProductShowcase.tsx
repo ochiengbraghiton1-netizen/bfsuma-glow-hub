@@ -273,6 +273,7 @@ const ProductShowcase = () => {
                     key={product.id}
                     id={product.id}
                     name={product.name}
+                    slug={product.slug}
                     price={formatPrice(product.price)}
                     numericPrice={product.price}
                     benefit={product.benefit || ""}
