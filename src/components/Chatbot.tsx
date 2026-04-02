@@ -1,11 +1,36 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { MessageCircle, X, Send, Loader2 } from "lucide-react";
+import { X, Send, Loader2, Sparkles, Phone, ArrowRight, HelpCircle, BookOpen, Briefcase, ShoppingBag, Stethoscope } from "lucide-react";
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-assistant`;
+const WHATSAPP_NUMBER = "254795454053";
+const WHATSAPP_BASE = `https://wa.me/${WHATSAPP_NUMBER}`;
 
 type Message = { role: "user" | "assistant"; content: string };
+
+interface QuickReply {
+  text: string;
+  icon: React.ReactNode;
+  action?: string;
+  type: "ai" | "whatsapp" | "link";
+  whatsappMsg?: string;
+  linkTo?: string;
+}
+
+function getWhatsAppUrl(message: string) {
+  return `${WHATSAPP_BASE}?text=${encodeURIComponent(message)}`;
+}
+
+function trackEvent(eventName: string, data?: Record<string, string>) {
+  if (typeof window !== "undefined" && (window as any).dataLayer) {
+    (window as any).dataLayer.push({
+      event: eventName,
+      ...data,
+    });
+  }
+}
 
 async function streamChat({
   messages,
@@ -68,31 +93,130 @@ async function streamChat({
   }
 }
 
+/** Detect page context from current URL */
+function usePageContext() {
+  const location = useLocation();
+  const path = location.pathname;
+
+  if (path.startsWith("/product/")) {
+    const slug = path.replace("/product/", "");
+    const name = slug.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+    return { type: "product" as const, slug, name };
+  }
+  if (path.startsWith("/category")) {
+    return { type: "category" as const, slug: "", name: "" };
+  }
+  return { type: "general" as const, slug: "", name: "" };
+}
+
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "assistant",
-      content: "Hello! Welcome to BF SUMA Royal. I'm here to help you learn about our wellness products, pricing, and business opportunities. How can I assist you today?"
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState("");
+  const [showFallback, setShowFallback] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fallbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pageContext = usePageContext();
 
-  const quickReplies = [
-    { text: "Product inquiries", action: "products" },
-    { text: "Price list", action: "prices" },
-    { text: "Join opportunity", action: "join" },
-    { text: "Contact details", action: "contact" }
-  ];
+  // Build welcome message based on page context
+  const getWelcomeMessage = useCallback((): string => {
+    if (pageContext.type === "product") {
+      return `Hi! 👋 I see you're looking at ${pageContext.name}. Need help with this product, or want guidance choosing the right supplement?`;
+    }
+    if (pageContext.type === "category") {
+      return "Hi! 👋 Not sure what to choose? I can help you find the right supplement for your needs, or connect you with our team.";
+    }
+    return "Hi! 👋 Welcome to BF SUMA Royal. I can help you find the right supplement, check prices, or connect you with our wellness team. How can I help?";
+  }, [pageContext.type, pageContext.name]);
+
+  // Reset messages when context changes or chat opens
+  useEffect(() => {
+    if (isOpen) {
+      setMessages([{ role: "assistant", content: getWelcomeMessage() }]);
+      setShowFallback(false);
+    }
+  }, [isOpen, getWelcomeMessage]);
+
+  // Fallback CTA after inactivity
+  useEffect(() => {
+    if (isOpen && messages.length <= 1) {
+      fallbackTimerRef.current = setTimeout(() => setShowFallback(true), 8000);
+    }
+    return () => {
+      if (fallbackTimerRef.current) clearTimeout(fallbackTimerRef.current);
+    };
+  }, [isOpen, messages.length]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Build quick replies based on context
+  const quickReplies: QuickReply[] = (() => {
+    const base: QuickReply[] = [
+      {
+        text: "Help me choose a product",
+        icon: <ShoppingBag className="w-3.5 h-3.5" />,
+        action: "products",
+        type: "ai",
+      },
+      {
+        text: "View price list",
+        icon: <BookOpen className="w-3.5 h-3.5" />,
+        action: "prices",
+        type: "ai",
+      },
+      {
+        text: "Which product solves my issue?",
+        icon: <HelpCircle className="w-3.5 h-3.5" />,
+        action: "health_issue",
+        type: "ai",
+      },
+      {
+        text: "Book consultation",
+        icon: <Stethoscope className="w-3.5 h-3.5" />,
+        type: "whatsapp",
+        whatsappMsg: "Hi, I'd like to book a free health consultation.",
+      },
+      {
+        text: "Join business opportunity",
+        icon: <Briefcase className="w-3.5 h-3.5" />,
+        type: "link",
+        linkTo: "/join-business",
+      },
+    ];
+
+    if (pageContext.type === "product") {
+      base.unshift({
+        text: `Tell me about ${pageContext.name}`,
+        icon: <HelpCircle className="w-3.5 h-3.5" />,
+        action: "products",
+        type: "ai",
+      });
+    }
+
+    return base;
+  })();
+
+  const handleQuickReply = (reply: QuickReply) => {
+    trackEvent("chatbot_quick_reply", { reply_text: reply.text, reply_type: reply.type });
+
+    if (reply.type === "whatsapp") {
+      trackEvent("chatbot_whatsapp_redirect", { source: "quick_reply", message: reply.whatsappMsg || "" });
+      window.open(getWhatsAppUrl(reply.whatsappMsg || "Hi, I'd like help choosing the right supplement for my needs."), "_blank");
+      return;
+    }
+    if (reply.type === "link" && reply.linkTo) {
+      window.location.href = reply.linkTo;
+      return;
+    }
+    sendMessage(reply.text, reply.action);
+  };
+
   const sendMessage = (userText: string, action?: string) => {
     if (isLoading || !userText.trim()) return;
+    setShowFallback(false);
     const userMsg: Message = { role: "user", content: userText.trim() };
     setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
@@ -128,51 +252,68 @@ const Chatbot = () => {
   };
 
   const openWhatsApp = () => {
-    window.open("https://wa.me/254795454053", "_blank");
+    const msg = pageContext.type === "product"
+      ? `Hi, I'm interested in ${pageContext.name}. Can you guide me?`
+      : "Hi, I'd like help choosing the right supplement for my needs.";
+    trackEvent("chatbot_whatsapp_redirect", { source: "talk_to_us", page_context: pageContext.type });
+    window.open(getWhatsAppUrl(msg), "_blank");
   };
+
+  const showQuickReplies = messages.length <= 1;
+
+  // Don't show on admin pages
+  const location = useLocation();
+  if (location.pathname.startsWith("/admin")) return null;
 
   return (
     <>
+      {/* Floating button — distinct from WhatsApp */}
       <Button
-        onClick={() => setIsOpen(!isOpen)}
-        variant="hero"
+        onClick={() => {
+          setIsOpen(!isOpen);
+          if (!isOpen) trackEvent("chatbot_opened", { page: location.pathname });
+        }}
         size="icon"
-        className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full shadow-glow animate-float"
+        className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full shadow-[0_4px_24px_hsl(var(--primary)/0.4)] hover:shadow-[0_4px_32px_hsl(var(--primary)/0.6)] bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 animate-float"
+        aria-label={isOpen ? "Close assistant" : "Open assistant"}
       >
-        {isOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
+        {isOpen ? <X className="w-6 h-6" /> : <Sparkles className="w-6 h-6" />}
       </Button>
 
       {isOpen && (
-        <Card className="fixed bottom-24 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] h-[500px] flex flex-col shadow-elegant animate-scale-in border-border">
-          <div className="bg-gradient-to-r from-primary to-accent p-4 rounded-t-2xl text-white">
+        <Card className="fixed bottom-24 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] h-[520px] flex flex-col shadow-elegant animate-scale-in border-border overflow-hidden">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-primary to-primary/80 p-4 rounded-t-2xl text-primary-foreground">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                <MessageCircle className="w-6 h-6" />
+                <Sparkles className="w-5 h-5" />
               </div>
-              <div>
-                <h3 className="font-bold">BF SUMA ROYAL Assistant</h3>
-                <p className="text-sm text-white/80">Online</p>
+              <div className="flex-1">
+                <h3 className="font-bold text-sm">BF SUMA Royal Assistant</h3>
+                <p className="text-xs text-primary-foreground/70">Need help? Chat with us or get a free consultation</p>
               </div>
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-muted/20">
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-muted/20">
             {messages.map((message, index) => (
               <div
                 key={index}
                 className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[80%] p-3 rounded-2xl ${
+                  className={`max-w-[80%] p-3 rounded-2xl text-sm whitespace-pre-line ${
                     message.role === "user"
                       ? "bg-primary text-primary-foreground"
                       : "bg-card text-foreground border border-border"
                   }`}
                 >
-                  <p className="text-sm whitespace-pre-line">{message.content}</p>
+                  {message.content}
                 </div>
               </div>
             ))}
+
             {isLoading && messages[messages.length - 1]?.role === "user" && (
               <div className="flex justify-start">
                 <div className="bg-card text-foreground border border-border p-3 rounded-2xl">
@@ -180,28 +321,49 @@ const Chatbot = () => {
                 </div>
               </div>
             )}
+
+            {/* Fallback CTA after inactivity */}
+            {showFallback && !isLoading && (
+              <div className="flex justify-start animate-fade-in">
+                <div className="bg-card border border-border rounded-2xl p-3 space-y-2 max-w-[85%]">
+                  <p className="text-sm text-foreground">Want to talk to a real person? Tap below 👇</p>
+                  <Button
+                    onClick={openWhatsApp}
+                    size="sm"
+                    className="w-full bg-accent text-accent-foreground hover:bg-accent/90 text-xs h-8 gap-1.5"
+                  >
+                    <Phone className="w-3.5 h-3.5" />
+                    Chat on WhatsApp
+                    <ArrowRight className="w-3 h-3" />
+                  </Button>
+                </div>
+              </div>
+            )}
+
             <div ref={messagesEndRef} />
           </div>
 
+          {/* Footer */}
           <div className="p-3 border-t border-border bg-background space-y-2">
-            {messages.length <= 1 && (
-              <>
-                <p className="text-xs text-muted-foreground">Quick replies:</p>
-                <div className="grid grid-cols-2 gap-1.5">
+            {showQuickReplies && (
+              <div className="space-y-1.5">
+                <p className="text-xs text-muted-foreground font-medium">How can we help?</p>
+                <div className="flex flex-wrap gap-1.5">
                   {quickReplies.map((reply, index) => (
                     <Button
                       key={index}
-                      onClick={() => sendMessage(reply.text, reply.action)}
+                      onClick={() => handleQuickReply(reply)}
                       variant="outline"
                       size="sm"
-                      className="text-xs h-auto py-1.5"
+                      className="text-xs h-auto py-1.5 px-2.5 gap-1.5"
                       disabled={isLoading}
                     >
+                      {reply.icon}
                       {reply.text}
                     </Button>
                   ))}
                 </div>
-              </>
+              </div>
             )}
 
             <form onSubmit={handleSubmit} className="flex gap-2">
@@ -215,9 +377,8 @@ const Chatbot = () => {
               />
               <Button
                 type="submit"
-                variant="hero"
                 size="icon"
-                className="h-9 w-9 rounded-full shrink-0"
+                className="h-9 w-9 rounded-full shrink-0 bg-primary text-primary-foreground hover:bg-primary/90"
                 disabled={isLoading || !input.trim()}
               >
                 <Send className="w-4 h-4" />
@@ -228,10 +389,11 @@ const Chatbot = () => {
               onClick={openWhatsApp}
               variant="outline"
               size="sm"
-              className="w-full text-xs"
+              className="w-full text-xs gap-1.5 border-accent/30 text-accent-foreground hover:bg-accent/10"
             >
-              <Send className="w-3 h-3" />
-              Chat with our team on WhatsApp
+              <Phone className="w-3.5 h-3.5 text-accent" />
+              Talk to our team on WhatsApp
+              <ArrowRight className="w-3 h-3" />
             </Button>
           </div>
         </Card>

@@ -17,7 +17,7 @@ const Community = lazy(() => import("@/components/Community"));
 const About = lazy(() => import("@/components/About"));
 const FAQ = lazy(() => import("@/components/FAQ"));
 const Contact = lazy(() => import("@/components/Contact"));
-const Chatbot = lazy(() => import("@/components/Chatbot"));
+
 const StoriesInsights = lazy(() => import("@/components/StoriesInsights"));
 const NewsletterSignup = lazy(() => import("@/components/NewsletterSignup"));
 const ExitIntentPopup = lazy(() => import("@/components/ExitIntentPopup"));
@@ -74,7 +74,7 @@ const Index = () => {
         {/* Interactive overlays + structured data - lowest priority */}
         <Suspense fallback={null}>
           <StructuredData />
-          <Chatbot />
+          
           <ExitIntentPopup />
         </Suspense>
       </main>
