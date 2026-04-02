@@ -94,7 +94,7 @@ const BlogPostUGC = ({ post, relatedProducts }: UGCPostProps) => {
             {relatedProducts.map((product) => (
               <Link
                 key={product.id}
-                to={`/p/${product.name.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-')}`}
+                to={`/product/${product.slug || product.name.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-')}`}
                 className="flex gap-4 p-4 rounded-xl bg-background border hover:shadow-md transition-shadow"
               >
                 {product.image_url && (

@@ -135,7 +135,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
                     {product.reason}
                   </p>
                   <Link
-                    to={`/p/${product.slug}`}
+                    to={`/product/${product.slug}`}
                     className="inline-flex items-center gap-2 text-primary font-semibold hover:text-accent transition-colors text-sm"
                   >
                     View Product <ArrowRight className="w-4 h-4" />
