@@ -262,15 +262,14 @@ const Chatbot = () => {
 
   const showQuickReplies = messages.length <= 1;
 
-  // Don't show on admin pages
-  const location = useLocation();
-  if (location.pathname.startsWith("/admin")) return null;
-
   // Delay button appearance to avoid distracting on page load
   useEffect(() => {
     const timer = setTimeout(() => setShowButton(true), 3000);
     return () => clearTimeout(timer);
   }, []);
+
+  // Don't show on admin pages
+  if (location.pathname.startsWith("/admin")) return null;
 
   return (
     <>
