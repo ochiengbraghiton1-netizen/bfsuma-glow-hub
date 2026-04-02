@@ -115,6 +115,7 @@ const Chatbot = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState("");
   const [showFallback, setShowFallback] = useState(false);
+  const [showButton, setShowButton] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fallbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pageContext = usePageContext();
