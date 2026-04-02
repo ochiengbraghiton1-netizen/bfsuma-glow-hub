@@ -59,6 +59,7 @@ const ProductKeywords = lazy(() => import("./pages/admin/ProductKeywords"));
 const LocationLanding = lazy(() => import("./pages/LocationLanding"));
 const ReturnPolicy = lazy(() => import("./pages/ReturnPolicy"));
 const TermsConditions = lazy(() => import("./pages/TermsConditions"));
+const ProductPage = lazy(() => import("./pages/ProductPage"));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-background">
