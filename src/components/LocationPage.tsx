@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { Phone, MapPin, Truck, Star, ArrowRight, ShoppingBag, Sparkles } from "lucide-react";
+import { Phone, MapPin, Truck, Star, ArrowRight, ShoppingBag, Sparkles, HelpCircle } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageSEO from "@/components/PageSEO";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import type { LocationData } from "@/config/locations";
 
 const WHATSAPP_URL = "https://wa.me/254795454053";
