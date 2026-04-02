@@ -61,10 +61,14 @@ const LocationPage = ({ location }: { location: LocationData }) => {
     <div className="min-h-screen">
       <PageSEO title={title} description={description} path={`/${slug}`} />
 
-      {/* LocalBusiness Schema */}
+      {/* Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
       <Header />
