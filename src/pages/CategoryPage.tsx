@@ -87,7 +87,7 @@ const CategoryPage = () => {
 
       const { data, error } = await supabase
         .from('products')
-        .select('id, name, price, benefit, description, image_url, stock_quantity, low_stock_threshold, track_inventory')
+        .select('id, name, slug, price, benefit, description, image_url, stock_quantity, low_stock_threshold, track_inventory')
         .in('id', productIds)
         .eq('is_active', true)
         .order('name');
