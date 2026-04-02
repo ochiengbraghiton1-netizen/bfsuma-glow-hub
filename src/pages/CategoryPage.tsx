@@ -7,6 +7,7 @@ import ProductCard from '@/components/ProductCard';
 import { Loader2, ArrowLeft, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Helmet } from 'react-helmet-async';
+import categoryPlaceholder from '@/assets/category-placeholder.jpg';
 
 interface Category {
   id: string;
@@ -161,28 +162,26 @@ const CategoryPage = () => {
                     <Link
                       key={cat.id}
                       to={`/category/${cat.slug}`}
-                      className="group block bg-card border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+                      className="group block rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
                     >
-                      {cat.image_url ? (
+                      <div className="relative h-52 overflow-hidden">
                         <img
-                          src={cat.image_url}
-                          alt={cat.name}
-                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform"
+                          src={cat.image_url || categoryPlaceholder}
+                          alt={`${cat.name} supplements Kenya`}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          loading="lazy"
                         />
-                      ) : (
-                        <div className="w-full h-48 bg-muted flex items-center justify-center">
-                          <Tag className="h-12 w-12 text-muted-foreground" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                        <div className="absolute bottom-0 left-0 right-0 p-4">
+                          <h2 className="font-bold text-lg text-white drop-shadow-md">
+                            {cat.name}
+                          </h2>
+                          {cat.description && (
+                            <p className="text-sm text-white/80 mt-0.5 line-clamp-2 drop-shadow-sm">
+                              {cat.description}
+                            </p>
+                          )}
                         </div>
-                      )}
-                      <div className="p-4">
-                        <h2 className="font-semibold text-lg group-hover:text-primary transition-colors">
-                          {cat.name}
-                        </h2>
-                        {cat.description && (
-                          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                            {cat.description}
-                          </p>
-                        )}
                       </div>
                     </Link>
                   ))}
