@@ -1,27 +1,37 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Defer GTM until after page load to avoid render-blocking -->
+    <!-- Defer GTM + GA until first user interaction (click/scroll/keydown) to avoid unused JS -->
     <script>
-      window.addEventListener('load', function() {
-        // Google Tag Manager
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-PDTHQJND');
-
-        // Google Analytics gtag.js
-        var gs = document.createElement('script');
-        gs.async = true;
-        gs.src = 'https://www.googletagmanager.com/gtag/js?id=G-5S6XHDLTPF';
-        document.head.appendChild(gs);
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        window.gtag = gtag;
-        gtag('js', new Date());
-        gtag('config', 'G-5S6XHDLTPF');
-      });
+      (function(){
+        var loaded=false;
+        function boot(){
+          if(loaded)return;loaded=true;
+          // Google Tag Manager
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-PDTHQJND');
+          // Google Analytics gtag.js
+          var gs=document.createElement('script');gs.async=true;
+          gs.src='https://www.googletagmanager.com/gtag/js?id=G-5S6XHDLTPF';
+          document.head.appendChild(gs);
+          window.dataLayer=window.dataLayer||[];
+          function gtag(){dataLayer.push(arguments);}
+          window.gtag=gtag;gtag('js',new Date());gtag('config','G-5S6XHDLTPF');
+          // Clean up listeners
+          ['click','scroll','keydown','touchstart'].forEach(function(e){
+            document.removeEventListener(e,boot,{capture:true,passive:true});
+          });
+        }
+        ['click','scroll','keydown','touchstart'].forEach(function(e){
+          document.addEventListener(e,boot,{capture:true,passive:true,once:true});
+        });
+        // Fallback: load after 5s idle even without interaction
+        if('requestIdleCallback' in window){requestIdleCallback(boot,{timeout:5000})}
+        else{setTimeout(boot,5000)}
+      })();
     </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
