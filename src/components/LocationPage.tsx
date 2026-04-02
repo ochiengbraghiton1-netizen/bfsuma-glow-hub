@@ -57,6 +57,53 @@ const LocationPage = ({ location }: { location: LocationData }) => {
     ],
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: `Where can I buy health supplements in ${city}, Kenya?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `You can buy premium health supplements in ${city} from BF Suma Royal. We offer fast delivery ${deliveryTime} and you can order via WhatsApp or our online store at bfsumaroyal.com.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: `How long does delivery take to ${city}?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `We deliver to ${city} ${deliveryTime}. ${deliveryNote}`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: `What are the best health supplements available in ${city}?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `Our top supplements for ${city} residents include ${products.map(p => p.name).join(", ")}. These are chosen specifically for the health needs and lifestyle of people in ${city}.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: `Are BF Suma Royal products genuine and certified?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes, all BF Suma Royal products are GMP-certified, Halal-approved, and sourced directly from the manufacturer. We guarantee 100% authentic wellness products.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: `Do you deliver to all areas in ${city}?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `Yes, we deliver to all areas in ${city} including ${landmarks.slice(0, 5).join(", ")}${landmarks.length > 5 ? " and more" : ""}. Contact us via WhatsApp for delivery details.`,
+        },
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen">
       <PageSEO title={title} description={description} path={`/${slug}`} />
@@ -69,6 +116,10 @@ const LocationPage = ({ location }: { location: LocationData }) => {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       <Header />
