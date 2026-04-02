@@ -229,6 +229,7 @@ const CategoryPage = () => {
                     key={product.id}
                     id={product.id}
                     name={product.name}
+                    slug={product.slug}
                     price={`KSh ${product.price.toLocaleString()}`}
                     numericPrice={product.price}
                     benefit={product.benefit || ''}
