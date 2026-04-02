@@ -83,6 +83,7 @@ export const useProducts = () => {
       return data.map((product) => ({
         id: product.id,
         name: product.name,
+        slug: product.slug,
         price: Number(product.price),
         benefit: product.benefit,
         description: product.description,

@@ -162,7 +162,7 @@ const Products = () => {
       error = result.error;
       productId = editingProduct.id;
     } else {
-      const result = await supabase.from('products').insert(productData).select('id').single();
+      const result = await supabase.from('products').insert([productData]).select('id').single();
       error = result.error;
       productId = result.data?.id || null;
     }

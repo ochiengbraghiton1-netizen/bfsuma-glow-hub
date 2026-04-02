@@ -289,7 +289,7 @@ const ProductPage = () => {
             </div>
 
             {/* Reviews */}
-            <ProductReviews productId={product.id} ratings={ratings} />
+            <ProductReviews productId={product.id} productName={product.name} />
 
             {/* Related Blog Posts */}
             <RelatedBlogPosts productId={product.id} />
