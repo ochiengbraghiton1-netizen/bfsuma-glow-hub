@@ -111,13 +111,14 @@ const BlogList = () => {
   return (
     <>
        <Helmet>
-        <title>Health & Wellness Blog | BF SUMA Royal Kenya</title>
-        <meta name="description" content="Read expert health tips, supplement guides, and wellness advice from BF SUMA Royal Kenya. Stay informed and shop natural products." />
+        <title>Health Tips & Wellness Blog Kenya | BF SUMA Royal</title>
+        <meta name="description" content="Expert health tips, supplement guides & wellness advice for Kenyans. Boost immunity, relieve joint pain & improve energy naturally. Read our latest articles." />
         <link rel="canonical" href="https://bfsumaroyal.com/blog" />
-        <meta property="og:title" content="Health & Wellness Blog | BF SUMA Royal Kenya" />
-        <meta property="og:description" content="Read health tips, wellness advice, and product insights from BF SUMA Royal Kenya." />
+        <meta property="og:title" content="Health Tips & Wellness Blog Kenya | BF SUMA Royal" />
+        <meta property="og:description" content="Expert health tips, supplement guides & wellness advice. Read our latest articles." />
         <meta property="og:url" content="https://bfsumaroyal.com/blog" />
         <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
 
       <section className="py-16 px-4 md:px-8">
@@ -352,7 +353,7 @@ const BlogPostView = ({ slug }: { slug: string }) => {
   return (
     <>
       <Helmet>
-        <title>{post.meta_title || post.title} | BF SUMA Kenya</title>
+        <title>{post.meta_title || `${post.title} | Health Guide Kenya`}</title>
         <meta name="description" content={metaDescription} />
         <link rel="canonical" href={canonicalUrl} />
         <meta property="og:image" content={articleImage} />

@@ -136,9 +136,13 @@ const CategoryPage = () => {
     return (
       <>
         <Helmet>
-          <title>Product Categories | BF SUMA Royal Kenya</title>
-          <meta name="description" content="Browse BF SUMA Royal product categories for natural health and wellness supplements in Kenya." />
+          <title>Best Health Supplement Categories Kenya | BF SUMA Royal</title>
+          <meta name="description" content="Browse top health supplement categories in Kenya – immunity, joint care, beauty, energy & more. Natural, lab-tested products. Shop by category today." />
           <link rel="canonical" href="https://bfsumaroyal.com/category" />
+          <meta property="og:title" content="Best Health Supplement Categories Kenya | BF SUMA Royal" />
+          <meta property="og:description" content="Browse top health supplement categories – immunity, joint care, beauty, energy & more. Shop now." />
+          <meta property="og:url" content="https://bfsumaroyal.com/category" />
+          <meta property="og:type" content="website" />
         </Helmet>
         <div className="min-h-screen flex flex-col">
           <Header />
@@ -196,9 +200,13 @@ const CategoryPage = () => {
   return (
     <>
       <Helmet>
-        <title>{category?.name} Supplements | BF SUMA Royal Kenya</title>
-        <meta name="description" content={category?.description || `Browse ${category?.name} natural health supplements from BF SUMA Royal Kenya.`} />
+        <title>{`Best ${category?.name} Supplements in Kenya | BF SUMA Royal`}</title>
+        <meta name="description" content={`Shop the best ${category?.name} supplements in Kenya. Improve your health naturally with trusted, lab-tested products. Fast delivery nationwide. Order now.`} />
         <link rel="canonical" href={`https://bfsumaroyal.com/category/${slug}`} />
+        <meta property="og:title" content={`Best ${category?.name} Supplements in Kenya | BF SUMA Royal`} />
+        <meta property="og:description" content={`Shop top ${category?.name} supplements in Kenya. Natural, effective products with fast delivery.`} />
+        <meta property="og:url" content={`https://bfsumaroyal.com/category/${slug}`} />
+        <meta property="og:type" content="website" />
       </Helmet>
       <div className="min-h-screen flex flex-col">
         <Header />

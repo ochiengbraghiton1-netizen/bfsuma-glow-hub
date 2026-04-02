@@ -99,7 +99,7 @@ const TermsConditions = () => {
     <div className="min-h-screen bg-background">
       <PageSEO
         title="Terms & Conditions | BF SUMA Royal Kenya"
-        description="Read the Terms & Conditions for using the BF SUMA Royal website and services. Covers accounts, billing, shipping, intellectual property, and dispute resolution under Kenyan law."
+        description="BF SUMA Royal Terms & Conditions – accounts, billing, shipping, returns & Kenyan law compliance. Read before ordering or joining our business."
         path="/terms"
       />
       <Header />

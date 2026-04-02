@@ -27,14 +27,18 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <Helmet>
-        <title>BF SUMA Royal Kenya | Natural Health Supplements & Business</title>
-        <meta name="description" content="Discover natural health supplements in Kenya. Boost energy, balance hormones, and improve wellness. Shop now at BF SUMA Royal." />
+        <title>Best Natural Health Supplements in Kenya | BF SUMA Royal</title>
+        <meta name="description" content="Shop top-rated natural supplements in Kenya for immunity, joint health, energy, beauty & more. Trusted quality, fast delivery nationwide. Order now at BF SUMA Royal." />
         <link rel="canonical" href="https://bfsumaroyal.com/" />
-        <meta property="og:title" content="BF SUMA Royal Kenya | Natural Health Supplements & Business" />
-        <meta property="og:description" content="Discover natural health supplements in Kenya. Boost energy, balance hormones, and improve wellness. Shop now at BF SUMA Royal." />
+        <meta property="og:title" content="Best Natural Health Supplements in Kenya | BF SUMA Royal" />
+        <meta property="og:description" content="Shop top-rated natural supplements in Kenya for immunity, joint health, energy, beauty & more. Trusted quality, fast delivery nationwide. Order now." />
         <meta property="og:url" content="https://bfsumaroyal.com/" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://bfsumaroyal.com/og-image.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Best Natural Health Supplements in Kenya | BF SUMA Royal" />
+        <meta name="twitter:description" content="Shop top-rated natural supplements in Kenya for immunity, joint health, energy, beauty & more. Order now." />
+        <meta name="twitter:image" content="https://bfsumaroyal.com/og-image.png" />
       </Helmet>
       <Header />
       <main className="pt-16">

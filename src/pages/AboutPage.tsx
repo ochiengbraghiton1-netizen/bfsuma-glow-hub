@@ -143,26 +143,22 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>About BF SUMA Royal Kenya | Our Journey Since 2006</title>
+        <title>About BF SUMA Royal Kenya | Trusted Since 2006</title>
         <meta
           name="description"
-          content="Discover BF SUMA Royal's journey from Los Angeles (2006) to a global wellness brand in 15+ countries. GMP, ISO, and Halal certified supplements."
+          content="Learn about BF SUMA Royal – from Los Angeles (2006) to Africa's trusted wellness brand. GMP, ISO & Halal certified natural supplements in 15+ countries."
         />
         <link rel="canonical" href="https://bfsumaroyal.com/about" />
-
-        {/* Open Graph */}
-        <meta property="og:title" content="About BF SUMA Royal Kenya | Our Journey Since 2006" />
-        <meta property="og:description" content="From Los Angeles in 2006 to 15+ countries today. Discover BF SUMA's journey of innovation and wellness impact." />
+        <meta property="og:title" content="About BF SUMA Royal Kenya | Trusted Since 2006" />
+        <meta property="og:description" content="From Los Angeles in 2006 to Africa's leading wellness brand. GMP, ISO & Halal certified." />
         <meta property="og:url" content="https://bfsumaroyal.com/about" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://bfsumaroyal.com/og-image.png" />
         <meta property="og:site_name" content="BF SUMA Royal" />
         <meta property="og:locale" content="en_KE" />
-
-        {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="About BF SUMA Royal Kenya | Our Journey Since 2006" />
-        <meta name="twitter:description" content="From Los Angeles in 2006 to 15+ countries today. Discover BF SUMA's journey of innovation and wellness impact." />
+        <meta name="twitter:title" content="About BF SUMA Royal Kenya | Trusted Since 2006" />
+        <meta name="twitter:description" content="From Los Angeles in 2006 to Africa's leading wellness brand. Discover our story." />
         <meta name="twitter:image" content="https://bfsumaroyal.com/og-image.png" />
 
         <script type="application/ld+json">{JSON.stringify(aboutPageSchema)}</script>

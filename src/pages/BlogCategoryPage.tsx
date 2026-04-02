@@ -134,8 +134,8 @@ const BlogCategoryPage = () => {
     );
   }
 
-  const pageTitle = `${category.name} - Blog | BF SUMA ROYAL`;
-  const pageDescription = category.description || `Browse ${category.name} articles from BF SUMA ROYAL blog.`;
+  const pageTitle = `${category.name} Health Articles Kenya | BF SUMA Royal`;
+  const pageDescription = category.description || `Read expert ${category.name} articles, health tips & guides from BF SUMA Royal Kenya. Trusted wellness advice for better health.`;
 
   return (
     <div className="min-h-screen flex flex-col">
