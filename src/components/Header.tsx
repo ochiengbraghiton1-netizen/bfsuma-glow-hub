@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import { ShoppingCart, Plus, Minus, Trash2, Menu, UserPlus, LogIn, LogOut, User, LayoutDashboard } from "lucide-react";
+import { ShoppingCart, Plus, Minus, Trash2, Menu, UserPlus, LogIn, LogOut, User, LayoutDashboard, Stethoscope } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useCart } from "@/contexts/CartContext";
