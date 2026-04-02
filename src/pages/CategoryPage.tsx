@@ -7,6 +7,7 @@ import ProductCard from '@/components/ProductCard';
 import { Loader2, ArrowLeft, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Helmet } from 'react-helmet-async';
+import categoryPlaceholder from '@/assets/category-placeholder.jpg';
 
 interface Category {
   id: string;
