@@ -12,6 +12,7 @@ import { generateProductAltText } from "@/lib/image-seo";
 interface ProductCardProps {
   id: string;
   name: string;
+  slug?: string;
   price: string;
   numericPrice: number;
   benefit: string;
