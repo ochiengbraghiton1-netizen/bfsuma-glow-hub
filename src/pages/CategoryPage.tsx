@@ -136,9 +136,13 @@ const CategoryPage = () => {
     return (
       <>
         <Helmet>
-          <title>Product Categories | BF SUMA Royal Kenya</title>
-          <meta name="description" content="Browse BF SUMA Royal product categories for natural health and wellness supplements in Kenya." />
+          <title>Best Health Supplement Categories Kenya | BF SUMA Royal</title>
+          <meta name="description" content="Browse top health supplement categories in Kenya – immunity, joint care, beauty, energy & more. Natural, lab-tested products. Shop by category today." />
           <link rel="canonical" href="https://bfsumaroyal.com/category" />
+          <meta property="og:title" content="Best Health Supplement Categories Kenya | BF SUMA Royal" />
+          <meta property="og:description" content="Browse top health supplement categories – immunity, joint care, beauty, energy & more. Shop now." />
+          <meta property="og:url" content="https://bfsumaroyal.com/category" />
+          <meta property="og:type" content="website" />
         </Helmet>
         <div className="min-h-screen flex flex-col">
           <Header />
