@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Eye } from 'lucide-react';
 import { formatPrice } from '@/hooks/use-products';
-import productGeneric from '@/assets/product-generic.jpg';
+import productGeneric from '@/assets/product-generic.webp';
 
 interface RelatedProduct {
   id: string;
