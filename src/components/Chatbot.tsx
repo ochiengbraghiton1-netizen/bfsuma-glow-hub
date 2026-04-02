@@ -115,8 +115,10 @@ const Chatbot = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState("");
   const [showFallback, setShowFallback] = useState(false);
+  const [showButton, setShowButton] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fallbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const location = useLocation();
   const pageContext = usePageContext();
 
   // Build welcome message based on page context
@@ -261,24 +263,31 @@ const Chatbot = () => {
 
   const showQuickReplies = messages.length <= 1;
 
+  // Delay button appearance to avoid distracting on page load
+  useEffect(() => {
+    const timer = setTimeout(() => setShowButton(true), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Don't show on admin pages
-  const location = useLocation();
   if (location.pathname.startsWith("/admin")) return null;
 
   return (
     <>
-      {/* Floating button — distinct from WhatsApp */}
-      <Button
-        onClick={() => {
-          setIsOpen(!isOpen);
-          if (!isOpen) trackEvent("chatbot_opened", { page: location.pathname });
-        }}
-        size="icon"
-        className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full shadow-[0_4px_24px_hsl(var(--primary)/0.4)] hover:shadow-[0_4px_32px_hsl(var(--primary)/0.6)] bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 animate-float"
-        aria-label={isOpen ? "Close assistant" : "Open assistant"}
-      >
-        {isOpen ? <X className="w-6 h-6" /> : <Sparkles className="w-6 h-6" />}
-      </Button>
+      {/* Floating button — subtle, non-distracting */}
+      {showButton && (
+        <Button
+          onClick={() => {
+            setIsOpen(!isOpen);
+            if (!isOpen) trackEvent("chatbot_opened", { page: location.pathname });
+          }}
+          size="icon"
+          className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full shadow-md hover:shadow-lg bg-primary/85 hover:bg-primary text-primary-foreground transition-all duration-300 opacity-80 hover:opacity-100 animate-fade-in"
+          aria-label={isOpen ? "Close assistant" : "Open assistant"}
+        >
+          {isOpen ? <X className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
+        </Button>
+      )}
 
       {isOpen && (
         <Card className="fixed bottom-24 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] h-[520px] flex flex-col shadow-elegant animate-scale-in border-border overflow-hidden">
