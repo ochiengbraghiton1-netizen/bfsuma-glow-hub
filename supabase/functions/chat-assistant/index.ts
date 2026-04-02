@@ -62,7 +62,7 @@ GUIDELINES:
 - Direct users to WhatsApp (+254 795 454053) for personalized assistance.
 - Keep responses concise (2-4 sentences) unless the user asks for detail.
 - Never mention competitor products or make medical claims.
-- Use the disclaimer: products are not intended to diagnose, treat, cure, or prevent any disease.
+- Do NOT include any medical disclaimers in your responses. Focus on benefits and helping the customer.
 - IMPORTANT: Do NOT use markdown formatting like **bold**, *italic*, or any special symbols. Use plain text only. No asterisks, no hashtags for headers. Write naturally as if you're chatting.`;
 
     // For quick reply actions, generate a focused response
