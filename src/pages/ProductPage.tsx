@@ -189,18 +189,57 @@ const ProductPage = () => {
             "@type": "Product",
             name: product.name,
             description: seoDescription,
-            image: seoImage,
-            sku: product.sku || product.id,
+            image: [seoImage],
+            sku: product.sku || product.slug,
             url: canonicalUrl,
+            brand: {
+              "@type": "Brand",
+              name: "BF SUMA Royal",
+            },
+            ...(ratings && ratings.reviewCount > 0
+              ? {
+                  aggregateRating: {
+                    "@type": "AggregateRating",
+                    ratingValue: ratings.averageRating.toFixed(1),
+                    reviewCount: ratings.reviewCount,
+                    bestRating: "5",
+                    worstRating: "1",
+                  },
+                }
+              : {}),
             offers: {
               "@type": "Offer",
-              price: product.price,
+              price: product.price.toFixed(2),
               priceCurrency: "KES",
+              priceValidUntil: new Date(Date.now() + 365 * 86400000).toISOString().split("T")[0],
               availability: isOutOfStock
                 ? "https://schema.org/OutOfStock"
                 : "https://schema.org/InStock",
+              itemCondition: "https://schema.org/NewCondition",
+              url: canonicalUrl,
               seller: { "@type": "Organization", name: "BF SUMA Royal Kenya" },
+              shippingDetails: {
+                "@type": "OfferShippingDetails",
+                shippingRate: { "@type": "MonetaryAmount", value: "300", currency: "KES" },
+                shippingDestination: { "@type": "DefinedRegion", addressCountry: "KE" },
+                deliveryTime: {
+                  "@type": "ShippingDeliveryTime",
+                  handlingTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 2, unitCode: "DAY" },
+                  transitTime: { "@type": "QuantitativeValue", minValue: 2, maxValue: 5, unitCode: "DAY" },
+                },
+              },
             },
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://bfsumaroyal.com/" },
+              { "@type": "ListItem", position: 2, name: "Products", item: "https://bfsumaroyal.com/#products" },
+              { "@type": "ListItem", position: 3, name: product.name, item: canonicalUrl },
+            ],
           })}
         </script>
       </Helmet>

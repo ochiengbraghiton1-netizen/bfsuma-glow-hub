@@ -207,6 +207,33 @@ const CategoryPage = () => {
         <meta property="og:description" content={`Shop top ${category?.name} supplements in Kenya. Natural, effective products with fast delivery.`} />
         <meta property="og:url" content={`https://bfsumaroyal.com/category/${slug}`} />
         <meta property="og:type" content="website" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://bfsumaroyal.com/" },
+              { "@type": "ListItem", position: 2, name: "Categories", item: "https://bfsumaroyal.com/category" },
+              { "@type": "ListItem", position: 3, name: category?.name, item: `https://bfsumaroyal.com/category/${slug}` },
+            ],
+          })}
+        </script>
+        {products.length > 0 && (
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              name: `${category?.name} Supplements`,
+              numberOfItems: products.length,
+              itemListElement: products.map((p, i) => ({
+                "@type": "ListItem",
+                position: i + 1,
+                url: `https://bfsumaroyal.com/product/${p.slug}`,
+                name: p.name,
+              })),
+            })}
+          </script>
+        )}
       </Helmet>
       <div className="min-h-screen flex flex-col">
         <Header />
