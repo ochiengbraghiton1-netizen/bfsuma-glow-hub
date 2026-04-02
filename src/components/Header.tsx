@@ -265,6 +265,17 @@ const Header = () => {
               
               {/* Prominent CTAs at top */}
               <div className="mt-6 flex flex-col gap-2 px-1">
+                <Button size="sm" asChild onClick={() => setIsMobileMenuOpen(false)}>
+                  <a
+                    href="https://wa.me/254795454053?text=Hi%2C%20I'd%20like%20to%20book%20a%20free%20health%20consultation."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2"
+                  >
+                    <Stethoscope className="h-4 w-4" />
+                    Book Consultation
+                  </a>
+                </Button>
                 <Button variant="default" size="sm" asChild onClick={() => setIsMobileMenuOpen(false)}>
                   <Link to="/products" className="flex items-center justify-center gap-2">
                     <ShoppingCart className="h-4 w-4" />
