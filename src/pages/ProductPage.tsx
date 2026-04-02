@@ -149,9 +149,11 @@ const ProductPage = () => {
   };
 
   const plainDescription = product.description ? stripHtmlTags(product.description) : "";
-  const seoTitle = `${product.name} | BF SUMA Royal Kenya`;
+  const seoTitle = truncateText(`Buy ${product.name} in Kenya | Best Natural Supplement`, 60);
   const seoDescription = truncateText(
-    plainDescription || `Buy ${product.name} in Kenya. Natural health supplement for better wellness.`,
+    product.benefit
+      ? `${product.name} – ${product.benefit}. Top-rated natural supplement in Kenya. Fast delivery. Order now at BF SUMA Royal.`
+      : plainDescription || `Buy ${product.name} in Kenya. Effective natural health supplement with fast nationwide delivery. Shop now at BF SUMA Royal.`,
     160
   );
   const seoImage = product.image_url || `${window.location.origin}/og-image.png`;

@@ -8,7 +8,7 @@ const ReturnPolicy = () => {
     <div className="min-h-screen bg-background">
       <PageSEO
         title="Return & Exchange Policy | BF SUMA Royal Kenya"
-        description="BF SUMA Royal's return and exchange policy. Request exchanges within 72 hours of delivery. Covers online and international orders. Hassle-free process with conditions."
+        description="Easy returns & exchanges at BF SUMA Royal Kenya. Request within 72 hours of delivery. Covers online & international orders. Hassle-free process."
         path="/return-policy"
       />
       <Header />

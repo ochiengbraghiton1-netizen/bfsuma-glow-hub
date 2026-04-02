@@ -110,11 +110,11 @@ const JoinBusiness = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Start a Wellness Business in Kenya | BF Suma Royal</title>
-        <meta name="description" content="Join BF Suma Royal and start your own health and wellness business in Kenya. Earn commissions, travel rewards, and car awards. Register for KES 7,000." />
+        <title>Join BF SUMA Business Kenya | Earn From Home</title>
+        <meta name="description" content="Start your own wellness business in Kenya with BF SUMA Royal. Earn commissions, travel rewards & car awards. Register for KES 7,000. Join today!" />
         <link rel="canonical" href="https://bfsumaroyal.com/join-business" />
-        <meta property="og:title" content="Start a Wellness Business in Kenya | BF Suma Royal" />
-        <meta property="og:description" content="Build income, grow your network, and unlock travel and car rewards with BF Suma Royal Kenya." />
+        <meta property="og:title" content="Join BF SUMA Business Kenya | Earn From Home" />
+        <meta property="og:description" content="Start your wellness business in Kenya. Earn commissions, travel rewards & car awards. Register today!" />
         <meta property="og:url" content="https://bfsumaroyal.com/join-business" />
         <meta property="og:type" content="website" />
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>

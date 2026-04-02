@@ -353,7 +353,7 @@ const BlogPostView = ({ slug }: { slug: string }) => {
   return (
     <>
       <Helmet>
-        <title>{post.meta_title || post.title} | BF SUMA Kenya</title>
+        <title>{post.meta_title || `${post.title} | Health Guide Kenya`}</title>
         <meta name="description" content={metaDescription} />
         <link rel="canonical" href={canonicalUrl} />
         <meta property="og:image" content={articleImage} />

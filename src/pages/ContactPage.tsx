@@ -45,8 +45,8 @@ const ContactPage = () => {
   return (
     <div className="min-h-screen">
       <PageSEO
-        title="Contact BF SUMA Royal | Orders & Support Kenya"
-        description="Reach BF SUMA Royal Kenya via WhatsApp, email, or visit us in Kakamega. Get fast support for orders, products, and business inquiries."
+        title="Contact Us in Kenya | BF SUMA Royal Support"
+        description="Reach BF SUMA Royal via WhatsApp, email, or visit us in Kakamega. Fast support for orders, products & business inquiries. Get in touch today."
         path="/contact"
       />
       <Header />
