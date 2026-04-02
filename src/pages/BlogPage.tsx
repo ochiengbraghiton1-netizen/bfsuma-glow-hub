@@ -46,6 +46,7 @@ interface BlogPostWithCategories extends BlogPost {
 interface RelatedProduct {
   id: string;
   name: string;
+  slug?: string;
   price: number;
   benefit: string | null;
   image_url: string | null;
