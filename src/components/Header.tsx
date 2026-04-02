@@ -102,6 +102,17 @@ const Header = () => {
         <div className="flex items-center gap-2 md:gap-3">
           {/* Desktop CTA buttons */}
           <div className="hidden lg:flex items-center gap-2">
+            <Button variant="outline" size="sm" asChild>
+              <a
+                href="https://wa.me/254795454053?text=Hi%2C%20I'd%20like%20to%20book%20a%20free%20health%20consultation."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5"
+              >
+                <Stethoscope className="h-4 w-4" />
+                Book Consultation
+              </a>
+            </Button>
             <Button variant="default" size="sm" asChild>
               <Link to="/products" className="flex items-center gap-1.5">
                 <ShoppingCart className="h-4 w-4" />
