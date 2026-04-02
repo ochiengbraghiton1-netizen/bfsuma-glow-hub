@@ -149,6 +149,17 @@ const BlogCategoryPage = () => {
           <meta property="og:description" content={pageDescription} />
           <meta property="og:type" content="website" />
           <meta property="og:url" content={`https://bfsumaroyal.com/blog/category/${category.slug}`} />
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                { "@type": "ListItem", position: 1, name: "Home", item: "https://bfsumaroyal.com/" },
+                { "@type": "ListItem", position: 2, name: "Blog", item: "https://bfsumaroyal.com/blog" },
+                { "@type": "ListItem", position: 3, name: category.name, item: `https://bfsumaroyal.com/blog/category/${category.slug}` },
+              ],
+            })}
+          </script>
         </Helmet>
 
         <section className="py-16 px-4 md:px-8">

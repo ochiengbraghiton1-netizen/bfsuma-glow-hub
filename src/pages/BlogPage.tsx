@@ -119,6 +119,16 @@ const BlogList = () => {
         <meta property="og:url" content="https://bfsumaroyal.com/blog" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://bfsumaroyal.com/" },
+              { "@type": "ListItem", position: 2, name: "Blog", item: "https://bfsumaroyal.com/blog" },
+            ],
+          })}
+        </script>
       </Helmet>
 
       <section className="py-16 px-4 md:px-8">
