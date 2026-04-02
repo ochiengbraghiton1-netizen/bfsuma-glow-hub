@@ -30,6 +30,7 @@ interface ProductCardProps {
 const ProductCard = ({ 
   id,
   name, 
+  slug,
   price,
   numericPrice,
   benefit, 
@@ -44,6 +45,7 @@ const ProductCard = ({
   const [ref, isInView] = useInView<HTMLDivElement>({ threshold: 0.6, triggerOnce: true });
   const [isHovering, setIsHovering] = useState(false);
   const { addToCart, toggleFavorite, isFavorite } = useCart();
+  const navigate = useNavigate();
 
   const stockStatus = getStockStatus(stockQuantity, lowStockThreshold, trackInventory);
   const isOutOfStock = stockStatus.status === "out-of-stock";
