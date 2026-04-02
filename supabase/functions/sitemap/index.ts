@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
     // Fetch active products from the database
     const { data: products, error } = await supabase
       .from("products")
-      .select("id, name, updated_at")
+      .select("slug, updated_at")
       .eq("is_active", true)
       .order("name");
 
@@ -70,16 +70,11 @@ Deno.serve(async (req) => {
       console.error("Error fetching products:", error);
     }
 
-    // Generate product URL entries
+    // Generate product URL entries using slug-based URLs
     const productEntries = (products || []).map((product) => {
-      // Create URL-friendly slug from product name
-      const slug = product.name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, "");
-      const loc = `${SITE_BASE_URL}/product/${product.id}`;
+      const loc = `${SITE_BASE_URL}/product/${product.slug}`;
       const lastmod = product.updated_at?.split("T")[0];
-      return generateUrlEntry(loc, "weekly", 0.7, lastmod);
+      return generateUrlEntry(loc, "weekly", 0.8, lastmod);
     });
 
     // Fetch active categories
