@@ -53,10 +53,12 @@ Deno.serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Generate static route entries
+    const today = new Date().toISOString().split("T")[0];
+
+    // Generate static route entries with lastmod
     const staticEntries = staticRoutes.map((route) => {
       const loc = `${SITE_BASE_URL}${route.path === "/" ? "" : route.path}`;
-      return generateUrlEntry(loc, route.changefreq, route.priority);
+      return generateUrlEntry(loc, route.changefreq, route.priority, today);
     });
 
     // Fetch active products from the database
@@ -112,8 +114,24 @@ Deno.serve(async (req) => {
       return generateUrlEntry(loc, "weekly", 0.7, lastmod);
     });
 
+    // Fetch blog categories
+    const { data: blogCategories, error: blogCatError } = await supabase
+      .from("blog_categories")
+      .select("slug, created_at")
+      .order("name");
+
+    if (blogCatError) {
+      console.error("Error fetching blog categories:", blogCatError);
+    }
+
+    const blogCategoryEntries = (blogCategories || []).map((cat) => {
+      const loc = `${SITE_BASE_URL}/blog/category/${cat.slug}`;
+      const lastmod = cat.created_at?.split("T")[0];
+      return generateUrlEntry(loc, "weekly", 0.6, lastmod);
+    });
+
     // Combine all entries
-    const allEntries = [...staticEntries, ...categoryEntries, ...productEntries, ...blogEntries].join("\n");
+    const allEntries = [...staticEntries, ...categoryEntries, ...productEntries, ...blogEntries, ...blogCategoryEntries].join("\n");
 
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
