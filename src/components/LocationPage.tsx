@@ -18,19 +18,43 @@ const LocationPage = ({ location }: { location: LocationData }) => {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "HealthAndBeautyBusiness",
-    name: "BF Suma Royal",
+    name: `BF Suma Royal – ${city}`,
     url: `${SITE_URL}/${slug}`,
     telephone: "+254795454053",
     email: "bfsumaroyal@gmail.com",
-    areaServed: { "@type": "City", name: `${city}, Kenya` },
+    areaServed: {
+      "@type": "City",
+      name: city,
+      containedInPlace: { "@type": "Country", name: "Kenya" },
+    },
     address: {
       "@type": "PostalAddress",
       addressLocality: "Kakamega",
       addressRegion: "Western",
       addressCountry: "KE",
     },
-    description: `Premium natural health supplements available in ${city}, Kenya. GMP-certified, Halal-approved wellness products with fast delivery.`,
+    description: `Premium natural health supplements available in ${city}, Kenya. GMP-certified, Halal-approved wellness products with fast delivery ${deliveryTime}.`,
     priceRange: "KES 1,000 – KES 10,000",
+    openingHoursSpecification: {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      opens: "08:00",
+      closes: "18:00",
+    },
+    sameAs: [
+      "https://www.facebook.com/share/1G6uTXLkpw/",
+      "https://www.instagram.com/bf_suma_royal",
+      "https://www.tiktok.com/@bfsumaroyal",
+    ],
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+      { "@type": "ListItem", position: 2, name: `Supplements in ${city}`, item: `${SITE_URL}/${slug}` },
+    ],
   };
 
   return (
