@@ -119,6 +119,7 @@ const Chatbot = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fallbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const location = useLocation();
+  const pageContext = usePageContext();
 
   // Build welcome message based on page context
   const getWelcomeMessage = useCallback((): string => {
