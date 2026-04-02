@@ -22,6 +22,7 @@ const StoriesInsights = lazy(() => import("@/components/StoriesInsights"));
 const NewsletterSignup = lazy(() => import("@/components/NewsletterSignup"));
 const ExitIntentPopup = lazy(() => import("@/components/ExitIntentPopup"));
 const StructuredData = lazy(() => import("@/components/StructuredData"));
+const ConsultationCTA = lazy(() => import("@/components/ConsultationCTA"));
 
 const Index = () => {
   return (
