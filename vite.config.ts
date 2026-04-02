@@ -1,7 +1,48 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
+
+/**
+ * Vite plugin: inject modulepreload hints for critical vendor chunks
+ * into the built HTML to reduce the waterfall / critical request chain.
+ */
+function modulePreloadHints(): Plugin {
+  const criticalChunks = [
+    "vendor-react",
+    "vendor-query",
+    "vendor-supabase",
+    "vendor-ui-core",
+  ];
+
+  return {
+    name: "critical-modulepreload",
+    enforce: "post",
+    transformIndexHtml: {
+      order: "post",
+      handler(html, ctx) {
+        if (!ctx.bundle) return html;
+
+        const hints: string[] = [];
+        for (const [fileName, chunk] of Object.entries(ctx.bundle)) {
+          if (
+            chunk.type === "chunk" &&
+            criticalChunks.some((name) => fileName.includes(name))
+          ) {
+            hints.push(
+              `<link rel="modulepreload" href="/${fileName}" />`
+            );
+          }
+        }
+
+        if (hints.length === 0) return html;
+
+        // Insert right before </head>
+        return html.replace("</head>", `${hints.join("\n    ")}\n  </head>`);
+      },
+    },
+  };
+}
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -9,7 +50,7 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
-  plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
+  plugins: [react(), modulePreloadHints(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
