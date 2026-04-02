@@ -276,7 +276,7 @@ const BlogPostView = ({ slug }: { slug: string }) => {
       if (productLinks?.length) {
         const { data: products } = await supabase
           .from('products')
-          .select('id, name, price, benefit, image_url')
+          .select('id, name, slug, price, benefit, image_url')
           .in('id', productLinks.map(l => l.product_id))
           .eq('is_active', true);
 
