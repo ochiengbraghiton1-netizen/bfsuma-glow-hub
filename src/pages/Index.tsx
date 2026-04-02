@@ -50,8 +50,16 @@ const Index = () => {
             <DoctorConsultation />
             <ExpertAuthority />
             <Testimonials />
+            <ConsultationCTA
+              headline="Still unsure? Talk to a wellness expert now."
+              subtext="Get free personalised advice on the best supplements for your health goals."
+            />
             <CaseStudies />
             <ProductShowcase />
+            <ConsultationCTA
+              headline="Need help choosing the right product?"
+              subtext="Our team can recommend the perfect supplement based on your needs."
+            />
           </Suspense>
         </div>
         {/* Secondary content - deferred further */}

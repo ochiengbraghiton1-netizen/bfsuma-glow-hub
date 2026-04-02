@@ -151,6 +151,7 @@ const App = () => (
                 </Routes>
                 <Suspense fallback={null}>
                   <Chatbot />
+                  <StickyConsultationCTA />
                 </Suspense>
               </Suspense>
             </BrowserRouter>
