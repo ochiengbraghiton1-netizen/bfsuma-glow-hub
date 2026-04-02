@@ -12,6 +12,7 @@ export interface DatabaseProduct {
   low_stock_threshold: number;
   track_inventory: boolean;
   is_active: boolean;
+  slug: string;
   sku: string | null;
   category: {
     id: string;
