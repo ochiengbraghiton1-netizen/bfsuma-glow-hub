@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { Phone, MapPin, Truck, Star, ArrowRight, ShoppingBag, Sparkles } from "lucide-react";
+import { Phone, MapPin, Truck, Star, ArrowRight, ShoppingBag, Sparkles, HelpCircle } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageSEO from "@/components/PageSEO";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import type { LocationData } from "@/config/locations";
 
 const WHATSAPP_URL = "https://wa.me/254795454053";
@@ -310,6 +311,37 @@ const LocationPage = ({ location }: { location: LocationData }) => {
               </Link>{" "}
               for any delivery questions.
             </p>
+          </div>
+        </section>
+
+        {/* ── FAQ ── */}
+        <section className="py-16 md:py-24 bg-muted/50">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <HelpCircle className="w-6 h-6 text-primary" />
+              <h2 className="text-2xl md:text-4xl font-bold text-foreground text-center">
+                FAQ – Supplements in {city}
+              </h2>
+            </div>
+            <p className="text-muted-foreground text-center mb-10 max-w-xl mx-auto">
+              Common questions about buying health supplements in {city}, Kenya.
+            </p>
+            <Accordion type="single" collapsible className="w-full space-y-3">
+              {(faqSchema.mainEntity as Array<{ name: string; acceptedAnswer: { text: string } }>).map((item, i) => (
+                <AccordionItem
+                  key={i}
+                  value={`faq-${i}`}
+                  className="bg-card border border-border rounded-xl px-5 data-[state=open]:shadow-elegant transition-shadow"
+                >
+                  <AccordionTrigger className="text-left text-sm md:text-base font-semibold text-foreground hover:no-underline py-4">
+                    {item.name}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground text-sm leading-relaxed pb-4">
+                    {item.acceptedAnswer.text}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
         </section>
 
