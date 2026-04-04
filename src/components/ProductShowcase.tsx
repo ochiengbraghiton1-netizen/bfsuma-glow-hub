@@ -46,6 +46,73 @@ const productImageMap: Record<string, string> = {
   "Vitamin C Plus": vitaminC,
 };
 
+const MAX_VISIBLE_CATEGORIES = 6;
+
+interface CategoryPillsProps {
+  categories: { id: string; slug: string; name: string }[];
+  activeCategory: string;
+  onSelect: (slug: string) => void;
+}
+
+const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsProps) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [showAll, setShowAll] = useState(false);
+
+  const visibleCategories = showAll ? categories : categories.slice(0, MAX_VISIBLE_CATEGORIES);
+  const hasMore = categories.length > MAX_VISIBLE_CATEGORIES;
+
+  return (
+    <div className="mb-4">
+      <div
+        ref={scrollRef}
+        className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1"
+        style={{ WebkitOverflowScrolling: "touch" }}
+      >
+        <button
+          onClick={() => onSelect("all")}
+          className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap ${
+            activeCategory === "all"
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40"
+          }`}
+        >
+          All
+        </button>
+        {visibleCategories.map((cat) => (
+          <button
+            key={cat.id}
+            onClick={() => onSelect(cat.slug)}
+            className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap ${
+              activeCategory === cat.slug
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40"
+            }`}
+          >
+            {cat.name}
+          </button>
+        ))}
+        {hasMore && !showAll && (
+          <button
+            onClick={() => setShowAll(true)}
+            className="shrink-0 px-4 py-1.5 rounded-full text-sm font-medium bg-muted/60 text-primary hover:bg-muted border border-border/40 whitespace-nowrap flex items-center gap-1"
+          >
+            +{categories.length - MAX_VISIBLE_CATEGORIES} More
+            <ChevronRight className="h-3.5 w-3.5" />
+          </button>
+        )}
+        {showAll && hasMore && (
+          <button
+            onClick={() => setShowAll(false)}
+            className="shrink-0 px-4 py-1.5 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground whitespace-nowrap"
+          >
+            Show Less
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const ProductShowcase = () => {
   const { products, categories, isLoading, error } = useProducts();
   const [selectedProduct, setSelectedProduct] = useState<DatabaseProduct | null>(null);
