@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Save } from 'lucide-react';
+import { Loader2, Save, Upload, X, Image as ImageIcon } from 'lucide-react';
 import { siteContentSchema } from '@/lib/validations';
 import RichTextEditor from '@/components/ui/rich-text-editor';
+import { compressImage } from '@/lib/image-compression';
 
 interface ContentSection {
   id: string;
@@ -19,12 +20,12 @@ interface ContentSection {
 }
 
 const defaultSections = [
-  { key: 'hero', label: 'Hero Section', description: 'Main banner at the top of the page' },
-  { key: 'about', label: 'About Section', description: 'Information about BF SUMA' },
-  { key: 'doctor_consultation', label: 'Doctor Consultation', description: 'Wellness consultation section' },
-  { key: 'join_earn', label: 'Join & Earn', description: 'Business opportunity section' },
-  { key: 'community', label: 'Community', description: 'Training and mentorship section' },
-  { key: 'instagram_widget', label: 'Instagram Live Feed', description: 'Elfsight widget ID for the Community page Instagram feed. Paste only the widget ID (e.g. abc123-def456)' },
+  { key: 'hero', label: 'Hero Section', description: 'Main banner at the top of the page. Upload a real, high-quality image of your team or community.', hasImageUpload: true },
+  { key: 'about', label: 'About Section', description: 'Information about BF SUMA', hasImageUpload: false },
+  { key: 'doctor_consultation', label: 'Doctor Consultation', description: 'Wellness consultation section', hasImageUpload: false },
+  { key: 'join_earn', label: 'Join & Earn', description: 'Business opportunity section', hasImageUpload: false },
+  { key: 'community', label: 'Community', description: 'Training and mentorship section', hasImageUpload: false },
+  { key: 'instagram_widget', label: 'Instagram Live Feed', description: 'Elfsight widget ID for the Community page Instagram feed. Paste only the widget ID (e.g. abc123-def456)', hasImageUpload: false },
 ];
 
 const Content = () => {
@@ -57,7 +58,6 @@ const Content = () => {
   const handleSave = async (sectionKey: string, formData: Partial<ContentSection>) => {
     setSaving(sectionKey);
 
-    // Validate form data
     const validation = siteContentSchema.safeParse(formData);
     if (!validation.success) {
       const firstError = validation.error.errors[0];
@@ -121,6 +121,7 @@ const Content = () => {
             sectionKey={section.key}
             label={section.label}
             description={section.description}
+            hasImageUpload={section.hasImageUpload}
             data={sections[section.key]}
             onSave={handleSave}
             saving={saving === section.key}
@@ -135,18 +136,22 @@ interface ContentCardProps {
   sectionKey: string;
   label: string;
   description: string;
+  hasImageUpload?: boolean;
   data?: ContentSection;
   onSave: (key: string, data: Partial<ContentSection>) => void;
   saving: boolean;
 }
 
-const ContentCard = ({ sectionKey, label, description, data, onSave, saving }: ContentCardProps) => {
+const ContentCard = ({ sectionKey, label, description, hasImageUpload, data, onSave, saving }: ContentCardProps) => {
   const [formData, setFormData] = useState({
     title: data?.title || '',
     subtitle: data?.subtitle || '',
     content: data?.content || '',
     image_url: data?.image_url || '',
   });
+  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(data?.image_url || null);
+  const { toast } = useToast();
 
   useEffect(() => {
     setFormData({
@@ -155,7 +160,48 @@ const ContentCard = ({ sectionKey, label, description, data, onSave, saving }: C
       content: data?.content || '',
       image_url: data?.image_url || '',
     });
+    setImagePreview(data?.image_url || null);
   }, [data]);
+
+  const handleImageUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast({ title: 'Error', description: 'Please select an image file', variant: 'destructive' });
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const compressed = await compressImage(file, 1920, 1080, 0.85);
+      const fileName = `${sectionKey}-${Date.now()}.${compressed.type.includes('png') ? 'png' : 'jpg'}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('categories')
+        .upload(`site-content/${fileName}`, compressed, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage
+        .from('categories')
+        .getPublicUrl(`site-content/${fileName}`);
+
+      const publicUrl = urlData.publicUrl;
+      setFormData(prev => ({ ...prev, image_url: publicUrl }));
+      setImagePreview(publicUrl);
+      toast({ title: 'Image uploaded', description: 'Click Save to apply changes.' });
+    } catch (err) {
+      toast({ title: 'Upload failed', description: 'Could not upload image. Try again.', variant: 'destructive' });
+    } finally {
+      setUploading(false);
+    }
+  }, [sectionKey, toast]);
+
+  const clearImage = () => {
+    setFormData(prev => ({ ...prev, image_url: '' }));
+    setImagePreview(null);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -170,6 +216,47 @@ const ContentCard = ({ sectionKey, label, description, data, onSave, saving }: C
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Image upload for hero */}
+          {hasImageUpload && (
+            <div className="space-y-3">
+              <Label>Hero Image (Upload a real photo — team, community, or customers)</Label>
+              {imagePreview ? (
+                <div className="relative rounded-lg overflow-hidden border border-border max-w-md">
+                  <img src={imagePreview} alt="Preview" className="w-full h-48 object-cover" />
+                  <button
+                    type="button"
+                    onClick={clearImage}
+                    className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1 hover:opacity-80"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center w-full max-w-md h-48 border-2 border-dashed border-border rounded-lg bg-muted/30">
+                  <div className="text-center text-muted-foreground">
+                    <ImageIcon className="w-10 h-10 mx-auto mb-2 opacity-40" />
+                    <p className="text-sm">No image uploaded</p>
+                  </div>
+                </div>
+              )}
+              <div className="flex gap-3 items-center">
+                <label className="cursor-pointer">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageUpload}
+                    disabled={uploading}
+                  />
+                  <span className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
+                    {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                    {uploading ? 'Uploading...' : imagePreview ? 'Replace Image' : 'Upload Image'}
+                  </span>
+                </label>
+              </div>
+            </div>
+          )}
+
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor={`${sectionKey}-title`}>Title</Label>
@@ -199,16 +286,18 @@ const ContentCard = ({ sectionKey, label, description, data, onSave, saving }: C
               minHeight="200px"
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor={`${sectionKey}-image`}>Image URL</Label>
-            <Input
-              id={`${sectionKey}-image`}
-              type="url"
-              value={formData.image_url}
-              onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-              placeholder="https://..."
-            />
-          </div>
+          {!hasImageUpload && (
+            <div className="space-y-2">
+              <Label htmlFor={`${sectionKey}-image`}>Image URL</Label>
+              <Input
+                id={`${sectionKey}-image`}
+                type="url"
+                value={formData.image_url}
+                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                placeholder="https://..."
+              />
+            </div>
+          )}
           <Button type="submit" disabled={saving}>
             {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
             Save Changes

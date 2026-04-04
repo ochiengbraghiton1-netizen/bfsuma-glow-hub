@@ -20,6 +20,7 @@ const Contact = lazy(() => import("@/components/Contact"));
 
 const StoriesInsights = lazy(() => import("@/components/StoriesInsights"));
 const NewsletterSignup = lazy(() => import("@/components/NewsletterSignup"));
+const RealPeopleSection = lazy(() => import("@/components/RealPeopleSection"));
 const ExitIntentPopup = lazy(() => import("@/components/ExitIntentPopup"));
 const StructuredData = lazy(() => import("@/components/StructuredData"));
 const ConsultationCTA = lazy(() => import("@/components/ConsultationCTA"));
@@ -44,6 +45,9 @@ const Index = () => {
       <Header />
       <main className="pt-16">
         <Hero />
+        <Suspense fallback={null}>
+          <RealPeopleSection />
+        </Suspense>
         {/* Priority below-fold: testimonials + products */}
         <div className="content-auto">
           <Suspense fallback={null}>
