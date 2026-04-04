@@ -233,3 +233,12 @@ All colors MUST be HSL.
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
+
+/* Hide scrollbar for horizontal scroll containers */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
