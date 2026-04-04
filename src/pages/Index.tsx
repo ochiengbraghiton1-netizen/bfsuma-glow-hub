@@ -45,6 +45,9 @@ const Index = () => {
       <Header />
       <main className="pt-16">
         <Hero />
+        <Suspense fallback={null}>
+          <RealPeopleSection />
+        </Suspense>
         {/* Priority below-fold: testimonials + products */}
         <div className="content-auto">
           <Suspense fallback={null}>
