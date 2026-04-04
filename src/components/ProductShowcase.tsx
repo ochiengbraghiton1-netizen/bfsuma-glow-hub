@@ -172,32 +172,12 @@ const ProductShowcase = () => {
             </div>
           </div>
 
-          {/* Category Filters */}
-          <div className="flex flex-wrap justify-center gap-2 mb-4">
-            <Button
-              variant={activeCategory === "all" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setActiveCategory("all")}
-              className={`rounded-full transition-all duration-300 ${
-                activeCategory === "all" ? "" : "border-border/50 hover:border-primary/50"
-              }`}
-            >
-              All Products
-            </Button>
-            {categories.map((category) => (
-              <Button
-                key={category.id}
-                variant={activeCategory === category.slug ? "default" : "outline"}
-                size="sm"
-                onClick={() => setActiveCategory(category.slug)}
-                className={`rounded-full transition-all duration-300 ${
-                  activeCategory === category.slug ? "" : "border-border/50 hover:border-primary/50"
-                }`}
-              >
-                {category.name}
-              </Button>
-            ))}
-          </div>
+          {/* Category Filters — horizontal scroll */}
+          <CategoryPills
+            categories={categories}
+            activeCategory={activeCategory}
+            onSelect={setActiveCategory}
+          />
 
           {/* Sort + Filter Controls */}
           <div className="flex items-center justify-between gap-3">
