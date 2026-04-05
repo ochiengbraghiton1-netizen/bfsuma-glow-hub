@@ -89,7 +89,7 @@ const ProductCard = ({
           style={{ transformStyle: 'preserve-3d' }}
         >
           <ResponsiveImage 
-            src={image || productGeneric}
+            src={image || ""}
             alt={generateProductAltText(name, category)}
             loading="lazy"
             decoding="async"
@@ -97,7 +97,6 @@ const ProductCard = ({
             height={224}
             className="w-full h-56 object-cover"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            fallbackSrc={productGeneric}
           />
         </div>
         
