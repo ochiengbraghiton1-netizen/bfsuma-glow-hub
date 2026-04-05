@@ -12,7 +12,7 @@ import { useProductRatings } from "@/hooks/use-product-ratings";
 import RelatedBlogPosts from "@/components/blog/RelatedBlogPosts";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import productGeneric from "@/assets/product-generic.webp";
+
 import { stripHtmlTags, truncateText } from "@/lib/html-utils";
 
 const trustSignals = [
@@ -261,12 +261,18 @@ const ProductPage = () => {
             <div className="grid md:grid-cols-2 gap-8 lg:gap-12 mb-12">
               {/* Image */}
               <div className="relative rounded-2xl overflow-hidden bg-card border">
-                <img
-                  src={product.image_url || productGeneric}
-                  alt={product.name}
-                  className="w-full aspect-square object-cover"
-                  loading="eager"
-                />
+                {product.image_url ? (
+                  <img
+                    src={product.image_url}
+                    alt={product.name}
+                    className="w-full aspect-square object-cover"
+                    loading="eager"
+                  />
+                ) : (
+                  <div className="w-full aspect-square bg-muted flex items-center justify-center text-muted-foreground text-sm">
+                    No image available
+                  </div>
+                )}
                 {product.track_inventory && (
                   <span
                     className={`absolute top-4 left-4 text-xs font-medium px-3 py-1 rounded-full ${stockBadgeStyles[stockStatus.status]}`}

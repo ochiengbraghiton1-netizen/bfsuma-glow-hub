@@ -1,10 +1,5 @@
 import { useState, useCallback } from "react";
 
-interface ImageSource {
-  src: string;
-  width: number;
-}
-
 interface ResponsiveImageProps {
   src: string;
   alt: string;
@@ -17,27 +12,13 @@ interface ResponsiveImageProps {
   onLoad?: () => void;
   onError?: () => void;
   fallbackSrc?: string;
+  /** Show a skeleton placeholder until the image loads (default: true) */
+  showSkeleton?: boolean;
 }
 
 /**
- * Generates srcset string for responsive images
- * Uses Lovable CDN image optimization when available
- */
-function generateSrcSet(src: string, widths: number[] = [320, 640, 768, 1024, 1280]): string {
-  // If it's already a data URL or external URL without CDN support, return empty
-  if (src.startsWith("data:") || !src) {
-    return "";
-  }
-
-  // For local assets or CDN-compatible URLs, generate srcset
-  // This assumes the build process or CDN handles WebP conversion
-  return widths
-    .map((width) => `${src} ${width}w`)
-    .join(", ");
-}
-
-/**
- * ResponsiveImage component with WebP support and srcset for optimal loading
+ * ResponsiveImage component with skeleton loading state and fade-in.
+ * No AI/default image fallback — shows a neutral skeleton until the real image loads.
  */
 const ResponsiveImage = ({
   src,
@@ -51,6 +32,7 @@ const ResponsiveImage = ({
   onLoad,
   onError,
   fallbackSrc,
+  showSkeleton = true,
 }: ResponsiveImageProps) => {
   const [hasError, setHasError] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -62,37 +44,47 @@ const ResponsiveImage = ({
 
   const handleError = useCallback(() => {
     setHasError(true);
+    if (fallbackSrc) {
+      // Will re-render with fallbackSrc
+    }
     onError?.();
-  }, [onError]);
+  }, [onError, fallbackSrc]);
 
   const imageSrc = hasError && fallbackSrc ? fallbackSrc : src;
-  const srcSet = generateSrcSet(imageSrc);
+
+  // If there's no source at all, show skeleton/placeholder
+  if (!imageSrc) {
+    return (
+      <div
+        className={`${className} bg-muted animate-pulse`}
+        style={{ width, height }}
+        role="img"
+        aria-label={alt}
+      />
+    );
+  }
 
   return (
-    <picture>
-      {/* WebP source - browsers that support it will use this */}
-      {srcSet && (
-        <source
-          type="image/webp"
-          srcSet={srcSet}
-          sizes={sizes}
+    <div className="relative">
+      {/* Skeleton placeholder — visible until image loads */}
+      {showSkeleton && !isLoaded && (
+        <div
+          className={`${className} absolute inset-0 bg-muted animate-pulse rounded-inherit`}
         />
       )}
-      {/* Fallback to original format */}
       <img
         src={imageSrc}
         alt={alt}
         width={width}
         height={height}
-        className={`${className} ${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
+        className={`${className} transition-opacity duration-300 ${isLoaded ? "opacity-100" : "opacity-0"}`}
         loading={loading}
         decoding={decoding}
         onLoad={handleLoad}
         onError={handleError}
         sizes={sizes}
-        srcSet={srcSet || undefined}
       />
-    </picture>
+    </div>
   );
 };
 
