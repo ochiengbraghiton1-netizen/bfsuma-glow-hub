@@ -168,30 +168,32 @@ const Checkout = () => {
   };
 
   const generateWhatsAppMessage = (orderId: string) => {
-    const itemsList = items.map(item => 
-      `Product: ${item.name}\nQuantity: ${item.quantity}\nPrice: KES ${(item.price * item.quantity).toLocaleString()}`
-    ).join('\n\n');
+    const shortId = orderId.slice(0, 8).toUpperCase();
+    const productLines = items.map(item => 
+      `• ${item.name} x${item.quantity} - KES ${(item.price * item.quantity).toLocaleString()}`
+    ).join('\n');
 
-    const message = `Hello, I'd like to place an order:
-
-${itemsList}
-
-Order ID: ${orderId.slice(0, 8).toUpperCase()}
-Total: KES ${finalTotal.toLocaleString()}
-${discount > 0 ? `Discount (${promoApplied?.code}): -KES ${discount.toLocaleString()}\n` : ''}Shipping (${DELIVERY_LABELS[deliveryLocation]}): KES ${shippingFee.toLocaleString()}
-
-Name: ${formData.customerName}
-Phone Number: ${formData.customerPhone}
-${formData.customerEmail ? `Email: ${formData.customerEmail}\n` : ''}Location (City/Area): ${formData.shippingAddress}
-
-Preferred Delivery Option:
-${deliveryLocation === 'nairobi' ? '✅ Home Delivery' : '✅ Home Delivery (Outside Nairobi)'}
-
-Payment Method:
-M-Pesa
-${formData.notes ? `\nNotes: ${formData.notes}` : ''}
-
-Please confirm availability and send payment instructions. Thank you.`;
+    let message = `🛒 *NEW ORDER - BF SUMA ROYAL*\n\n`;
+    message += `📋 *Order ID:* ${shortId}\n\n`;
+    message += `👤 *Customer Details:*\n`;
+    message += `Name: ${formData.customerName}\n`;
+    message += `Phone: ${formData.customerPhone}\n`;
+    if (formData.customerEmail) {
+      message += `Email: ${formData.customerEmail}\n`;
+    }
+    message += `\n📦 *Products:*\n${productLines}\n\n`;
+    message += `💰 *Order Summary:*\n`;
+    message += `Subtotal: KES ${subtotal.toLocaleString()}\n`;
+    if (discount > 0) {
+      message += `Discount (${promoApplied?.code}): -KES ${discount.toLocaleString()}\n`;
+    }
+    message += `Shipping (${DELIVERY_LABELS[deliveryLocation]}): KES ${shippingFee.toLocaleString()}\n\n`;
+    message += `*Total: KES ${finalTotal.toLocaleString()}*\n\n`;
+    message += `📍 *Delivery Address:*\n${formData.shippingAddress}\n`;
+    if (formData.notes) {
+      message += `\n📝 *Notes:* ${formData.notes}\n`;
+    }
+    message += `\n---\nSent from BF SUMA ROYAL Website`;
 
     return encodeURIComponent(message);
   };

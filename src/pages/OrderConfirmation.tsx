@@ -129,12 +129,34 @@ const OrderConfirmation = () => {
   const generateWhatsAppMessage = () => {
     if (!order) return '';
     const shortId = formatOrderId(order.id);
-    const productNames = orderItems.length > 0
-      ? orderItems.map(i => `${i.product_name} x${i.quantity}`).join(', ')
-      : 'See order details';
-    return encodeURIComponent(
-      `Hello BF Suma, I am confirming Order #${shortId} for ${productNames}. My name is ${order.customer_name}. Phone: ${order.customer_phone}. Total: ${formatAmount(order.total_amount)}.`
-    );
+    const productLines = orderItems.length > 0
+      ? orderItems.map(i => `• ${i.product_name} x${i.quantity} - ${formatAmount(i.subtotal)}`).join('\n')
+      : '• See order details';
+
+    let message = `🛒 *NEW ORDER - BF SUMA ROYAL*\n\n`;
+    message += `📋 *Order ID:* ${shortId}\n\n`;
+    message += `👤 *Customer Details:*\n`;
+    message += `Name: ${order.customer_name}\n`;
+    message += `Phone: ${order.customer_phone}\n`;
+    if (order.customer_email) {
+      message += `Email: ${order.customer_email}\n`;
+    }
+    message += `\n📦 *Products:*\n${productLines}\n\n`;
+    message += `💰 *Order Summary:*\n`;
+    message += `Subtotal: ${formatAmount(order.subtotal)}\n`;
+    if (order.discount_amount > 0) {
+      message += `Discount${order.promotion_code ? ` (${order.promotion_code})` : ''}: -${formatAmount(order.discount_amount)}\n`;
+    }
+    message += `\n*Total: ${formatAmount(order.total_amount)}*\n\n`;
+    if (order.shipping_address) {
+      message += `📍 *Delivery Address:*\n${order.shipping_address}\n`;
+    }
+    if (order.notes) {
+      message += `\n📝 *Notes:* ${order.notes}\n`;
+    }
+    message += `\n---\nSent from BF SUMA ROYAL Website`;
+
+    return encodeURIComponent(message);
   };
 
 
