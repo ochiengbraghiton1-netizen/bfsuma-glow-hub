@@ -1,5 +1,5 @@
 import { ArrowRight, ShoppingBag, MessageCircle } from "lucide-react";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 const WHATSAPP_URL = 'https://wa.me/254795454053?text=Hi%2C%20I%20need%20help%20choosing%20the%20right%20supplement%20for%20my%20health.';
