@@ -1,20 +1,14 @@
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { ShoppingCart, Plus, Minus, Trash2, Menu, UserPlus, LogIn, LogOut, User, LayoutDashboard, Stethoscope } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import ThemeToggle from "./ThemeToggle";
 import productGeneric from "@/assets/product-generic.webp";
 import bfSumaLogo from "@/assets/bf-suma-logo-new-sm.webp";
-
-// Lazy-load Sheet (Radix Dialog) to reduce initial JS parse — only needed on interaction
-const Sheet = lazy(() => import("@/components/ui/sheet").then(m => ({ default: m.Sheet })));
-const SheetContent = lazy(() => import("@/components/ui/sheet").then(m => ({ default: m.SheetContent })));
-const SheetHeader = lazy(() => import("@/components/ui/sheet").then(m => ({ default: m.SheetHeader })));
-const SheetTitle = lazy(() => import("@/components/ui/sheet").then(m => ({ default: m.SheetTitle })));
-const SheetTrigger = lazy(() => import("@/components/ui/sheet").then(m => ({ default: m.SheetTrigger })));
-const Separator = lazy(() => import("@/components/ui/separator").then(m => ({ default: m.Separator })));
+import { Separator } from "@/components/ui/separator";
 
 const navLinks = [
   { href: "/products", label: "Shop", isAnchor: false },
