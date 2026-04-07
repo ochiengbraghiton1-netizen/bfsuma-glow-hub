@@ -11,8 +11,6 @@ function modulePreloadHints(): Plugin {
   const criticalChunks = [
     "vendor-react",
     "vendor-query",
-    "vendor-supabase",
-    "vendor-ui-core",
   ];
 
   return {
