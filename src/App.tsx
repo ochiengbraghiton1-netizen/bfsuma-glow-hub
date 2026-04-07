@@ -15,8 +15,8 @@ const Sonner = lazy(() => import("@/components/ui/sonner").then(m => ({ default:
 const Chatbot = lazy(() => import("@/components/Chatbot"));
 
 
-// Critical route – loaded eagerly
-import Index from "./pages/Index";
+// Index page — lazy loaded to reduce initial JS parse/execution
+const Index = lazy(() => import("./pages/Index"));
 
 // Lazy-loaded routes for code splitting
 const Checkout = lazy(() => import("./pages/Checkout"));
