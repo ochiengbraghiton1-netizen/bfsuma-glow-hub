@@ -1,13 +1,11 @@
 import { ArrowRight, ShoppingBag, MessageCircle } from "lucide-react";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 const WHATSAPP_URL = 'https://wa.me/254795454053?text=Hi%2C%20I%20need%20help%20choosing%20the%20right%20supplement%20for%20my%20health.';
 
 const Hero = () => {
   const [heroImage, setHeroImage] = useState<string | null>(null);
-  const [imageReady, setImageReady] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     supabase
@@ -17,21 +15,9 @@ const Hero = () => {
       .maybeSingle()
       .then(({ data }) => {
         if (data?.image_url) {
-          // Preload the image before displaying
           const img = new Image();
-          img.onload = () => {
-            setHeroImage(data.image_url);
-            setImageReady(true);
-            setLoading(false);
-          };
-          img.onerror = () => {
-            setLoading(false);
-          };
+          img.onload = () => setHeroImage(data.image_url);
           img.src = data.image_url;
-        } else {
-          // No admin image — use static fallback directly (no preload needed, it's local)
-          setLoading(false);
-          setImageReady(true);
         }
       });
   }, []);
@@ -45,38 +31,36 @@ const Hero = () => {
       {/* Neutral background while loading */}
       <div className="absolute inset-0 bg-muted" />
 
-      {/* Hero background image — only rendered when ready */}
-      {imageReady && (
-        heroImage ? (
-          <img
-            src={heroImage}
-            alt="BF SUMA Royal wellness community — real customers and team members"
-            loading="eager"
-            decoding="sync"
-            fetchPriority="high"
-            className="absolute inset-0 w-full h-full object-cover animate-fade-in"
-            width={1920}
-            height={1080}
-            sizes="100vw"
-            style={{ objectPosition: "center top" }}
-          />
-        ) : (
-          <picture>
-            <source srcSet="/images/wellness-hero.webp" type="image/webp" />
-            <img
-              src="/images/wellness-hero.jpg"
-              alt="BF SUMA Royal premium wellness supplements and natural health products display"
-              loading="eager"
-              decoding="sync"
-              fetchPriority="high"
-              className="absolute inset-0 w-full h-full object-cover"
-              width={1920}
-              height={1080}
-              sizes="100vw"
-              style={{ objectPosition: "center" }}
-            />
-          </picture>
-        )
+      {/* Static fallback — always rendered immediately for fast LCP */}
+      <picture>
+        <source srcSet="/images/wellness-hero.webp" type="image/webp" />
+        <img
+          src="/images/wellness-hero.jpg"
+          alt="BF SUMA Royal premium wellness supplements and natural health products display"
+          loading="eager"
+          decoding="sync"
+          fetchPriority="high"
+          className="absolute inset-0 w-full h-full object-cover"
+          width={1920}
+          height={1080}
+          sizes="100vw"
+          style={{ objectPosition: "center" }}
+        />
+      </picture>
+
+      {/* Admin-uploaded hero overlays the static one when ready */}
+      {heroImage && (
+        <img
+          src={heroImage}
+          alt="BF SUMA Royal wellness community — real customers and team members"
+          loading="eager"
+          decoding="sync"
+          className="absolute inset-0 w-full h-full object-cover animate-fade-in"
+          width={1920}
+          height={1080}
+          sizes="100vw"
+          style={{ objectPosition: "center top" }}
+        />
       )}
 
       {/* Dark gradient overlay for readability */}

@@ -1,8 +1,9 @@
 import { lazy, Suspense } from "react";
 import { Helmet } from "react-helmet-async";
 import Hero from "@/components/Hero";
-import Header from "@/components/Header";
 
+// Lazy-load Header (contains Sheet/Radix Dialog — heavy) to reduce TBT
+const Header = lazy(() => import("@/components/Header"));
 const Footer = lazy(() => import("@/components/Footer"));
 
 // Lazy-load below-the-fold sections
@@ -42,7 +43,9 @@ const Index = () => {
         <meta name="twitter:description" content="Shop top-rated natural supplements in Kenya for immunity, joint health, energy, beauty & more. Order now." />
         <meta name="twitter:image" content="https://bfsumaroyal.com/og-image.png" />
       </Helmet>
-      <Header />
+      <Suspense fallback={<div className="h-16" />}>
+        <Header />
+      </Suspense>
       <main className="pt-16">
         <Hero />
         <Suspense fallback={null}>
