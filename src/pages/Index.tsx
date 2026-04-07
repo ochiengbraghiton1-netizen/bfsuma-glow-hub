@@ -43,7 +43,9 @@ const Index = () => {
         <meta name="twitter:description" content="Shop top-rated natural supplements in Kenya for immunity, joint health, energy, beauty & more. Order now." />
         <meta name="twitter:image" content="https://bfsumaroyal.com/og-image.png" />
       </Helmet>
-      <Header />
+      <Suspense fallback={<div className="h-16" />}>
+        <Header />
+      </Suspense>
       <main className="pt-16">
         <Hero />
         <Suspense fallback={null}>
