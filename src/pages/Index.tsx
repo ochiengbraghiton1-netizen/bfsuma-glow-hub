@@ -1,8 +1,9 @@
 import { lazy, Suspense } from "react";
 import { Helmet } from "react-helmet-async";
 import Hero from "@/components/Hero";
-import Header from "@/components/Header";
 
+// Lazy-load Header (contains Sheet/Radix Dialog — heavy) to reduce TBT
+const Header = lazy(() => import("@/components/Header"));
 const Footer = lazy(() => import("@/components/Footer"));
 
 // Lazy-load below-the-fold sections
