@@ -11,8 +11,6 @@ function modulePreloadHints(): Plugin {
   const criticalChunks = [
     "vendor-react",
     "vendor-query",
-    "vendor-supabase",
-    "vendor-ui-core",
   ];
 
   return {
@@ -44,13 +42,46 @@ function modulePreloadHints(): Plugin {
   };
 }
 
+/**
+ * Vite plugin: make the main CSS non-render-blocking.
+ * Inlines critical above-fold CSS and async-loads the full stylesheet.
+ */
+function asyncCssPlugin(): Plugin {
+  // Critical CSS for above-fold rendering (variables, body, header shell, hero)
+  const criticalCSS = `
+:root{--background:0 0% 100%;--foreground:160 20% 15%;--primary:158 64% 52%;--primary-foreground:0 0% 100%;--primary-glow:158 64% 62%;--accent:43 96% 56%;--accent-foreground:160 20% 15%;--accent-glow:43 96% 66%;--secondary:158 44% 32%;--secondary-foreground:0 0% 100%;--muted:160 10% 95%;--muted-foreground:160 10% 40%;--border:160 20% 90%;--ring:158 64% 52%;--radius:1rem;--destructive:0 84.2% 60.2%;--destructive-foreground:0 0% 100%;--input:160 20% 90%}
+.dark{--background:160 20% 8%;--foreground:0 0% 95%;--primary:158 64% 55%;--primary-foreground:0 0% 100%;--accent:43 96% 60%;--accent-foreground:160 20% 10%;--secondary:158 44% 25%;--secondary-foreground:0 0% 100%;--muted:160 15% 18%;--muted-foreground:160 10% 65%;--border:160 20% 20%;--ring:158 64% 55%;--input:160 20% 18%;--destructive:0 72% 51%;--destructive-foreground:0 0% 100%}
+*,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:hsl(var(--border))}
+body{margin:0;background-color:hsl(var(--background));color:hsl(var(--foreground));font-family:system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+`.trim();
+
+  return {
+    name: "async-css",
+    enforce: "post",
+    transformIndexHtml: {
+      order: "post",
+      handler(html) {
+        // Find the main CSS link and make it non-render-blocking
+        const cssLinkRegex = /<link rel="stylesheet" crossorigin href="(\/assets\/index-[^"]+\.css)">/;
+        const match = html.match(cssLinkRegex);
+        if (!match) return html;
+
+        const cssHref = match[1];
+        const asyncLink = `<style>${criticalCSS}</style>\n    <link rel="stylesheet" href="${cssHref}" media="print" onload="this.media='all'">\n    <noscript><link rel="stylesheet" href="${cssHref}"></noscript>`;
+
+        return html.replace(match[0], asyncLink);
+      },
+    },
+  };
+}
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
   },
-  plugins: [react(), modulePreloadHints(), mode === "development" && componentTagger()].filter(Boolean),
+  plugins: [react(), modulePreloadHints(), asyncCssPlugin(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
