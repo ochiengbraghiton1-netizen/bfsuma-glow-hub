@@ -137,6 +137,52 @@ All colors MUST be HSL.
   contain-intrinsic-size: auto 500px;
 }
 
+/* App layout resets */
+#root {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+.container {
+  width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
+  50% { transform: translateY(-20px) rotate(180deg); opacity: 0.6; }
+}
+
+@keyframes glow {
+  0%, 100% { filter: drop-shadow(0 0 3px hsl(43 96% 56% / 0.5)); }
+  50% { filter: drop-shadow(0 0 8px hsl(43 96% 56% / 0.8)); }
+}
+
+.animate-glow { animation: glow 2s ease-in-out infinite; }
+
+@keyframes cta-pulse {
+  0%, 100% { box-shadow: 0 0 50px hsl(43 96% 56% / 0.6), 0 8px 32px hsl(43 96% 56% / 0.35); }
+  50% { box-shadow: 0 0 65px hsl(43 96% 56% / 0.75), 0 12px 40px hsl(43 96% 56% / 0.45); }
+}
+
+.animate-cta-pulse { animation: cta-pulse 2.5s ease-in-out infinite; }
+
 /* TipTap / ProseMirror editor styles for headings and lists */
 .ProseMirror h1 {
   font-size: 1.875rem;
