@@ -35,6 +35,11 @@ const Hero = () => {
 
       {/* Static fallback — always rendered immediately for fast LCP */}
       <picture>
+        <source
+          media="(min-width: 768px)"
+          srcSet="/images/wellness-hero.webp"
+          type="image/webp"
+        />
         <source srcSet="/images/wellness-hero.webp" type="image/webp" />
         <img
           src="/images/wellness-hero.jpg"
@@ -42,13 +47,26 @@ const Hero = () => {
           loading="eager"
           decoding="sync"
           fetchPriority="high"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover object-[center_30%] md:object-[center_top]"
           width={1920}
           height={1080}
           sizes="100vw"
-          style={{ objectPosition: "center" }}
         />
       </picture>
+
+      {/* Admin-uploaded hero overlays the static one when ready */}
+      {heroImage && (
+        <img
+          src={heroImage}
+          alt="BF SUMA Royal wellness community — real customers and team members"
+          loading="eager"
+          decoding="sync"
+          className="absolute inset-0 w-full h-full object-cover object-[center_30%] md:object-[center_top] animate-fade-in"
+          width={1920}
+          height={1080}
+          sizes="100vw"
+        />
+      )}
 
       {/* Admin-uploaded hero overlays the static one when ready */}
       {heroImage && (
