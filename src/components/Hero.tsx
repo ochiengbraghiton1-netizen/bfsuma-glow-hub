@@ -100,23 +100,23 @@ const Hero = () => {
           Discover the right supplement for your body—boost immunity, improve energy, and support your health with trusted natural solutions in Kenya.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 md:gap-5 justify-center items-center w-full max-w-xl mx-auto">
+        <div className="flex flex-col sm:flex-row gap-3 md:gap-5 justify-center items-stretch sm:items-center w-full max-w-xl mx-auto">
           <button
             onClick={scrollToProducts}
-            className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-3 h-14 md:h-[4.5rem] px-10 md:px-14 text-lg md:text-[1.35rem] font-extrabold tracking-wide rounded-2xl bg-accent text-accent-foreground shadow-[0_0_50px_hsl(43_96%_56%/0.6),0_8px_32px_hsl(43_96%_56%/0.35)] hover:shadow-[0_0_70px_hsl(43_96%_56%/0.8),0_12px_40px_hsl(43_96%_56%/0.5)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300 ease-out animate-cta-pulse"
+            className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 md:gap-3 h-14 md:h-[4.5rem] px-5 md:px-14 text-base md:text-[1.35rem] font-extrabold tracking-wide rounded-2xl bg-accent text-accent-foreground shadow-[0_0_50px_hsl(43_96%_56%/0.6),0_8px_32px_hsl(43_96%_56%/0.35)] hover:shadow-[0_0_70px_hsl(43_96%_56%/0.8),0_12px_40px_hsl(43_96%_56%/0.5)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300 ease-out animate-cta-pulse whitespace-nowrap"
           >
-            <ShoppingBag className="w-6 h-6 md:w-7 md:h-7" />
-            Find the Right Supplement
-            <ArrowRight className="w-6 h-6 md:w-7 md:h-7 group-hover:translate-x-1.5 transition-transform duration-300" />
+            <ShoppingBag className="w-5 h-5 md:w-7 md:h-7 shrink-0" />
+            <span>Find the Right Supplement</span>
+            <ArrowRight className="w-5 h-5 md:w-7 md:h-7 shrink-0 group-hover:translate-x-1.5 transition-transform duration-300" />
           </button>
           <a
             href={WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-3 h-14 md:h-[4.5rem] px-10 md:px-14 text-lg md:text-[1.35rem] font-extrabold tracking-wide rounded-2xl bg-white/15 backdrop-blur-md text-white border-2 border-accent shadow-[0_0_30px_hsl(43_96%_56%/0.25),inset_0_1px_0_hsl(0_0%_100%/0.15)] hover:bg-accent hover:text-accent-foreground hover:shadow-[0_0_50px_hsl(43_96%_56%/0.6),0_8px_32px_hsl(43_96%_56%/0.35)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300 ease-out"
+            className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 md:gap-3 h-14 md:h-[4.5rem] px-5 md:px-14 text-base md:text-[1.35rem] font-extrabold tracking-wide rounded-2xl bg-white/15 backdrop-blur-md text-white border-2 border-accent shadow-[0_0_30px_hsl(43_96%_56%/0.25),inset_0_1px_0_hsl(0_0%_100%/0.15)] hover:bg-accent hover:text-accent-foreground hover:shadow-[0_0_50px_hsl(43_96%_56%/0.6),0_8px_32px_hsl(43_96%_56%/0.35)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300 ease-out whitespace-nowrap"
           >
-            <MessageCircle className="w-6 h-6 md:w-7 md:h-7" />
-            Talk to a Wellness Expert
+            <MessageCircle className="w-5 h-5 md:w-7 md:h-7 shrink-0" />
+            <span>Talk to a Wellness Expert</span>
           </a>
         </div>
       </div>
