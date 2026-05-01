@@ -91,7 +91,7 @@ const Index = () => {
         <Suspense fallback={null}>
           <StructuredData />
           
-          <ExitIntentPopup />
+          <HealthQuizPopup />
         </Suspense>
       </main>
       <Suspense fallback={null}>
