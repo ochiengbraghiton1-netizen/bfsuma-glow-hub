@@ -91,29 +91,14 @@ const HorizontalCarousel = ({
 
 interface CarouselItemProps {
   children: ReactNode;
-  widthMobile?: number;
-  widthDesktop?: number;
+  className?: string;
 }
 
-export const CarouselItem = ({
-  children,
-  widthMobile = 280,
-  widthDesktop = 340,
-}: CarouselItemProps) => (
+export const CarouselItem = ({ children, className = "" }: CarouselItemProps) => (
   <div
-    className="snap-start shrink-0"
-    style={{
-      width: `min(${widthMobile}px, 85vw)`,
-      // @ts-ignore inline custom prop for md
-    }}
+    className={`snap-start shrink-0 w-[85vw] max-w-[300px] md:w-[340px] md:max-w-none ${className}`}
   >
-    <div className="md:hidden h-full">{children}</div>
-    <div
-      className="hidden md:block h-full"
-      style={{ width: `${widthDesktop}px` }}
-    >
-      {children}
-    </div>
+    {children}
   </div>
 );
 
