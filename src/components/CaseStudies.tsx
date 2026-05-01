@@ -1,5 +1,6 @@
 import { Star, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import HorizontalCarousel, { CarouselItem } from "@/components/ui/horizontal-carousel";
 
 const caseStudies = [
   {
@@ -57,47 +58,41 @@ const CaseStudies = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
+        <HorizontalCarousel ariaLabel="Customer results">
           {caseStudies.map((study, idx) => (
-            <Card
-              key={idx}
-              className="p-5 bg-card border-border/50 hover:shadow-glow transition-shadow duration-300"
-            >
-              {/* Rating */}
-              <div className="flex items-center gap-0.5 mb-3">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`w-4 h-4 ${i < study.rating ? 'fill-accent text-accent' : 'text-border'}`}
-                  />
-                ))}
-              </div>
-
-              {/* Before/After */}
-              <div className="space-y-3 mb-4">
-                <div className="flex items-start gap-2">
-                  <span className="shrink-0 mt-0.5 w-5 h-5 rounded-full bg-destructive/10 text-destructive flex items-center justify-center text-xs font-bold">B</span>
-                  <p className="text-sm text-muted-foreground">{study.before}</p>
+            <CarouselItem key={idx}>
+              <Card className="p-5 bg-card border-border/50 hover:shadow-glow transition-shadow duration-300 h-full">
+                <div className="flex items-center gap-0.5 mb-3">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`w-4 h-4 ${i < study.rating ? 'fill-accent text-accent' : 'text-border'}`}
+                    />
+                  ))}
                 </div>
-                <div className="flex items-center justify-center">
-                  <ArrowRight className="w-4 h-4 text-primary" />
+                <div className="space-y-3 mb-4">
+                  <div className="flex items-start gap-2">
+                    <span className="shrink-0 mt-0.5 w-5 h-5 rounded-full bg-destructive/10 text-destructive flex items-center justify-center text-xs font-bold">B</span>
+                    <p className="text-sm text-muted-foreground">{study.before}</p>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <ArrowRight className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="shrink-0 mt-0.5 w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">A</span>
+                    <p className="text-sm text-foreground font-medium">{study.after}</p>
+                  </div>
                 </div>
-                <div className="flex items-start gap-2">
-                  <span className="shrink-0 mt-0.5 w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">A</span>
-                  <p className="text-sm text-foreground font-medium">{study.after}</p>
+                <div className="border-t border-border/50 pt-3">
+                  <p className="font-semibold text-foreground text-sm">{study.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {study.location} • {study.product}
+                  </p>
                 </div>
-              </div>
-
-              {/* Attribution */}
-              <div className="border-t border-border/50 pt-3">
-                <p className="font-semibold text-foreground text-sm">{study.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  {study.location} • {study.product}
-                </p>
-              </div>
-            </Card>
+              </Card>
+            </CarouselItem>
           ))}
-        </div>
+        </HorizontalCarousel>
 
         {/* Disclaimer */}
         <p className="text-center text-xs text-muted-foreground mt-6 max-w-lg mx-auto italic">

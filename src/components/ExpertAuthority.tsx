@@ -1,5 +1,6 @@
 import { Award } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import HorizontalCarousel, { CarouselItem } from "@/components/ui/horizontal-carousel";
 import expertAmina from "@/assets/expert-amina.webp";
 import expertDavid from "@/assets/expert-david.webp";
 import expertFaith from "@/assets/expert-faith.webp";
@@ -42,30 +43,29 @@ const ExpertAuthority = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <HorizontalCarousel ariaLabel="Wellness experts">
           {experts.map((expert) => (
-            <Card
-              key={expert.name}
-              className="overflow-hidden bg-card border-border/50 hover:shadow-glow transition-shadow duration-300"
-            >
-              <div className="aspect-square overflow-hidden">
-                <img
-                  src={expert.image}
-                  alt={`${expert.name} — ${expert.title} at BF Suma Royal`}
-                  loading="lazy"
-                  width={512}
-                  height={512}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-5">
-                <h3 className="text-lg font-bold text-foreground">{expert.name}</h3>
-                <p className="text-sm font-medium text-primary mb-2">{expert.title}</p>
-                <p className="text-sm text-muted-foreground leading-relaxed">{expert.bio}</p>
-              </div>
-            </Card>
+            <CarouselItem key={expert.name}>
+              <Card className="overflow-hidden bg-card border-border/50 hover:shadow-glow transition-shadow duration-300 h-full">
+                <div className="aspect-square overflow-hidden">
+                  <img
+                    src={expert.image}
+                    alt={`${expert.name} — ${expert.title} at BF Suma Royal`}
+                    loading="lazy"
+                    width={512}
+                    height={512}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="p-5">
+                  <h3 className="text-lg font-bold text-foreground">{expert.name}</h3>
+                  <p className="text-sm font-medium text-primary mb-2">{expert.title}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{expert.bio}</p>
+                </div>
+              </Card>
+            </CarouselItem>
           ))}
-        </div>
+        </HorizontalCarousel>
       </div>
     </section>
   );

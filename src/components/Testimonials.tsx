@@ -1,5 +1,6 @@
 import { Star, Quote } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import HorizontalCarousel, { CarouselItem } from "@/components/ui/horizontal-carousel";
 
 const testimonials = [
   {
@@ -60,27 +61,25 @@ const Testimonials = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <HorizontalCarousel ariaLabel="Customer testimonials">
           {testimonials.map((testimonial, index) => (
-            <Card 
-              key={index}
-              className="p-6 bg-card border-border/50 hover:shadow-glow transition-all duration-300 animate-fade-in"
-              style={{ animationDelay: `${(index + 4) * 100}ms` }}
-            >
-              <Quote className="w-8 h-8 text-primary/30 mb-4" />
-              <p className="text-foreground mb-4 italic">"{testimonial.text}"</p>
-              <div className="flex items-center gap-1 mb-3">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-accent text-accent" />
-                ))}
-              </div>
-              <div>
-                <p className="font-semibold text-foreground">{testimonial.name}</p>
-                <p className="text-sm text-muted-foreground">{testimonial.location} • {testimonial.product}</p>
-              </div>
-            </Card>
+            <CarouselItem key={index}>
+              <Card className="p-6 bg-card border-border/50 hover:shadow-glow transition-all duration-300 h-full">
+                <Quote className="w-8 h-8 text-primary/30 mb-4" />
+                <p className="text-foreground mb-4 italic">"{testimonial.text}"</p>
+                <div className="flex items-center gap-1 mb-3">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-accent text-accent" />
+                  ))}
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">{testimonial.name}</p>
+                  <p className="text-sm text-muted-foreground">{testimonial.location} • {testimonial.product}</p>
+                </div>
+              </Card>
+            </CarouselItem>
           ))}
-        </div>
+        </HorizontalCarousel>
       </div>
     </section>
   );
