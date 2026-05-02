@@ -30,17 +30,17 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <Helmet>
-        <title>Best Natural Health Supplements in Kenya | BF SUMA Royal</title>
-        <meta name="description" content="Shop top-rated natural supplements in Kenya for immunity, joint health, energy, beauty & more. Trusted quality, fast delivery nationwide. Order now at BF SUMA Royal." />
+        <title>BF SUMA Royal | Premium Supplements in Kenya for Energy & Immunity</title>
+        <meta name="description" content="Shop trusted natural supplements in Kenya. Boost energy, improve immunity, and support your health with BF SUMA Royal premium wellness products." />
         <link rel="canonical" href="https://bfsumaroyal.com/" />
-        <meta property="og:title" content="Best Natural Health Supplements in Kenya | BF SUMA Royal" />
-        <meta property="og:description" content="Shop top-rated natural supplements in Kenya for immunity, joint health, energy, beauty & more. Trusted quality, fast delivery nationwide. Order now." />
+        <meta property="og:title" content="BF SUMA Royal | Premium Supplements in Kenya for Energy & Immunity" />
+        <meta property="og:description" content="Shop trusted natural supplements in Kenya. Boost energy, improve immunity, and support your health with BF SUMA Royal premium wellness products." />
         <meta property="og:url" content="https://bfsumaroyal.com/" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://bfsumaroyal.com/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Best Natural Health Supplements in Kenya | BF SUMA Royal" />
-        <meta name="twitter:description" content="Shop top-rated natural supplements in Kenya for immunity, joint health, energy, beauty & more. Order now." />
+        <meta name="twitter:title" content="BF SUMA Royal | Premium Supplements in Kenya" />
+        <meta name="twitter:description" content="Shop trusted natural supplements in Kenya. Boost energy, immunity & overall wellness with BF SUMA Royal." />
         <meta name="twitter:image" content="https://bfsumaroyal.com/og-image.png" />
       </Helmet>
       <Suspense fallback={<div className="h-16" />}>
