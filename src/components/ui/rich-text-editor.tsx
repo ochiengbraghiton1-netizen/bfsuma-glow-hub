@@ -284,6 +284,12 @@ const RichTextEditor = ({
 
   if (!editor) return null;
 
+  // TipTap v3 command type augmentations don't always merge across nested @tiptap/core
+  // copies. Cast to any so chained extension commands (toggleBold, toggleHeading, etc.)
+  // type-check while runtime behavior remains identical.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const chain = () => (editor.chain() as any);
+
   return (
     <div className={cn('border border-input rounded-lg bg-background shadow-sm', className)}>
       <input type="file" ref={fileInputRef} onChange={handleFileSelect} accept="image/*" className="hidden" />
