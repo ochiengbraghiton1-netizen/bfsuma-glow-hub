@@ -9,8 +9,45 @@ import { toast } from "sonner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageSEO from "@/components/PageSEO";
+import { Helmet } from "react-helmet-async";
 
 import TikTokIcon from "@/components/icons/TikTokIcon";
+
+const contactLocalBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": "HealthAndBeautyBusiness",
+  name: "BF SUMA Royal Kenya",
+  image: "https://bfsumaroyal.com/og-image.png",
+  url: "https://bfsumaroyal.com/contact",
+  telephone: "+254795454053",
+  email: "bfsumaroyal@gmail.com",
+  description:
+    "Contact BF SUMA Royal Kenya for natural supplement orders, wellness consultations, and distributor support. Reach us via WhatsApp, email, or visit Kakamega.",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Kakamega",
+    addressCountry: "KE",
+  },
+  priceRange: "KSh 1,500 - KSh 15,000",
+  openingHoursSpecification: {
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    opens: "08:00",
+    closes: "18:00",
+  },
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: "+254795454053",
+    contactType: "customer support",
+    availableLanguage: ["English", "Swahili"],
+    areaServed: "KE",
+  },
+  sameAs: [
+    "https://www.facebook.com/share/1G6uTXLkpw/",
+    "https://www.instagram.com/bf_suma_royal",
+    "https://www.tiktok.com/@bfsumaroyal",
+  ],
+};
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
@@ -45,10 +82,13 @@ const ContactPage = () => {
   return (
     <div className="min-h-screen">
       <PageSEO
-        title="Contact Us in Kenya | BF SUMA Royal Support"
-        description="Reach BF SUMA Royal via WhatsApp, email, or visit us in Kakamega. Fast support for orders, products & business inquiries. Get in touch today."
+        title="Contact BF SUMA Royal | Order Supplements in Kenya"
+        description="Contact BF SUMA Royal for orders, consultations, and support. Reach us on WhatsApp, email, or visit our Kakamega office in Kenya. We reply fast."
         path="/contact"
       />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(contactLocalBusinessSchema)}</script>
+      </Helmet>
       <Header />
       <main className="pt-16">
         <section className="py-24 bg-background">

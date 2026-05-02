@@ -57,6 +57,7 @@ const FAQPage = () => {
       </Helmet>
       <Header />
       <main className="pt-16">
+        <h1 className="sr-only">Frequently Asked Questions – BF SUMA Royal Kenya</h1>
         <FAQ />
       </main>
       <Footer />
