@@ -288,7 +288,8 @@ const RichTextEditor = ({
   // copies. Cast to any so chained extension commands (toggleBold, toggleHeading, etc.)
   // type-check while runtime behavior remains identical.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const chain = () => (chain() as any);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const chain = () => ((editor as any).chain() as any);
 
   return (
     <div className={cn('border border-input rounded-lg bg-background shadow-sm', className)}>
