@@ -17,3 +17,5 @@ project_id = "sboaeutgckyiwunfmxqp"
     verify_jwt = false
   [functions.site-health]
     verify_jwt = false
+  [functions.seo-render]
+    verify_jwt = false
