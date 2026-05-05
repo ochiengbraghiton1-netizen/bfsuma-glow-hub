@@ -62,6 +62,9 @@ const LocationLanding = lazy(() => import("./pages/LocationLanding"));
 const ReturnPolicy = lazy(() => import("./pages/ReturnPolicy"));
 const TermsConditions = lazy(() => import("./pages/TermsConditions"));
 const ProductPage = lazy(() => import("./pages/ProductPage"));
+const WellnessHubsIndex = lazy(() => import("./pages/WellnessHubsIndex"));
+const WellnessHubPage = lazy(() => import("./pages/WellnessHubPage"));
+const AdminWellnessHubs = lazy(() => import("./pages/admin/WellnessHubs"));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-background">
@@ -129,6 +132,7 @@ const App = () => (
                     <Route path="social-posts" element={<SocialPosts />} />
                     <Route path="leads" element={<Leads />} />
                     <Route path="product-keywords" element={<ProductKeywords />} />
+                    <Route path="wellness-hubs" element={<AdminWellnessHubs />} />
                   </Route>
                   <Route path="/affiliate" element={<AffiliateDashboard />} />
                   <Route path="/distributor/dashboard" element={<DistributorDashboard />} />
@@ -146,6 +150,8 @@ const App = () => (
                   <Route path="/return-policy" element={<ReturnPolicy />} />
                   <Route path="/terms" element={<TermsConditions />} />
                   <Route path="/my-orders" element={<MyOrders />} />
+                  <Route path="/wellness" element={<WellnessHubsIndex />} />
+                  <Route path="/wellness/:slug" element={<WellnessHubPage />} />
                   <Route path="/:city" element={<LocationLanding />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>

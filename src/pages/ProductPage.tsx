@@ -10,6 +10,7 @@ import RichTextContent from "@/components/ui/rich-text-content";
 import ProductReviews from "@/components/ProductReviews";
 import { useProductRatings } from "@/hooks/use-product-ratings";
 import RelatedBlogPosts from "@/components/blog/RelatedBlogPosts";
+import RelatedWellnessHubs from "@/components/RelatedWellnessHubs";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -340,6 +341,9 @@ const ProductPage = () => {
 
             {/* Related Blog Posts */}
             <RelatedBlogPosts productId={product.id} />
+
+            {/* Related Wellness Hubs */}
+            <RelatedWellnessHubs productId={product.id} />
           </div>
         </main>
         <Footer />

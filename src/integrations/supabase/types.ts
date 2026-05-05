@@ -1210,6 +1210,118 @@ export type Database = {
         }
         Relationships: []
       }
+      wellness_hub_articles: {
+        Row: {
+          blog_post_id: string
+          created_at: string
+          hub_id: string
+          id: string
+          position: number
+        }
+        Insert: {
+          blog_post_id: string
+          created_at?: string
+          hub_id: string
+          id?: string
+          position?: number
+        }
+        Update: {
+          blog_post_id?: string
+          created_at?: string
+          hub_id?: string
+          id?: string
+          position?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wellness_hub_articles_hub_id_fkey"
+            columns: ["hub_id"]
+            isOneToOne: false
+            referencedRelation: "wellness_hubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wellness_hub_products: {
+        Row: {
+          created_at: string
+          hub_id: string
+          id: string
+          position: number
+          product_id: string
+        }
+        Insert: {
+          created_at?: string
+          hub_id: string
+          id?: string
+          position?: number
+          product_id: string
+        }
+        Update: {
+          created_at?: string
+          hub_id?: string
+          id?: string
+          position?: number
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wellness_hub_products_hub_id_fkey"
+            columns: ["hub_id"]
+            isOneToOne: false
+            referencedRelation: "wellness_hubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wellness_hubs: {
+        Row: {
+          created_at: string
+          display_order: number
+          faq: Json
+          hero_description: string
+          hero_title: string
+          id: string
+          intro_html: string | null
+          is_active: boolean
+          meta_description: string | null
+          meta_title: string | null
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          faq?: Json
+          hero_description: string
+          hero_title: string
+          id?: string
+          intro_html?: string | null
+          is_active?: boolean
+          meta_description?: string | null
+          meta_title?: string | null
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          faq?: Json
+          hero_description?: string
+          hero_title?: string
+          id?: string
+          intro_html?: string | null
+          is_active?: boolean
+          meta_description?: string | null
+          meta_title?: string | null
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

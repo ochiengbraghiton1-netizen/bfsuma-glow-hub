@@ -376,6 +376,45 @@ async function buildMeta(pathname: string, supabase: ReturnType<typeof createCli
     };
   }
 
+  // /wellness index
+  if (pathname === "/wellness") {
+    return {
+      title: "Wellness Hubs | BF SUMA Royal Kenya",
+      description: "Explore 7 wellness hubs from BF SUMA Royal Kenya — joint pain, weight, digestion, hormones, energy, sleep & immunity.",
+      canonical,
+      h1: "Wellness Hubs",
+      body: `<p>Curated supplements, expert guides and FAQs across 7 wellness areas Kenyans care about most.</p>`,
+    };
+  }
+  // /wellness/:slug
+  const hubMatch = pathname.match(/^\/wellness\/([^\/]+)$/);
+  if (hubMatch) {
+    const hubSlug = decodeURIComponent(hubMatch[1]);
+    const { data } = await supabase
+      .from("wellness_hubs")
+      .select("name,hero_title,hero_description,meta_title,meta_description,faq")
+      .eq("slug", hubSlug).eq("is_active", true).maybeSingle();
+    if (data) {
+      const desc = truncate(data.meta_description || data.hero_description, 160);
+      const faqArr = Array.isArray(data.faq) ? data.faq : [];
+      return {
+        title: truncate(data.meta_title || `${data.hero_title} | BF SUMA Royal`, 60),
+        description: desc, canonical, h1: data.hero_title,
+        body: `<p>${escapeHtml(data.hero_description)}</p><p><a href="/wellness">All wellness hubs</a> · <a href="/products">Shop products</a></p>`,
+        jsonLd: [
+          { "@context": "https://schema.org", "@type": "FAQPage",
+            mainEntity: faqArr.map((f: any) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
+          { "@context": "https://schema.org", "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+              { "@type": "ListItem", position: 2, name: "Wellness Hubs", item: `${SITE}/wellness` },
+              { "@type": "ListItem", position: 3, name: data.name, item: canonical },
+            ] },
+        ],
+      };
+    }
+  }
+
   // City pages (single-segment slug)
   const cityMatch = pathname.match(/^\/([a-z][a-z-]+)$/);
   if (cityMatch && cityMeta[cityMatch[1]]) {
