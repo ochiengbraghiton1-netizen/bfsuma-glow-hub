@@ -13,6 +13,7 @@ import RichTextContent from '@/components/ui/rich-text-content';
 import BlogPostUGC from '@/components/blog/BlogPostUGC';
 import SocialShareButtons from '@/components/blog/SocialShareButtons';
 import BlogRelatedProducts from '@/components/blog/BlogRelatedProducts';
+import RelatedWellnessHubs from '@/components/RelatedWellnessHubs';
 import { stripHtmlTags } from '@/lib/html-utils';
 import { SITE_BASE_URL } from '@/config/routes';
 import { generateBlogAltText } from '@/lib/image-seo';
@@ -531,6 +532,9 @@ const BlogPostView = ({ slug }: { slug: string }) => {
 
               {/* Related Products */}
               <BlogRelatedProducts products={relatedProducts} />
+
+              {/* Related Wellness Hubs */}
+              <RelatedWellnessHubs blogPostId={post.id} />
             </>
           )}
         </div>
