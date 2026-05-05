@@ -130,8 +130,24 @@ Deno.serve(async (req) => {
       return generateUrlEntry(loc, "weekly", 0.6, lastmod);
     });
 
+    // Fetch wellness hubs
+    const { data: hubs } = await supabase
+      .from("wellness_hubs")
+      .select("slug, updated_at")
+      .eq("is_active", true)
+      .order("display_order");
+
+    const hubEntries = [
+      generateUrlEntry(`${SITE_BASE_URL}/wellness`, "weekly", 0.85, today),
+      ...((hubs || []).map((h: any) => {
+        const loc = `${SITE_BASE_URL}/wellness/${h.slug}`;
+        const lastmod = h.updated_at?.split("T")[0];
+        return generateUrlEntry(loc, "weekly", 0.85, lastmod);
+      })),
+    ];
+
     // Combine all entries
-    const allEntries = [...staticEntries, ...categoryEntries, ...productEntries, ...blogEntries, ...blogCategoryEntries].join("\n");
+    const allEntries = [...staticEntries, ...hubEntries, ...categoryEntries, ...productEntries, ...blogEntries, ...blogCategoryEntries].join("\n");
 
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
