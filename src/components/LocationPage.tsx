@@ -3,6 +3,7 @@ import { Phone, MapPin, Truck, Star, ArrowRight, ShoppingBag, Sparkles, HelpCirc
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageSEO from "@/components/PageSEO";
+import RelatedWellnessHubs from "@/components/RelatedWellnessHubs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import type { LocationData } from "@/config/locations";
 
@@ -344,6 +345,9 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             </Accordion>
           </div>
         </section>
+
+        {/* ── RELATED WELLNESS HUBS ── */}
+        <RelatedWellnessHubs showAll />
 
         {/* ── INTERNAL LINKS ── */}
         <section className="py-12 bg-muted/30 border-t border-border">
