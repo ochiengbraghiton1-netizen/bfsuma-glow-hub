@@ -91,7 +91,7 @@ const Index = () => {
         {/* Interactive overlays + structured data - lowest priority */}
         <Suspense fallback={null}>
           <StructuredData />
-          
+          <SectionNav />
           <HealthQuizPopup />
         </Suspense>
       </main>
