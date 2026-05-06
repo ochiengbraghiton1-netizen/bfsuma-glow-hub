@@ -141,6 +141,8 @@ const LocationPage = ({ location }: { location: LocationData }) => {
         name: f.q,
         acceptedAnswer: { "@type": "Answer", text: f.a },
       }))),
+    ],
+  };
 
   return (
     <div className="min-h-screen">
