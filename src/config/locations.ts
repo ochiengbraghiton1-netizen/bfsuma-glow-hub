@@ -40,7 +40,7 @@ export interface LocationData {
   deliveryNote: string;
   products: LocationProduct[];
   testimonials: LocationTestimonial[];
-  editorial: LocationEditorial;
+  editorial?: LocationEditorial;
   extraFaqs?: LocationFAQ[];
 }
 

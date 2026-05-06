@@ -9,8 +9,22 @@ const WHATSAPP = "https://wa.me/254795454053";
  * wellness scaffolding so each page reads as a unique 1,200–1,800 word article.
  */
 const LocationLongForm = ({ location }: { location: LocationData }) => {
-  const { city, county, landmarks, deliveryTime, editorial, products } = location;
+  const { city, county, landmarks, deliveryTime, products, localContext } = location;
   const area = landmarks[0] || city;
+  const editorial = location.editorial ?? {
+    climateNote: localContext[0] || `Life in ${city} brings its own rhythm — work, family, weather and commute all shape how the body feels by the end of the day.`,
+    workLifeNote: localContext[1] || `Long hours, irregular meals and limited downtime quietly chip away at energy, immunity and joint comfort for many ${city} residents.`,
+    topConcerns: [
+      "Low energy and afternoon crashes",
+      "Weak immunity and frequent colds",
+      "Joint stiffness, especially in the mornings",
+      "Stress, poor sleep and weight that won't shift",
+      "Hormonal changes affecting mood and skin",
+    ],
+    foodNote: `The traditional ${city} diet has real strengths — sukuma, beans, fish or chicken, fruit and whole grains. The challenge today is convenience: too much sugar, soda, deep-fried snacks and rushed meals.`,
+    recoveryNote: `Recovery is as important as effort. Whether you're farming, commuting through ${area} or sitting at a desk all day, your body needs sleep, hydration and quiet time to repair.`,
+    trustNote: `BF SUMA Royal has been serving Kenyans since our founding, with a real local team you can reach on WhatsApp and discreet delivery to ${city} ${deliveryTime}.`,
+  };
 
   return (
     <section className="py-16 md:py-20 bg-background">
