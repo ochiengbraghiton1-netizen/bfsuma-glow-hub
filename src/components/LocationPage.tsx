@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageSEO from "@/components/PageSEO";
 import RelatedWellnessHubs from "@/components/RelatedWellnessHubs";
+import LocationLongForm from "@/components/LocationLongForm";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import type { LocationData } from "@/config/locations";
 
