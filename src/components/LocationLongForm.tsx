@@ -124,7 +124,7 @@ const LocationLongForm = ({ location }: { location: LocationData }) => {
           >
             Explore Wellness Hubs
           </Link>
-        </pre>
+        </p>
 
         <h2 className="mt-12">Internal linking for {city} readers</h2>
         <ul>
