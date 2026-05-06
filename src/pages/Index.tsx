@@ -25,6 +25,7 @@ const RealPeopleSection = lazy(() => import("@/components/RealPeopleSection"));
 const HealthQuizPopup = lazy(() => import("@/components/HealthQuizPopup"));
 const StructuredData = lazy(() => import("@/components/StructuredData"));
 const ConsultationCTA = lazy(() => import("@/components/ConsultationCTA"));
+const SectionNav = lazy(() => import("@/components/SectionNav"));
 
 const Index = () => {
   return (
