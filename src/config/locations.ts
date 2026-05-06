@@ -15,6 +15,20 @@ export interface LocationProduct {
   reason: string;
 }
 
+export interface LocationEditorial {
+  climateNote: string;
+  workLifeNote: string;
+  topConcerns: string[];
+  foodNote: string;
+  recoveryNote: string;
+  trustNote: string;
+}
+
+export interface LocationFAQ {
+  q: string;
+  a: string;
+}
+
 export interface LocationData {
   slug: string;
   city: string;
@@ -26,6 +40,8 @@ export interface LocationData {
   deliveryNote: string;
   products: LocationProduct[];
   testimonials: LocationTestimonial[];
+  editorial?: LocationEditorial;
+  extraFaqs?: LocationFAQ[];
 }
 
 export const locations: LocationData[] = [
