@@ -1,4 +1,5 @@
 import { Facebook, Instagram, Phone, Mail, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 import TikTokIcon from "@/components/icons/TikTokIcon";
 
 const Footer = () => {
@@ -31,34 +32,34 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="/wellness" className="text-white/80 hover:text-accent transition-colors">
+                <Link to="/wellness" className="text-white/80 hover:text-accent transition-colors">
                   Wellness Hubs
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/faq" className="text-white/80 hover:text-accent transition-colors">
+                <Link to="/faq" className="text-white/80 hover:text-accent transition-colors">
                   FAQ
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/contact" className="text-white/80 hover:text-accent transition-colors">
+                <Link to="/contact" className="text-white/80 hover:text-accent transition-colors">
                   Contact
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/return-policy" className="text-white/80 hover:text-accent transition-colors">
+                <Link to="/return-policy" className="text-white/80 hover:text-accent transition-colors">
                   Return & Exchange Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/terms" className="text-white/80 hover:text-accent transition-colors">
+                <Link to="/terms" className="text-white/80 hover:text-accent transition-colors">
                   Terms & Conditions
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/join-business" className="text-white/80 hover:text-accent transition-colors">
+                <Link to="/join-business" className="text-white/80 hover:text-accent transition-colors">
                   Join & Earn
-                </a>
+                </Link>
               </li>
             </ul>
 
@@ -77,9 +78,9 @@ const Footer = () => {
                 { href: "/kakamega", label: "Kakamega" },
               ].map((loc) => (
                 <li key={loc.href}>
-                  <a href={loc.href} className="text-white/80 hover:text-accent transition-colors text-sm">
+                  <Link to={loc.href} className="text-white/80 hover:text-accent transition-colors text-sm">
                     Supplements in {loc.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
