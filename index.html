@@ -39,9 +39,9 @@
     <!-- Preload LCP hero image -->
     <link rel="preload" as="image" href="/images/wellness-hero.webp" type="image/webp" fetchpriority="high" />
     
-    <!-- Hide SEO fallback once React renders -->
+    <!-- SEO fallback is for crawlers reading HTML source — never visible to users -->
     <style>
-      #root:not(:empty) ~ .seo-fallback{display:none}
+      .seo-fallback{display:none !important}
     </style>
     
     <!-- Primary Meta Tags -->
