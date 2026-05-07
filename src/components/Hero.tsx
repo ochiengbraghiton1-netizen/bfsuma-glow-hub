@@ -89,16 +89,16 @@ const Hero = () => {
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
         <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4 md:mb-6 leading-tight">
-          Premium Natural Supplements
+          Feel Better Naturally —
           <br />
           <span className="bg-gradient-to-r from-accent to-accent-glow bg-clip-text text-transparent">
-            for Better Health in Kenya
+            Joint Pain, Energy, Digestion & Hormonal Support
           </span>
         </h1>
-        <p className="sr-only">Tired of fatigue, pain, or low energy? Start feeling better naturally with BF SUMA Royal.</p>
+        <p className="sr-only">Natural supplements trusted by thousands of Kenyans for joint comfort, fatigue, bloating, hormone balance and daily wellness.</p>
 
         <p className="text-base md:text-xl text-white/90 mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed">
-          Discover the right supplement for your body—boost immunity, improve energy, and support your health with trusted natural solutions in Kenya.
+          Natural supplements trusted by thousands of Kenyans for stiff joints, low energy, bloating, hormonal balance and everyday wellness — with free WhatsApp guidance from our wellness team.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 md:gap-5 justify-center items-stretch sm:items-center w-full max-w-xl mx-auto">

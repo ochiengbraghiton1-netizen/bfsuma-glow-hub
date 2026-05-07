@@ -26,16 +26,17 @@ const HealthQuizPopup = lazy(() => import("@/components/HealthQuizPopup"));
 const StructuredData = lazy(() => import("@/components/StructuredData"));
 const ConsultationCTA = lazy(() => import("@/components/ConsultationCTA"));
 const SectionNav = lazy(() => import("@/components/SectionNav"));
+const ShopByHealthGoal = lazy(() => import("@/components/ShopByHealthGoal"));
 
 const Index = () => {
   return (
     <div className="min-h-screen">
       <Helmet>
-        <title>BF SUMA Royal | Premium Supplements in Kenya for Energy & Immunity</title>
-        <meta name="description" content="Shop trusted natural supplements in Kenya. Boost energy, improve immunity, and support your health with BF SUMA Royal premium wellness products." />
+        <title>Natural Support for Joint Pain, Energy & Digestion | BF SUMA Royal Kenya</title>
+        <meta name="description" content="Helping Kenyans feel better naturally — supplements for joint pain, low energy, bloating, hormonal balance and sleep. Free WhatsApp guidance." />
         <link rel="canonical" href="https://bfsumaroyal.com/" />
-        <meta property="og:title" content="BF SUMA Royal | Premium Supplements in Kenya for Energy & Immunity" />
-        <meta property="og:description" content="Shop trusted natural supplements in Kenya. Boost energy, improve immunity, and support your health with BF SUMA Royal premium wellness products." />
+        <meta property="og:title" content="Feel Better Naturally — Joint, Energy, Digestion & Hormone Support | BF SUMA Royal" />
+        <meta property="og:description" content="Trusted natural supplements for stiff joints, fatigue, bloating, hormonal balance and everyday wellness in Kenya." />
         <meta property="og:url" content="https://bfsumaroyal.com/" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://bfsumaroyal.com/og-image.png" />
@@ -50,6 +51,7 @@ const Index = () => {
       <main className="pt-16">
         <Hero />
         <Suspense fallback={null}>
+          <ShopByHealthGoal />
           <RealPeopleSection />
         </Suspense>
         {/* Priority below-fold: testimonials + products */}
