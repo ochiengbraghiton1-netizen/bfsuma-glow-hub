@@ -284,7 +284,7 @@ const ProductPage = () => {
               </div>
 
               {/* Info */}
-              <div className="flex flex-col">
+              <div className="flex flex-col lg:sticky lg:top-24 self-start">
                 <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{product.name}</h1>
                 {product.benefit && (
                   <p className="text-lg text-muted-foreground mb-4">{product.benefit}</p>
@@ -306,26 +306,37 @@ const ProductPage = () => {
                   ))}
                 </div>
 
-                {/* Actions */}
-                <div className="flex gap-3 mb-6">
+                {/* Purchase Actions — visible on every breakpoint */}
+                <div className="flex flex-col sm:flex-row gap-3 mb-3">
                   <Button
                     onClick={handleAddToCart}
                     disabled={isOutOfStock}
-                    className="flex-1 rounded-full"
+                    className="flex-1 rounded-full min-w-0"
                     size="lg"
                   >
-                    <ShoppingCart className="w-5 h-5 mr-2" />
-                    {isOutOfStock ? "Out of Stock" : "Add to Cart"}
+                    <ShoppingCart className="w-5 h-5 mr-2 shrink-0" />
+                    <span className="truncate">{isOutOfStock ? "Out of Stock" : "Add to Cart"}</span>
                   </Button>
                   <Button
                     variant="outline"
                     size="lg"
-                    className="rounded-full"
+                    className="rounded-full sm:w-auto"
                     onClick={() => toggleFavorite(product.id)}
+                    aria-label={favorite ? "Remove from favourites" : "Add to favourites"}
                   >
                     <Heart className={`w-5 h-5 ${favorite ? "fill-primary text-primary" : ""}`} />
                   </Button>
                 </div>
+
+                {/* WhatsApp consultation CTA */}
+                <a
+                  href={`https://wa.me/254795454053?text=${encodeURIComponent(`Hi, I'd like advice on ${product.name}.`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 w-full rounded-full border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary font-medium px-4 py-3 text-sm mb-6 transition"
+                >
+                  Talk to a wellness consultant on WhatsApp
+                </a>
 
                 {/* Description */}
                 {product.description && (
