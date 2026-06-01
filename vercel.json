@@ -5,26 +5,6 @@
       "destination": "https://sboaeutgckyiwunfmxqp.supabase.co/functions/v1/sitemap"
     },
     {
-      "source": "/index.html",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/",
-      "destination": "https://sboaeutgckyiwunfmxqp.supabase.co/functions/v1/seo-render?path=/"
-    },
-    {
-      "source": "/:path((?!assets|images|api|.*\\.).*)",
-      "destination": "https://sboaeutgckyiwunfmxqp.supabase.co/functions/v1/seo-render?path=/:path"
-    },
-    {
-      "source": "/:p1/:p2((?!.*\\.).*)",
-      "destination": "https://sboaeutgckyiwunfmxqp.supabase.co/functions/v1/seo-render?path=/:p1/:p2"
-    },
-    {
-      "source": "/:p1/:p2/:p3((?!.*\\.).*)",
-      "destination": "https://sboaeutgckyiwunfmxqp.supabase.co/functions/v1/seo-render?path=/:p1/:p2/:p3"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
