@@ -74,6 +74,7 @@ const BlogList = () => {
         .from('blog_posts')
         .select('*')
         .eq('status', 'published')
+        .eq('content_type', 'health')
         .order('published_at', { ascending: false });
 
       if (!error && postsData) {
