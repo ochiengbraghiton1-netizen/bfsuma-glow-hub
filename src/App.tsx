@@ -63,6 +63,8 @@ const ReturnPolicy = lazy(() => import("./pages/ReturnPolicy"));
 const TermsConditions = lazy(() => import("./pages/TermsConditions"));
 const ProductPage = lazy(() => import("./pages/ProductPage"));
 const WellnessHubsIndex = lazy(() => import("./pages/WellnessHubsIndex"));
+const BusinessHubPage = lazy(() => import("./pages/BusinessHubPage"));
+const BusinessBlogPage = lazy(() => import("./pages/BusinessBlogPage"));
 const WellnessHubPage = lazy(() => import("./pages/WellnessHubPage"));
 const AdminWellnessHubs = lazy(() => import("./pages/admin/WellnessHubs"));
 
