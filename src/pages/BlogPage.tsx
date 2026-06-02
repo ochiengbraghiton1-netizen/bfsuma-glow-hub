@@ -528,7 +528,7 @@ const BlogPostView = ({ slug }: { slug: string }) => {
                       <Link to="/#products">View Our Products</Link>
                     </Button>
                     <Button variant="outline" asChild>
-                      <Link to="/blog">More Articles</Link>
+                      <Link to={hubPath}>More Articles</Link>
                     </Button>
                   </div>
                 </div>
