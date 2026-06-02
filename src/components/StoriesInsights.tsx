@@ -111,6 +111,7 @@ const StoriesInsights = () => {
         .from("blog_posts")
         .select("id, title, slug, excerpt, featured_image, video_url, published_at")
         .eq("status", "published")
+        .eq("content_type", "health")
         .order("published_at", { ascending: false })
         .limit(6);
 
