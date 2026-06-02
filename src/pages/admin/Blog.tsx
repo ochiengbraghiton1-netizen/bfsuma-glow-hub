@@ -79,6 +79,7 @@ const initialFormState = {
   meta_title: '',
   meta_description: '',
   status: 'draft',
+  content_type: 'health' as 'health' | 'business',
   scheduled_at: null as Date | null,
   category_ids: [] as string[],
   product_ids: [] as string[],
