@@ -532,6 +532,26 @@ const Blog = () => {
               </div>
             </div>
 
+            {/* Content Type */}
+            <div className="space-y-2">
+              <Label htmlFor="content_type" className="text-[hsl(var(--admin-text))]">Content Type *</Label>
+              <Select
+                value={formData.content_type}
+                onValueChange={(value: 'health' | 'business') => setFormData({ ...formData, content_type: value })}
+              >
+                <SelectTrigger className="text-[hsl(var(--admin-text))] bg-background">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="z-[60]">
+                  <SelectItem value="health">Health Content (shows on /blog and homepage)</SelectItem>
+                  <SelectItem value="business">Business Opportunity Content (shows on /business)</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                Determines where this article appears. Health = /blog. Business = /business/blog.
+              </p>
+            </div>
+
             {/* Categories */}
             <div className="space-y-2">
               <Label className="text-[hsl(var(--admin-text))]">Categories</Label>
