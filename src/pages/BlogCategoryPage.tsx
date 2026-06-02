@@ -79,6 +79,7 @@ const BlogCategoryPage = () => {
         .select('id, title, slug, excerpt, featured_image, video_url, published_at')
         .in('id', postIds)
         .eq('status', 'published')
+        .eq('content_type', 'health')
         .order('published_at', { ascending: false });
 
       if (postsData) {
