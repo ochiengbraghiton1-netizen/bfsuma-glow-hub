@@ -353,6 +353,9 @@ const BlogPostView = ({ slug }: { slug: string }) => {
   }
 
   const isUGC = post.categories?.some(c => UGC_CATEGORY_SLUGS.includes(c.slug));
+  const isBusiness = (post as any).content_type === 'business';
+  const hubPath = isBusiness ? '/business/blog' : '/blog';
+  const hubLabel = isBusiness ? 'Business Hub' : 'Blog';
 
   const plainContent = stripHtmlTags(post.content);
   const wordCount = plainContent.split(/\s+/).length;
