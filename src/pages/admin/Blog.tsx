@@ -195,6 +195,7 @@ const Blog = () => {
       meta_title: post.meta_title || '',
       meta_description: post.meta_description || '',
       status: post.status,
+      content_type: ((post as any).content_type === 'business' ? 'business' : 'health'),
       scheduled_at: post.scheduled_at ? new Date(post.scheduled_at) : null,
       category_ids: postCats?.map(pc => pc.category_id) || [],
       product_ids: postProds?.map(pp => pp.product_id) || [],
