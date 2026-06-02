@@ -222,6 +222,7 @@ const Blog = () => {
       meta_title: formData.meta_title.trim() || null,
       meta_description: formData.meta_description.trim() || null,
       status: formData.status,
+      content_type: formData.content_type,
       published_at: formData.status === 'published' ? new Date().toISOString() : null,
       scheduled_at: formData.scheduled_at?.toISOString() || null,
     };
