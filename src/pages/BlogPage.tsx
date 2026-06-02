@@ -439,9 +439,9 @@ const BlogPostView = ({ slug }: { slug: string }) => {
       <article className="py-12 px-4 md:px-8">
         <div className="max-w-3xl mx-auto">
           <Button asChild variant="ghost" className="mb-6">
-            <Link to="/blog">
+            <Link to={hubPath}>
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Blog
+              Back to {hubLabel}
             </Link>
           </Button>
 
