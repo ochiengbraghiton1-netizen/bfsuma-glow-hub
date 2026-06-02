@@ -74,6 +74,7 @@ const BlogList = () => {
         .from('blog_posts')
         .select('*')
         .eq('status', 'published')
+        .eq('content_type', 'health')
         .order('published_at', { ascending: false });
 
       if (!error && postsData) {
@@ -352,6 +353,9 @@ const BlogPostView = ({ slug }: { slug: string }) => {
   }
 
   const isUGC = post.categories?.some(c => UGC_CATEGORY_SLUGS.includes(c.slug));
+  const isBusiness = (post as any).content_type === 'business';
+  const hubPath = isBusiness ? '/business/blog' : '/blog';
+  const hubLabel = isBusiness ? 'Business Hub' : 'Blog';
 
   const plainContent = stripHtmlTags(post.content);
   const wordCount = plainContent.split(/\s+/).length;
@@ -425,7 +429,7 @@ const BlogPostView = ({ slug }: { slug: string }) => {
             '@type': 'BreadcrumbList',
             itemListElement: [
               { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://bfsumaroyal.com/' },
-              { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://bfsumaroyal.com/blog' },
+              { '@type': 'ListItem', position: 2, name: hubLabel, item: `https://bfsumaroyal.com${hubPath}` },
               { '@type': 'ListItem', position: 3, name: post.title, item: canonicalUrl },
             ],
           })}
@@ -435,9 +439,9 @@ const BlogPostView = ({ slug }: { slug: string }) => {
       <article className="py-12 px-4 md:px-8">
         <div className="max-w-3xl mx-auto">
           <Button asChild variant="ghost" className="mb-6">
-            <Link to="/blog">
+            <Link to={hubPath}>
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Blog
+              Back to {hubLabel}
             </Link>
           </Button>
 
@@ -524,7 +528,7 @@ const BlogPostView = ({ slug }: { slug: string }) => {
                       <Link to="/#products">View Our Products</Link>
                     </Button>
                     <Button variant="outline" asChild>
-                      <Link to="/blog">More Articles</Link>
+                      <Link to={hubPath}>More Articles</Link>
                     </Button>
                   </div>
                 </div>

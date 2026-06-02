@@ -63,6 +63,8 @@ const ReturnPolicy = lazy(() => import("./pages/ReturnPolicy"));
 const TermsConditions = lazy(() => import("./pages/TermsConditions"));
 const ProductPage = lazy(() => import("./pages/ProductPage"));
 const WellnessHubsIndex = lazy(() => import("./pages/WellnessHubsIndex"));
+const BusinessHubPage = lazy(() => import("./pages/BusinessHubPage"));
+const BusinessBlogPage = lazy(() => import("./pages/BusinessBlogPage"));
 const WellnessHubPage = lazy(() => import("./pages/WellnessHubPage"));
 const AdminWellnessHubs = lazy(() => import("./pages/admin/WellnessHubs"));
 
@@ -152,6 +154,8 @@ const App = () => (
                   <Route path="/my-orders" element={<MyOrders />} />
                   <Route path="/wellness" element={<WellnessHubsIndex />} />
                   <Route path="/wellness/:slug" element={<WellnessHubPage />} />
+                  <Route path="/business" element={<BusinessHubPage />} />
+                  <Route path="/business/blog" element={<BusinessBlogPage />} />
                   <Route path="/:city" element={<LocationLanding />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>

@@ -92,6 +92,22 @@ export const routes: RouteConfig[] = [
     description: 'Read expert health tips, supplement guides, and wellness advice from BF SUMA Royal Kenya. Stay informed and shop natural products.',
   },
   {
+    path: '/business',
+    includeInSitemap: true,
+    changefreq: 'weekly',
+    priority: 0.8,
+    title: 'BF SUMA Royal Business Hub Kenya | Income Opportunity',
+    description: 'Build extra income with the BF SUMA Royal distributor business in Kenya. Stories, training, and step-by-step registration.',
+  },
+  {
+    path: '/business/blog',
+    includeInSitemap: true,
+    changefreq: 'weekly',
+    priority: 0.7,
+    title: 'Business Opportunity Blog | BF SUMA Royal Kenya',
+    description: 'Real distributor stories, training and guides for the BF SUMA Royal income opportunity in Kenya.',
+  },
+  {
     path: '/contact',
     includeInSitemap: true,
     changefreq: 'monthly',

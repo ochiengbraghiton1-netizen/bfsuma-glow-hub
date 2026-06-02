@@ -79,6 +79,7 @@ const initialFormState = {
   meta_title: '',
   meta_description: '',
   status: 'draft',
+  content_type: 'health' as 'health' | 'business',
   scheduled_at: null as Date | null,
   category_ids: [] as string[],
   product_ids: [] as string[],
@@ -194,6 +195,7 @@ const Blog = () => {
       meta_title: post.meta_title || '',
       meta_description: post.meta_description || '',
       status: post.status,
+      content_type: ((post as any).content_type === 'business' ? 'business' : 'health'),
       scheduled_at: post.scheduled_at ? new Date(post.scheduled_at) : null,
       category_ids: postCats?.map(pc => pc.category_id) || [],
       product_ids: postProds?.map(pp => pp.product_id) || [],
@@ -220,6 +222,7 @@ const Blog = () => {
       meta_title: formData.meta_title.trim() || null,
       meta_description: formData.meta_description.trim() || null,
       status: formData.status,
+      content_type: formData.content_type,
       published_at: formData.status === 'published' ? new Date().toISOString() : null,
       scheduled_at: formData.scheduled_at?.toISOString() || null,
     };
@@ -527,6 +530,26 @@ const Blog = () => {
                   className="text-[hsl(var(--admin-text))] bg-background"
                 />
               </div>
+            </div>
+
+            {/* Content Type */}
+            <div className="space-y-2">
+              <Label htmlFor="content_type" className="text-[hsl(var(--admin-text))]">Content Type *</Label>
+              <Select
+                value={formData.content_type}
+                onValueChange={(value: 'health' | 'business') => setFormData({ ...formData, content_type: value })}
+              >
+                <SelectTrigger className="text-[hsl(var(--admin-text))] bg-background">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="z-[60]">
+                  <SelectItem value="health">Health Content (shows on /blog and homepage)</SelectItem>
+                  <SelectItem value="business">Business Opportunity Content (shows on /business)</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                Determines where this article appears. Health = /blog. Business = /business/blog.
+              </p>
             </div>
 
             {/* Categories */}
