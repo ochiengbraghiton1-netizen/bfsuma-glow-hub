@@ -97,10 +97,10 @@ Deno.serve(async (req) => {
       return generateUrlEntry(loc, "weekly", 0.8, lastmod);
     });
 
-    // Fetch published blog posts
+    // Fetch published blog posts (split by content_type)
     const { data: blogPosts, error: blogError } = await supabase
       .from("blog_posts")
-      .select("slug, updated_at, published_at")
+      .select("slug, updated_at, published_at, content_type")
       .eq("status", "published")
       .order("published_at", { ascending: false });
 
@@ -108,11 +108,23 @@ Deno.serve(async (req) => {
       console.error("Error fetching blog posts:", blogError);
     }
 
-    const blogEntries = (blogPosts || []).map((post) => {
-      const loc = `${SITE_BASE_URL}/blog/${post.slug}`;
+    // Health posts -> /blog/:slug ; Business posts -> /business/blog/:slug
+    // Slugs are preserved; only the indexed URL path differs by content_type.
+    const healthBlogEntries: string[] = [];
+    const businessBlogEntries: string[] = [];
+    (blogPosts || []).forEach((post: any) => {
       const lastmod = (post.updated_at || post.published_at)?.split("T")[0];
-      return generateUrlEntry(loc, "weekly", 0.7, lastmod);
+      if (post.content_type === "business") {
+        businessBlogEntries.push(
+          generateUrlEntry(`${SITE_BASE_URL}/business/blog/${post.slug}`, "weekly", 0.7, lastmod),
+        );
+      } else {
+        healthBlogEntries.push(
+          generateUrlEntry(`${SITE_BASE_URL}/blog/${post.slug}`, "weekly", 0.7, lastmod),
+        );
+      }
     });
+    const blogEntries = [...healthBlogEntries, ...businessBlogEntries];
 
     // Fetch blog categories
     const { data: blogCategories, error: blogCatError } = await supabase
