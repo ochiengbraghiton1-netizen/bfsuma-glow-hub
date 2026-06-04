@@ -264,7 +264,11 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             </h2>
             <div className="space-y-6">
               {localContext.map((paragraph, i) => (
-                <p key={i} className="text-muted-foreground leading-relaxed text-base md:text-lg">{paragraph}</p>
+                <p
+                  key={i}
+                  className="text-muted-foreground leading-relaxed text-base md:text-lg"
+                  dangerouslySetInnerHTML={{ __html: autoLinkProducts(paragraph, linkInfo) }}
+                />
               ))}
             </div>
           </div>
