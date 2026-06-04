@@ -67,6 +67,7 @@ const BusinessHubPage = lazy(() => import("./pages/BusinessHubPage"));
 const BusinessBlogPage = lazy(() => import("./pages/BusinessBlogPage"));
 const WellnessHubPage = lazy(() => import("./pages/WellnessHubPage"));
 const AdminWellnessHubs = lazy(() => import("./pages/admin/WellnessHubs"));
+const AdminLocationProducts = lazy(() => import("./pages/admin/LocationProducts"));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-background">
