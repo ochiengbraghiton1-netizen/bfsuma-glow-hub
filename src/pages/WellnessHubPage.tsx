@@ -194,7 +194,7 @@ const WellnessHubPage = () => {
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {products.map((p) => {
                   const benefitText = p.benefit || stripHtml(p.description, 120);
-                  const waMsg = encodeURIComponent(`Hi, I'd like to order ${p.name} (${hub.name}).`);
+                  const waMsg = encodeURIComponent(`Hi, I'd like to order ${p.name} (${hub.name}).\n\nPage: ${canonical}`);
                   return (
                     <div key={p.id} className="group bg-card border border-border rounded-2xl overflow-hidden hover:shadow-elegant transition-all flex flex-col">
                       <Link to={`/product/${p.slug}`} className="block">
