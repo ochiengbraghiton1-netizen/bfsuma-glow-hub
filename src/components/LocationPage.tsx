@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Phone, MapPin, Truck, Star, ArrowRight, ShoppingBag, Sparkles, HelpCircle, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,7 +8,8 @@ import PageSEO from "@/components/PageSEO";
 import RelatedWellnessHubs from "@/components/RelatedWellnessHubs";
 import LocationLongForm from "@/components/LocationLongForm";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import type { LocationData } from "@/config/locations";
+import { autoLinkProducts } from "@/lib/auto-link-products";
+import type { LocationData, LocationProduct } from "@/config/locations";
 
 const WHATSAPP_URL = "https://wa.me/254795454053";
 const SITE_URL = "https://bfsumaroyal.com";
@@ -18,13 +19,47 @@ interface DbProduct {
   benefit: string | null; price: number; image_url: string | null;
 }
 
-const LocationPage = ({ location }: { location: LocationData }) => {
-  const { city, slug, heroSubtext, localContext, landmarks, deliveryTime, deliveryNote, products, testimonials } = location;
-  const [dbProducts, setDbProducts] = useState<Record<string, DbProduct>>({});
+/** Build a prefilled WhatsApp link with page + product context for higher conversions. */
+const buildWa = (text: string, pageUrl: string) =>
+  `${WHATSAPP_URL}?text=${encodeURIComponent(`${text}\n\nPage: ${pageUrl}`)}`;
 
-  // Fetch real product data (image, price) by slug for richer cards
+const LocationPage = ({ location }: { location: LocationData }) => {
+  const { city, slug, heroSubtext, localContext, landmarks, deliveryTime, deliveryNote, products: staticProducts, testimonials } = location;
+  const pageUrl = `${SITE_URL}/${slug}`;
+  const [dbProducts, setDbProducts] = useState<Record<string, DbProduct>>({});
+  const [dbAssignments, setDbAssignments] = useState<LocationProduct[] | null>(null);
+
+  // Admin-managed city → product assignments (overrides static list when present)
   useEffect(() => {
-    const slugs = products.map(p => p.slug);
+    (async () => {
+      const { data: assigns } = await (supabase as any)
+        .from("location_products")
+        .select("product_id, reason, position, products!inner(id,name,slug,benefit,price,image_url,is_active)")
+        .eq("city_slug", slug)
+        .order("position");
+      const valid = (assigns || []).filter((a: any) => a.products?.is_active);
+      if (valid.length) {
+        const mapped: LocationProduct[] = valid.map((a: any) => ({
+          name: a.products.name,
+          slug: a.products.slug,
+          reason: a.reason || a.products.benefit || `Recommended for ${city} residents.`,
+        }));
+        const pmap: Record<string, DbProduct> = {};
+        valid.forEach((a: any) => { pmap[a.products.slug] = a.products; });
+        setDbAssignments(mapped);
+        setDbProducts(pmap);
+      } else {
+        setDbAssignments(null);
+      }
+    })();
+  }, [slug, city]);
+
+  const products = dbAssignments ?? staticProducts;
+
+  // Hydrate image/price from DB for static fallback list
+  useEffect(() => {
+    if (dbAssignments) return;
+    const slugs = staticProducts.map(p => p.slug);
     if (!slugs.length) return;
     (async () => {
       const { data } = await supabase
@@ -36,7 +71,12 @@ const LocationPage = ({ location }: { location: LocationData }) => {
       (data || []).forEach((p: any) => { map[p.slug] = p; });
       setDbProducts(map);
     })();
-  }, [products]);
+  }, [dbAssignments, staticProducts]);
+
+  const linkInfo = useMemo(
+    () => products.map(p => ({ name: p.name, slug: p.slug })),
+    [products]
+  );
 
   const title = `Health Supplements in ${city} Kenya | BF Suma Royal`;
   const description = `Buy premium health supplements in ${city}, Kenya. Boost energy, immunity & wellness with BF Suma Royal. Fast delivery ${deliveryTime}. Order via WhatsApp today!`;
