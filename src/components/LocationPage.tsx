@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Phone, MapPin, Truck, Star, ArrowRight, ShoppingBag, Sparkles, HelpCircle, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,7 +8,8 @@ import PageSEO from "@/components/PageSEO";
 import RelatedWellnessHubs from "@/components/RelatedWellnessHubs";
 import LocationLongForm from "@/components/LocationLongForm";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import type { LocationData } from "@/config/locations";
+import { autoLinkProducts } from "@/lib/auto-link-products";
+import type { LocationData, LocationProduct } from "@/config/locations";
 
 const WHATSAPP_URL = "https://wa.me/254795454053";
 const SITE_URL = "https://bfsumaroyal.com";
@@ -18,13 +19,47 @@ interface DbProduct {
   benefit: string | null; price: number; image_url: string | null;
 }
 
-const LocationPage = ({ location }: { location: LocationData }) => {
-  const { city, slug, heroSubtext, localContext, landmarks, deliveryTime, deliveryNote, products, testimonials } = location;
-  const [dbProducts, setDbProducts] = useState<Record<string, DbProduct>>({});
+/** Build a prefilled WhatsApp link with page + product context for higher conversions. */
+const buildWa = (text: string, pageUrl: string) =>
+  `${WHATSAPP_URL}?text=${encodeURIComponent(`${text}\n\nPage: ${pageUrl}`)}`;
 
-  // Fetch real product data (image, price) by slug for richer cards
+const LocationPage = ({ location }: { location: LocationData }) => {
+  const { city, slug, heroSubtext, localContext, landmarks, deliveryTime, deliveryNote, products: staticProducts, testimonials } = location;
+  const pageUrl = `${SITE_URL}/${slug}`;
+  const [dbProducts, setDbProducts] = useState<Record<string, DbProduct>>({});
+  const [dbAssignments, setDbAssignments] = useState<LocationProduct[] | null>(null);
+
+  // Admin-managed city → product assignments (overrides static list when present)
   useEffect(() => {
-    const slugs = products.map(p => p.slug);
+    (async () => {
+      const { data: assigns } = await (supabase as any)
+        .from("location_products")
+        .select("product_id, reason, position, products!inner(id,name,slug,benefit,price,image_url,is_active)")
+        .eq("city_slug", slug)
+        .order("position");
+      const valid = (assigns || []).filter((a: any) => a.products?.is_active);
+      if (valid.length) {
+        const mapped: LocationProduct[] = valid.map((a: any) => ({
+          name: a.products.name,
+          slug: a.products.slug,
+          reason: a.reason || a.products.benefit || `Recommended for ${city} residents.`,
+        }));
+        const pmap: Record<string, DbProduct> = {};
+        valid.forEach((a: any) => { pmap[a.products.slug] = a.products; });
+        setDbAssignments(mapped);
+        setDbProducts(pmap);
+      } else {
+        setDbAssignments(null);
+      }
+    })();
+  }, [slug, city]);
+
+  const products = dbAssignments ?? staticProducts;
+
+  // Hydrate image/price from DB for static fallback list
+  useEffect(() => {
+    if (dbAssignments) return;
+    const slugs = staticProducts.map(p => p.slug);
     if (!slugs.length) return;
     (async () => {
       const { data } = await supabase
@@ -36,7 +71,12 @@ const LocationPage = ({ location }: { location: LocationData }) => {
       (data || []).forEach((p: any) => { map[p.slug] = p; });
       setDbProducts(map);
     })();
-  }, [products]);
+  }, [dbAssignments, staticProducts]);
+
+  const linkInfo = useMemo(
+    () => products.map(p => ({ name: p.name, slug: p.slug })),
+    [products]
+  );
 
   const title = `Health Supplements in ${city} Kenya | BF Suma Royal`;
   const description = `Buy premium health supplements in ${city}, Kenya. Boost energy, immunity & wellness with BF Suma Royal. Fast delivery ${deliveryTime}. Order via WhatsApp today!`;
@@ -129,7 +169,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed">{heroSubtext}</p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-lg mx-auto">
-              <a href={`${WHATSAPP_URL}?text=Hi, I'd like to order supplements. I'm in ${city}.`} target="_blank" rel="noopener noreferrer"
+              <a href={buildWa(`Hi, I'd like to order supplements. I'm in ${city}.`, pageUrl)} target="_blank" rel="noopener noreferrer"
                 className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 h-14 px-10 text-lg font-bold rounded-2xl bg-accent text-accent-foreground shadow-[0_0_40px_hsl(43_96%_56%/0.5)] hover:shadow-[0_0_60px_hsl(43_96%_56%/0.7)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300">
                 <Phone className="w-5 h-5" />
                 Order via WhatsApp
@@ -162,7 +202,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map((product) => {
                 const db = dbProducts[product.slug];
-                const waMsg = encodeURIComponent(`Hi, I'd like to order ${product.name}. I'm in ${city}.`);
+                const waHref = buildWa(`Hi, I'd like to order ${product.name}. I'm in ${city}.`, pageUrl);
                 return (
                   <div key={product.slug} className="group bg-card rounded-2xl overflow-hidden border border-border hover:shadow-glow transition-all duration-300 flex flex-col">
                     <Link to={`/product/${product.slug}`} className="block">
@@ -184,7 +224,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
                         <Link to={`/product/${product.slug}`} className="flex-1 inline-flex items-center justify-center gap-1 h-10 px-3 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors">
                           View Product
                         </Link>
-                        <a href={`${WHATSAPP_URL}?text=${waMsg}`} target="_blank" rel="noopener noreferrer" aria-label={`Order ${product.name} on WhatsApp`}
+                        <a href={waHref} target="_blank" rel="noopener noreferrer" aria-label={`Order ${product.name} on WhatsApp`}
                           className="inline-flex items-center justify-center h-10 w-10 rounded-lg bg-accent text-accent-foreground hover:scale-105 transition-transform">
                           <Phone className="w-4 h-4" />
                         </a>
@@ -224,7 +264,11 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             </h2>
             <div className="space-y-6">
               {localContext.map((paragraph, i) => (
-                <p key={i} className="text-muted-foreground leading-relaxed text-base md:text-lg">{paragraph}</p>
+                <p
+                  key={i}
+                  className="text-muted-foreground leading-relaxed text-base md:text-lg"
+                  dangerouslySetInnerHTML={{ __html: autoLinkProducts(paragraph, linkInfo) }}
+                />
               ))}
             </div>
           </div>
@@ -242,7 +286,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-4">Fast Delivery to {city}</h2>
             <p className="text-xl text-primary font-semibold mb-4">We deliver to {city} {deliveryTime}</p>
             <p className="text-muted-foreground leading-relaxed mb-8">{deliveryNote}</p>
-            <a href={`${WHATSAPP_URL}?text=Hi, I'd like to place an order for delivery to ${city}.`} target="_blank" rel="noopener noreferrer"
+            <a href={buildWa(`Hi, I'd like to place an order for delivery to ${city}.`, pageUrl)} target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 h-12 px-8 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors">
               <Phone className="w-5 h-5" />
               Order Now for {city} Delivery
@@ -304,7 +348,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
                     {item.name}
                   </AccordionTrigger>
                   <AccordionContent className="text-muted-foreground text-sm leading-relaxed pb-4">
-                    {item.acceptedAnswer.text}
+                    <div dangerouslySetInnerHTML={{ __html: autoLinkProducts(item.acceptedAnswer.text, linkInfo) }} />
                   </AccordionContent>
                 </AccordionItem>
               ))}

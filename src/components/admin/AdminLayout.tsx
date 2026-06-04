@@ -24,7 +24,7 @@ import {
   BookOpen,
   KeyRound,
 } from 'lucide-react';
-import { Instagram, MailOpen, Sparkles } from 'lucide-react';
+import { Instagram, MailOpen, Sparkles, MapPin } from 'lucide-react';
 
 import { Link as LinkIcon } from 'lucide-react';
 
@@ -46,6 +46,7 @@ const navItems = [
   { to: '/admin/leads', icon: MailOpen, label: 'Leads' },
   { to: '/admin/product-keywords', icon: KeyRound, label: 'Product Keywords' },
   { to: '/admin/wellness-hubs', icon: Sparkles, label: 'Wellness Hubs' },
+  { to: '/admin/location-products', icon: MapPin, label: 'City Products' },
 ];
 
 const AdminLayout = () => {

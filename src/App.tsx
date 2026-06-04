@@ -67,6 +67,7 @@ const BusinessHubPage = lazy(() => import("./pages/BusinessHubPage"));
 const BusinessBlogPage = lazy(() => import("./pages/BusinessBlogPage"));
 const WellnessHubPage = lazy(() => import("./pages/WellnessHubPage"));
 const AdminWellnessHubs = lazy(() => import("./pages/admin/WellnessHubs"));
+const AdminLocationProducts = lazy(() => import("./pages/admin/LocationProducts"));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-background">
@@ -135,6 +136,7 @@ const App = () => (
                     <Route path="leads" element={<Leads />} />
                     <Route path="product-keywords" element={<ProductKeywords />} />
                     <Route path="wellness-hubs" element={<AdminWellnessHubs />} />
+                    <Route path="location-products" element={<AdminLocationProducts />} />
                   </Route>
                   <Route path="/affiliate" element={<AffiliateDashboard />} />
                   <Route path="/distributor/dashboard" element={<DistributorDashboard />} />
