@@ -202,7 +202,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map((product) => {
                 const db = dbProducts[product.slug];
-                const waMsg = encodeURIComponent(`Hi, I'd like to order ${product.name}. I'm in ${city}.`);
+                const waHref = buildWa(`Hi, I'd like to order ${product.name}. I'm in ${city}.`, pageUrl);
                 return (
                   <div key={product.slug} className="group bg-card rounded-2xl overflow-hidden border border-border hover:shadow-glow transition-all duration-300 flex flex-col">
                     <Link to={`/product/${product.slug}`} className="block">
