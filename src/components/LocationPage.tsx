@@ -348,7 +348,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
                     {item.name}
                   </AccordionTrigger>
                   <AccordionContent className="text-muted-foreground text-sm leading-relaxed pb-4">
-                    {item.acceptedAnswer.text}
+                    <div dangerouslySetInnerHTML={{ __html: autoLinkProducts(item.acceptedAnswer.text, linkInfo) }} />
                   </AccordionContent>
                 </AccordionItem>
               ))}
