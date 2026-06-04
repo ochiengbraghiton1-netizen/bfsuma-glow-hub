@@ -224,7 +224,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
                         <Link to={`/product/${product.slug}`} className="flex-1 inline-flex items-center justify-center gap-1 h-10 px-3 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors">
                           View Product
                         </Link>
-                        <a href={`${WHATSAPP_URL}?text=${waMsg}`} target="_blank" rel="noopener noreferrer" aria-label={`Order ${product.name} on WhatsApp`}
+                        <a href={waHref} target="_blank" rel="noopener noreferrer" aria-label={`Order ${product.name} on WhatsApp`}
                           className="inline-flex items-center justify-center h-10 w-10 rounded-lg bg-accent text-accent-foreground hover:scale-105 transition-transform">
                           <Phone className="w-4 h-4" />
                         </a>
