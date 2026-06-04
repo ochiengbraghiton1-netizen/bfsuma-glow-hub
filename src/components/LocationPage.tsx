@@ -169,7 +169,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed">{heroSubtext}</p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-lg mx-auto">
-              <a href={`${WHATSAPP_URL}?text=Hi, I'd like to order supplements. I'm in ${city}.`} target="_blank" rel="noopener noreferrer"
+              <a href={buildWa(`Hi, I'd like to order supplements. I'm in ${city}.`, pageUrl)} target="_blank" rel="noopener noreferrer"
                 className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 h-14 px-10 text-lg font-bold rounded-2xl bg-accent text-accent-foreground shadow-[0_0_40px_hsl(43_96%_56%/0.5)] hover:shadow-[0_0_60px_hsl(43_96%_56%/0.7)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300">
                 <Phone className="w-5 h-5" />
                 Order via WhatsApp
