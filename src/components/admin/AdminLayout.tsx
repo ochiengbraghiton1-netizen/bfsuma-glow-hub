@@ -24,7 +24,7 @@ import {
   BookOpen,
   KeyRound,
 } from 'lucide-react';
-import { Instagram, MailOpen, Sparkles } from 'lucide-react';
+import { Instagram, MailOpen, Sparkles, MapPin } from 'lucide-react';
 
 import { Link as LinkIcon } from 'lucide-react';
 
