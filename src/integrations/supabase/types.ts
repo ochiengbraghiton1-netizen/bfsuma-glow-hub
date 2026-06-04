@@ -491,6 +491,44 @@ export type Database = {
         }
         Relationships: []
       }
+      location_products: {
+        Row: {
+          city_slug: string
+          created_at: string
+          id: string
+          position: number
+          product_id: string
+          reason: string | null
+          updated_at: string
+        }
+        Insert: {
+          city_slug: string
+          created_at?: string
+          id?: string
+          position?: number
+          product_id: string
+          reason?: string | null
+          updated_at?: string
+        }
+        Update: {
+          city_slug?: string
+          created_at?: string
+          id?: string
+          position?: number
+          product_id?: string
+          reason?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "location_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       newsletter_subscribers: {
         Row: {
           email: string
