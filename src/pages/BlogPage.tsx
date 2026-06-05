@@ -340,7 +340,7 @@ const BlogPostView = ({ slug }: { slug: string }) => {
   if (notFound || !post) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
-        <h1 className="text-2xl font-bold mb-4">Post Not Found</h1>
+        <h2 className="text-2xl font-bold mb-4">Post Not Found</h2>
         <p className="text-muted-foreground mb-6">The blog post you're looking for doesn't exist.</p>
         <Button asChild>
           <Link to="/blog">
