@@ -19,6 +19,19 @@ interface DbProduct {
   benefit: string | null; price: number; image_url: string | null;
 }
 
+interface CmsPage {
+  hero_title: string | null;
+  hero_description: string | null;
+  main_content_html: string | null;
+  faqs: Array<{ q: string; a: string }> | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  og_title: string | null;
+  og_description: string | null;
+  og_image_url: string | null;
+  canonical_url: string | null;
+}
+
 /** Build a prefilled WhatsApp link with page + product context for higher conversions. */
 const buildWa = (text: string, pageUrl: string) =>
   `${WHATSAPP_URL}?text=${encodeURIComponent(`${text}\n\nPage: ${pageUrl}`)}`;
@@ -28,6 +41,20 @@ const LocationPage = ({ location }: { location: LocationData }) => {
   const pageUrl = `${SITE_URL}/${slug}`;
   const [dbProducts, setDbProducts] = useState<Record<string, DbProduct>>({});
   const [dbAssignments, setDbAssignments] = useState<LocationProduct[] | null>(null);
+  const [cms, setCms] = useState<CmsPage | null>(null);
+
+  // CMS-overridable per-city SEO content
+  useEffect(() => {
+    (async () => {
+      const { data } = await (supabase as any)
+        .from("location_pages")
+        .select("hero_title,hero_description,main_content_html,faqs,meta_title,meta_description,og_title,og_description,og_image_url,canonical_url")
+        .eq("city_slug", slug)
+        .eq("is_published", true)
+        .maybeSingle();
+      if (data) setCms(data as CmsPage);
+    })();
+  }, [slug]);
 
   // Admin-managed city → product assignments (overrides static list when present)
   useEffect(() => {
@@ -78,8 +105,10 @@ const LocationPage = ({ location }: { location: LocationData }) => {
     [products]
   );
 
-  const title = `Health Supplements in ${city} Kenya | BF Suma Royal`;
-  const description = `Buy premium health supplements in ${city}, Kenya. Boost energy, immunity & wellness with BF Suma Royal. Fast delivery ${deliveryTime}. Order via WhatsApp today!`;
+  const title = cms?.meta_title || `Health Supplements in ${city} Kenya | BF Suma Royal`;
+  const description = cms?.meta_description || `Buy premium health supplements in ${city}, Kenya. Boost energy, immunity & wellness with BF Suma Royal. Fast delivery ${deliveryTime}. Order via WhatsApp today!`;
+  const heroTitleText = cms?.hero_title || `Buy Health Supplements in ${city}, Kenya`;
+  const heroDescriptionText = cms?.hero_description || heroSubtext;
 
   // LocalBusiness JSON-LD
   const localBusinessSchema = {
