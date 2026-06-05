@@ -1,32 +1,45 @@
 /**
- * Generate SEO-optimized alt text for product images.
- * Format: "[Product Name] - BF SUMA Royal supplement"
- * Ensures alt text is under 125 characters.
+ * SEO alt-text helpers for product / blog imagery.
+ * Format: "[Product Name] | BF SUMA Royal" for primary product images.
+ * Secondary images: "[Product Name] Supplement Bottle" (numbered for 3rd+).
  */
+
+const BRAND_SUFFIX = "BF SUMA Royal";
+
 export function generateProductAltText(
   productName: string,
-  category?: string
+  _category?: string,
+  override?: string | null
 ): string {
-  const base = category
-    ? `${productName} - BF SUMA Royal ${category.toLowerCase()} supplement`
-    : `${productName} - BF SUMA Royal supplement`;
-
-  return base.length <= 125 ? base : `${productName} - BF SUMA Royal`.slice(0, 125);
+  const trimmedOverride = override?.trim();
+  if (trimmedOverride) return trimmedOverride.slice(0, 125);
+  const base = `${productName} | ${BRAND_SUFFIX}`;
+  return base.length <= 125 ? base : productName.slice(0, 125);
 }
 
 /**
- * Generate SEO-optimized alt text for blog post images.
- * Format: "[Title] - BF SUMA Royal blog"
+ * For gallery/secondary product images.
+ *  index = 0 -> primary alt (uses generateProductAltText)
+ *  index = 1 -> "[Name] Supplement Bottle"
+ *  index >=2 -> "[Name] Supplement Bottle - View {n}"
  */
+export function generateProductGalleryAltText(
+  productName: string,
+  index: number,
+  override?: string | null
+): string {
+  const trimmedOverride = override?.trim();
+  if (trimmedOverride) return trimmedOverride.slice(0, 125);
+  if (index <= 0) return generateProductAltText(productName);
+  if (index === 1) return `${productName} Supplement Bottle`;
+  return `${productName} Supplement Bottle - View ${index + 1}`;
+}
+
 export function generateBlogAltText(title: string): string {
-  const base = `${title} - BF SUMA Royal blog`;
+  const base = `${title} - ${BRAND_SUFFIX} blog`;
   return base.length <= 125 ? base : title.slice(0, 120);
 }
 
-/**
- * Generate an SEO-friendly file name slug from a product name.
- * e.g. "Detoxilive Pro Oil Capsules" → "detoxilive-pro-oil-capsules"
- */
 export function generateImageSlug(name: string): string {
   return name
     .toLowerCase()
