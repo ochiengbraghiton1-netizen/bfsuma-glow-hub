@@ -102,65 +102,68 @@ export function autoLinkProducts(html: string, products: ProductLinkInfo[]): str
   const firstLinkedProducts = new Set<string>();
 
   const parts = splitHtml(html);
-
-  // Track depth of skip-tags
   const skipStack: string[] = [];
 
   const out = parts.map((part) => {
     if (part.isTag) {
-      if (part.tagName && SKIP_TAGS.has(part.tagName)) {
+      if (part.tagName) {
+        const inSkip = SKIP_TAGS.has(part.tagName);
+        const selfClose = part.text.endsWith("/>");
         if (part.isClosing) {
-          // Pop matching
+          // Pop matching tag from the top of stack (any tag — handles no-autolink wrappers)
           for (let i = skipStack.length - 1; i >= 0; i--) {
             if (skipStack[i] === part.tagName) {
               skipStack.splice(i, 1);
               break;
             }
           }
-        } else if (!part.text.endsWith("/>")) {
+        } else if (!selfClose && (inSkip || part.hasNoAutolink)) {
           skipStack.push(part.tagName);
         }
-      }
-      if (part.hasNoAutolink && !part.isClosing && !part.text.endsWith("/>") && part.tagName) {
-        skipStack.push(part.tagName);
       }
       return part.text;
     }
     if (skipStack.length > 0) return part.text;
 
-    let text = part.text;
+    const text = part.text;
+    // Collect candidate matches across all rules, then greedily pick
+    // non-overlapping matches preferring earliest start, then longest length.
+    interface Cand { start: number; end: number; matchText: string; rule: MatchRule }
+    const cands: Cand[] = [];
     for (const rule of rules) {
-      if (totalLinks >= MAX_LINKS_PER_POST) break;
-      const productId = rule.product.name;
-      let remaining = MAX_LINKS_PER_PRODUCT - (linksPerProduct.get(productId) || 0);
-      if (remaining <= 0) continue;
-
-      const slug = rule.product.slug || nameToSlug(rule.product.name);
-      const href = `/product/${slug}`;
-
-      let result = "";
-      let lastIdx = 0;
       rule.pattern.lastIndex = 0;
       let m: RegExpExecArray | null;
       while ((m = rule.pattern.exec(text)) !== null) {
-        if (remaining <= 0 || totalLinks >= MAX_LINKS_PER_POST) break;
-        const isFirst = !firstLinkedProducts.has(productId);
-        const badge = isFirst
-          ? `<span style="font-size:10px;margin-left:3px;color:hsl(var(--accent));font-weight:500;white-space:nowrap;">View Product →</span>`
-          : "";
-        if (isFirst) firstLinkedProducts.add(productId);
-        const anchor = `<a href="${href}" class="product-autolink" style="color:hsl(var(--primary));text-decoration:none;border-bottom:1px solid hsl(var(--primary)/0.3);">${m[0]}${badge}</a>`;
-        result += text.slice(lastIdx, m.index) + anchor;
-        lastIdx = m.index + m[0].length;
-        rule.pattern.lastIndex = lastIdx;
-        remaining--;
-        totalLinks++;
-        linksPerProduct.set(productId, (linksPerProduct.get(productId) || 0) + 1);
+        cands.push({ start: m.index, end: m.index + m[0].length, matchText: m[0], rule });
+        if (m[0].length === 0) rule.pattern.lastIndex++;
       }
-      result += text.slice(lastIdx);
-      text = result;
     }
-    return text;
+    cands.sort((a, b) => a.start - b.start || (b.end - b.start) - (a.end - a.start));
+
+    let result = "";
+    let cursor = 0;
+    for (const c of cands) {
+      if (c.start < cursor) continue; // overlaps with previously chosen
+      if (totalLinks >= MAX_LINKS_PER_POST) break;
+      const productId = c.rule.product.name;
+      const used = linksPerProduct.get(productId) || 0;
+      if (used >= MAX_LINKS_PER_PRODUCT) continue;
+
+      const slug = c.rule.product.slug || nameToSlug(c.rule.product.name);
+      const href = `/product/${slug}`;
+      const isFirst = !firstLinkedProducts.has(productId);
+      const badge = isFirst
+        ? `<span style="font-size:10px;margin-left:3px;color:hsl(var(--accent));font-weight:500;white-space:nowrap;">View Product →</span>`
+        : "";
+      if (isFirst) firstLinkedProducts.add(productId);
+      const anchor = `<a href="${href}" class="product-autolink" style="color:hsl(var(--primary));text-decoration:none;border-bottom:1px solid hsl(var(--primary)/0.3);">${c.matchText}${badge}</a>`;
+      result += text.slice(cursor, c.start) + anchor;
+      cursor = c.end;
+      totalLinks++;
+      linksPerProduct.set(productId, used + 1);
+    }
+    result += text.slice(cursor);
+    return result;
   });
 
   return out.join("");
