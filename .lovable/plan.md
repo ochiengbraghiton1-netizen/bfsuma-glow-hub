@@ -1,68 +1,87 @@
-## Content Architecture Refactor — Health vs Business
+## BF SUMA Royal — Critical SEO Fixes (Phase 1)
 
-Separate health and business content without breaking existing URLs, articles, or SEO.
+A large, multi-area request. Below is the proposed plan grouped by the four issues you raised, plus the auto-link testing addendum.
 
-### Phase 1 — Schema
-- Migration: add `content_type text NOT NULL DEFAULT 'health'` to `blog_posts` with CHECK constraint (`'health' | 'business'`)
-- Add index on `content_type` + `status` for fast filtering
+---
 
-### Phase 2 — Migrate existing content (data update)
-- Script classifies posts via:
-  - Their linked `blog_categories.slug/name` (Network Marketing, Success Stories, Business Opportunity, Entrepreneurship, Income)
-  - Keyword scan on title/slug/excerpt (mlm, network marketing, side hustle, income, distributor, business opportunity, extra income, earn, recruit, compensation)
-- Sets `content_type='business'` for matches; leaves rest as `'health'`
-- Pure UPDATE — no content rewrites, no slug changes
+### Issue 1 — Crawl & Indexation Audit
 
-### Phase 3 — Admin panel
-- Add `Content Type` dropdown to `src/pages/admin/Blog.tsx` post editor form (Health / Business). Default = Health.
+**Audit findings I'll act on (based on current code):**
+- `public/robots.txt` is fine for public sections (`/product/*`, `/blog/*`, `/wellness/*`, local pages, etc. are all allowed). Only admin/auth/checkout/account flows are disallowed — correct.
+- `index.html` has no global `noindex`. `PageSEO` only emits `noindex` when explicitly passed — correct.
+- Sitemap (edge function) already includes products, categories, blog posts (split health vs business), wellness hubs and static routes. Missing: `/wellness` index is present, but **local landing pages list is hardcoded** and out of sync with `src/config/locations.ts`. Also missing: `/join-business`, `/auth`, `/checkout` (intentional), and `/wellness` hub articles aren't needed.
+- Per-route canonicals: `PageSEO` writes a canonical, but `index.html` also ships a static `<link rel="canonical" href="/">`. This causes **duplicate canonicals on every non-home route** (a real indexation bug). Fix: remove the static canonical from `index.html`; leave per-route canonicals to `PageSEO` / `seo-render`.
+- `seo-render` edge function already emits per-route meta + JSON-LD for crawlers (good — handles JS rendering concern).
 
-### Phase 4 — Business Hub
-- New route `/business` → `BusinessHubPage.tsx`
-  - Hero (income opportunity messaging)
-  - Featured business articles (top 3 by date, `content_type='business'`)
-  - Success stories grid
-  - Join BF SUMA CTA (reuse existing JoinBusiness CTA component)
-  - Training resources block
-  - Business FAQs
+**Actions:**
+1. Remove the conflicting `<link rel="canonical">` from `index.html`.
+2. Regenerate the sitemap's location list dynamically from `src/config/locations.ts` (export a JSON list the edge function can import, or hardcode in sync — I'll mirror the config in the edge function so all 10+ cities are correctly listed with priorities).
+3. Add `/wellness` already present; add missing static routes (`/join-business`).
+4. Verify `seo-render` covers `/wellness/:slug`, `/blog/:slug`, `/business/blog/:slug`, `/product/:slug`, location routes, and `/category/:slug` — patch any missing route handlers so first-byte HTML carries title/description/canonical/H1.
 
-### Phase 5 — Business blog
-- New route `/business/blog` → `BusinessBlogPage.tsx`
-  - Lists only `content_type='business'` posts
-  - Search, category filter, pagination
-  - Featured row at top
+---
 
-### Phase 6 — Health blog cleanup
-- Update `src/pages/BlogPage.tsx` (and any list queries) to filter `.eq('content_type','health')`
-- Same for `BlogCategoryPage.tsx`
+### Issue 2 — Missing H1 Tags
 
-### Phase 7 — URL preservation
-- `/blog/:slug` still resolves any post regardless of type (BlogPage already handles slug param)
-- Inside post view: detect post's `content_type`; if `business`, render breadcrumb `Home › Business Hub › Article` instead of `Home › Blog › Article`
+**Audit:**
+- Most pages have H1s already. I'll sweep these route components and ensure exactly one `<h1>`:
+  - `ProductPage`, `WellnessHubPage`, `WellnessHubsIndex`, `LocationPage`, `BlogPage`, `BlogCategoryPage`, blog post detail, `BusinessHubPage`, `BusinessBlogPage`, `CategoryPage`, `FAQPage`, `ContactPage`, `AboutPage`, `JoinBusiness`, `CommunityPage`, `ReturnPolicy`, `TermsConditions`, `NotFound`, `Index`.
+- Fix any pages with zero H1s (add semantic H1) or multiple H1s (demote extras to H2).
+- Update `seo-render` to inject an H1 into the no-JS HTML for each route type.
 
-### Phase 8 — Homepage
-- Audit `StoriesInsights.tsx` and any homepage blog widget → add `.eq('content_type','health')`
-- `RelatedBlogPosts` on product pages already scoped to product — leave as-is
+---
 
-### Phase 10 — Recommendation logic
-- Related-posts queries (in BlogPage and any "related" component): filter by same `content_type` as current article
+### Issue 3 — Unique Product Image Alt Text
 
-### Phase 11 — SEO safety
-- No slug/URL/meta changes
-- Sitemap (`supabase/functions/sitemap`) keeps including all posts as-is
-- Add `/business` and `/business/blog` to `src/config/routes.ts` so they appear in sitemap
+**Actions:**
+1. `ProductCard`, `ProductPage`, `ProductDetailModal`, `ProductShowcase`, `BlogRelatedProducts`, `RecommendedProductsSection` (within `WellnessHubPage`/`LocationPage`):
+   - Primary image alt: `{product.name} | BF SUMA Royal`
+   - Gallery/secondary images: `{product.name} Supplement Bottle` (with index suffix for 3rd+).
+   - Honor `product_images.alt_text` if set (admin override). Fallback to formatted name.
+2. Update `src/lib/image-seo.ts` helper to centralize alt formatting.
+3. Admin UI: `ProductImageUpload` already supports alt text — confirm it persists; add a small placeholder hint.
 
-### Files to touch
-- New migration (Phase 1)
-- Data update via `supabase--insert` (Phase 2)
-- `src/pages/admin/Blog.tsx` (Phase 3)
-- `src/pages/BusinessHubPage.tsx` (new), `src/pages/BusinessBlogPage.tsx` (new)
-- `src/App.tsx` (routes)
-- `src/pages/BlogPage.tsx`, `src/pages/BlogCategoryPage.tsx` (filter + breadcrumb)
-- `src/components/StoriesInsights.tsx` (homepage filter)
-- `src/config/routes.ts` (new public routes)
-- `src/components/Footer.tsx` (link to Business Hub)
+---
 
-### Testing report
-After implementation, run a read query to report counts: total health, total business, sample reclassified slugs.
+### Issue 4 — Editable Local SEO Content (Admin)
 
-Proceeding with Phase 1 migration first (requires your approval), then continuing through all phases.
+**Schema** (new migration):
+- Extend `location_products` is product-only. Create new table `location_pages` keyed by `city_slug`:
+  - `hero_title`, `hero_description`, `main_content_html` (rich text), `faqs` (jsonb), `meta_title`, `meta_description`, `seo_keywords` (text[]), `og_title`, `og_description`, `og_image_url`, `canonical_url`, `is_published`.
+  - GRANTs: `SELECT` to anon + authenticated (public read), full to service_role; INSERT/UPDATE/DELETE for admins via `has_role`.
+- Update trigger for `updated_at`.
+
+**Admin UI:** new page `/admin/locations` listing every city from `locations.ts` with edit modal — TipTap rich text editor (already in project), FAQ list editor, meta/og fields.
+
+**Frontend:** `LocationPage` reads `location_pages` row (if exists) and overrides static defaults; falls back to current static content. `seo-render` also reads from the table.
+
+---
+
+### Auto-Linking — Tests & Edge Cases
+
+- Add Vitest unit tests for `src/lib/auto-link-products.ts`:
+  - links in headings/lists/FAQ answers
+  - case-insensitive whole-word matching
+  - no link inside existing `<a>`
+  - no link inside `<code>` / `<pre>` (new edge case)
+  - respects max-per-product and max-per-page caps
+  - no false matches inside other words ("ProArthro" should not match "Arthro")
+  - HTML entities preserved
+  - longest-match-wins ordering
+- Harden the linker to skip `<code>`, `<pre>`, `<script>`, `<style>`, and any element with `data-no-autolink`.
+
+---
+
+### Out of scope for this phase
+- Actual Google Search Console submission / reindex requests (you should hit "Validate fix" in GSC after deploy).
+- Backfilling alt text on already-uploaded images in storage metadata (the rendered alt will be correct regardless).
+
+### Deliverables
+1. `index.html` canonical removed.
+2. `supabase/functions/sitemap/index.ts` + `seo-render` updated.
+3. New `location_pages` table + migration + admin page + frontend wiring.
+4. Alt-text helper + component updates.
+5. H1 audit fixes across route components.
+6. Hardened `auto-link-products.ts` + Vitest tests.
+
+Confirm and I'll execute the whole plan in one pass.
