@@ -191,11 +191,12 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             </div>
 
             <h1 className="text-3xl md:text-6xl font-bold text-white mb-6 leading-tight">
-              Buy Health Supplements in{" "}
-              <span className="bg-gradient-to-r from-accent to-accent-glow bg-clip-text text-transparent">{city}, Kenya</span>
+              {heroTitleText}
             </h1>
 
-            <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed">{heroSubtext}</p>
+            <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed">{heroDescriptionText}</p>
+
+
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-lg mx-auto">
               <a href={buildWa(`Hi, I'd like to order supplements. I'm in ${city}.`, pageUrl)} target="_blank" rel="noopener noreferrer"
@@ -236,7 +237,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
                   <div key={product.slug} className="group bg-card rounded-2xl overflow-hidden border border-border hover:shadow-glow transition-all duration-300 flex flex-col">
                     <Link to={`/product/${product.slug}`} className="block">
                       {db?.image_url ? (
-                        <img src={db.image_url} alt={product.name} className="w-full aspect-square object-cover group-hover:scale-105 transition-transform" loading="lazy" />
+                        <img src={db.image_url} alt={`${product.name} | BF SUMA Royal`} className="w-full aspect-square object-cover group-hover:scale-105 transition-transform" loading="lazy" />
                       ) : (
                         <div className="w-full aspect-square bg-muted flex items-center justify-center text-muted-foreground">
                           <ShoppingBag className="w-12 h-12 opacity-40" />
