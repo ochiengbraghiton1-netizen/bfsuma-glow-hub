@@ -118,7 +118,7 @@ const CategoryPage = () => {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 flex flex-col items-center justify-center">
-          <h1 className="text-2xl font-bold mb-4">Category Not Found</h1>
+          <h2 className="text-2xl font-bold mb-4">Category Not Found</h2>
           <p className="text-muted-foreground mb-6">The category you're looking for doesn't exist.</p>
           <Link to="/category">
             <Button>

@@ -19,6 +19,19 @@ interface DbProduct {
   benefit: string | null; price: number; image_url: string | null;
 }
 
+interface CmsPage {
+  hero_title: string | null;
+  hero_description: string | null;
+  main_content_html: string | null;
+  faqs: Array<{ q: string; a: string }> | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  og_title: string | null;
+  og_description: string | null;
+  og_image_url: string | null;
+  canonical_url: string | null;
+}
+
 /** Build a prefilled WhatsApp link with page + product context for higher conversions. */
 const buildWa = (text: string, pageUrl: string) =>
   `${WHATSAPP_URL}?text=${encodeURIComponent(`${text}\n\nPage: ${pageUrl}`)}`;
@@ -28,6 +41,20 @@ const LocationPage = ({ location }: { location: LocationData }) => {
   const pageUrl = `${SITE_URL}/${slug}`;
   const [dbProducts, setDbProducts] = useState<Record<string, DbProduct>>({});
   const [dbAssignments, setDbAssignments] = useState<LocationProduct[] | null>(null);
+  const [cms, setCms] = useState<CmsPage | null>(null);
+
+  // CMS-overridable per-city SEO content
+  useEffect(() => {
+    (async () => {
+      const { data } = await (supabase as any)
+        .from("location_pages")
+        .select("hero_title,hero_description,main_content_html,faqs,meta_title,meta_description,og_title,og_description,og_image_url,canonical_url")
+        .eq("city_slug", slug)
+        .eq("is_published", true)
+        .maybeSingle();
+      if (data) setCms(data as CmsPage);
+    })();
+  }, [slug]);
 
   // Admin-managed city → product assignments (overrides static list when present)
   useEffect(() => {
@@ -78,8 +105,10 @@ const LocationPage = ({ location }: { location: LocationData }) => {
     [products]
   );
 
-  const title = `Health Supplements in ${city} Kenya | BF Suma Royal`;
-  const description = `Buy premium health supplements in ${city}, Kenya. Boost energy, immunity & wellness with BF Suma Royal. Fast delivery ${deliveryTime}. Order via WhatsApp today!`;
+  const title = cms?.meta_title || `Health Supplements in ${city} Kenya | BF Suma Royal`;
+  const description = cms?.meta_description || `Buy premium health supplements in ${city}, Kenya. Boost energy, immunity & wellness with BF Suma Royal. Fast delivery ${deliveryTime}. Order via WhatsApp today!`;
+  const heroTitleText = cms?.hero_title || `Buy Health Supplements in ${city}, Kenya`;
+  const heroDescriptionText = cms?.hero_description || heroSubtext;
 
   // LocalBusiness JSON-LD
   const localBusinessSchema = {
@@ -133,6 +162,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
       { "@type": "Question", name: `Are BF SUMA Royal supplements safe to take with my medication?`, acceptedAnswer: { "@type": "Answer", text: `Most of our natural supplements are well tolerated, but always show the product to your doctor or pharmacist if you take prescription medication for blood pressure, diabetes or heart conditions.` } },
       { "@type": "Question", name: `How discreet is delivery to ${city}?`, acceptedAnswer: { "@type": "Answer", text: `All orders to ${city} arrive in plain, unbranded packaging. Only you and our delivery partner know what is inside.` } },
       ...((location.extraFaqs || []).map(f => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } }))),
+      ...((cms?.faqs || []).map(f => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } }))),
     ],
   };
 
@@ -162,11 +192,12 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             </div>
 
             <h1 className="text-3xl md:text-6xl font-bold text-white mb-6 leading-tight">
-              Buy Health Supplements in{" "}
-              <span className="bg-gradient-to-r from-accent to-accent-glow bg-clip-text text-transparent">{city}, Kenya</span>
+              {heroTitleText}
             </h1>
 
-            <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed">{heroSubtext}</p>
+            <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed">{heroDescriptionText}</p>
+
+
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-lg mx-auto">
               <a href={buildWa(`Hi, I'd like to order supplements. I'm in ${city}.`, pageUrl)} target="_blank" rel="noopener noreferrer"
@@ -207,7 +238,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
                   <div key={product.slug} className="group bg-card rounded-2xl overflow-hidden border border-border hover:shadow-glow transition-all duration-300 flex flex-col">
                     <Link to={`/product/${product.slug}`} className="block">
                       {db?.image_url ? (
-                        <img src={db.image_url} alt={product.name} className="w-full aspect-square object-cover group-hover:scale-105 transition-transform" loading="lazy" />
+                        <img src={db.image_url} alt={`${product.name} | BF SUMA Royal`} className="w-full aspect-square object-cover group-hover:scale-105 transition-transform" loading="lazy" />
                       ) : (
                         <div className="w-full aspect-square bg-muted flex items-center justify-center text-muted-foreground">
                           <ShoppingBag className="w-12 h-12 opacity-40" />
@@ -275,6 +306,15 @@ const LocationPage = ({ location }: { location: LocationData }) => {
         </section>
 
         {/* ── LONG-FORM EDITORIAL ── */}
+        {cms?.main_content_html && (
+          <section className="py-12 md:py-16 bg-background">
+            <div
+              className="container mx-auto px-4 max-w-3xl prose prose-neutral dark:prose-invert"
+              dangerouslySetInnerHTML={{ __html: autoLinkProducts(cms.main_content_html, linkInfo) }}
+            />
+          </section>
+        )}
+
         <LocationLongForm location={location} />
 
         {/* ── DELIVERY ── */}

@@ -491,6 +491,63 @@ export type Database = {
         }
         Relationships: []
       }
+      location_pages: {
+        Row: {
+          canonical_url: string | null
+          city_slug: string
+          created_at: string
+          faqs: Json
+          hero_description: string | null
+          hero_title: string | null
+          id: string
+          is_published: boolean
+          main_content_html: string | null
+          meta_description: string | null
+          meta_title: string | null
+          og_description: string | null
+          og_image_url: string | null
+          og_title: string | null
+          seo_keywords: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          canonical_url?: string | null
+          city_slug: string
+          created_at?: string
+          faqs?: Json
+          hero_description?: string | null
+          hero_title?: string | null
+          id?: string
+          is_published?: boolean
+          main_content_html?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          og_description?: string | null
+          og_image_url?: string | null
+          og_title?: string | null
+          seo_keywords?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          canonical_url?: string | null
+          city_slug?: string
+          created_at?: string
+          faqs?: Json
+          hero_description?: string | null
+          hero_title?: string | null
+          id?: string
+          is_published?: boolean
+          main_content_html?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          og_description?: string | null
+          og_image_url?: string | null
+          og_title?: string | null
+          seo_keywords?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       location_products: {
         Row: {
           city_slug: string

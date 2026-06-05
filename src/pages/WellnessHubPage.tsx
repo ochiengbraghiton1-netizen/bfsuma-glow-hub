@@ -105,7 +105,7 @@ const WellnessHubPage = () => {
     return <div className="min-h-screen flex flex-col"><Header /><div className="flex-1 flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div><Footer /></div>;
   }
   if (notFound || !hub) {
-    return <div className="min-h-screen flex flex-col"><Header /><div className="flex-1 flex flex-col items-center justify-center p-6 text-center"><h1 className="text-2xl font-bold mb-2">Hub Not Found</h1><Link to="/wellness" className="text-primary underline">Browse all wellness hubs</Link></div><Footer /></div>;
+    return <div className="min-h-screen flex flex-col"><Header /><div className="flex-1 flex flex-col items-center justify-center p-6 text-center"><h2 className="text-2xl font-bold mb-2">Hub Not Found</h2><Link to="/wellness" className="text-primary underline">Browse all wellness hubs</Link></div><Footer /></div>;
   }
 
   const canonical = `${SITE}/wellness/${hub.slug}`;

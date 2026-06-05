@@ -265,7 +265,7 @@ const ProductPage = () => {
                 {product.image_url ? (
                   <img
                     src={product.image_url}
-                    alt={product.name}
+                    alt={`${product.name} | BF SUMA Royal`}
                     className="w-full aspect-square object-cover"
                     loading="eager"
                   />
