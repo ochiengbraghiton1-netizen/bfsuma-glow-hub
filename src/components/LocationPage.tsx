@@ -162,6 +162,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
       { "@type": "Question", name: `Are BF SUMA Royal supplements safe to take with my medication?`, acceptedAnswer: { "@type": "Answer", text: `Most of our natural supplements are well tolerated, but always show the product to your doctor or pharmacist if you take prescription medication for blood pressure, diabetes or heart conditions.` } },
       { "@type": "Question", name: `How discreet is delivery to ${city}?`, acceptedAnswer: { "@type": "Answer", text: `All orders to ${city} arrive in plain, unbranded packaging. Only you and our delivery partner know what is inside.` } },
       ...((location.extraFaqs || []).map(f => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } }))),
+      ...((cms?.faqs || []).map(f => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } }))),
     ],
   };
 
@@ -305,6 +306,15 @@ const LocationPage = ({ location }: { location: LocationData }) => {
         </section>
 
         {/* ── LONG-FORM EDITORIAL ── */}
+        {cms?.main_content_html && (
+          <section className="py-12 md:py-16 bg-background">
+            <div
+              className="container mx-auto px-4 max-w-3xl prose prose-neutral dark:prose-invert"
+              dangerouslySetInnerHTML={{ __html: autoLinkProducts(cms.main_content_html, linkInfo) }}
+            />
+          </section>
+        )}
+
         <LocationLongForm location={location} />
 
         {/* ── DELIVERY ── */}
