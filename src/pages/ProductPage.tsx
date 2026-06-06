@@ -219,6 +219,14 @@ const ProductPage = () => {
               itemCondition: "https://schema.org/NewCondition",
               url: canonicalUrl,
               seller: { "@type": "Organization", name: "BF SUMA Royal Kenya" },
+              hasMerchantReturnPolicy: {
+                "@type": "MerchantReturnPolicy",
+                applicableCountry: "KE",
+                returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+                merchantReturnDays: 3,
+                returnMethod: "https://schema.org/ReturnByMail",
+                returnFees: "https://schema.org/FreeReturn",
+              },
               shippingDetails: {
                 "@type": "OfferShippingDetails",
                 shippingRate: { "@type": "MonetaryAmount", value: "300", currency: "KES" },
@@ -226,7 +234,7 @@ const ProductPage = () => {
                 deliveryTime: {
                   "@type": "ShippingDeliveryTime",
                   handlingTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 2, unitCode: "DAY" },
-                  transitTime: { "@type": "QuantitativeValue", minValue: 2, maxValue: 5, unitCode: "DAY" },
+                  transitTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 5, unitCode: "DAY" },
                 },
               },
             },

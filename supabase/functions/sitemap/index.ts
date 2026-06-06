@@ -8,7 +8,9 @@ const corsHeaders = {
 
 const SITE_BASE_URL = "https://bfsumaroyal.com";
 
-// Static routes configuration
+// Static routes configuration — only canonical 200-OK URLs.
+// /category is excluded (parent path renders the listing under /products via redirect),
+// /business/blog is included only if it serves a 200 listing page.
 const staticRoutes = [
   { path: "/", changefreq: "weekly", priority: 1.0 },
   { path: "/about", changefreq: "monthly", priority: 0.8 },
@@ -20,7 +22,6 @@ const staticRoutes = [
   { path: "/faq", changefreq: "monthly", priority: 0.7 },
   { path: "/community", changefreq: "weekly", priority: 0.6 },
   { path: "/products", changefreq: "weekly", priority: 0.8 },
-  { path: "/category", changefreq: "weekly", priority: 0.7 },
   { path: "/return-policy", changefreq: "monthly", priority: 0.5 },
   { path: "/terms", changefreq: "monthly", priority: 0.5 },
   // Location pages
