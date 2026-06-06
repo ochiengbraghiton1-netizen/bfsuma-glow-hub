@@ -269,8 +269,28 @@ async function buildMeta(pathname: string, supabase: ReturnType<typeof createCli
             price: Number(data.price).toFixed(2),
             priceCurrency: "KES",
             availability: isOOS ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
+            itemCondition: "https://schema.org/NewCondition",
             url: canonical,
+            priceValidUntil: new Date(Date.now() + 365 * 86400000).toISOString().split("T")[0],
             seller: { "@type": "Organization", name: "BF SUMA Royal Kenya" },
+            hasMerchantReturnPolicy: {
+              "@type": "MerchantReturnPolicy",
+              applicableCountry: "KE",
+              returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+              merchantReturnDays: 3,
+              returnMethod: "https://schema.org/ReturnByMail",
+              returnFees: "https://schema.org/FreeReturn",
+            },
+            shippingDetails: {
+              "@type": "OfferShippingDetails",
+              shippingRate: { "@type": "MonetaryAmount", value: "300", currency: "KES" },
+              shippingDestination: { "@type": "DefinedRegion", addressCountry: "KE" },
+              deliveryTime: {
+                "@type": "ShippingDeliveryTime",
+                handlingTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 2, unitCode: "DAY" },
+                transitTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 5, unitCode: "DAY" },
+              },
+            },
           },
         },
         {
