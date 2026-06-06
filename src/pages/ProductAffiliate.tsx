@@ -64,14 +64,11 @@ const ProductAffiliate = () => {
           localStorage.setItem("bf_referral_expiry", expiry.toISOString());
         }
 
-        // 2) Try affiliate link lookup first
-        const { data: linkData } = await supabase
-          .from("product_affiliate_links")
-          .select("product_id, is_active, slug")
-          .eq("slug", slug)
-          .eq("is_active", true)
-          .maybeSingle();
+        // 2) Try affiliate link lookup first (via SECURITY DEFINER RPC)
+        const { data: linkRows } = await supabase
+          .rpc("get_affiliate_product_link", { p_slug: slug });
 
+        const linkData = Array.isArray(linkRows) && linkRows.length ? linkRows[0] : null;
         let productId: string | null = null;
 
         if (linkData) {

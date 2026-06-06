@@ -54,26 +54,11 @@ export const useReferral = () => {
 
   const trackClick = async (code: string) => {
     try {
-      // Get affiliate ID from code
-      const { data: affiliate } = await supabase
-        .from('affiliates')
-        .select('id')
-        .eq('referral_code', code)
-        .eq('status', 'active')
-        .maybeSingle();
-
-      if (affiliate) {
-        // Record the click
-        await supabase.from('affiliate_clicks').insert({
-          affiliate_id: affiliate.id,
-          ip_address: null,
-          user_agent: navigator.userAgent,
-          referrer_url: document.referrer || window.location.href,
-        });
-
-        // Increment click count using RPC
-        await supabase.rpc('increment_affiliate_clicks', { affiliate_code: code });
-      }
+      await supabase.rpc('track_affiliate_click', {
+        p_code: code,
+        p_user_agent: navigator.userAgent,
+        p_referrer_url: document.referrer || window.location.href,
+      });
     } catch (error) {
       console.error('Error tracking referral click:', error);
     }

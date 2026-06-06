@@ -1431,6 +1431,13 @@ export type Database = {
       }
       generate_next_agent_code: { Args: never; Returns: string }
       generate_referral_code: { Args: never; Returns: string }
+      get_affiliate_product_link: {
+        Args: { p_slug: string }
+        Returns: {
+          product_id: string
+          slug: string
+        }[]
+      }
       get_category_product_count: {
         Args: { p_category_id: string }
         Returns: number
@@ -1490,6 +1497,10 @@ export type Database = {
           p_pv_value: number
           p_referral_type?: string
         }
+        Returns: undefined
+      }
+      track_affiliate_click: {
+        Args: { p_code: string; p_referrer_url?: string; p_user_agent?: string }
         Returns: undefined
       }
     }
