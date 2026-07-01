@@ -1438,6 +1438,17 @@ export type Database = {
           slug: string
         }[]
       }
+      get_approved_product_reviews: {
+        Args: { p_product_id: string }
+        Returns: {
+          created_at: string
+          id: string
+          is_verified_purchase: boolean
+          rating: number
+          review_text: string
+          reviewer_name: string
+        }[]
+      }
       get_category_product_count: {
         Args: { p_category_id: string }
         Returns: number
