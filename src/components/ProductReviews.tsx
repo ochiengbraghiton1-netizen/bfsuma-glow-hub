@@ -54,14 +54,11 @@ const ProductReviews = ({ productId, productName }: ProductReviewsProps) => {
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["product-reviews", productId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("product_reviews")
-        .select("id, reviewer_name, rating, review_text, created_at, is_verified_purchase")
-        .eq("product_id", productId)
-        .eq("status", "approved")
-        .order("created_at", { ascending: false });
+      const { data, error } = await supabase.rpc("get_approved_product_reviews", {
+        p_product_id: productId,
+      });
       if (error) throw error;
-      return data;
+      return data ?? [];
     },
   });
 
