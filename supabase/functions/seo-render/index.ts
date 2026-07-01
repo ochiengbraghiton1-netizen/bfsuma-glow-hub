@@ -47,6 +47,27 @@ const stripHtml = (s: string) => s.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ")
 const escapeHtml = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 
+const buildWhatsAppUrl = (message: string) =>
+  `https://wa.me/254795454053?text=${encodeURIComponent(message)}`;
+
+const getProductDisplayName = (slug: string, name: string) =>
+  slug === "arthroxtra" ? "ArthroXtra Tablets" : name;
+
+const buildProductIngredients = (slug: string, plainDescription: string) => {
+  if (slug === "arthroxtra") {
+    return ["Glucosamine", "Chondroitin", "joint-support nutrients"];
+  }
+
+  const match = plainDescription.match(/(?:combining|with|includes?|contains?)\s+([^.;:]+)(?:[.;:]|$)/i);
+  if (!match) return ["BF SUMA Royal quality-assured wellness ingredients"];
+
+  return match[1]
+    .split(/,| and /i)
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 6);
+};
+
 // ---- Static route map -------------------------------------------------------
 
 const staticMeta: Record<string, Omit<Meta, "canonical">> = {
@@ -235,30 +256,41 @@ async function buildMeta(pathname: string, supabase: ReturnType<typeof createCli
     }
 
     const plain = stripHtml(data.description || "");
+    const displayName = getProductDisplayName(data.slug, data.name);
+    const ingredients = buildProductIngredients(data.slug, plain);
     const desc = truncate(
-      data.benefit
-        ? `${data.name} – ${data.benefit}. Top-rated natural supplement in Kenya. Fast delivery. Order now at BF SUMA Royal.`
-        : plain || `Buy ${data.name} in Kenya. Effective natural health supplement with fast nationwide delivery.`,
+      data.slug === "arthroxtra"
+        ? "ArthroXtra Tablets support joint comfort, flexibility, cartilage wellness, and smoother everyday movement. Order in Kenya from BF SUMA Royal."
+        : data.benefit
+          ? `${displayName} – ${data.benefit}. Top-rated natural supplement in Kenya. Fast delivery. Order now at BF SUMA Royal.`
+          : plain || `Buy ${displayName} in Kenya. Effective natural health supplement with fast nationwide delivery.`,
       160,
     );
     const isOOS = data.track_inventory && (data.stock_quantity ?? 0) <= 0;
+    const title = data.slug === "arthroxtra"
+      ? "ArthroXtra Tablets — Joint Support Supplement Kenya | BF SUMA Royal"
+      : truncate(`Buy ${displayName} in Kenya | BF SUMA Royal`, 60);
+    const whatsappUrl = buildWhatsAppUrl(`Hi BF SUMA Royal, I want to order ${displayName} from ${canonical}`);
 
     return {
-      title: truncate(`Buy ${data.name} in Kenya | BF SUMA Royal`, 60),
+      title,
       description: desc,
       canonical,
       ogImage: data.image_url || DEFAULT_OG,
       ogType: "product",
-      h1: data.name,
+      h1: displayName,
       body: `
-        <p>${escapeHtml(data.benefit || plain || `${data.name} natural supplement.`)}</p>
+        <p>${escapeHtml(data.benefit || plain || `${displayName} natural supplement.`)}</p>
         <p><strong>Price:</strong> KSh ${Number(data.price).toLocaleString()}</p>
+        <p><strong>Ingredients:</strong> ${ingredients.map(escapeHtml).join(", ")}.</p>
+        <p>${escapeHtml(plain).slice(0, 700)}</p>
+        <p><a href="${whatsappUrl}" rel="nofollow">Order ${escapeHtml(displayName)} on WhatsApp</a></p>
         <p><a href="/products">View all products</a> · <a href="/contact">Contact us</a></p>`,
       jsonLd: [
         {
           "@context": "https://schema.org",
           "@type": "Product",
-          name: data.name,
+          name: displayName,
           description: desc,
           image: [data.image_url || DEFAULT_OG],
           sku: data.sku || data.slug,
@@ -299,7 +331,7 @@ async function buildMeta(pathname: string, supabase: ReturnType<typeof createCli
           itemListElement: [
             { "@type": "ListItem", position: 1, name: "Home", item: SITE },
             { "@type": "ListItem", position: 2, name: "Products", item: `${SITE}/products` },
-            { "@type": "ListItem", position: 3, name: data.name, item: canonical },
+            { "@type": "ListItem", position: 3, name: displayName, item: canonical },
           ],
         },
       ],
@@ -490,11 +522,15 @@ function applyMeta(shell: string, meta: Meta): string {
     `<meta name="description" content="${desc}" />`,
   );
 
-  // canonical
-  html = html.replace(
-    /<link\s+rel=["']canonical["'][^>]*>/i,
-    `<link rel="canonical" href="${url}" />`,
-  );
+  // canonical — insert if the SPA shell intentionally omits a static canonical.
+  if (/<link\s+rel=["']canonical["'][^>]*>/i.test(html)) {
+    html = html.replace(
+      /<link\s+rel=["']canonical["'][^>]*>/i,
+      `<link rel="canonical" href="${url}" />`,
+    );
+  } else {
+    html = html.replace(/<\/head>/i, `    <link rel="canonical" href="${url}" />\n  </head>`);
+  }
 
   // Open Graph
   html = html.replace(/<meta\s+property=["']og:url["'][^>]*>/i, `<meta property="og:url" content="${url}" />`);
@@ -540,8 +576,7 @@ function applyMeta(shell: string, meta: Meta): string {
     html = html.replace(/<\/head>/i, `    ${blocks}\n  </head>`);
   }
 
-  // SEO fallback block — replace contents between markers if present,
-  // otherwise replace the existing static <main>…</main> inside .seo-fallback.
+  // SEO fallback block — replace the whole hidden crawler fallback body.
   const fallback = `
         <h1>${escapeHtml(meta.h1)}</h1>
         ${meta.body}
@@ -550,11 +585,17 @@ function applyMeta(shell: string, meta: Meta): string {
           <a href="/about">About</a> · <a href="/faq">FAQ</a> · <a href="/contact">Contact</a>
         </nav>`;
 
-  // Replace the inner <main>…</main> of .seo-fallback
-  html = html.replace(
-    /(<div\s+class=["']seo-fallback["'][^>]*>)([\s\S]*?)(<\/div>\s*<script\s+type=["']module["'])/i,
-    (_m, open, _inner, tail) => `${open}<main>${fallback}</main>${tail}`,
-  );
+  const fallbackOpen = html.match(/<div\s+class=["']seo-fallback["'][^>]*>/i);
+  if (fallbackOpen?.index !== undefined) {
+    const contentStart = fallbackOpen.index + fallbackOpen[0].length;
+    const bodyClose = html.search(/<\/body>/i);
+    const searchEnd = bodyClose === -1 ? html.length : bodyClose;
+    const closeStart = html.lastIndexOf("</div>", searchEnd);
+
+    if (closeStart > contentStart) {
+      html = `${html.slice(0, contentStart)}<main>${fallback}</main>${html.slice(closeStart)}`;
+    }
+  }
 
   return html;
 }

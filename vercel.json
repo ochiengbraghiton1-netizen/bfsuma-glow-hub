@@ -6,17 +6,6 @@
     },
     {
       "source": "/(.*)",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": "(?i).*(googlebot|bingbot|yandex(bot)?|duckduckbot|baiduspider|slackbot|facebookexternalhit|linkedinbot|twitterbot|whatsapp|applebot|petalbot|ahrefsbot|semrushbot|mj12bot|google-inspectiontool|google-extended|chrome-lighthouse|adsbot-google|mediapartners-google|googleother).*"
-        }
-      ],
-      "destination": "https://sboaeutgckyiwunfmxqp.supabase.co/functions/v1/seo-render?path=/$1"
-    },
-    {
-      "source": "/(.*)",
       "destination": "/index.html"
     }
   ],
