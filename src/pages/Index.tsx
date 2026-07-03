@@ -7,12 +7,10 @@ const Header = lazy(() => import("@/components/Header"));
 const Footer = lazy(() => import("@/components/Footer"));
 
 // Lazy-load below-the-fold sections
-const DoctorConsultation = lazy(() => import("@/components/DoctorConsultation"));
 const ProductShowcase = lazy(() => import("@/components/ProductShowcase"));
-const Testimonials = lazy(() => import("@/components/Testimonials"));
-const ExpertAuthority = lazy(() => import("@/components/ExpertAuthority"));
-const CaseStudies = lazy(() => import("@/components/CaseStudies"));
-const CertificationsBadges = lazy(() => import("@/components/CertificationsBadges"));
+const RealResultsMerged = lazy(() => import("@/components/RealResultsMerged"));
+const WhyTrustUs = lazy(() => import("@/components/WhyTrustUs"));
+const CertificationsStrip = lazy(() => import("@/components/CertificationsStrip"));
 const JoinEarn = lazy(() => import("@/components/JoinEarn"));
 const Community = lazy(() => import("@/components/Community"));
 const About = lazy(() => import("@/components/About"));
@@ -49,30 +47,33 @@ const Index = () => {
         <Header />
       </Suspense>
       <main className="pt-16">
+        {/* 1. Hero */}
         <Hero />
+
         <Suspense fallback={null}>
+          {/* 2. Certification strip */}
+          <CertificationsStrip />
+
+          {/* 3. What's bothering you today? (includes "Not sure yet?" block) */}
           <ShopByHealthGoal />
-          <RealPeopleSection />
+
+          {/* 5. Premium Products */}
+          <ProductShowcase />
+
+          {/* 6. Real Results from Real Kenyans (merged before/after + quotes) */}
+          <RealResultsMerged />
+
+          {/* 7. Single consultation CTA */}
+          <ConsultationCTA
+            headline="Still unsure? Talk to a wellness expert now."
+            subtext="Get free personalised advice on the best supplements for your health goals."
+          />
+
+          {/* Why Customers Trust Us (replaces AI expert photos) */}
+          <WhyTrustUs />
         </Suspense>
-        {/* Priority below-fold: testimonials + products */}
-        <div className="content-auto">
-          <Suspense fallback={null}>
-            <DoctorConsultation />
-            <ExpertAuthority />
-            <Testimonials />
-            <ConsultationCTA
-              headline="Still unsure? Talk to a wellness expert now."
-              subtext="Get free personalised advice on the best supplements for your health goals."
-            />
-            <CaseStudies />
-            <ProductShowcase />
-            <ConsultationCTA
-              headline="Need help choosing the right product?"
-              subtext="Our team can recommend the perfect supplement based on your needs."
-            />
-          </Suspense>
-        </div>
-        {/* Secondary content - deferred further */}
+
+        {/* Blog posts */}
         <div className="content-auto">
           <Suspense fallback={null}>
             <StoriesInsights />
@@ -80,17 +81,21 @@ const Index = () => {
             <FAQ />
           </Suspense>
         </div>
-        {/* Tertiary content */}
+
         <div className="content-auto">
           <Suspense fallback={null}>
             <JoinEarn />
             <Community />
             <Contact />
             <NewsletterSignup />
-            <CertificationsBadges />
           </Suspense>
         </div>
-        {/* Interactive overlays + structured data - lowest priority */}
+
+        {/* Final section above footer: community photos */}
+        <Suspense fallback={null}>
+          <RealPeopleSection />
+        </Suspense>
+
         <Suspense fallback={null}>
           <StructuredData />
           <SectionNav />

@@ -136,22 +136,8 @@ const StoriesInsights = () => {
     fetchBlogs();
   }, []);
 
-  // Build community items from social posts with "Show on Homepage" (is_featured)
-  const communityItems: StoryItem[] = (socialPosts || [])
-    .filter((p) => p.image_url)
-    .slice(0, 3)
-    .map((p) => ({
-      id: p.id,
-      type: "community" as const,
-      title: p.author_name,
-      excerpt: trimExcerpt(p.content || "A real wellness story shared by a member of our Kenyan community."),
-      image: p.image_url,
-      link: p.post_url || "/community",
-      cta: "View Story",
-    }));
-
-  // Priority: community first, then blogs, cap at MAX_CARDS
-  let items: StoryItem[] = [...communityItems, ...blogItems].slice(0, MAX_CARDS);
+  // Blog cards only — community/team photos intentionally excluded from homepage
+  let items: StoryItem[] = blogItems.slice(0, MAX_CARDS);
 
   const isStillLoading = loading || socialLoading;
 
