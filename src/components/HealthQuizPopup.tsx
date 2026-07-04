@@ -114,6 +114,10 @@ const HealthQuizPopup = () => {
         subscribed: !!email.trim(),
       });
       setCooldown(true);
+      const fbq = (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq;
+      if (typeof fbq === "function") {
+        fbq("track", "Lead", { content_name: "Health Quiz Lead" });
+      }
       setStep(5);
     } catch {
       toast({ title: "Could not save. Please try again.", variant: "destructive" });
