@@ -105,6 +105,21 @@ const ProductPage = () => {
     resolve();
   }, [slug, navigate]);
 
+  // Fire Meta Pixel ViewContent event when product loads
+  useEffect(() => {
+    if (!product) return;
+    const fbq = (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq;
+    if (typeof fbq === "function") {
+      fbq("track", "ViewContent", {
+        content_name: product.name,
+        content_ids: [product.sku || product.slug],
+        content_type: "product",
+        value: product.price,
+        currency: "KES",
+      });
+    }
+  }, [product]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col">
