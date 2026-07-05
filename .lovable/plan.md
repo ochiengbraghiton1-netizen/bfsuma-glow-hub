@@ -1,87 +1,64 @@
-## BF SUMA Royal — Critical SEO Fixes (Phase 1)
+## Site Audit Findings (no changes made)
 
-A large, multi-area request. Below is the proposed plan grouped by the four issues you raised, plus the auto-link testing addendum.
+### Area 1 — Broken links & dead ends
+- **`/blog/:slug`** — NOT a bug. `BlogPage` internally checks `useParams().slug` and renders `<BlogPostView>` when present, `<BlogList>` when absent. Individual posts render fine. (App.tsx line 147 is intentional.)
+- **Track Order button** (`OrderConfirmation.tsx:376`) — Navigates to `/order-tracking`, which IS registered in App.tsx (line 106) → `OrderTracking` page exists. ✅ Wired. Worth a live click-test to confirm the page loads customer's order without extra input.
+- **"View full policy"** in `ReturnPolicySummary.tsx` — Links to `/return-policy`, route exists. ✅
+- **Wellness "View Recommended Products"** — Uses `#recommended-products` anchor which matches `<section id="recommended-products">` in same file. ✅
+- **Business hub internal links** — Need runtime check; not yet audited.
+- No hardcoded dead-end URLs detected in nav/footer scan.
 
----
+### Area 2 — Console errors
+Requires live browser runs on each page. Not performed yet. Recommend a Playwright pass across the 6 key routes capturing `console` + failed network requests.
 
-### Issue 1 — Crawl & Indexation Audit
+### Area 3 — Mobile 375px
+Requires headless screenshots at 375×viewport. Not performed yet. Recommend a Playwright pass on the 7 listed page types.
 
-**Audit findings I'll act on (based on current code):**
-- `public/robots.txt` is fine for public sections (`/product/*`, `/blog/*`, `/wellness/*`, local pages, etc. are all allowed). Only admin/auth/checkout/account flows are disallowed — correct.
-- `index.html` has no global `noindex`. `PageSEO` only emits `noindex` when explicitly passed — correct.
-- Sitemap (edge function) already includes products, categories, blog posts (split health vs business), wellness hubs and static routes. Missing: `/wellness` index is present, but **local landing pages list is hardcoded** and out of sync with `src/config/locations.ts`. Also missing: `/join-business`, `/auth`, `/checkout` (intentional), and `/wellness` hub articles aren't needed.
-- Per-route canonicals: `PageSEO` writes a canonical, but `index.html` also ships a static `<link rel="canonical" href="/">`. This causes **duplicate canonicals on every non-home route** (a real indexation bug). Fix: remove the static canonical from `index.html`; leave per-route canonicals to `PageSEO` / `seo-render`.
-- `seo-render` edge function already emits per-route meta + JSON-LD for crawlers (good — handles JS rendering concern).
+### Area 4 — Performance
+- Hero images use `loading="eager"` ✅ (Hero.tsx lines 47/62/76).
+- Below-the-fold `loading="lazy"` and WebP coverage across product cards, wellness hubs, city pages — not yet enumerated. Needs a scripted grep + asset audit.
+- No render-blocking third-party scripts spotted beyond GTM/Meta Pixel (both async).
 
-**Actions:**
-1. Remove the conflicting `<link rel="canonical">` from `index.html`.
-2. Regenerate the sitemap's location list dynamically from `src/config/locations.ts` (export a JSON list the edge function can import, or hardcode in sync — I'll mirror the config in the edge function so all 10+ cities are correctly listed with priorities).
-3. Add `/wellness` already present; add missing static routes (`/join-business`).
-4. Verify `seo-render` covers `/wellness/:slug`, `/blog/:slug`, `/business/blog/:slug`, `/product/:slug`, location routes, and `/category/:slug` — patch any missing route handlers so first-byte HTML carries title/description/canonical/H1.
+### Area 5 — Forms
+Static review only. Runtime submission + DB write verification not performed. Files exist for all six:
+`HealthQuizPopup.tsx`, `consultation/ConsultationForm.tsx`, `Contact.tsx`, `Checkout.tsx`, `business-registration/…`, `NewsletterSignup.tsx`. Prior work confirmed HealthQuiz fires `fbq('Lead')` after save. Others need a live submit test each.
 
----
+### Area 6 — SEO meta via seo-render ✅
+All 6 tested URLs return unique title/H1/meta description:
+- `/product/arthroxtra` → "ArthroXtra Tablets — Joint Support Supplement Kenya…"
+- `/product/x-power-man-capsules` → "Buy X-Power Man Capsules in Kenya…"
+- `/blog/strengthen-immune-system-naturally-kenya` → "How to Strengthen Your Immune System Naturally…"
+- `/wellness/joint-pain-mobility` → "Joint Pain & Mobility Support in Kenya…"
+- `/nairobi` → "Health Supplements in Nairobi Kenya…"
+- `/about` → "About BF SUMA Royal Kenya | Our Journey Since 2006"
 
-### Issue 2 — Missing H1 Tags
+No generic homepage fallback observed. All good.
 
-**Audit:**
-- Most pages have H1s already. I'll sweep these route components and ensure exactly one `<h1>`:
-  - `ProductPage`, `WellnessHubPage`, `WellnessHubsIndex`, `LocationPage`, `BlogPage`, `BlogCategoryPage`, blog post detail, `BusinessHubPage`, `BusinessBlogPage`, `CategoryPage`, `FAQPage`, `ContactPage`, `AboutPage`, `JoinBusiness`, `CommunityPage`, `ReturnPolicy`, `TermsConditions`, `NotFound`, `Index`.
-- Fix any pages with zero H1s (add semantic H1) or multiple H1s (demote extras to H2).
-- Update `seo-render` to inject an H1 into the no-JS HTML for each route type.
+### Area 7 — Admin dashboard
+All 12 routes registered in App.tsx under protected `AdminLayout`. Component files exist for each. Functional correctness (buttons, CRUD, data connections) requires a logged-in Playwright walkthrough — not performed.
 
----
+### Area 8 — Security headers ✅
+`middleware.ts` `applySecurityHeaders` sets: HSTS, X-Frame-Options SAMEORIGIN, X-Content-Type-Options nosniff, Referrer-Policy strict-origin-when-cross-origin, Permissions-Policy (camera/mic/geo/interest-cohort off), X-XSS-Protection 0, COOP same-origin-allow-popups. **Caveat:** these are only applied on the bot-prerender branch (`if (!BOT_USER_AGENT.test(userAgent)) return next()`). Human visitors get whatever Vercel default headers exist — no HSTS/XFO enforced by middleware. This is a gap worth flagging.
 
-### Issue 3 — Unique Product Image Alt Text
-
-**Actions:**
-1. `ProductCard`, `ProductPage`, `ProductDetailModal`, `ProductShowcase`, `BlogRelatedProducts`, `RecommendedProductsSection` (within `WellnessHubPage`/`LocationPage`):
-   - Primary image alt: `{product.name} | BF SUMA Royal`
-   - Gallery/secondary images: `{product.name} Supplement Bottle` (with index suffix for 3rd+).
-   - Honor `product_images.alt_text` if set (admin override). Fallback to formatted name.
-2. Update `src/lib/image-seo.ts` helper to centralize alt formatting.
-3. Admin UI: `ProductImageUpload` already supports alt text — confirm it persists; add a small placeholder hint.
-
----
-
-### Issue 4 — Editable Local SEO Content (Admin)
-
-**Schema** (new migration):
-- Extend `location_products` is product-only. Create new table `location_pages` keyed by `city_slug`:
-  - `hero_title`, `hero_description`, `main_content_html` (rich text), `faqs` (jsonb), `meta_title`, `meta_description`, `seo_keywords` (text[]), `og_title`, `og_description`, `og_image_url`, `canonical_url`, `is_published`.
-  - GRANTs: `SELECT` to anon + authenticated (public read), full to service_role; INSERT/UPDATE/DELETE for admins via `has_role`.
-- Update trigger for `updated_at`.
-
-**Admin UI:** new page `/admin/locations` listing every city from `locations.ts` with edit modal — TipTap rich text editor (already in project), FAQ list editor, meta/og fields.
-
-**Frontend:** `LocationPage` reads `location_pages` row (if exists) and overrides static defaults; falls back to current static content. `seo-render` also reads from the table.
+### Area 9 — Route audit
+- `/blog/:slug` → `BlogPage`: intentional, works (see Area 1). No change needed.
+- `/:city` catch-all: `LocationLanding` calls `getLocationBySlug(city)` against a static list; unknown slugs render `NotFound`. All static routes (`/about`, `/contact`, `/wellness`, `/blog`, `/checkout`, `/auth`, …) are declared before `/:city` and React Router prefers exact/static matches over dynamic segments, so they are NOT intercepted. ✅ Confirmed safe.
+- One minor: `/products` maps to `CategoryPage` (line 141) — intentional alias, fine.
 
 ---
 
-### Auto-Linking — Tests & Edge Cases
+## What still needs a runtime pass before fixes
 
-- Add Vitest unit tests for `src/lib/auto-link-products.ts`:
-  - links in headings/lists/FAQ answers
-  - case-insensitive whole-word matching
-  - no link inside existing `<a>`
-  - no link inside `<code>` / `<pre>` (new edge case)
-  - respects max-per-product and max-per-page caps
-  - no false matches inside other words ("ProArthro" should not match "Arthro")
-  - HTML entities preserved
-  - longest-match-wins ordering
-- Harden the linker to skip `<code>`, `<pre>`, `<script>`, `<style>`, and any element with `data-no-autolink`.
+To turn the "not yet audited" items into concrete findings, I recommend a Playwright sweep that:
+1. Loads each of the 7 mobile-target pages at 375×1800 and screenshots.
+2. Records `console` errors + failed network requests on the 6 key pages.
+3. Submits each of the 6 forms with valid dummy data and verifies DB row + UI feedback.
+4. Greps the codebase for `<img` tags without `loading=` and non-WebP src.
+5. Logs into `/admin` (using injected session) and clicks through each admin route capturing errors.
 
----
+## Confirmed real issues to potentially fix
+1. **Security headers only ship on the bot branch of `middleware.ts`.** Human requests miss HSTS, XFO, nosniff, Referrer-Policy, Permissions-Policy.
+2. (Everything else in your list is either already correct or needs runtime verification before I can flag it.)
 
-### Out of scope for this phase
-- Actual Google Search Console submission / reindex requests (you should hit "Validate fix" in GSC after deploy).
-- Backfilling alt text on already-uploaded images in storage metadata (the rendered alt will be correct regardless).
-
-### Deliverables
-1. `index.html` canonical removed.
-2. `supabase/functions/sitemap/index.ts` + `seo-render` updated.
-3. New `location_pages` table + migration + admin page + frontend wiring.
-4. Alt-text helper + component updates.
-5. H1 audit fixes across route components.
-6. Hardened `auto-link-products.ts` + Vitest tests.
-
-Confirm and I'll execute the whole plan in one pass.
+## Proposed next step
+Approve this plan and I'll (a) run the Playwright sweep described above and (b) fix the middleware headers gap. I will report the runtime findings back before applying any UI/form fixes so you can pick which ones to implement.
