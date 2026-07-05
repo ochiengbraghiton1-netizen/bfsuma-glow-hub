@@ -32,7 +32,9 @@ export default async function middleware(request: Request) {
   const url = new URL(request.url);
 
   if (PUBLIC_FILE.test(url.pathname)) {
-    return next();
+    const response = next();
+    applySecurityHeaders(response.headers);
+    return response;
   }
 
   const renderUrl = new URL(SEO_RENDER_URL);
@@ -48,7 +50,9 @@ export default async function middleware(request: Request) {
   });
 
   if (!rendered.ok) {
-    return next();
+    const response = next();
+    applySecurityHeaders(response.headers);
+    return response;
   }
 
   const headers = new Headers(rendered.headers);
