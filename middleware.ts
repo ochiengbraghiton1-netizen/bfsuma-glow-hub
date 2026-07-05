@@ -7,7 +7,7 @@ const PUBLIC_FILE = /\.[a-z0-9]+$/i;
 
 const applySecurityHeaders = (headers: Headers) => {
   headers.set("strict-transport-security", "max-age=63072000; includeSubDomains; preload");
-  headers.set("x-frame-options", "SAMEORIGIN");
+  headers.set("x-frame-options", "DENY");
   headers.set("x-content-type-options", "nosniff");
   headers.set("referrer-policy", "strict-origin-when-cross-origin");
   headers.set("permissions-policy", "camera=(), microphone=(), geolocation=(), interest-cohort=()");
@@ -24,13 +24,17 @@ export default async function middleware(request: Request) {
   const userAgent = request.headers.get("user-agent") || "";
 
   if (!BOT_USER_AGENT.test(userAgent)) {
-    return next();
+    const response = next();
+    applySecurityHeaders(response.headers);
+    return response;
   }
 
   const url = new URL(request.url);
 
   if (PUBLIC_FILE.test(url.pathname)) {
-    return next();
+    const response = next();
+    applySecurityHeaders(response.headers);
+    return response;
   }
 
   const renderUrl = new URL(SEO_RENDER_URL);
@@ -46,7 +50,9 @@ export default async function middleware(request: Request) {
   });
 
   if (!rendered.ok) {
-    return next();
+    const response = next();
+    applySecurityHeaders(response.headers);
+    return response;
   }
 
   const headers = new Headers(rendered.headers);
