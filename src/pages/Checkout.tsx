@@ -14,7 +14,7 @@ import { z } from 'zod';
 import productGeneric from '@/assets/product-generic.jpg';
 import { HoneypotField } from '@/components/ui/honeypot-field';
 import { isBot } from '@/lib/honeypot';
-import { PhoneInput, formatForWhatsApp } from '@/components/ui/phone-input';
+import { PhoneInput, formatForWhatsApp, isValidInternationalPhone } from '@/components/ui/phone-input';
 import PayPalButton from '@/components/checkout/PayPalButton';
 import CurrencySelector from '@/components/checkout/CurrencySelector';
 import SecureCheckoutBadges from '@/components/checkout/SecureCheckoutBadges';
