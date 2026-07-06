@@ -99,14 +99,26 @@ const HealthQuizPopup = () => {
 
   const recommendation = concern ? RECOMMENDATIONS[concern] : null;
 
+  // Kenyan phone: 07XXXXXXXX, 01XXXXXXXX, +2547XXXXXXXX, +2541XXXXXXXX, 2547XXXXXXXX, 2541XXXXXXXX
+  const isValidKenyanPhone = (raw: string): boolean => {
+    const p = raw.replace(/[\s\-()]/g, "");
+    return /^(?:\+?254|0)(7|1)\d{8}$/.test(p);
+  };
+  const phoneValid = isValidKenyanPhone(phone);
+  const phoneShowError = phone.length > 0 && !phoneValid;
+
   const handleSubmitLead = async () => {
     if (!name.trim()) {
       toast({ title: "Please enter your name", variant: "destructive" });
       return;
     }
+    if (!phoneValid) {
+      toast({ title: "Enter a valid Kenyan number e.g. 0712 345 678", variant: "destructive" });
+      return;
+    }
     setSubmitting(true);
     try {
-      const source = `health_quiz | concern:${concern} | duration:${duration} | goal:${goal} | phone:${phone || "n/a"}`;
+      const source = `health_quiz | concern:${concern} | duration:${duration} | goal:${goal} | phone:${phone}`;
       await supabase.from("leads").insert({
         name: name.trim(),
         email: email.trim() || `quiz-${Date.now()}@no-email.local`,
