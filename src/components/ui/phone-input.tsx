@@ -14,29 +14,31 @@ export interface CountryCode {
   dial: string;
   name: string;
   flag: string;
+  /** Expected national number length (digits after dial code). Single number or [min,max]. */
+  length: number | [number, number];
 }
 
 export const COUNTRY_CODES: CountryCode[] = [
-  { code: "KE", dial: "+254", name: "Kenya", flag: "🇰🇪" },
-  { code: "TZ", dial: "+255", name: "Tanzania", flag: "🇹🇿" },
-  { code: "UG", dial: "+256", name: "Uganda", flag: "🇺🇬" },
-  { code: "RW", dial: "+250", name: "Rwanda", flag: "🇷🇼" },
-  { code: "ET", dial: "+251", name: "Ethiopia", flag: "🇪🇹" },
-  { code: "NG", dial: "+234", name: "Nigeria", flag: "🇳🇬" },
-  { code: "GH", dial: "+233", name: "Ghana", flag: "🇬🇭" },
-  { code: "ZA", dial: "+27", name: "South Africa", flag: "🇿🇦" },
-  { code: "CD", dial: "+243", name: "DR Congo", flag: "🇨🇩" },
-  { code: "CM", dial: "+237", name: "Cameroon", flag: "🇨🇲" },
-  { code: "GB", dial: "+44", name: "United Kingdom", flag: "🇬🇧" },
-  { code: "US", dial: "+1", name: "United States", flag: "🇺🇸" },
-  { code: "CA", dial: "+1", name: "Canada", flag: "🇨🇦" },
-  { code: "AE", dial: "+971", name: "UAE", flag: "🇦🇪" },
-  { code: "SA", dial: "+966", name: "Saudi Arabia", flag: "🇸🇦" },
-  { code: "IN", dial: "+91", name: "India", flag: "🇮🇳" },
-  { code: "CN", dial: "+86", name: "China", flag: "🇨🇳" },
-  { code: "DE", dial: "+49", name: "Germany", flag: "🇩🇪" },
-  { code: "FR", dial: "+33", name: "France", flag: "🇫🇷" },
-  { code: "AU", dial: "+61", name: "Australia", flag: "🇦🇺" },
+  { code: "KE", dial: "+254", name: "Kenya", flag: "🇰🇪", length: 9 },
+  { code: "TZ", dial: "+255", name: "Tanzania", flag: "🇹🇿", length: 9 },
+  { code: "UG", dial: "+256", name: "Uganda", flag: "🇺🇬", length: 9 },
+  { code: "RW", dial: "+250", name: "Rwanda", flag: "🇷🇼", length: 9 },
+  { code: "ET", dial: "+251", name: "Ethiopia", flag: "🇪🇹", length: 9 },
+  { code: "NG", dial: "+234", name: "Nigeria", flag: "🇳🇬", length: 10 },
+  { code: "GH", dial: "+233", name: "Ghana", flag: "🇬🇭", length: 9 },
+  { code: "ZA", dial: "+27", name: "South Africa", flag: "🇿🇦", length: 9 },
+  { code: "CD", dial: "+243", name: "DR Congo", flag: "🇨🇩", length: 9 },
+  { code: "CM", dial: "+237", name: "Cameroon", flag: "🇨🇲", length: 9 },
+  { code: "GB", dial: "+44", name: "United Kingdom", flag: "🇬🇧", length: 10 },
+  { code: "US", dial: "+1", name: "United States", flag: "🇺🇸", length: 10 },
+  { code: "CA", dial: "+1", name: "Canada", flag: "🇨🇦", length: 10 },
+  { code: "AE", dial: "+971", name: "UAE", flag: "🇦🇪", length: 9 },
+  { code: "SA", dial: "+966", name: "Saudi Arabia", flag: "🇸🇦", length: 9 },
+  { code: "IN", dial: "+91", name: "India", flag: "🇮🇳", length: 10 },
+  { code: "CN", dial: "+86", name: "China", flag: "🇨🇳", length: 11 },
+  { code: "DE", dial: "+49", name: "Germany", flag: "🇩🇪", length: [10, 11] },
+  { code: "FR", dial: "+33", name: "France", flag: "🇫🇷", length: 9 },
+  { code: "AU", dial: "+61", name: "Australia", flag: "🇦🇺", length: 9 },
 ];
 
 /**
@@ -61,6 +63,18 @@ export function parsePhone(fullPhone: string): { dialCode: string; number: strin
  */
 export function formatForWhatsApp(fullPhone: string): string {
   return fullPhone.replace(/[^0-9]/g, "");
+}
+
+/** Validate a full international phone against the selected country's expected digit length. */
+export function isValidInternationalPhone(fullPhone: string): boolean {
+  if (!fullPhone || !fullPhone.startsWith("+")) return false;
+  const { dialCode, number } = parsePhone(fullPhone);
+  const digits = number.replace(/\D/g, "");
+  const cc = COUNTRY_CODES.find((c) => c.dial === dialCode);
+  if (!cc) return digits.length >= 7 && digits.length <= 15;
+  const len = cc.length;
+  if (Array.isArray(len)) return digits.length >= len[0] && digits.length <= len[1];
+  return digits.length === len;
 }
 
 interface PhoneInputProps {
