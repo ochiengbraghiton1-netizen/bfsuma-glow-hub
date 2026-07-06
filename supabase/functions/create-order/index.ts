@@ -261,6 +261,61 @@ Deno.serve(async (req) => {
     // Client sends referral_code if available; we handle it server-side
     // (This is optional - tracked via localStorage on client, but we accept it here too)
 
+    // --- Fire admin email notification (fire-and-forget) ---
+    try {
+      const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
+      if (lovableApiKey) {
+        const shortId = `BF-${orderId.slice(0, 8).toUpperCase()}`;
+        const fmt = (n: number) => `KSh ${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        const productLines = orderItemsData
+          .map((i) => `  • ${i.product_name} x${i.quantity} — ${fmt(i.subtotal)}`)
+          .join("<br/>");
+        const html = `
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111;max-width:640px;">
+  <h2 style="margin:0 0 12px;">🛒 New Order ${shortId}</h2>
+  <p style="margin:0 0 16px;color:#555;">A new order has just been placed on BF SUMA ROYAL.</p>
+  <table style="border-collapse:collapse;width:100%;">
+    <tr><td style="padding:4px 0;"><b>Order ID</b></td><td>${shortId}</td></tr>
+    <tr><td style="padding:4px 0;"><b>Customer</b></td><td>${body.customer_name.trim()}</td></tr>
+    <tr><td style="padding:4px 0;"><b>Phone</b></td><td>${body.customer_phone.trim()}</td></tr>
+    ${body.customer_email ? `<tr><td style="padding:4px 0;"><b>Email</b></td><td>${body.customer_email.trim()}</td></tr>` : ""}
+    <tr><td style="padding:4px 0;vertical-align:top;"><b>Products</b></td><td>${productLines}</td></tr>
+    <tr><td style="padding:4px 0;"><b>Subtotal</b></td><td>${fmt(subtotal)}</td></tr>
+    ${discountAmount > 0 ? `<tr><td style="padding:4px 0;"><b>Discount</b></td><td>-${fmt(discountAmount)} (${promotionCode})</td></tr>` : ""}
+    <tr><td style="padding:4px 0;"><b>Shipping</b></td><td>${fmt(shippingFee)}</td></tr>
+    <tr><td style="padding:4px 0;"><b>Total</b></td><td><b>${fmt(totalAmount)}</b></td></tr>
+    <tr><td style="padding:4px 0;"><b>Delivery Location</b></td><td>${deliveryLocation}</td></tr>
+    <tr><td style="padding:4px 0;vertical-align:top;"><b>Delivery Address</b></td><td>${body.shipping_address.trim().replace(/\n/g, "<br/>")}</td></tr>
+    ${body.notes ? `<tr><td style="padding:4px 0;vertical-align:top;"><b>Notes</b></td><td>${body.notes.trim().replace(/\n/g, "<br/>")}</td></tr>` : ""}
+    <tr><td style="padding:4px 0;"><b>Payment Method</b></td><td>${paymentMethod}</td></tr>
+    <tr><td style="padding:4px 0;"><b>Status</b></td><td>${status}</td></tr>
+  </table>
+  <p style="margin:20px 0 0;">
+    <a href="https://bfsumaroyal.com/admin/orders" style="background:#047857;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;">View in Admin</a>
+  </p>
+</div>`;
+        // Fire-and-forget — do not await; do not block order response
+        fetch("https://api.lovable.dev/api/v1/send-email", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${lovableApiKey}`,
+          },
+          body: JSON.stringify({
+            to: ["braghiton.ochieng.125@gmail.com"],
+            subject: `🛒 New Order ${shortId} — BF SUMA ROYAL`,
+            html,
+            purpose: "transactional",
+          }),
+        }).catch((e) => console.error("Admin email send error:", e));
+      } else {
+        console.error("LOVABLE_API_KEY not set — admin email skipped");
+      }
+    } catch (e) {
+      console.error("Admin email dispatch error:", e);
+    }
+
+
     return new Response(
       JSON.stringify({
         order_id: orderId,

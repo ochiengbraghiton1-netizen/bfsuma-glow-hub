@@ -14,7 +14,7 @@ import { z } from 'zod';
 import productGeneric from '@/assets/product-generic.jpg';
 import { HoneypotField } from '@/components/ui/honeypot-field';
 import { isBot } from '@/lib/honeypot';
-import { PhoneInput, formatForWhatsApp } from '@/components/ui/phone-input';
+import { PhoneInput, formatForWhatsApp, isValidInternationalPhone } from '@/components/ui/phone-input';
 import PayPalButton from '@/components/checkout/PayPalButton';
 import CurrencySelector from '@/components/checkout/CurrencySelector';
 import SecureCheckoutBadges from '@/components/checkout/SecureCheckoutBadges';
@@ -39,7 +39,7 @@ const DELIVERY_LABELS: Record<DeliveryLocation, string> = {
 const checkoutSchema = z.object({
   customerName: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
   customerEmail: z.string().trim().email('Invalid email address').max(255).optional().or(z.literal('')),
-  customerPhone: z.string().trim().min(7, 'Phone number is too short').max(20).transform(v => v.replace(/[\s\-]/g, '')).pipe(z.string().regex(/^\+\d{7,15}$/, 'Please enter a valid phone number')),
+  customerPhone: z.string().trim().refine(isValidInternationalPhone, 'Enter a valid phone number for the selected country'),
   shippingAddress: z.string().trim().min(10, 'Please enter a complete address').max(500),
   notes: z.string().trim().max(500).optional(),
   promoCode: z.string().trim().max(50).optional(),

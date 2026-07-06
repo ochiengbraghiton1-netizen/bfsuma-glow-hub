@@ -99,14 +99,26 @@ const HealthQuizPopup = () => {
 
   const recommendation = concern ? RECOMMENDATIONS[concern] : null;
 
+  // Kenyan phone: 07XXXXXXXX, 01XXXXXXXX, +2547XXXXXXXX, +2541XXXXXXXX, 2547XXXXXXXX, 2541XXXXXXXX
+  const isValidKenyanPhone = (raw: string): boolean => {
+    const p = raw.replace(/[\s\-()]/g, "");
+    return /^(?:\+?254|0)(7|1)\d{8}$/.test(p);
+  };
+  const phoneValid = isValidKenyanPhone(phone);
+  const phoneShowError = phone.length > 0 && !phoneValid;
+
   const handleSubmitLead = async () => {
     if (!name.trim()) {
       toast({ title: "Please enter your name", variant: "destructive" });
       return;
     }
+    if (!phoneValid) {
+      toast({ title: "Enter a valid Kenyan number e.g. 0712 345 678", variant: "destructive" });
+      return;
+    }
     setSubmitting(true);
     try {
-      const source = `health_quiz | concern:${concern} | duration:${duration} | goal:${goal} | phone:${phone || "n/a"}`;
+      const source = `health_quiz | concern:${concern} | duration:${duration} | goal:${goal} | phone:${phone}`;
       await supabase.from("leads").insert({
         name: name.trim(),
         email: email.trim() || `quiz-${Date.now()}@no-email.local`,
@@ -260,8 +272,20 @@ const HealthQuizPopup = () => {
                   <Input id="quiz-name" value={name} onChange={(e) => setName(e.target.value)} maxLength={100} placeholder="Your name" />
                 </div>
                 <div>
-                  <Label htmlFor="quiz-phone">Phone (optional)</Label>
-                  <Input id="quiz-phone" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={20} placeholder="+254 ..." />
+                  <Label htmlFor="quiz-phone">Phone (Kenyan number) *</Label>
+                  <Input
+                    id="quiz-phone"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    maxLength={20}
+                    placeholder="0712 345 678"
+                    inputMode="tel"
+                    className={phoneShowError ? "border-destructive" : ""}
+                    aria-invalid={phoneShowError}
+                  />
+                  {phoneShowError && (
+                    <p className="text-xs text-destructive mt-1">Enter a valid Kenyan number e.g. 0712 345 678</p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="quiz-email">Email (optional)</Label>
@@ -272,7 +296,7 @@ const HealthQuizPopup = () => {
                 <Button variant="outline" className="rounded-full" onClick={() => setStep(3)} disabled={submitting}>
                   <ArrowLeft className="w-4 h-4" />
                 </Button>
-                <Button className="flex-1 rounded-full" onClick={handleSubmitLead} disabled={submitting}>
+                <Button className="flex-1 rounded-full" onClick={handleSubmitLead} disabled={submitting || !name.trim() || !phoneValid}>
                   {submitting ? "Saving..." : "See My Result"} <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
               </div>
