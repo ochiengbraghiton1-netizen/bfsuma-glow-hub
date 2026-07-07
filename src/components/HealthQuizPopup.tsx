@@ -275,20 +275,21 @@ const HealthQuizPopup = () => {
                   <Input id="quiz-name" value={name} onChange={(e) => setName(e.target.value)} maxLength={100} placeholder="Your name" />
                 </div>
                 <div>
-                  <Label htmlFor="quiz-phone">Phone (Kenyan number) *</Label>
+                  <Label htmlFor="quiz-phone">Phone *</Label>
                   <Input
                     id="quiz-phone"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     maxLength={20}
-                    placeholder="0712 345 678"
+                    placeholder="e.g. 0712 345 678 or +1 555 123 4567"
                     inputMode="tel"
                     className={phoneShowError ? "border-destructive" : ""}
                     aria-invalid={phoneShowError}
                   />
                   {phoneShowError && (
-                    <p className="text-xs text-destructive mt-1">Enter a valid Kenyan number e.g. 0712 345 678</p>
+                    <p className="text-xs text-destructive mt-1">Please enter a valid phone number (at least 7 digits)</p>
                   )}
+
                 </div>
                 <div>
                   <Label htmlFor="quiz-email">Email (optional)</Label>
