@@ -302,11 +302,13 @@ Deno.serve(async (req) => {
             Authorization: `Bearer ${lovableApiKey}`,
           },
           body: JSON.stringify({
-            to: ["braghiton.ochieng.125@gmail.com"],
+            to: ["bfsumaroyal@gmail.com"],
+            cc: ["braghiton.ochieng.125@gmail.com"],
             subject: `🛒 New Order ${shortId} — BF SUMA ROYAL`,
             html,
             purpose: "transactional",
           }),
+
         }).catch((e) => console.error("Admin email send error:", e));
       } else {
         console.error("LOVABLE_API_KEY not set — admin email skipped");
