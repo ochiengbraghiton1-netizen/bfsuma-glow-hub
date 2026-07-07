@@ -70,8 +70,8 @@ const Header = () => {
     <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b transition-all duration-300 ease-in-out ${isScrolled ? "bg-background/95 border-border shadow-lg shadow-black/10" : "bg-background/80 border-border/50 shadow-none"}`}>
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-         <img src={bfSumaLogo} alt="BF SUMA ROYAL Logo" width={40} height={42} className="h-8 md:h-10 w-auto" />
-         <span className="text-sm md:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent whitespace-nowrap">
+         <img src={bfSumaLogo} alt="BF SUMA ROYAL Logo" width={40} height={42} className="h-8 md:h-10 w-auto flex-shrink-0" />
+         <span className="text-sm md:text-lg xl:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent whitespace-nowrap">
             BF SUMA ROYAL
           </span>
         </Link>
