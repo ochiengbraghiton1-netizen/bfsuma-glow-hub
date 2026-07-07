@@ -70,8 +70,8 @@ const Header = () => {
     <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b transition-all duration-300 ease-in-out ${isScrolled ? "bg-background/95 border-border shadow-lg shadow-black/10" : "bg-background/80 border-border/50 shadow-none"}`}>
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-         <img src={bfSumaLogo} alt="BF SUMA ROYAL Logo" width={40} height={42} className="h-8 md:h-10 w-auto" />
-         <span className="text-sm md:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent whitespace-nowrap">
+         <img src={bfSumaLogo} alt="BF SUMA ROYAL Logo" width={40} height={42} className="h-8 md:h-10 w-auto flex-shrink-0" />
+         <span className="text-sm md:text-lg xl:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent whitespace-nowrap">
             BF SUMA ROYAL
           </span>
         </Link>
@@ -100,9 +100,9 @@ const Header = () => {
           )}
         </nav>
 
-        <div className="flex items-center gap-2 md:gap-3">
+        <div className="flex items-center gap-1 md:gap-2">
           {/* Desktop CTA buttons */}
-          <div className="hidden lg:flex items-center gap-2">
+          <div className="hidden xl:flex items-center gap-2">
             <Button variant="outline" size="sm" asChild>
               <a
                 href="https://wa.me/254795454053?text=Hi%2C%20I'd%20like%20to%20book%20a%20free%20health%20consultation."
@@ -128,10 +128,29 @@ const Header = () => {
             </Button>
           </div>
 
+          {/* Compact CTAs for lg–xl range */}
+          <div className="hidden lg:flex xl:hidden items-center gap-1">
+            <Button variant="outline" size="icon" asChild aria-label="Book Consultation">
+              <a
+                href="https://wa.me/254795454053?text=Hi%2C%20I'd%20like%20to%20book%20a%20free%20health%20consultation."
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Stethoscope className="h-4 w-4" />
+              </a>
+            </Button>
+            <Button variant="premium" size="sm" asChild>
+              <Link to="/join-business" className="flex items-center gap-1.5">
+                <UserPlus className="h-4 w-4" />
+                Join
+              </Link>
+            </Button>
+          </div>
+
           <ThemeToggle />
 
           {/* Desktop auth button */}
-          <div className="hidden lg:block">
+          <div className="hidden xl:block">
             {user ? (
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/account">
@@ -148,6 +167,7 @@ const Header = () => {
               </Button>
             )}
           </div>
+
           
           {/* Cart Sheet */}
           <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
