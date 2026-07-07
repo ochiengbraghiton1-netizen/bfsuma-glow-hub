@@ -99,12 +99,14 @@ const HealthQuizPopup = () => {
 
   const recommendation = concern ? RECOMMENDATIONS[concern] : null;
 
-  // Kenyan phone: 07XXXXXXXX, 01XXXXXXXX, +2547XXXXXXXX, +2541XXXXXXXX, 2547XXXXXXXX, 2541XXXXXXXX
-  const isValidKenyanPhone = (raw: string): boolean => {
-    const p = raw.replace(/[\s\-()]/g, "");
-    return /^(?:\+?254|0)(7|1)\d{8}$/.test(p);
+  // International phone: allow +, spaces, dashes, parens; require 7-15 digits total
+  const isValidPhone = (raw: string): boolean => {
+    if (!raw) return false;
+    if (!/^[+\d\s\-()]+$/.test(raw)) return false;
+    const digits = raw.replace(/\D/g, "");
+    return digits.length >= 7 && digits.length <= 15;
   };
-  const phoneValid = isValidKenyanPhone(phone);
+  const phoneValid = isValidPhone(phone);
   const phoneShowError = phone.length > 0 && !phoneValid;
 
   const handleSubmitLead = async () => {
@@ -113,9 +115,10 @@ const HealthQuizPopup = () => {
       return;
     }
     if (!phoneValid) {
-      toast({ title: "Enter a valid Kenyan number e.g. 0712 345 678", variant: "destructive" });
+      toast({ title: "Please enter a valid phone number (at least 7 digits)", variant: "destructive" });
       return;
     }
+
     setSubmitting(true);
     try {
       const source = `health_quiz | concern:${concern} | duration:${duration} | goal:${goal} | phone:${phone}`;
