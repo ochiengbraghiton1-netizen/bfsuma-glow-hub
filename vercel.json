@@ -5,7 +5,7 @@
       "destination": "https://sboaeutgckyiwunfmxqp.supabase.co/functions/v1/sitemap"
     },
     {
-      "source": "/(.*)",
+      "source": "/:path*",
       "destination": "/index.html"
     }
   ],
