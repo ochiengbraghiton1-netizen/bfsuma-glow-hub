@@ -33,7 +33,7 @@ const Hero = () => {
       {/* Neutral background while loading */}
       <div className="absolute inset-0 bg-muted" />
 
-      {/* Static fallback — always rendered immediately for fast LCP */}
+      {/* Static fallback: always rendered immediately for fast LCP */}
       <picture>
         <source
           media="(min-width: 768px)"
@@ -47,7 +47,7 @@ const Hero = () => {
           loading="eager"
           decoding="sync"
           fetchPriority="high"
-          className="absolute inset-0 w-full h-full object-cover object-[center_30%] md:object-[center_top]"
+          className="absolute inset-0 w-full h-full object-cover object-[center_30%] md:object-center"
           width={1920}
           height={1080}
           sizes="100vw"
@@ -58,28 +58,13 @@ const Hero = () => {
       {heroImage && (
         <img
           src={heroImage}
-          alt="BF SUMA Royal wellness community — real customers and team members"
+          alt="BF SUMA Royal wellness community with real customers and team members"
           loading="eager"
           decoding="sync"
-          className="absolute inset-0 w-full h-full object-cover object-[center_30%] md:object-[center_top] animate-fade-in"
+          className="absolute inset-0 w-full h-full object-cover object-[center_30%] md:object-center animate-fade-in"
           width={1920}
           height={1080}
           sizes="100vw"
-        />
-      )}
-
-      {/* Admin-uploaded hero overlays the static one when ready */}
-      {heroImage && (
-        <img
-          src={heroImage}
-          alt="BF SUMA Royal wellness community — real customers and team members"
-          loading="eager"
-          decoding="sync"
-          className="absolute inset-0 w-full h-full object-cover animate-fade-in"
-          width={1920}
-          height={1080}
-          sizes="100vw"
-          style={{ objectPosition: "center top" }}
         />
       )}
 
@@ -89,7 +74,7 @@ const Hero = () => {
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
         <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4 md:mb-6 leading-tight">
-          Feel Better Naturally —
+          Feel Better Naturally
           <br />
           <span className="bg-gradient-to-r from-accent to-accent-glow bg-clip-text text-transparent">
             Joint Pain, Energy, Digestion & Hormonal Support
@@ -98,8 +83,9 @@ const Hero = () => {
         <p className="sr-only">Natural supplements trusted by thousands of Kenyans for joint comfort, fatigue, bloating, hormone balance and daily wellness.</p>
 
         <p className="text-base md:text-xl text-white/90 mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed">
-          Natural supplements trusted by thousands of Kenyans for stiff joints, low energy, bloating, hormonal balance and everyday wellness — with free WhatsApp guidance from our wellness team.
+          Natural supplements trusted by thousands of Kenyans for stiff joints, low energy, bloating, hormonal balance and everyday wellness, with free WhatsApp guidance from our wellness team.
         </p>
+
 
         <div className="flex flex-col sm:flex-row gap-3 md:gap-5 justify-center items-stretch sm:items-center w-full max-w-xl mx-auto">
           <button
