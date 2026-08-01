@@ -101,10 +101,10 @@ const Hero = () => {
         </p>
 
 
-        <div className="flex flex-col sm:flex-row gap-3 md:gap-5 justify-center items-stretch sm:items-center w-full max-w-xl mx-auto">
+        <div className="flex flex-col lg:flex-row gap-3 md:gap-5 justify-center items-stretch lg:items-center w-full max-w-xl lg:max-w-none mx-auto">
           <button
             onClick={scrollToProducts}
-            className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 md:gap-3 h-14 md:h-[4.5rem] px-5 md:px-14 text-base md:text-[1.35rem] font-extrabold tracking-wide rounded-2xl bg-accent text-accent-foreground shadow-[0_0_50px_hsl(43_96%_56%/0.6),0_8px_32px_hsl(43_96%_56%/0.35)] hover:shadow-[0_0_70px_hsl(43_96%_56%/0.8),0_12px_40px_hsl(43_96%_56%/0.5)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300 ease-out animate-cta-pulse whitespace-nowrap"
+            className="group relative w-full lg:w-auto inline-flex items-center justify-center gap-2 md:gap-3 h-14 md:h-[4.5rem] px-5 md:px-14 text-base md:text-[1.35rem] font-extrabold tracking-wide rounded-2xl bg-accent text-accent-foreground shadow-[0_0_50px_hsl(43_96%_56%/0.6),0_8px_32px_hsl(43_96%_56%/0.35)] hover:shadow-[0_0_70px_hsl(43_96%_56%/0.8),0_12px_40px_hsl(43_96%_56%/0.5)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300 ease-out animate-cta-pulse whitespace-nowrap"
           >
             <ShoppingBag className="w-5 h-5 md:w-7 md:h-7 shrink-0" />
             <span>Find the Right Supplement</span>
@@ -114,7 +114,7 @@ const Hero = () => {
             href={WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 md:gap-3 h-14 md:h-[4.5rem] px-5 md:px-14 text-base md:text-[1.35rem] font-extrabold tracking-wide rounded-2xl bg-white/15 backdrop-blur-md text-white border-2 border-accent shadow-[0_0_30px_hsl(43_96%_56%/0.25),inset_0_1px_0_hsl(0_0%_100%/0.15)] hover:bg-accent hover:text-accent-foreground hover:shadow-[0_0_50px_hsl(43_96%_56%/0.6),0_8px_32px_hsl(43_96%_56%/0.35)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300 ease-out whitespace-nowrap"
+            className="group relative w-full lg:w-auto inline-flex items-center justify-center gap-2 md:gap-3 h-14 md:h-[4.5rem] px-5 md:px-14 text-base md:text-[1.35rem] font-extrabold tracking-wide rounded-2xl bg-white/15 backdrop-blur-md text-white border-2 border-accent shadow-[0_0_30px_hsl(43_96%_56%/0.25),inset_0_1px_0_hsl(0_0%_100%/0.15)] hover:bg-accent hover:text-accent-foreground hover:shadow-[0_0_50px_hsl(43_96%_56%/0.6),0_8px_32px_hsl(43_96%_56%/0.35)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300 ease-out whitespace-nowrap"
           >
             <MessageCircle className="w-5 h-5 md:w-7 md:h-7 shrink-0" />
             <span>Talk to a Wellness Expert</span>
