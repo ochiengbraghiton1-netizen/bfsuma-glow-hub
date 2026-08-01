@@ -72,9 +72,9 @@ const buildProductIngredients = (slug: string, plainDescription: string) => {
 
 const staticMeta: Record<string, Omit<Meta, "canonical">> = {
   "/": {
-    title: "BF SUMA Royal | Premium Supplements in Kenya for Energy & Immunity",
+    title: "Natural Health Supplements Kenya | Joint Pain, Hormonal Balance and Energy | BF SUMA Royal",
     description:
-      "Shop trusted natural supplements in Kenya. Boost energy, improve immunity, and support your health with BF SUMA Royal premium wellness products.",
+      "Trusted by Kenyan families for joint pain, hormonal balance, low energy and digestive health. Natural herbal supplements with free WhatsApp wellness guidance.",
     h1: "BF SUMA Royal — Premium Health Supplements Kenya",
     body: `<p>Premium natural supplements to support immunity, energy and wellness. GMP, ISO and Halal certified. Order via WhatsApp for fast delivery across Kenya.</p>`,
   },
