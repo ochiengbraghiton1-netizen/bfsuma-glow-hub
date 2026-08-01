@@ -92,6 +92,13 @@ const staticMeta: Record<string, Omit<Meta, "canonical">> = {
     h1: "Join the BF SUMA Royal Business in Kenya",
     body: `<p>Become a BF SUMA Royal distributor in Kenya for a one-time KES 7,000 fee. Earn through retail margins, team bonuses and leadership rewards.</p>`,
   },
+  "/business/blog": {
+    title: "Business & Opportunity Blog | BF SUMA Royal Kenya",
+    description:
+      "Real stories, income insights and honest advice about building a wellness business with BF SUMA Royal in Kenya.",
+    h1: "BF SUMA Royal Business & Opportunity Blog",
+    body: `<p>Real distributor stories, income insights, training and honest advice about building a wellness business with BF SUMA Royal in Kenya.</p>`,
+  },
   "/blog": {
     title: "Health & Wellness Blog | BF SUMA Royal Kenya",
     description:
