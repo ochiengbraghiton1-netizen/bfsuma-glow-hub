@@ -33,7 +33,7 @@ const Hero = () => {
       {/* Neutral background while loading */}
       <div className="absolute inset-0 bg-muted" />
 
-      {/* Static fallback — always rendered immediately for fast LCP */}
+      {/* Static fallback: always rendered immediately for fast LCP */}
       <picture>
         <source
           media="(min-width: 768px)"
@@ -47,41 +47,40 @@ const Hero = () => {
           loading="eager"
           decoding="sync"
           fetchPriority="high"
-          className="absolute inset-0 w-full h-full object-cover object-[center_30%] md:object-[center_top]"
+          className="absolute inset-0 w-full h-full object-cover object-[center_30%] md:object-center"
           width={1920}
           height={1080}
           sizes="100vw"
         />
       </picture>
 
-      {/* Admin-uploaded hero overlays the static one when ready */}
+      {/* Admin-uploaded hero overlays the static one when ready.
+          It is portrait-oriented, so on mobile we crop with object-cover, while
+          on tablet/desktop we letterbox it over a blurred copy of itself so the
+          full photo stays visible instead of cropping to just the faces. */}
       {heroImage && (
-        <img
-          src={heroImage}
-          alt="BF SUMA Royal wellness community — real customers and team members"
-          loading="eager"
-          decoding="sync"
-          className="absolute inset-0 w-full h-full object-cover object-[center_30%] md:object-[center_top] animate-fade-in"
-          width={1920}
-          height={1080}
-          sizes="100vw"
-        />
+        <div className="absolute inset-0 animate-fade-in">
+          <img
+            src={heroImage}
+            alt=""
+            aria-hidden="true"
+            loading="eager"
+            decoding="async"
+            className="hidden md:block absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-70"
+          />
+          <img
+            src={heroImage}
+            alt="BF SUMA Royal wellness community with real customers and team members"
+            loading="eager"
+            decoding="sync"
+            className="absolute inset-0 w-full h-full object-cover object-[center_30%] md:object-contain md:object-center"
+            width={736}
+            height={920}
+            sizes="100vw"
+          />
+        </div>
       )}
 
-      {/* Admin-uploaded hero overlays the static one when ready */}
-      {heroImage && (
-        <img
-          src={heroImage}
-          alt="BF SUMA Royal wellness community — real customers and team members"
-          loading="eager"
-          decoding="sync"
-          className="absolute inset-0 w-full h-full object-cover animate-fade-in"
-          width={1920}
-          height={1080}
-          sizes="100vw"
-          style={{ objectPosition: "center top" }}
-        />
-      )}
 
       {/* Dark gradient overlay for readability */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80" />
@@ -89,22 +88,23 @@ const Hero = () => {
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
         <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4 md:mb-6 leading-tight">
-          Feel Better Naturally —
+          Feel Better Naturally
           <br />
-          <span className="bg-gradient-to-r from-accent to-accent-glow bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-accent via-accent-glow to-accent bg-clip-text text-transparent [-webkit-box-decoration-break:clone] [box-decoration-break:clone]">
             Joint Pain, Energy, Digestion & Hormonal Support
           </span>
         </h1>
         <p className="sr-only">Natural supplements trusted by thousands of Kenyans for joint comfort, fatigue, bloating, hormone balance and daily wellness.</p>
 
         <p className="text-base md:text-xl text-white/90 mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed">
-          Natural supplements trusted by thousands of Kenyans for stiff joints, low energy, bloating, hormonal balance and everyday wellness — with free WhatsApp guidance from our wellness team.
+          Natural supplements trusted by thousands of Kenyans for stiff joints, low energy, bloating, hormonal balance and everyday wellness, with free WhatsApp guidance from our wellness team.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-3 md:gap-5 justify-center items-stretch sm:items-center w-full max-w-xl mx-auto">
+
+        <div className="flex flex-col lg:flex-row gap-3 md:gap-5 justify-center items-stretch lg:items-center w-full max-w-xl lg:max-w-none mx-auto">
           <button
             onClick={scrollToProducts}
-            className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 md:gap-3 h-14 md:h-[4.5rem] px-5 md:px-14 text-base md:text-[1.35rem] font-extrabold tracking-wide rounded-2xl bg-accent text-accent-foreground shadow-[0_0_50px_hsl(43_96%_56%/0.6),0_8px_32px_hsl(43_96%_56%/0.35)] hover:shadow-[0_0_70px_hsl(43_96%_56%/0.8),0_12px_40px_hsl(43_96%_56%/0.5)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300 ease-out animate-cta-pulse whitespace-nowrap"
+            className="group relative w-full lg:w-auto inline-flex items-center justify-center gap-2 md:gap-3 h-14 md:h-[4.5rem] px-5 md:px-14 text-base md:text-[1.35rem] font-extrabold tracking-wide rounded-2xl bg-accent text-accent-foreground shadow-[0_0_50px_hsl(43_96%_56%/0.6),0_8px_32px_hsl(43_96%_56%/0.35)] hover:shadow-[0_0_70px_hsl(43_96%_56%/0.8),0_12px_40px_hsl(43_96%_56%/0.5)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300 ease-out animate-cta-pulse whitespace-nowrap"
           >
             <ShoppingBag className="w-5 h-5 md:w-7 md:h-7 shrink-0" />
             <span>Find the Right Supplement</span>
@@ -114,7 +114,7 @@ const Hero = () => {
             href={WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 md:gap-3 h-14 md:h-[4.5rem] px-5 md:px-14 text-base md:text-[1.35rem] font-extrabold tracking-wide rounded-2xl bg-white/15 backdrop-blur-md text-white border-2 border-accent shadow-[0_0_30px_hsl(43_96%_56%/0.25),inset_0_1px_0_hsl(0_0%_100%/0.15)] hover:bg-accent hover:text-accent-foreground hover:shadow-[0_0_50px_hsl(43_96%_56%/0.6),0_8px_32px_hsl(43_96%_56%/0.35)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300 ease-out whitespace-nowrap"
+            className="group relative w-full lg:w-auto inline-flex items-center justify-center gap-2 md:gap-3 h-14 md:h-[4.5rem] px-5 md:px-14 text-base md:text-[1.35rem] font-extrabold tracking-wide rounded-2xl bg-white/15 backdrop-blur-md text-white border-2 border-accent shadow-[0_0_30px_hsl(43_96%_56%/0.25),inset_0_1px_0_hsl(0_0%_100%/0.15)] hover:bg-accent hover:text-accent-foreground hover:shadow-[0_0_50px_hsl(43_96%_56%/0.6),0_8px_32px_hsl(43_96%_56%/0.35)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300 ease-out whitespace-nowrap"
           >
             <MessageCircle className="w-5 h-5 md:w-7 md:h-7 shrink-0" />
             <span>Talk to a Wellness Expert</span>

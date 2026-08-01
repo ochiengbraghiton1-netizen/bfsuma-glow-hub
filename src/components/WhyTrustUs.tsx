@@ -30,7 +30,7 @@ const WhyTrustUs = () => {
         <div className="text-center mb-10">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground">Why Customers Trust Us</h2>
           <p className="text-muted-foreground mt-2 max-w-xl mx-auto">
-            Real quality, real support and real results — the foundation of BF SUMA Royal.
+            Real quality, real support and real results, the foundation of BF SUMA Royal.
           </p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">

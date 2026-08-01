@@ -31,9 +31,9 @@ const Index = () => {
     <div className="min-h-screen">
       <Helmet>
         <title>Natural Support for Joint Pain, Energy & Digestion | BF SUMA Royal Kenya</title>
-        <meta name="description" content="Helping Kenyans feel better naturally — supplements for joint pain, low energy, bloating, hormonal balance and sleep. Free WhatsApp guidance." />
+        <meta name="description" content="Helping Kenyans feel better naturally with supplements for joint pain, low energy, bloating, hormonal balance and sleep. Free WhatsApp guidance." />
         <link rel="canonical" href="https://bfsumaroyal.com/" />
-        <meta property="og:title" content="Feel Better Naturally — Joint, Energy, Digestion & Hormone Support | BF SUMA Royal" />
+        <meta property="og:title" content="Feel Better Naturally | Joint, Energy, Digestion & Hormone Support | BF SUMA Royal" />
         <meta property="og:description" content="Trusted natural supplements for stiff joints, fatigue, bloating, hormonal balance and everyday wellness in Kenya." />
         <meta property="og:url" content="https://bfsumaroyal.com/" />
         <meta property="og:type" content="website" />
