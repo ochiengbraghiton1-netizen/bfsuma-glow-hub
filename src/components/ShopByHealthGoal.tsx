@@ -61,7 +61,7 @@ const ShopByHealthGoal = () => {
           <p className="text-accent font-semibold uppercase tracking-wider text-xs mb-2">Shop by Health Goal</p>
           <h2 className="text-2xl md:text-4xl font-bold mb-3">What's bothering you today?</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Pick the area you'd like help with — we'll show you the right natural supplements and guidance.
+            Pick the area you'd like help with, we'll show you the right natural supplements and guidance.
           </p>
         </div>
 
@@ -91,7 +91,7 @@ const ShopByHealthGoal = () => {
           </div>
           <h3 className="text-xl md:text-2xl font-bold mb-2">Not sure where to start?</h3>
           <p className="text-muted-foreground max-w-xl mx-auto mb-6">
-            Tell our wellness team about your concern on WhatsApp. We'll recommend the right supplement for your body — free, no pressure.
+            Tell our wellness team about your concern on WhatsApp. We'll recommend the right supplement for your body. Free, no pressure.
           </p>
           <a
             href="https://wa.me/254795454053?text=Hi%2C%20I%27m%20not%20sure%20which%20supplement%20fits%20me.%20Can%20you%20help%3F"
