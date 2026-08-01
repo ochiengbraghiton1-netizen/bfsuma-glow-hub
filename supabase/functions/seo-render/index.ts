@@ -377,7 +377,12 @@ async function buildMeta(pathname: string, supabase: ReturnType<typeof createCli
             datePublished: data.published_at,
             dateModified: data.updated_at,
             url: canonical,
-            author: { "@type": "Organization", name: "BF SUMA Royal" },
+            author: {
+              "@type": "Person",
+              name: "Braghiton Ochieng",
+              jobTitle: "Health Consultant",
+              worksFor: { "@type": "Organization", name: "BF SUMA Royal" },
+            },
             publisher: {
               "@type": "Organization",
               name: "BF SUMA Royal",
@@ -388,6 +393,68 @@ async function buildMeta(pathname: string, supabase: ReturnType<typeof createCli
       };
     }
   }
+
+  // /business/blog/:slug
+  const bizBlogMatch = pathname.match(/^\/business\/blog\/([^\/]+)$/);
+  if (bizBlogMatch) {
+    const slug = decodeURIComponent(bizBlogMatch[1]);
+    const { data } = await supabase
+      .from("blog_posts")
+      .select("title,slug,excerpt,content,featured_image,meta_title,meta_description,published_at,updated_at")
+      .eq("slug", slug)
+      .eq("status", "published")
+      .maybeSingle();
+
+    if (data) {
+      const desc =
+        truncate(data.meta_description || stripHtml(data.excerpt || data.content || ""), 160) ||
+        `Read ${data.title} on the BF SUMA Royal Kenya business opportunity blog.`;
+      return {
+        title: truncate(data.meta_title || `${data.title} | BF SUMA Royal Business Blog`, 60),
+        description: desc,
+        canonical,
+        ogImage: data.featured_image || DEFAULT_OG,
+        ogType: "article",
+        h1: data.title,
+        body: `<p>${escapeHtml(stripHtml(data.excerpt || data.content || "").slice(0, 400))}</p>
+               <p><a href="/business/blog">More business articles</a> · <a href="/join-business">Join the business</a></p>`,
+        jsonLd: [
+          {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            headline: data.title,
+            description: desc,
+            image: data.featured_image ? [data.featured_image] : [DEFAULT_OG],
+            datePublished: data.published_at,
+            dateModified: data.updated_at,
+            url: canonical,
+            author: {
+              "@type": "Person",
+              name: "Braghiton Ochieng",
+              jobTitle: "Health Consultant",
+              worksFor: { "@type": "Organization", name: "BF SUMA Royal" },
+            },
+            publisher: {
+              "@type": "Organization",
+              name: "BF SUMA Royal",
+              logo: { "@type": "ImageObject", url: `${SITE}/favicon.png` },
+            },
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+              { "@type": "ListItem", position: 2, name: "Business Hub", item: `${SITE}/business` },
+              { "@type": "ListItem", position: 3, name: "Business Blog", item: `${SITE}/business/blog` },
+              { "@type": "ListItem", position: 4, name: data.title, item: canonical },
+            ],
+          },
+        ],
+      };
+    }
+  }
+
 
   // /blog/category/:slug
   const blogCatMatch = pathname.match(/^\/blog\/category\/([^\/]+)$/);
