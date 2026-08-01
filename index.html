@@ -112,6 +112,20 @@
           if (typeof window.fbq === 'function') {
             window.fbq('track', 'Contact', { content_name: 'WhatsApp Click' });
           }
+          // GA4 (via GTM-PDTHQJND) custom conversion event
+          if (typeof window.gtag === 'function') {
+            window.gtag('event', 'whatsapp_click', {
+              event_category: 'engagement',
+              event_label: 'WhatsApp Button Click'
+            });
+          } else {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+              event: 'whatsapp_click',
+              event_category: 'engagement',
+              event_label: 'WhatsApp Button Click'
+            });
+          }
         }, { capture: true, passive: true });
       })();
     </script>
