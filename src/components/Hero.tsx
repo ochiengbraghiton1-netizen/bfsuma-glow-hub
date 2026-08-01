@@ -90,7 +90,7 @@ const Hero = () => {
         <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4 md:mb-6 leading-tight">
           Feel Better Naturally
           <br />
-          <span className="bg-gradient-to-r from-accent to-accent-glow bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-accent via-accent-glow to-accent bg-clip-text text-transparent [-webkit-box-decoration-break:clone] [box-decoration-break:clone]">
             Joint Pain, Energy, Digestion & Hormonal Support
           </span>
         </h1>
