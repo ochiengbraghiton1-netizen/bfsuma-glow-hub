@@ -54,19 +54,33 @@ const Hero = () => {
         />
       </picture>
 
-      {/* Admin-uploaded hero overlays the static one when ready */}
+      {/* Admin-uploaded hero overlays the static one when ready.
+          It is portrait-oriented, so on mobile we crop with object-cover, while
+          on tablet/desktop we letterbox it over a blurred copy of itself so the
+          full photo stays visible instead of cropping to just the faces. */}
       {heroImage && (
-        <img
-          src={heroImage}
-          alt="BF SUMA Royal wellness community with real customers and team members"
-          loading="eager"
-          decoding="sync"
-          className="absolute inset-0 w-full h-full object-cover object-[center_30%] md:object-center animate-fade-in"
-          width={1920}
-          height={1080}
-          sizes="100vw"
-        />
+        <div className="absolute inset-0 animate-fade-in">
+          <img
+            src={heroImage}
+            alt=""
+            aria-hidden="true"
+            loading="eager"
+            decoding="async"
+            className="hidden md:block absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-70"
+          />
+          <img
+            src={heroImage}
+            alt="BF SUMA Royal wellness community with real customers and team members"
+            loading="eager"
+            decoding="sync"
+            className="absolute inset-0 w-full h-full object-cover object-[center_30%] md:object-contain md:object-center"
+            width={736}
+            height={920}
+            sizes="100vw"
+          />
+        </div>
       )}
+
 
       {/* Dark gradient overlay for readability */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80" />
