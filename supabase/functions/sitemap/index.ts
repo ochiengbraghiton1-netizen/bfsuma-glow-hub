@@ -8,39 +8,50 @@ const corsHeaders = {
 
 const SITE_BASE_URL = "https://bfsumaroyal.com";
 
-// Static routes configuration — only canonical 200-OK URLs.
-// /category is excluded (parent path renders the listing under /products via redirect),
-// /business/blog is included only if it serves a 200 listing page.
+// Static routes — only canonical 200-OK URLs.
 const staticRoutes = [
-  { path: "/", changefreq: "weekly", priority: 1.0 },
-  { path: "/about", changefreq: "monthly", priority: 0.8 },
-  { path: "/join-business", changefreq: "monthly", priority: 0.8 },
-  { path: "/blog", changefreq: "daily", priority: 0.9 },
-  { path: "/business", changefreq: "weekly", priority: 0.8 },
-  { path: "/business/blog", changefreq: "weekly", priority: 0.7 },
-  { path: "/contact", changefreq: "monthly", priority: 0.7 },
-  { path: "/faq", changefreq: "monthly", priority: 0.7 },
-  { path: "/community", changefreq: "weekly", priority: 0.6 },
-  { path: "/products", changefreq: "weekly", priority: 0.8 },
+  { path: "/", changefreq: "daily", priority: 1.0 },
+  { path: "/products", changefreq: "weekly", priority: 0.9 },
+  { path: "/wellness", changefreq: "monthly", priority: 0.8 },
+  { path: "/blog", changefreq: "monthly", priority: 0.6 },
+  { path: "/business", changefreq: "monthly", priority: 0.6 },
+  { path: "/business/blog", changefreq: "monthly", priority: 0.6 },
+  { path: "/about", changefreq: "monthly", priority: 0.6 },
+  { path: "/join-business", changefreq: "monthly", priority: 0.6 },
+  { path: "/contact", changefreq: "monthly", priority: 0.6 },
+  { path: "/faq", changefreq: "monthly", priority: 0.6 },
+  { path: "/community", changefreq: "monthly", priority: 0.6 },
   { path: "/return-policy", changefreq: "monthly", priority: 0.5 },
   { path: "/terms", changefreq: "monthly", priority: 0.5 },
-  // Location pages
-  { path: "/nairobi", changefreq: "monthly", priority: 0.8 },
-  { path: "/mombasa", changefreq: "monthly", priority: 0.8 },
-  { path: "/kisumu", changefreq: "monthly", priority: 0.8 },
-  { path: "/nakuru", changefreq: "monthly", priority: 0.8 },
-  { path: "/kakamega", changefreq: "monthly", priority: 0.8 },
-  { path: "/eldoret", changefreq: "monthly", priority: 0.8 },
-  { path: "/thika", changefreq: "monthly", priority: 0.8 },
-  { path: "/nyeri", changefreq: "monthly", priority: 0.8 },
-  { path: "/machakos", changefreq: "monthly", priority: 0.8 },
-  { path: "/kitale", changefreq: "monthly", priority: 0.8 },
 ];
+
+// City landing pages
+const cityRoutes = [
+  "/nairobi",
+  "/mombasa",
+  "/kisumu",
+  "/nakuru",
+  "/kakamega",
+  "/eldoret",
+  "/thika",
+  "/nyeri",
+  "/machakos",
+  "/kitale",
+];
+
+function escapeXml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
 
 function generateUrlEntry(loc: string, changefreq: string, priority: number, lastmod?: string): string {
   const lastmodTag = lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : "";
   return `  <url>
-    <loc>${loc}</loc>${lastmodTag}
+    <loc>${escapeXml(loc)}</loc>${lastmodTag}
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
   </url>`;
@@ -56,113 +67,95 @@ Deno.serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const today = new Date().toISOString().split("T")[0];
+    // Static + city entries (no lastmod: no page-specific timestamp available)
+    const staticEntries = staticRoutes.map((route) =>
+      generateUrlEntry(
+        `${SITE_BASE_URL}${route.path === "/" ? "" : route.path}`,
+        route.changefreq,
+        route.priority,
+      ),
+    );
 
-    // Generate static route entries with lastmod
-    const staticEntries = staticRoutes.map((route) => {
-      const loc = `${SITE_BASE_URL}${route.path === "/" ? "" : route.path}`;
-      return generateUrlEntry(loc, route.changefreq, route.priority, today);
-    });
+    const cityEntries = cityRoutes.map((path) =>
+      generateUrlEntry(`${SITE_BASE_URL}${path}`, "monthly", 0.7),
+    );
 
-    // Fetch active products from the database
-    const { data: products, error } = await supabase
-      .from("products")
-      .select("slug, updated_at")
-      .eq("is_active", true)
-      .order("name");
+    const [
+      { data: products, error: prodError },
+      { data: categories, error: catError },
+      { data: blogPosts, error: blogError },
+      { data: blogCategories, error: blogCatError },
+      { data: hubs, error: hubError },
+    ] = await Promise.all([
+      supabase.from("products").select("slug, updated_at").eq("is_active", true).order("name"),
+      supabase.from("categories").select("slug, updated_at").eq("is_active", true).order("name"),
+      supabase
+        .from("blog_posts")
+        .select("slug, updated_at, published_at, content_type")
+        .eq("status", "published")
+        .not("published_at", "is", null)
+        .order("published_at", { ascending: false }),
+      supabase.from("blog_categories").select("slug, created_at").order("name"),
+      supabase.from("wellness_hubs").select("slug, updated_at").eq("is_active", true).order("display_order"),
+    ]);
 
-    if (error) {
-      console.error("Error fetching products:", error);
+    for (const [label, error] of [
+      ["products", prodError],
+      ["categories", catError],
+      ["blog_posts", blogError],
+      ["blog_categories", blogCatError],
+      ["wellness_hubs", hubError],
+    ] as const) {
+      if (error) console.error(`Error fetching ${label}:`, error);
     }
 
-    // Generate product URL entries using slug-based URLs
-    const productEntries = (products || []).map((product) => {
-      const loc = `${SITE_BASE_URL}/product/${product.slug}`;
-      const lastmod = product.updated_at?.split("T")[0];
-      return generateUrlEntry(loc, "weekly", 0.8, lastmod);
-    });
+    // Products -> /product/:slug
+    const productEntries = (products || [])
+      .filter((p: any) => p.slug)
+      .map((p: any) => generateUrlEntry(`${SITE_BASE_URL}/product/${p.slug}`, "weekly", 0.9, p.updated_at?.split("T")[0]));
 
-    // Fetch active categories
-    const { data: categories, error: catError } = await supabase
-      .from("categories")
-      .select("id, slug, updated_at")
-      .eq("is_active", true)
-      .order("name");
+    // Categories -> /category/:slug
+    const categoryEntries = (categories || [])
+      .filter((c: any) => c.slug)
+      .map((c: any) => generateUrlEntry(`${SITE_BASE_URL}/category/${c.slug}`, "weekly", 0.7, c.updated_at?.split("T")[0]));
 
-    if (catError) {
-      console.error("Error fetching categories:", catError);
-    }
-
-    // Generate category URL entries
-    const categoryEntries = (categories || []).map((category) => {
-      const loc = `${SITE_BASE_URL}/category/${category.slug}`;
-      const lastmod = category.updated_at?.split("T")[0];
-      return generateUrlEntry(loc, "weekly", 0.8, lastmod);
-    });
-
-    // Fetch published blog posts (split by content_type)
-    const { data: blogPosts, error: blogError } = await supabase
-      .from("blog_posts")
-      .select("slug, updated_at, published_at, content_type")
-      .eq("status", "published")
-      .order("published_at", { ascending: false });
-
-    if (blogError) {
-      console.error("Error fetching blog posts:", blogError);
-    }
-
-    // Health posts -> /blog/:slug ; Business posts -> /business/blog/:slug
-    // Slugs are preserved; only the indexed URL path differs by content_type.
+    // Blog posts split by content_type. Slugs preserved; only the path differs.
     const healthBlogEntries: string[] = [];
     const businessBlogEntries: string[] = [];
     (blogPosts || []).forEach((post: any) => {
+      if (!post.slug) return;
       const lastmod = (post.updated_at || post.published_at)?.split("T")[0];
       if (post.content_type === "business") {
         businessBlogEntries.push(
-          generateUrlEntry(`${SITE_BASE_URL}/business/blog/${post.slug}`, "weekly", 0.7, lastmod),
+          generateUrlEntry(`${SITE_BASE_URL}/business/blog/${post.slug}`, "monthly", 0.8, lastmod),
         );
       } else {
         healthBlogEntries.push(
-          generateUrlEntry(`${SITE_BASE_URL}/blog/${post.slug}`, "weekly", 0.7, lastmod),
+          generateUrlEntry(`${SITE_BASE_URL}/blog/${post.slug}`, "monthly", 0.8, lastmod),
         );
       }
     });
-    const blogEntries = [...healthBlogEntries, ...businessBlogEntries];
 
-    // Fetch blog categories
-    const { data: blogCategories, error: blogCatError } = await supabase
-      .from("blog_categories")
-      .select("slug, created_at")
-      .order("name");
+    // Blog categories -> /blog/category/:slug
+    const blogCategoryEntries = (blogCategories || [])
+      .filter((c: any) => c.slug)
+      .map((c: any) => generateUrlEntry(`${SITE_BASE_URL}/blog/category/${c.slug}`, "weekly", 0.6, c.created_at?.split("T")[0]));
 
-    if (blogCatError) {
-      console.error("Error fetching blog categories:", blogCatError);
-    }
+    // Wellness hubs -> /wellness/:slug
+    const hubEntries = (hubs || [])
+      .filter((h: any) => h.slug)
+      .map((h: any) => generateUrlEntry(`${SITE_BASE_URL}/wellness/${h.slug}`, "monthly", 0.8, h.updated_at?.split("T")[0]));
 
-    const blogCategoryEntries = (blogCategories || []).map((cat) => {
-      const loc = `${SITE_BASE_URL}/blog/category/${cat.slug}`;
-      const lastmod = cat.created_at?.split("T")[0];
-      return generateUrlEntry(loc, "weekly", 0.6, lastmod);
-    });
-
-    // Fetch wellness hubs
-    const { data: hubs } = await supabase
-      .from("wellness_hubs")
-      .select("slug, updated_at")
-      .eq("is_active", true)
-      .order("display_order");
-
-    const hubEntries = [
-      generateUrlEntry(`${SITE_BASE_URL}/wellness`, "weekly", 0.85, today),
-      ...((hubs || []).map((h: any) => {
-        const loc = `${SITE_BASE_URL}/wellness/${h.slug}`;
-        const lastmod = h.updated_at?.split("T")[0];
-        return generateUrlEntry(loc, "weekly", 0.85, lastmod);
-      })),
-    ];
-
-    // Combine all entries
-    const allEntries = [...staticEntries, ...hubEntries, ...categoryEntries, ...productEntries, ...blogEntries, ...blogCategoryEntries].join("\n");
+    const allEntries = [
+      ...staticEntries,
+      ...cityEntries,
+      ...hubEntries,
+      ...categoryEntries,
+      ...productEntries,
+      ...healthBlogEntries,
+      ...businessBlogEntries,
+      ...blogCategoryEntries,
+    ].join("\n");
 
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
