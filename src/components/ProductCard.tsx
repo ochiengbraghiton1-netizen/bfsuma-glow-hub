@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Heart, Eye, Shield, CheckCircle } from "lucide-react";
+import { ShoppingCart, Heart, Eye, Shield, CheckCircle, Search } from "lucide-react";
 import { useInView } from "@/hooks/use-in-view";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
