@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { Search, X, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -117,18 +117,53 @@ const ProductShowcase = () => {
   const { products, categories, isLoading, error } = useProducts();
   const [selectedProduct, setSelectedProduct] = useState<DatabaseProduct | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [sortOption, setSortOption] = useState<SortOption>("featured");
-  const [filters, setFilters] = useState<FilterState>(defaultFilters);
+  const savedState = (() => {
+    try {
+      return JSON.parse(sessionStorage.getItem("catalogState") || "null");
+    } catch {
+      return null;
+    }
+  })();
+  const [searchQuery, setSearchQuery] = useState<string>(savedState?.searchQuery ?? "");
+  const [activeCategory, setActiveCategory] = useState<string>(savedState?.activeCategory ?? "all");
+  const [sortOption, setSortOption] = useState<SortOption>(savedState?.sortOption ?? "featured");
+  const [filters, setFilters] = useState<FilterState>(savedState?.filters ?? defaultFilters);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
+  // Persist catalog state so returning from a product page restores filters
+  useEffect(() => {
+    sessionStorage.setItem(
+      "catalogState",
+      JSON.stringify({ searchQuery, activeCategory, sortOption, filters })
+    );
+  }, [searchQuery, activeCategory, sortOption, filters]);
+
   const activeFilterCount = getActiveFilterCount(filters);
+
 
   const handleProductClick = (product: DatabaseProduct) => {
     setSelectedProduct(product);
     setModalOpen(true);
+    if (product.slug) {
+      // Shareable URL while the quick view is open (no router navigation)
+      window.history.pushState({ quickView: true }, "", `/product/${product.slug}`);
+    }
   };
+
+  const handleModalOpenChange = (open: boolean) => {
+    setModalOpen(open);
+    if (!open && window.history.state?.quickView) {
+      window.history.back();
+    }
+  };
+
+  useEffect(() => {
+    const onPop = () => setModalOpen(false);
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
+
 
   const clearFilters = () => setFilters(defaultFilters);
 
@@ -330,7 +365,7 @@ const ProductShowcase = () => {
                     stockQuantity={product.stock_quantity}
                     lowStockThreshold={product.low_stock_threshold}
                     trackInventory={product.track_inventory}
-                    onClick={() => handleProductClick(product)}
+                    onQuickView={() => handleProductClick(product)}
                   />
                 ))}
               </div>
@@ -377,7 +412,7 @@ const ProductShowcase = () => {
             : null
         }
         open={modalOpen}
-        onOpenChange={setModalOpen}
+        onOpenChange={handleModalOpenChange}
       />
     </section>
   );

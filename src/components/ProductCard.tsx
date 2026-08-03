@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Heart, Eye, Shield, CheckCircle } from "lucide-react";
+import { ShoppingCart, Heart, Eye, Shield, CheckCircle, Search } from "lucide-react";
 import { useInView } from "@/hooks/use-in-view";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -25,6 +25,7 @@ interface ProductCardProps {
   lowStockThreshold?: number;
   trackInventory?: boolean;
   onClick?: () => void;
+  onQuickView?: () => void;
 }
 
 const ProductCard = ({ 
@@ -40,7 +41,8 @@ const ProductCard = ({
   stockQuantity = 0,
   lowStockThreshold = 10,
   trackInventory = true,
-  onClick 
+  onClick,
+  onQuickView
 }: ProductCardProps) => {
   const [ref, isInView] = useInView<HTMLDivElement>({ threshold: 0.6, triggerOnce: true });
   const [isHovering, setIsHovering] = useState(false);
@@ -63,6 +65,17 @@ const ProductCard = ({
 
   const favorite = isFavorite(id);
 
+  const goToProduct = () => {
+    if (slug) navigate(`/product/${slug}`);
+    else onClick?.();
+  };
+
+  const handleQuickView = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    (onQuickView || onClick)?.();
+  };
+
+
   const stockBadgeStyles = {
     "in-stock": "bg-green-500/10 text-green-600 dark:text-green-400",
     "low-stock": "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
@@ -79,7 +92,7 @@ const ProductCard = ({
       {/* Product Image */}
       <div 
         className="relative overflow-hidden cursor-pointer"
-        onClick={onClick || (slug ? () => navigate(`/product/${slug}`) : undefined)}
+        onClick={goToProduct}
       >
         <div
           className={`
@@ -113,6 +126,19 @@ const ProductCard = ({
         >
           <Heart className={`w-4 h-4 ${favorite ? 'fill-current' : ''}`} />
         </button>
+
+        {/* Quick View Button */}
+        {(onQuickView || onClick) && (
+          <button
+            onClick={handleQuickView}
+            aria-label={`Quick view ${name}`}
+            className="absolute top-14 right-3 p-2 rounded-full backdrop-blur-sm bg-background/80 text-muted-foreground hover:text-primary transition-all duration-300"
+          >
+            <Search className="w-4 h-4" />
+          </button>
+        )}
+
+
 
         {/* Certifications */}
         <div className="absolute top-3 left-3 flex flex-col gap-1">
@@ -154,8 +180,9 @@ const ProductCard = ({
       <div className="p-5 flex flex-col flex-1">
         {/* Product Name */}
         <h3 
+          onClick={goToProduct}
           className={`
-            text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-1
+            text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-1 cursor-pointer
             ${isInView ? 'animate-product-name-enter' : 'opacity-0'}
           `}
           style={{ animationDelay: isInView ? '80ms' : '0ms' }}
