@@ -25,6 +25,7 @@ interface ProductCardProps {
   lowStockThreshold?: number;
   trackInventory?: boolean;
   onClick?: () => void;
+  onQuickView?: () => void;
 }
 
 const ProductCard = ({ 
