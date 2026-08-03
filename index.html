@@ -36,8 +36,29 @@
     <link rel="preconnect" href="https://cdn.gpteng.co" crossorigin />
     <link rel="dns-prefetch" href="https://cdn.gpteng.co" />
     
-    <!-- Preload LCP hero image -->
-    <link rel="preload" as="image" href="/images/wellness-hero.webp" type="image/webp" fetchpriority="high" />
+    <!-- Preload LCP hero image (responsive: mobile gets the small variant) -->
+    <link
+      rel="preload"
+      as="image"
+      href="/images/wellness-hero-1280.webp"
+      imagesrcset="/images/wellness-hero-768.webp 768w, /images/wellness-hero-1280.webp 1280w, /images/wellness-hero.webp 1920w"
+      imagesizes="100vw"
+      type="image/webp"
+      fetchpriority="high"
+    />
+    <!-- Use the admin hero (cached from a previous visit) as the LCP image when known -->
+    <script>
+      (function(){
+        try {
+          var u = localStorage.getItem('bfs_hero_img');
+          if (u && /^https:\/\//.test(u)) {
+            var l = document.createElement('link');
+            l.rel = 'preload'; l.as = 'image'; l.href = u; l.setAttribute('fetchpriority','high');
+            document.head.appendChild(l);
+          }
+        } catch (e) {}
+      })();
+    </script>
     
     <!-- SEO fallback is for crawlers reading HTML source — never visible to users -->
     <style>
