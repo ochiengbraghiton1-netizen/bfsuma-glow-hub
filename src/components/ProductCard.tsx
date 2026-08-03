@@ -127,6 +127,19 @@ const ProductCard = ({
           <Heart className={`w-4 h-4 ${favorite ? 'fill-current' : ''}`} />
         </button>
 
+        {/* Quick View Button */}
+        {(onQuickView || onClick) && (
+          <button
+            onClick={handleQuickView}
+            aria-label={`Quick view ${name}`}
+            className="absolute top-14 right-3 p-2 rounded-full backdrop-blur-sm bg-background/80 text-muted-foreground hover:text-primary transition-all duration-300"
+          >
+            <Search className="w-4 h-4" />
+          </button>
+        )}
+
+
+
         {/* Certifications */}
         <div className="absolute top-3 left-3 flex flex-col gap-1">
           {certifications.map((cert) => (
