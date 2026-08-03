@@ -56,7 +56,7 @@ const Hero = () => {
           alt="BF SUMA Royal wellness community with real customers and team members"
           loading="eager"
           decoding="sync"
-          fetchPriority="high"
+          {...{ fetchpriority: "high" }}
           className="absolute inset-0 w-full h-full object-cover object-[center_20%] md:object-[center_30%]"
           width={736}
           height={920}
@@ -70,7 +70,7 @@ const Hero = () => {
           alt="BF SUMA Royal premium wellness supplements and natural health products display"
           loading="eager"
           decoding="sync"
-          fetchPriority="high"
+          {...{ fetchpriority: "high" }}
           className="absolute inset-0 w-full h-full object-cover object-[center_30%] md:object-center"
           width={1280}
           height={720}
