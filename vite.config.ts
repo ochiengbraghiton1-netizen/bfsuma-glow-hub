@@ -73,7 +73,7 @@ export default defineConfig(({ mode }) => ({
     minify: "esbuild",
     cssMinify: true,
     // Target modern browsers for smaller output
-    target: "es2020",
+    target: "es2022",
     // Chunk splitting for better caching
     rollupOptions: {
       output: {
