@@ -65,6 +65,17 @@ const ProductCard = ({
 
   const favorite = isFavorite(id);
 
+  const goToProduct = () => {
+    if (slug) navigate(`/product/${slug}`);
+    else onClick?.();
+  };
+
+  const handleQuickView = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    (onQuickView || onClick)?.();
+  };
+
+
   const stockBadgeStyles = {
     "in-stock": "bg-green-500/10 text-green-600 dark:text-green-400",
     "low-stock": "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
