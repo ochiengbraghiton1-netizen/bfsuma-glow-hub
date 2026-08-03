@@ -41,7 +41,8 @@ const ProductCard = ({
   stockQuantity = 0,
   lowStockThreshold = 10,
   trackInventory = true,
-  onClick 
+  onClick,
+  onQuickView
 }: ProductCardProps) => {
   const [ref, isInView] = useInView<HTMLDivElement>({ threshold: 0.6, triggerOnce: true });
   const [isHovering, setIsHovering] = useState(false);
