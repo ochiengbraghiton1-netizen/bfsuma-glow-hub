@@ -180,8 +180,9 @@ const ProductCard = ({
       <div className="p-5 flex flex-col flex-1">
         {/* Product Name */}
         <h3 
+          onClick={goToProduct}
           className={`
-            text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-1
+            text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-1 cursor-pointer
             ${isInView ? 'animate-product-name-enter' : 'opacity-0'}
           `}
           style={{ animationDelay: isInView ? '80ms' : '0ms' }}
