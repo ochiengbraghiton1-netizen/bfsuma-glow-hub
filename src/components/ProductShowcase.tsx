@@ -128,7 +128,19 @@ const ProductShowcase = () => {
   const handleProductClick = (product: DatabaseProduct) => {
     setSelectedProduct(product);
     setModalOpen(true);
+    if (product.slug) {
+      // Shareable URL while the quick view is open (no router navigation)
+      window.history.pushState({ quickView: true }, "", `/product/${product.slug}`);
+    }
   };
+
+  const handleModalOpenChange = (open: boolean) => {
+    setModalOpen(open);
+    if (!open && window.history.state?.quickView) {
+      window.history.back();
+    }
+  };
+
 
   const clearFilters = () => setFilters(defaultFilters);
 
