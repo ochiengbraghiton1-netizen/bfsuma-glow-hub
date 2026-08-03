@@ -3,25 +3,42 @@ import { useEffect, useState } from "react";
 
 const WHATSAPP_URL = 'https://wa.me/254795454053?text=Hi%2C%20I%20need%20help%20choosing%20the%20right%20supplement%20for%20my%20health.';
 
+const HERO_CACHE_KEY = "bfs_hero_img";
+
+const readCachedHero = () => {
+  try {
+    const u = localStorage.getItem(HERO_CACHE_KEY);
+    return u && /^https:\/\//.test(u) ? u : null;
+  } catch {
+    return null;
+  }
+};
+
 const Hero = () => {
-  const [heroImage, setHeroImage] = useState<string | null>(null);
+  // Use the previously seen admin hero straight away so it is the LCP element
+  // instead of swapping in later (a late swap resets LCP and tanks the score).
+  const [heroImage] = useState<string | null>(readCachedHero);
 
   useEffect(() => {
     // Defer Supabase import to avoid loading the 169KB chunk during initial render
-    import("@/integrations/supabase/client").then(({ supabase }) => {
-      supabase
-        .from('site_content')
-        .select('image_url')
-        .eq('section_key', 'hero')
-        .maybeSingle()
-        .then(({ data }) => {
-          if (data?.image_url) {
-            const img = new Image();
-            img.onload = () => setHeroImage(data.image_url);
-            img.src = data.image_url;
-          }
-        });
-    });
+    const t = window.setTimeout(() => {
+      import("@/integrations/supabase/client").then(({ supabase }) => {
+        supabase
+          .from('site_content')
+          .select('image_url')
+          .eq('section_key', 'hero')
+          .maybeSingle()
+          .then(({ data }) => {
+            try {
+              if (data?.image_url) localStorage.setItem(HERO_CACHE_KEY, data.image_url);
+              else localStorage.removeItem(HERO_CACHE_KEY);
+            } catch {
+              /* ignore */
+            }
+          });
+      });
+    }, 2500);
+    return () => window.clearTimeout(t);
   }, []);
 
   const scrollToProducts = () => {
@@ -33,42 +50,33 @@ const Hero = () => {
       {/* Neutral background while loading */}
       <div className="absolute inset-0 bg-muted" />
 
-      {/* Static fallback: always rendered immediately for fast LCP */}
-      <picture>
-        <source
-          media="(min-width: 768px)"
-          srcSet="/images/wellness-hero.webp"
-          type="image/webp"
-        />
-        <source srcSet="/images/wellness-hero.webp" type="image/webp" />
+      {heroImage ? (
         <img
-          src="/images/wellness-hero.jpg"
+          src={heroImage}
+          alt="BF SUMA Royal wellness community with real customers and team members"
+          loading="eager"
+          decoding="sync"
+          {...{ fetchpriority: "high" }}
+          className="absolute inset-0 w-full h-full object-cover object-[center_20%] md:object-[center_30%]"
+          width={736}
+          height={920}
+          sizes="100vw"
+        />
+      ) : (
+        <img
+          src="/images/wellness-hero-1280.webp"
+          srcSet="/images/wellness-hero-768.webp 768w, /images/wellness-hero-1280.webp 1280w, /images/wellness-hero.webp 1920w"
+          sizes="100vw"
           alt="BF SUMA Royal premium wellness supplements and natural health products display"
           loading="eager"
           decoding="sync"
-          fetchPriority="high"
+          {...{ fetchpriority: "high" }}
           className="absolute inset-0 w-full h-full object-cover object-[center_30%] md:object-center"
-          width={1920}
-          height={1080}
-          sizes="100vw"
+          width={1280}
+          height={720}
         />
-      </picture>
-
-      {/* Admin-uploaded hero overlays the static one when ready. */}
-      {heroImage && (
-        <div className="absolute inset-0 animate-fade-in">
-          <img
-            src={heroImage}
-            alt="BF SUMA Royal wellness community with real customers and team members"
-            loading="eager"
-            decoding="sync"
-            className="absolute inset-0 w-full h-full object-cover object-[center_20%] md:object-[center_30%]"
-            width={736}
-            height={920}
-            sizes="100vw"
-          />
-        </div>
       )}
+
 
 
 
