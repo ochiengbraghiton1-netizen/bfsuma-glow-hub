@@ -342,7 +342,7 @@ const ProductShowcase = () => {
                     stockQuantity={product.stock_quantity}
                     lowStockThreshold={product.low_stock_threshold}
                     trackInventory={product.track_inventory}
-                    onClick={() => handleProductClick(product)}
+                    onQuickView={() => handleProductClick(product)}
                   />
                 ))}
               </div>
@@ -389,7 +389,7 @@ const ProductShowcase = () => {
             : null
         }
         open={modalOpen}
-        onOpenChange={setModalOpen}
+        onOpenChange={handleModalOpenChange}
       />
     </section>
   );
