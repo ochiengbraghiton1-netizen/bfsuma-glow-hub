@@ -117,13 +117,29 @@ const ProductShowcase = () => {
   const { products, categories, isLoading, error } = useProducts();
   const [selectedProduct, setSelectedProduct] = useState<DatabaseProduct | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [sortOption, setSortOption] = useState<SortOption>("featured");
-  const [filters, setFilters] = useState<FilterState>(defaultFilters);
+  const savedState = (() => {
+    try {
+      return JSON.parse(sessionStorage.getItem("catalogState") || "null");
+    } catch {
+      return null;
+    }
+  })();
+  const [searchQuery, setSearchQuery] = useState<string>(savedState?.searchQuery ?? "");
+  const [activeCategory, setActiveCategory] = useState<string>(savedState?.activeCategory ?? "all");
+  const [sortOption, setSortOption] = useState<SortOption>(savedState?.sortOption ?? "featured");
+  const [filters, setFilters] = useState<FilterState>(savedState?.filters ?? defaultFilters);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
+  // Persist catalog state so returning from a product page restores filters
+  useEffect(() => {
+    sessionStorage.setItem(
+      "catalogState",
+      JSON.stringify({ searchQuery, activeCategory, sortOption, filters })
+    );
+  }, [searchQuery, activeCategory, sortOption, filters]);
+
   const activeFilterCount = getActiveFilterCount(filters);
+
 
   const handleProductClick = (product: DatabaseProduct) => {
     setSelectedProduct(product);
