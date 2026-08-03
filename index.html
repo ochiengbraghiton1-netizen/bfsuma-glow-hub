@@ -108,14 +108,25 @@
 
     <!-- Meta Pixel Code -->
     <script>
-      !function(f,b,e,v,n,t,s)
-      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      // Queue-only stub so events fire immediately; the ~70KB fbevents.js
+      // network request is deferred until interaction or idle to protect LCP/TBT.
+      !function(f,b,e,v,n){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
       n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];
+      var done=false;
+      function load(){if(done)return;done=true;
+        var t=b.createElement(e);t.async=!0;t.src=v;
+        var s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s);
+        ['click','scroll','keydown','touchstart'].forEach(function(x){
+          b.removeEventListener(x,load,{capture:true});
+        });
+      }
+      ['click','scroll','keydown','touchstart'].forEach(function(x){
+        b.addEventListener(x,load,{capture:true,passive:true,once:true});
+      });
+      if('requestIdleCallback' in f){f.requestIdleCallback(load,{timeout:4000})}
+      else{setTimeout(load,4000)}
+      }(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
       fbq('init', '951783873944798');
       fbq('track', 'PageView');
 
