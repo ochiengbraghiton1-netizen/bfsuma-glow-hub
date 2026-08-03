@@ -141,6 +141,13 @@ const ProductShowcase = () => {
     }
   };
 
+  useEffect(() => {
+    const onPop = () => setModalOpen(false);
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
+
 
   const clearFilters = () => setFilters(defaultFilters);
 
