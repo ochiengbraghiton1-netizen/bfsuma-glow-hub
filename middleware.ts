@@ -2,7 +2,10 @@ import { next } from "@vercel/functions";
 
 const SEO_RENDER_URL = "https://sboaeutgckyiwunfmxqp.supabase.co/functions/v1/seo-render";
 
-const BOT_USER_AGENT = /(googlebot|bingbot|twitterbot|facebookexternalhit|linkedinbot|slackbot)/i;
+// Include Google's URL Inspection / testing crawlers as well as normal search bots.
+// Without Google-InspectionTool here, the live test receives the SPA shell, executes
+// React, and can observe route-level fallback metadata instead of the prerender.
+const BOT_USER_AGENT = /(googlebot|google-inspectiontool|googleother|bingbot|twitterbot|facebookexternalhit|linkedinbot|slackbot)/i;
 const PUBLIC_FILE = /\.[a-z0-9]+$/i;
 
 const applySecurityHeaders = (headers: Headers) => {
