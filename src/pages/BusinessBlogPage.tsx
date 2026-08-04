@@ -214,7 +214,7 @@ const PostCard = ({ post }: { post: BusinessPost }) => (
         {post.published_at && format(new Date(post.published_at), "MMM d, yyyy")}
       </div>
       <CardTitle className="line-clamp-2">
-        <Link to={`/blog/${post.slug}`} className="hover:text-primary transition-colors">
+        <Link to={`/business/blog/${post.slug}`} className="hover:text-primary transition-colors">
           {post.title}
         </Link>
       </CardTitle>
@@ -222,7 +222,7 @@ const PostCard = ({ post }: { post: BusinessPost }) => (
     </CardHeader>
     <CardContent className="mt-auto">
       <Button asChild variant="outline" className="w-full">
-        <Link to={`/blog/${post.slug}`}>{post.video_url ? "Watch Story" : "Read More"}</Link>
+        <Link to={`/business/blog/${post.slug}`}>{post.video_url ? "Watch Story" : "Read More"}</Link>
       </Button>
     </CardContent>
   </Card>
