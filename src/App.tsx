@@ -160,6 +160,7 @@ const App = () => (
                   <Route path="/wellness/:slug" element={<WellnessHubPage />} />
                   <Route path="/business" element={<BusinessHubPage />} />
                   <Route path="/business/blog" element={<BusinessBlogPage />} />
+                  <Route path="/business/blog/:slug" element={<BlogPage />} />
                   <Route path="/:city" element={<LocationLanding />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
