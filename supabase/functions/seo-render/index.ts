@@ -1,3 +1,4 @@
+// Last deployed: 2026-08-04
 // SEO renderer: fetches the static SPA shell (index.html) and rewrites
 // per-route <title>, meta, canonical, OG/Twitter, JSON-LD and the visible
 // SEO fallback block so crawlers receive unique signals on the first byte.
