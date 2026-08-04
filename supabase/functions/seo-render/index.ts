@@ -354,6 +354,7 @@ async function buildMeta(pathname: string, supabase: ReturnType<typeof createCli
       .select("title,slug,excerpt,content,featured_image,meta_title,meta_description,published_at,updated_at")
       .eq("slug", slug)
       .eq("status", "published")
+      .neq("content_type", "business")
       .maybeSingle();
 
     if (data) {
@@ -403,6 +404,7 @@ async function buildMeta(pathname: string, supabase: ReturnType<typeof createCli
       .select("title,slug,excerpt,content,featured_image,meta_title,meta_description,published_at,updated_at")
       .eq("slug", slug)
       .eq("status", "published")
+      .eq("content_type", "business")
       .maybeSingle();
 
     if (data) {
