@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -36,6 +36,7 @@ interface BlogPost {
   meta_title: string | null;
   meta_description: string | null;
   status: string;
+  content_type: 'health' | 'business' | null;
   published_at: string | null;
   created_at: string;
 }
@@ -240,7 +241,7 @@ const BlogList = () => {
   );
 };
 
-const BlogPostView = ({ slug }: { slug: string }) => {
+const BlogPostView = ({ slug, expectedContentType }: { slug: string; expectedContentType: 'health' | 'business' }) => {
   const [post, setPost] = useState<BlogPostWithCategories | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<RelatedProduct[]>([]);
   const [allProducts, setAllProducts] = useState<{ name: string; slug: string; keywords?: string[] }[]>([]);
@@ -254,6 +255,7 @@ const BlogPostView = ({ slug }: { slug: string }) => {
         .select('*')
         .eq('slug', slug)
         .eq('status', 'published')
+        .eq('content_type', expectedContentType)
         .single();
 
       if (error || !data) {
@@ -327,7 +329,7 @@ const BlogPostView = ({ slug }: { slug: string }) => {
     };
 
     fetchPost();
-  }, [slug]);
+  }, [slug, expectedContentType]);
 
   if (loading) {
     return (
@@ -353,7 +355,7 @@ const BlogPostView = ({ slug }: { slug: string }) => {
   }
 
   const isUGC = post.categories?.some(c => UGC_CATEGORY_SLUGS.includes(c.slug));
-  const isBusiness = (post as any).content_type === 'business';
+  const isBusiness = post.content_type === 'business';
   const hubPath = isBusiness ? '/business/blog' : '/blog';
   const hubLabel = isBusiness ? 'Business Hub' : 'Blog';
 
@@ -362,7 +364,7 @@ const BlogPostView = ({ slug }: { slug: string }) => {
   const readingTime = Math.max(1, Math.ceil(wordCount / 200));
   const metaDescription = post.meta_description || stripHtmlTags(post.excerpt) || '';
 
-  const canonicalUrl = `https://bfsumaroyal.com/blog/${post.slug}`;
+  const canonicalUrl = `https://bfsumaroyal.com${hubPath}/${post.slug}`;
   const articleImage = post.featured_image || 'https://bfsumaroyal.com/og-image.png';
 
   return (
@@ -500,7 +502,7 @@ const BlogPostView = ({ slug }: { slug: string }) => {
             )}
             <div className="mt-5 pt-4 border-t border-border/50">
               <SocialShareButtons
-                url={`${SITE_BASE_URL}/blog/${post.slug}`}
+                url={`${SITE_BASE_URL}${hubPath}/${post.slug}`}
                 title={post.title}
               />
             </div>
@@ -517,7 +519,7 @@ const BlogPostView = ({ slug }: { slug: string }) => {
               <div className="mt-12 pt-8 border-t">
                 <div className="mb-6">
                   <SocialShareButtons
-                    url={`${SITE_BASE_URL}/blog/${post.slug}`}
+                    url={`${SITE_BASE_URL}${hubPath}/${post.slug}`}
                     title={post.title}
                   />
                 </div>
@@ -549,12 +551,14 @@ const BlogPostView = ({ slug }: { slug: string }) => {
 
 const BlogPage = () => {
   const { slug } = useParams<{ slug: string }>();
+  const location = useLocation();
+  const expectedContentType = location.pathname.startsWith('/business/blog/') ? 'business' : 'health';
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
-        {slug ? <BlogPostView slug={slug} /> : <BlogList />}
+        {slug ? <BlogPostView slug={slug} expectedContentType={expectedContentType} /> : <BlogList />}
       </main>
       <Footer />
     </div>
