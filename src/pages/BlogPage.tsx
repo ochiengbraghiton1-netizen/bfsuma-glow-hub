@@ -36,7 +36,7 @@ interface BlogPost {
   meta_title: string | null;
   meta_description: string | null;
   status: string;
-  content_type: 'health' | 'business' | null;
+  content_type: string | null;
   published_at: string | null;
   created_at: string;
 }
