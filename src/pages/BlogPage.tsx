@@ -12,6 +12,7 @@ import { Helmet } from 'react-helmet-async';
 import RichTextContent from '@/components/ui/rich-text-content';
 import BlogPostUGC from '@/components/blog/BlogPostUGC';
 import SocialShareButtons from '@/components/blog/SocialShareButtons';
+import BlogLeadCapture from '@/components/blog/BlogLeadCapture';
 import BlogRelatedProducts from '@/components/blog/BlogRelatedProducts';
 import RelatedWellnessHubs from '@/components/RelatedWellnessHubs';
 import { stripHtmlTags } from '@/lib/html-utils';
@@ -507,6 +508,8 @@ const BlogPostView = ({ slug, expectedContentType }: { slug: string; expectedCon
               />
             </div>
           </header>
+
+          <BlogLeadCapture contentType={expectedContentType} postSlug={post.slug} />
 
           {/* Render UGC layout or standard content */}
           {isUGC ? (
