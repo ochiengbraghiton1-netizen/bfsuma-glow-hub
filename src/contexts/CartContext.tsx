@@ -1,7 +1,26 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import WishlistCapturePopup from "@/components/WishlistCapturePopup";
 
 const CART_STORAGE_KEY = "bf_cart_items";
 const FAVORITES_STORAGE_KEY = "bf_favorites";
+const WISHLIST_CONTACT_KEY = "bf_wishlist_contact";
+
+export interface WishlistContact {
+  phone: string;
+  email?: string;
+}
+
+const loadWishlistContact = (): WishlistContact | null => {
+  try {
+    const raw = localStorage.getItem(WISHLIST_CONTACT_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed?.phone ? (parsed as WishlistContact) : null;
+  } catch {
+    return null;
+  }
+};
+
 
 const loadFromStorage = <T,>(key: string, fallback: T): T => {
   try {
@@ -32,6 +51,10 @@ interface CartContextType {
   favorites: string[];
   toggleFavorite: (id: string) => void;
   isFavorite: (id: string) => boolean;
+  pendingWishlistProductId: string | null;
+  completeWishlistCapture: (contact: WishlistContact) => void;
+  cancelWishlistCapture: () => void;
+
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -79,11 +102,47 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-  const toggleFavorite = (id: string) => {
-    setFavorites(prev => 
-      prev.includes(id) ? prev.filter(n => n !== id) : [...prev, id]
-    );
+  const [pendingWishlistProductId, setPendingWishlistProductId] = useState<string | null>(null);
+
+  const recordWishlistItem = (productId: string, contact: WishlistContact) => {
+    // fire-and-forget; never block the UI
+    import("@/integrations/supabase/client")
+      .then(({ supabase }) =>
+        supabase.from("wishlist_items").insert({
+          product_id: productId,
+          lead_phone: contact.phone,
+          lead_email: contact.email ?? null,
+        }),
+      )
+      .catch(() => {});
   };
+
+  const toggleFavorite = (id: string) => {
+    if (favorites.includes(id)) {
+      setFavorites(prev => prev.filter(n => n !== id));
+      return;
+    }
+    const contact = loadWishlistContact();
+    if (contact) {
+      setFavorites(prev => [...prev, id]);
+      recordWishlistItem(id, contact);
+      return;
+    }
+    setPendingWishlistProductId(id);
+  };
+
+  const completeWishlistCapture = (contact: WishlistContact) => {
+    try {
+      localStorage.setItem(WISHLIST_CONTACT_KEY, JSON.stringify(contact));
+    } catch {}
+    const id = pendingWishlistProductId;
+    if (id) {
+      setFavorites(prev => (prev.includes(id) ? prev : [...prev, id]));
+    }
+    setPendingWishlistProductId(null);
+  };
+
+  const cancelWishlistCapture = () => setPendingWishlistProductId(null);
 
   const isFavorite = (id: string) => favorites.includes(id);
 
@@ -99,11 +158,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       favorites,
       toggleFavorite,
       isFavorite,
+      pendingWishlistProductId,
+      completeWishlistCapture,
+      cancelWishlistCapture,
     }}>
       {children}
+      <WishlistCapturePopup />
     </CartContext.Provider>
   );
 };
+
 
 export const useCart = () => {
   const context = useContext(CartContext);
