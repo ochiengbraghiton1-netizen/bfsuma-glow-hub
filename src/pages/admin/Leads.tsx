@@ -26,6 +26,32 @@ const Leads = () => {
     },
   });
 
+  const { data: products } = useQuery({
+    queryKey: ["admin-leads-products"],
+    staleTime: 5 * 60 * 1000,
+    queryFn: async () => {
+      const { data, error } = await supabase.from("products").select("id, name");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const productMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    (products || []).forEach((p) => {
+      map[p.id] = p.name;
+    });
+    return map;
+  }, [products]);
+
+  const displaySource = (source: string | null) => {
+    const raw = source || "exit_popup";
+    if (!raw.startsWith("wishlist")) return raw;
+    const match = raw.match(/product_id:([0-9a-fA-F-]{36})/);
+    const name = match ? productMap[match[1]] : undefined;
+    return name ? `Wishlist: ${name}` : "Wishlist";
+  };
+
   const filtered = useMemo(() => {
     if (!leads) return [];
     return leads.filter((lead) => {
@@ -45,7 +71,7 @@ const Leads = () => {
     const rows = filtered.map((l) => [
       l.email,
       l.name || "",
-      l.source || "exit_popup",
+      displaySource(l.source),
       format(new Date(l.created_at), "yyyy-MM-dd HH:mm"),
       l.subscribed ? "Subscribed" : "Unsubscribed",
     ]);
@@ -150,7 +176,7 @@ const Leads = () => {
                     <TableCell className="font-medium">{lead.email}</TableCell>
                     <TableCell>{lead.name || "—"}</TableCell>
                     <TableCell className="hidden md:table-cell">
-                      <Badge variant="outline" className="text-xs">{lead.source || "exit_popup"}</Badge>
+                      <Badge variant="outline" className="text-xs">{displaySource(lead.source)}</Badge>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {format(new Date(lead.created_at), "MMM d, yyyy")}
