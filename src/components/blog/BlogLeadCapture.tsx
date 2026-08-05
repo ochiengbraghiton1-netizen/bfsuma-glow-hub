@@ -56,7 +56,7 @@ const BlogLeadCapture = ({ contentType, postSlug }: BlogLeadCaptureProps) => {
       await supabase.from("leads").insert({
         name: null,
         email: trimmedEmail || `blog-${Date.now()}@no-email.local`,
-        source: `blog_${contentType} | post:${postSlug} | phone:${phone.trim()}`,
+        source: `blog_${contentType} | post:${postSlug}`,
         subscribed: !!trimmedEmail,
       });
       setPhone("");
