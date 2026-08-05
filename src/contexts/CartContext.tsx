@@ -51,6 +51,10 @@ interface CartContextType {
   favorites: string[];
   toggleFavorite: (id: string) => void;
   isFavorite: (id: string) => boolean;
+  pendingWishlistProductId: string | null;
+  completeWishlistCapture: (contact: WishlistContact) => void;
+  cancelWishlistCapture: () => void;
+
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
