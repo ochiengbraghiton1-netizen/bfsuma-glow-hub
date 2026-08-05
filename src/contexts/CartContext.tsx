@@ -1,7 +1,26 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import WishlistCapturePopup from "@/components/WishlistCapturePopup";
 
 const CART_STORAGE_KEY = "bf_cart_items";
 const FAVORITES_STORAGE_KEY = "bf_favorites";
+const WISHLIST_CONTACT_KEY = "bf_wishlist_contact";
+
+export interface WishlistContact {
+  phone: string;
+  email?: string;
+}
+
+const loadWishlistContact = (): WishlistContact | null => {
+  try {
+    const raw = localStorage.getItem(WISHLIST_CONTACT_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed?.phone ? (parsed as WishlistContact) : null;
+  } catch {
+    return null;
+  }
+};
+
 
 const loadFromStorage = <T,>(key: string, fallback: T): T => {
   try {
