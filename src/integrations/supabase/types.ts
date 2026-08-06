@@ -210,6 +210,51 @@ export type Database = {
           },
         ]
       }
+      blog_post_quiz_options: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          label: string
+          post_id: string
+          product_id: string
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          label: string
+          post_id: string
+          product_id: string
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          label?: string
+          post_id?: string
+          product_id?: string
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_post_quiz_options_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blog_post_quiz_options_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_posts: {
         Row: {
           author_id: string | null
