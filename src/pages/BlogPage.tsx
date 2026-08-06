@@ -246,6 +246,7 @@ const BlogPostView = ({ slug, expectedContentType }: { slug: string; expectedCon
   const [post, setPost] = useState<BlogPostWithCategories | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<RelatedProduct[]>([]);
   const [allProducts, setAllProducts] = useState<{ name: string; slug: string; keywords?: string[] }[]>([]);
+  const [quizOptions, setQuizOptions] = useState<BlogQuizOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
