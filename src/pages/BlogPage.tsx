@@ -12,7 +12,7 @@ import { Helmet } from 'react-helmet-async';
 import RichTextContent from '@/components/ui/rich-text-content';
 import BlogPostUGC from '@/components/blog/BlogPostUGC';
 import SocialShareButtons from '@/components/blog/SocialShareButtons';
-import BlogLeadCapture from '@/components/blog/BlogLeadCapture';
+import BlogLeadCapture, { type BlogQuizOption } from '@/components/blog/BlogLeadCapture';
 import BlogRelatedProducts from '@/components/blog/BlogRelatedProducts';
 import RelatedWellnessHubs from '@/components/RelatedWellnessHubs';
 import { stripHtmlTags } from '@/lib/html-utils';
@@ -283,6 +283,33 @@ const BlogPostView = ({ slug, expectedContentType }: { slug: string; expectedCon
       }
 
       setPost({ ...data, categories: cats });
+
+      // Fetch per-post quiz options
+      const { data: quizRows } = await supabase
+        .from('blog_post_quiz_options')
+        .select('id, label, reason, product_id, display_order')
+        .eq('post_id', data.id)
+        .order('display_order');
+
+      if (quizRows?.length) {
+        const { data: quizProducts } = await supabase
+          .from('products')
+          .select('id, name, slug')
+          .in('id', quizRows.map(r => r.product_id));
+
+        const prodMap = new Map((quizProducts || []).map(p => [p.id, p]));
+        setQuizOptions(
+          quizRows.map(r => ({
+            id: r.id,
+            label: r.label,
+            reason: r.reason,
+            product: prodMap.get(r.product_id) || null,
+          }))
+        );
+      } else {
+        setQuizOptions([]);
+      }
+
 
       // Fetch related products
       const { data: productLinks } = await supabase
