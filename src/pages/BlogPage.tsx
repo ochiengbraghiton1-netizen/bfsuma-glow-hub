@@ -509,7 +509,12 @@ const BlogPostView = ({ slug, expectedContentType }: { slug: string; expectedCon
             </div>
           </header>
 
-          <BlogLeadCapture contentType={expectedContentType} postSlug={post.slug} />
+          <BlogLeadCapture
+            contentType={expectedContentType}
+            postSlug={post.slug}
+            postTitle={post.title}
+            quizOptions={quizOptions}
+          />
 
           {/* Render UGC layout or standard content */}
           {isUGC ? (
