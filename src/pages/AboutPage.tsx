@@ -106,7 +106,7 @@ const aboutPageSchema = {
     url: "https://bfsumaroyal.com",
     logo: "https://bfsumaroyal.com/favicon.png",
     sameAs: [
-      "https://www.facebook.com/share/1G6uTXLkpw/",
+      "https://www.facebook.com/share/18KxrewVoN/",
       "https://www.instagram.com/bf_suma_royal",
       "https://www.tiktok.com/@bfsumaroyal",
     ],

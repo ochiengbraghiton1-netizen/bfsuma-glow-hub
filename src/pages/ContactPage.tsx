@@ -43,7 +43,7 @@ const contactLocalBusinessSchema = {
     areaServed: "KE",
   },
   sameAs: [
-    "https://www.facebook.com/share/1G6uTXLkpw/",
+    "https://www.facebook.com/share/18KxrewVoN/",
     "https://www.instagram.com/bf_suma_royal",
     "https://www.tiktok.com/@bfsumaroyal",
   ],
@@ -74,7 +74,7 @@ const ContactPage = () => {
   ];
 
   const socialLinks = [
-    { icon: Facebook, label: "Facebook", link: "https://www.facebook.com/share/1G6uTXLkpw/", color: "hover:text-[#1877F2]" },
+    { icon: Facebook, label: "Facebook", link: "https://www.facebook.com/share/18KxrewVoN/", color: "hover:text-[#1877F2]" },
     { icon: Instagram, label: "Instagram", link: "https://www.instagram.com/bf_suma_royal?igsh=MXRkNTJtYWJ1bmJwNg==", color: "hover:text-[#E4405F]" },
     { icon: TikTokIcon, label: "TikTok", link: "https://www.tiktok.com/@bfsumaroyal", color: "hover:text-foreground" },
   ];

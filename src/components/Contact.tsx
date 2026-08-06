@@ -74,7 +74,7 @@ const Contact = () => {
     {
       icon: Facebook,
       label: "Facebook",
-      link: "https://www.facebook.com/share/1G6uTXLkpw/",
+      link: "https://www.facebook.com/share/18KxrewVoN/",
       color: "hover:text-[#1877F2]"
     },
     {

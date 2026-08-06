@@ -123,7 +123,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
     description: `Premium natural health supplements available in ${city}, Kenya. GMP-certified, Halal-approved wellness products with fast delivery ${deliveryTime}.`,
     priceRange: "KES 1,000 – KES 10,000",
     openingHoursSpecification: { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], opens: "08:00", closes: "18:00" },
-    sameAs: ["https://www.facebook.com/share/1G6uTXLkpw/","https://www.instagram.com/bf_suma_royal","https://www.tiktok.com/@bfsumaroyal"],
+    sameAs: ["https://www.facebook.com/share/18KxrewVoN/","https://www.instagram.com/bf_suma_royal","https://www.tiktok.com/@bfsumaroyal"],
   };
 
   const breadcrumbSchema = {
