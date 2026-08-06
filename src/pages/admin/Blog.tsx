@@ -63,6 +63,13 @@ interface BlogPost {
   updated_at: string;
 }
 
+interface QuizOptionRow {
+  id?: string;
+  label: string;
+  product_id: string;
+  reason: string;
+}
+
 interface ProductOption {
   id: string;
   name: string;
@@ -97,6 +104,7 @@ const Blog = () => {
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [formData, setFormData] = useState(initialFormState);
   const [newCategoryName, setNewCategoryName] = useState('');
+  const [quizOptions, setQuizOptions] = useState<QuizOptionRow[]>([]);
   const { toast } = useToast();
 
   const fetchCategories = async () => {
@@ -166,6 +174,7 @@ const Blog = () => {
   const openCreateDialog = () => {
     setEditingPost(null);
     setFormData(initialFormState);
+    setQuizOptions([]);
     setDialogOpen(true);
   };
 
@@ -183,6 +192,22 @@ const Blog = () => {
       .from('blog_post_products')
       .select('product_id')
       .eq('post_id', post.id);
+
+    // Fetch quiz options
+    const { data: quizRows } = await supabase
+      .from('blog_post_quiz_options')
+      .select('id, label, product_id, reason, display_order')
+      .eq('post_id', post.id)
+      .order('display_order');
+
+    setQuizOptions(
+      (quizRows || []).map(r => ({
+        id: r.id,
+        label: r.label,
+        product_id: r.product_id,
+        reason: r.reason || '',
+      }))
+    );
 
     setFormData({
       title: post.title,
@@ -259,6 +284,21 @@ const Blog = () => {
       if (formData.product_ids.length > 0) {
         await supabase.from('blog_post_products').insert(
           formData.product_ids.map(prodId => ({ post_id: postId!, product_id: prodId }))
+        );
+      }
+
+      // Update quiz options
+      await supabase.from('blog_post_quiz_options').delete().eq('post_id', postId);
+      const validQuiz = quizOptions.filter(q => q.label.trim() && q.product_id);
+      if (validQuiz.length > 0) {
+        await supabase.from('blog_post_quiz_options').insert(
+          validQuiz.map((q, i) => ({
+            post_id: postId!,
+            label: q.label.trim(),
+            product_id: q.product_id,
+            reason: q.reason.trim() || null,
+            display_order: i,
+          }))
         );
       }
 
@@ -718,6 +758,64 @@ const Blog = () => {
                   )}
                 </div>
               </div>
+            </div>
+
+
+            {/* Reader Quiz */}
+            <div className="space-y-2">
+              <Label className="text-[hsl(var(--admin-text))]">Reader Quiz (optional)</Label>
+              <p className="text-xs text-muted-foreground">
+                Add 2-4 options so readers get a personalized mini-quiz on this post instead of a generic signup form.
+              </p>
+              <div className="space-y-2">
+                {quizOptions.map((q, idx) => (
+                  <div key={idx} className="grid gap-2 md:grid-cols-[1fr_1fr_1fr_auto] items-center p-3 border rounded-md bg-muted/20">
+                    <Input
+                      value={q.label}
+                      placeholder="e.g. Joint pain when climbing stairs"
+                      onChange={(e) => setQuizOptions(prev => prev.map((r, i) => i === idx ? { ...r, label: e.target.value } : r))}
+                      className="text-[hsl(var(--admin-text))] bg-background"
+                    />
+                    <Select
+                      value={q.product_id}
+                      onValueChange={(v) => setQuizOptions(prev => prev.map((r, i) => i === idx ? { ...r, product_id: v } : r))}
+                    >
+                      <SelectTrigger className="bg-background">
+                        <SelectValue placeholder="Recommended product" />
+                      </SelectTrigger>
+                      <SelectContent className="z-[60]">
+                        {allProducts.map(p => (
+                          <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      value={q.reason}
+                      placeholder="e.g. targeted joint support and mobility"
+                      onChange={(e) => setQuizOptions(prev => prev.map((r, i) => i === idx ? { ...r, reason: e.target.value } : r))}
+                      className="text-[hsl(var(--admin-text))] bg-background"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setQuizOptions(prev => prev.filter((_, i) => i !== idx))}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              {quizOptions.length < 4 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setQuizOptions(prev => [...prev, { label: '', product_id: '', reason: '' }])}
+                >
+                  <Plus className="h-4 w-4 mr-2" /> Add option
+                </Button>
+              )}
             </div>
 
             {/* Scheduling */}

@@ -62,7 +62,7 @@ const StructuredData = () => {
       "availableLanguage": ["English", "Swahili"]
     },
     "sameAs": [
-      "https://www.facebook.com/share/1G6uTXLkpw/",
+      "https://www.facebook.com/share/18KxrewVoN/",
       "https://www.instagram.com/bf_suma_royal",
       "https://www.tiktok.com/@bfsumaroyal"
     ]
