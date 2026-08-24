@@ -9,8 +9,46 @@ const corsHeaders = {
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  const badRequest = (error: string) =>
+    new Response(JSON.stringify({ error }), {
+      status: 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+
   try {
-    const { messages, action } = await req.json();
+    let body: any;
+    try {
+      body = await req.json();
+    } catch {
+      return badRequest("Invalid JSON body");
+    }
+    if (!body || typeof body !== "object") return badRequest("Invalid request body");
+
+    const { messages, action } = body as {
+      messages?: unknown;
+      action?: unknown;
+    };
+
+    // Either a valid `messages` array or a valid `action` string is required.
+    const hasAction = typeof action === "string" && action.trim().length > 0;
+    const validMessages =
+      Array.isArray(messages) &&
+      messages.length > 0 &&
+      messages.every(
+        (m: any) =>
+          m && typeof m === "object" &&
+          typeof m.role === "string" &&
+          ["user", "assistant", "system"].includes(m.role) &&
+          typeof m.content === "string" &&
+          m.content.trim().length > 0
+      );
+
+    if (!hasAction && !validMessages) {
+      return badRequest(
+        "`messages` must be a non-empty array of { role: 'user'|'assistant'|'system', content: string }, or provide an `action`."
+      );
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -66,16 +104,22 @@ GUIDELINES:
 - IMPORTANT: Do NOT use markdown formatting like **bold**, *italic*, or any special symbols. Use plain text only. No asterisks, no hashtags for headers. Write naturally as if you're chatting.`;
 
     // For quick reply actions, generate a focused response
-    let userMessages = messages;
-    if (action) {
+    let userMessages: Array<{ role: string; content: string }> = validMessages
+      ? (messages as Array<{ role: string; content: string }>)
+      : [];
+    if (hasAction) {
       const actionPrompts: Record<string, string> = {
         products: "Tell me about your product catalog. What wellness products do you offer?",
         prices: "Show me your current product prices and price list.",
         join: "Tell me about the BF SUMA Royal business opportunity and how I can join as a distributor.",
         contact: "What are your contact details, business address, and how can I reach you?",
+        health_issue:
+          "I have a health concern I would like help with. Ask me what my main concern is, then recommend suitable BF SUMA Royal products from the catalog.",
       };
-      userMessages = [{ role: "user", content: actionPrompts[action] || action }];
+      const key = (action as string).trim();
+      userMessages = [{ role: "user", content: actionPrompts[key] || key }];
     }
+
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
