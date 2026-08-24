@@ -196,12 +196,7 @@ Deno.serve(async (req) => {
             discountAmount = Number(promo.discount_value);
           }
           promotionCode = promo.code;
-
-          // Increment usage count
-          await supabase
-            .from("promotions")
-            .update({ usage_count: (promo.usage_count || 0) + 1 })
-            .eq("id", promo.id);
+          promoToConsume = { id: promo.id, usage_count: promo.usage_count || 0 };
         }
       }
     }
@@ -217,6 +212,44 @@ Deno.serve(async (req) => {
       status = "pending_payment";
     } else if (paymentMethod === "mpesa") {
       status = "pending_payment";
+    }
+
+    // --- Reserve stock atomically BEFORE writing the order.
+    // decrement_stock locks the row (FOR UPDATE) and returns false when stock is
+    // insufficient, which prevents concurrent oversell. Any failure rolls back the
+    // reservations already made in this request.
+    const reserved: OrderItem[] = [];
+    const releaseReserved = async () => {
+      for (const r of reserved) {
+        await supabase.rpc("decrement_stock", {
+          p_product_id: r.product_id,
+          p_quantity: -r.quantity, // negative quantity restores stock
+        });
+      }
+    };
+
+    for (const item of body.items) {
+      const { data: ok, error: stockError } = await supabase.rpc("decrement_stock", {
+        p_product_id: item.product_id,
+        p_quantity: item.quantity,
+      });
+      if (stockError) {
+        console.error("decrement_stock error:", stockError);
+        await releaseReserved();
+        return new Response(JSON.stringify({ error: "Failed to reserve stock" }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (ok !== true) {
+        await releaseReserved();
+        const name = productMap.get(item.product_id)?.name ?? item.product_id;
+        return new Response(JSON.stringify({ error: `Insufficient stock for ${name}` }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      reserved.push({ product_id: item.product_id, quantity: item.quantity });
     }
 
     // --- Insert order ---
@@ -243,6 +276,7 @@ Deno.serve(async (req) => {
 
     if (orderError) {
       console.error("Order insert error:", orderError);
+      await releaseReserved();
       return new Response(JSON.stringify({ error: "Failed to create order" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -258,21 +292,27 @@ Deno.serve(async (req) => {
 
     if (itemsError) {
       console.error("Order items insert error:", itemsError);
-      // Attempt cleanup
+      // Roll back: remove the partially created order and release reserved stock
+      await supabase.from("order_items").delete().eq("order_id", orderId);
       await supabase.from("orders").delete().eq("id", orderId);
+      await releaseReserved();
       return new Response(JSON.stringify({ error: "Failed to create order items" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // --- Decrement stock ---
-    for (const item of body.items) {
-      await supabase.rpc("decrement_stock", {
-        p_product_id: item.product_id,
-        p_quantity: item.quantity,
-      });
+    // --- Consume promotion usage only after the order is fully persisted.
+    // Optimistic lock on usage_count so concurrent orders cannot exceed usage_limit.
+    if (promoToConsume) {
+      const { error: promoError } = await supabase
+        .from("promotions")
+        .update({ usage_count: promoToConsume.usage_count + 1 })
+        .eq("id", promoToConsume.id)
+        .eq("usage_count", promoToConsume.usage_count);
+      if (promoError) console.error("Promotion usage increment failed:", promoError);
     }
+
 
     // --- Track affiliate conversion ---
     // Client sends referral_code if available; we handle it server-side
