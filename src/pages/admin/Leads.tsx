@@ -39,18 +39,13 @@ const Leads = () => {
   const productMap = useMemo(() => {
     const map: Record<string, string> = {};
     (products || []).forEach((p) => {
-      map[p.id] = p.name;
+      map[p.id.toLowerCase()] = p.name;
     });
     return map;
   }, [products]);
 
-  const displaySource = (source: string | null) => {
-    const raw = source || "exit_popup";
-    if (!raw.startsWith("wishlist")) return raw;
-    const match = raw.match(/product_id:([0-9a-fA-F-]{36})/);
-    const name = match ? productMap[match[1]] : undefined;
-    return name ? `Wishlist: ${name}` : "Wishlist";
-  };
+  const displaySource = (source: string | null) => formatLeadSource(source, productMap);
+
 
   const filtered = useMemo(() => {
     if (!leads) return [];
