@@ -73,11 +73,28 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    if (!body.items || body.items.length === 0) {
+    if (!Array.isArray(body.items) || body.items.length === 0) {
       return new Response(JSON.stringify({ error: "No items in order" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    // --- Validate item shape BEFORE touching the database ---
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    for (const item of body.items) {
+      if (!item || typeof item.product_id !== "string" || !UUID_RE.test(item.product_id.trim())) {
+        return new Response(
+          JSON.stringify({ error: `Invalid product identifier: ${String(item?.product_id)}` }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      if (!Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 100) {
+        return new Response(
+          JSON.stringify({ error: `Invalid quantity for product ${item.product_id}` }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
     }
 
     // --- Validate delivery location & calculate shipping fee server-side ---
@@ -91,7 +108,7 @@ Deno.serve(async (req) => {
     const shippingFee = SHIPPING_FEES[deliveryLocation];
 
     // --- Fetch product prices from DB (never trust frontend prices) ---
-    const productIds = body.items.map((i) => i.product_id);
+    const productIds = body.items.map((i) => i.product_id.trim());
     const { data: products, error: productsError } = await supabase
       .from("products")
       .select("id, price, name, is_active, track_inventory, stock_quantity")
