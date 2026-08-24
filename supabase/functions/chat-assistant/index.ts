@@ -9,8 +9,46 @@ const corsHeaders = {
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  const badRequest = (error: string) =>
+    new Response(JSON.stringify({ error }), {
+      status: 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+
   try {
-    const { messages, action } = await req.json();
+    let body: any;
+    try {
+      body = await req.json();
+    } catch {
+      return badRequest("Invalid JSON body");
+    }
+    if (!body || typeof body !== "object") return badRequest("Invalid request body");
+
+    const { messages, action } = body as {
+      messages?: unknown;
+      action?: unknown;
+    };
+
+    // Either a valid `messages` array or a valid `action` string is required.
+    const hasAction = typeof action === "string" && action.trim().length > 0;
+    const validMessages =
+      Array.isArray(messages) &&
+      messages.length > 0 &&
+      messages.every(
+        (m: any) =>
+          m && typeof m === "object" &&
+          typeof m.role === "string" &&
+          ["user", "assistant", "system"].includes(m.role) &&
+          typeof m.content === "string" &&
+          m.content.trim().length > 0
+      );
+
+    if (!hasAction && !validMessages) {
+      return badRequest(
+        "`messages` must be a non-empty array of { role: 'user'|'assistant'|'system', content: string }, or provide an `action`."
+      );
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
