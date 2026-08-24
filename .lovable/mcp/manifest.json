@@ -3,7 +3,13 @@
   "sdk_version": "0.20.0",
   "path": "/functions/v1/mcp",
   "auth": {
-    "type": "none"
+    "type": "oauth",
+    "issuer": "https://sboaeutgckyiwunfmxqp.supabase.co/auth/v1",
+    "resource": "https://sboaeutgckyiwunfmxqp.supabase.co/functions/v1/mcp",
+    "resource_name": "BF SUMA Royal MCP",
+    "accepted_audiences": [
+      "authenticated"
+    ]
   },
   "mcp": {
     "server": {
