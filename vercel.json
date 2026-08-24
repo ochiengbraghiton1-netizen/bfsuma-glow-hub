@@ -5,6 +5,11 @@
       "destination": "https://sboaeutgckyiwunfmxqp.supabase.co/functions/v1/sitemap"
     },
     {
+      "source": "/api/:path*",
+      "destination": "https://sboaeutgckyiwunfmxqp.supabase.co/functions/v1/:path*"
+    },
+
+    {
       "source": "/:path*",
       "destination": "/index.html"
     }
