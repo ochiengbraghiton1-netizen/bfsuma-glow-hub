@@ -171,6 +171,7 @@ Deno.serve(async (req) => {
     // --- Apply promotion code server-side ---
     let discountAmount = 0;
     let promotionCode: string | null = null;
+    let promoToConsume: { id: string; usage_count: number } | null = null;
     if (body.promotion_code) {
       const { data: promo } = await supabase
         .from("promotions")
