@@ -3,7 +3,7 @@
 // supabase function: mcp
 // Bundled from src/lib/mcp/index.ts by @lovable.dev/mcp-js.
 // src/lib/mcp/index.ts
-import { defineMcp } from "npm:@lovable.dev/mcp-js@0.20.0";
+import { defineMcp, auth } from "npm:@lovable.dev/mcp-js@0.20.0";
 
 // src/lib/mcp/tools/search-products.ts
 import { defineTool } from "npm:@lovable.dev/mcp-js@0.20.0";
@@ -114,11 +114,20 @@ var list_blog_posts_default = defineTool4({
 });
 
 // src/lib/mcp/index.ts
+var SUPABASE_URL = "https://sboaeutgckyiwunfmxqp.supabase.co";
 var mcp_default = defineMcp({
   name: "bfsuma-royal-mcp",
   title: "BF SUMA Royal MCP",
   version: "0.1.0",
   instructions: "Tools for exploring the BF SUMA Royal wellness catalog. Use `search_products` to find supplements by keyword, `get_product` for full details of one product by slug, `list_wellness_hubs` for health-goal hub pages, and `list_blog_posts` for recent published articles. All prices are in KES.",
+  // Require a verified OAuth bearer token on every MCP request. Anonymous
+  // callers get a 401 with the RFC 9728 protected-resource challenge.
+  auth: auth.oauth.issuer({
+    issuer: `${SUPABASE_URL}/auth/v1`,
+    resource: `${SUPABASE_URL}/functions/v1/mcp`,
+    acceptedAudiences: ["authenticated"],
+    resourceName: "BF SUMA Royal MCP"
+  }),
   tools: [search_products_default, get_product_default, list_wellness_hubs_default, list_blog_posts_default]
 });
 
