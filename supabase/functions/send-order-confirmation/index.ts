@@ -217,6 +217,11 @@ Deno.serve(async (req) => {
     if (!emailResponse.ok) {
       const errText = await emailResponse.text();
       console.error("Email API error:", errText);
+      // Release the idempotency claim so a legitimate retry can succeed
+      await supabase
+        .from("orders")
+        .update({ confirmation_email_sent_at: null })
+        .eq("id", orderId);
       return new Response(JSON.stringify({ error: "Failed to send email" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
