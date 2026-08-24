@@ -21,9 +21,20 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { orderId } = await req.json();
-    if (!orderId) {
-      return new Response(JSON.stringify({ error: "orderId required" }), {
+    let payload: any;
+    try {
+      payload = await req.json();
+    } catch {
+      return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const orderId = typeof payload?.orderId === "string" ? payload.orderId.trim() : "";
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!orderId || !UUID_RE.test(orderId)) {
+      return new Response(JSON.stringify({ error: "Invalid orderId" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -47,12 +58,44 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Only paid orders get a confirmation — prevents unauthorized triggering
+    // on pending/guest orders. No order data is returned in these responses.
+    if (order.payment_status !== "paid") {
+      return new Response(JSON.stringify({ error: "Order is not confirmed for payment" }), {
+        status: 409,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Idempotency: claim the send slot atomically; a replay finds no row to update.
+    const { data: claimed, error: claimErr } = await supabase
+      .from("orders")
+      .update({ confirmation_email_sent_at: new Date().toISOString() })
+      .eq("id", orderId)
+      .is("confirmation_email_sent_at", null)
+      .select("id");
+
+    if (claimErr) {
+      console.error("Idempotency claim error:", claimErr);
+      return new Response(JSON.stringify({ error: "Internal error" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (!claimed || claimed.length === 0) {
+      return new Response(JSON.stringify({ success: true, alreadySent: true }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     if (!order.customer_email) {
       return new Response(JSON.stringify({ error: "No customer email" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
 
     // Fetch order items
     const { data: items } = await supabase
