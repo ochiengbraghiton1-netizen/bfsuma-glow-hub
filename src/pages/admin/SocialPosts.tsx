@@ -22,11 +22,16 @@ const platformOptions = [
   { value: "tiktok", label: "TikTok", icon: Video },
 ];
 
+const categoryOptions = [
+  { value: "health", label: "Health" },
+  { value: "business", label: "Business" },
+];
+
 const emptyForm = {
   platform: "instagram",
+  content_category: "",
   author_name: "",
   author_handle: "",
-  author_avatar_url: "",
   content: "",
   image_url: "",
   video_url: "",
@@ -37,6 +42,7 @@ const emptyForm = {
   is_approved: true,
   display_order: 0,
 };
+
 
 const SocialPosts = () => {
   const { toast } = useToast();
