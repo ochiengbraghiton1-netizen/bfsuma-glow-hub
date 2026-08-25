@@ -53,6 +53,8 @@ const SocialPosts = () => {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
+  const [videoUploading, setVideoUploading] = useState(false);
+  const videoInputRef = useRef<HTMLInputElement>(null);
 
   const { data: posts, isLoading } = useQuery({
     queryKey: ["admin-social-posts"],
@@ -158,6 +160,49 @@ const SocialPosts = () => {
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
+  const ALLOWED_VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"];
+  const MAX_VIDEO_BYTES = 50 * 1024 * 1024; // 50 MB
+
+  const handleVideoUpload = async (file: File) => {
+    if (!ALLOWED_VIDEO_TYPES.includes(file.type)) {
+      toast({
+        title: "Unsupported video format",
+        description: "Please use MP4, WebM or MOV.",
+        variant: "destructive",
+      });
+      if (videoInputRef.current) videoInputRef.current.value = "";
+      return;
+    }
+    if (file.size > MAX_VIDEO_BYTES) {
+      toast({
+        title: "Video too large",
+        description: `Maximum size is 50 MB. This file is ${formatFileSize(file.size)}.`,
+        variant: "destructive",
+      });
+      if (videoInputRef.current) videoInputRef.current.value = "";
+      return;
+    }
+
+    setVideoUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "mp4";
+      const path = `videos/${crypto.randomUUID()}.${ext}`;
+      const { error } = await supabase.storage
+        .from("social-posts")
+        .upload(path, file, { contentType: file.type });
+      if (error) throw error;
+      const { data: urlData } = supabase.storage.from("social-posts").getPublicUrl(path);
+      setForm((prev) => ({ ...prev, video_url: urlData.publicUrl }));
+      toast({ title: "Video uploaded", description: formatFileSize(file.size) });
+    } catch (err: any) {
+      // Keep any existing video_url intact on failure
+      toast({ title: "Video upload failed", description: err.message, variant: "destructive" });
+    } finally {
+      setVideoUploading(false);
+      if (videoInputRef.current) videoInputRef.current.value = "";
+    }
+  };
+
 
   const PlatformBadge = ({ platform }: { platform: string }) => {
     const p = platformOptions.find((o) => o.value === platform);
@@ -296,6 +341,72 @@ const SocialPosts = () => {
                   />
                 </div>
               </div>
+
+              {/* Video upload section */}
+              <div>
+                <Label>Video</Label>
+                <div className="space-y-2">
+                  {form.video_url && (
+                    <div className="relative w-full rounded-lg overflow-hidden border bg-muted">
+                      <video
+                        src={form.video_url}
+                        poster={form.image_url || undefined}
+                        controls
+                        playsInline
+                        preload="metadata"
+                        className="w-full max-h-48 bg-black"
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        className="absolute top-2 right-2 h-6 w-6"
+                        onClick={() => setForm({ ...form, video_url: "" })}
+                        aria-label="Remove video"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
+                  <div
+                    className="relative border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer border-muted-foreground/25 hover:border-primary/50"
+                    onClick={() => videoInputRef.current?.click()}
+                  >
+                    <input
+                      ref={videoInputRef}
+                      type="file"
+                      accept="video/mp4,video/webm,video/quicktime"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleVideoUpload(file);
+                      }}
+                    />
+                    {videoUploading ? (
+                      <div className="flex flex-col items-center gap-1">
+                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                        <span className="text-sm text-muted-foreground">Uploading video...</span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-1">
+                        <Video className="h-6 w-6 text-muted-foreground" />
+                        <span className="text-sm font-medium">Click to upload a video</span>
+                        <span className="text-xs text-muted-foreground">MP4, WebM or MOV, max 50 MB, or paste a URL below</span>
+                      </div>
+                    )}
+                  </div>
+                  <Input
+                    value={form.video_url}
+                    onChange={(e) => setForm({ ...form, video_url: e.target.value })}
+                    placeholder="https://... (video URL)"
+                  />
+                  {form.image_url && form.video_url && (
+                    <p className="text-xs text-muted-foreground">The image will be used as the video poster.</p>
+                  )}
+                </div>
+              </div>
+
+
 
               <div>
                 <Label>Post URL</Label>

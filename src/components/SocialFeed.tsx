@@ -18,15 +18,25 @@ const SocialPostCard = ({ post, index }: { post: SocialPost; index: number }) =>
   const PlatformIcon = platform.icon;
 
   return (
-    <a
-      href={post.post_url || "#"}
-      target="_blank"
-      rel="noopener noreferrer"
+    <div
       className="group block rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
       style={{ animation: `fade-in 0.4s ease-out ${index * 0.08}s both` }}
     >
-      {/* Image */}
-      {post.image_url && (
+      {/* Media */}
+      {post.video_url ? (
+        <div className="aspect-square overflow-hidden bg-black">
+          <video
+            src={post.video_url}
+            poster={post.image_url || undefined}
+            controls
+            muted
+            playsInline
+            preload="metadata"
+            aria-label={`Video posted by ${post.author_name} on ${platform.label}`}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      ) : post.image_url ? (
         <div className="aspect-square overflow-hidden bg-muted/30">
           <img
             src={post.image_url}
@@ -35,7 +45,8 @@ const SocialPostCard = ({ post, index }: { post: SocialPost; index: number }) =>
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         </div>
-      )}
+      ) : null}
+
 
       {/* Content */}
       <div className="p-4 space-y-3">
@@ -87,12 +98,19 @@ const SocialPostCard = ({ post, index }: { post: SocialPost; index: number }) =>
               <span>{post.likes_count.toLocaleString()}</span>
             </div>
           )}
-          <span className="text-xs text-muted-foreground flex items-center gap-1 ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-            View post <ExternalLink className="w-3 h-3" />
-          </span>
+          {post.post_url && (
+            <a
+              href={post.post_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1 ml-auto transition-colors"
+            >
+              View post <ExternalLink className="w-3 h-3" />
+            </a>
+          )}
         </div>
       </div>
-    </a>
+    </div>
   );
 };
 
