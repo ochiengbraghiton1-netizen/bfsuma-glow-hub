@@ -322,7 +322,7 @@ const SocialPosts = () => {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => { setDialogOpen(false); resetForm(); }}>Cancel</Button>
-              <Button onClick={() => saveMutation.mutate()} disabled={!form.author_name || saveMutation.isPending}>
+              <Button onClick={() => saveMutation.mutate()} disabled={!form.author_name || !form.content_category || saveMutation.isPending}>
                 {saveMutation.isPending ? "Saving..." : editingId ? "Update" : "Create"}
               </Button>
             </DialogFooter>
