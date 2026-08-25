@@ -160,6 +160,49 @@ const SocialPosts = () => {
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
+  const ALLOWED_VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"];
+  const MAX_VIDEO_BYTES = 50 * 1024 * 1024; // 50 MB
+
+  const handleVideoUpload = async (file: File) => {
+    if (!ALLOWED_VIDEO_TYPES.includes(file.type)) {
+      toast({
+        title: "Unsupported video format",
+        description: "Please use MP4, WebM or MOV.",
+        variant: "destructive",
+      });
+      if (videoInputRef.current) videoInputRef.current.value = "";
+      return;
+    }
+    if (file.size > MAX_VIDEO_BYTES) {
+      toast({
+        title: "Video too large",
+        description: `Maximum size is 50 MB. This file is ${formatFileSize(file.size)}.`,
+        variant: "destructive",
+      });
+      if (videoInputRef.current) videoInputRef.current.value = "";
+      return;
+    }
+
+    setVideoUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "mp4";
+      const path = `videos/${crypto.randomUUID()}.${ext}`;
+      const { error } = await supabase.storage
+        .from("social-posts")
+        .upload(path, file, { contentType: file.type });
+      if (error) throw error;
+      const { data: urlData } = supabase.storage.from("social-posts").getPublicUrl(path);
+      setForm((prev) => ({ ...prev, video_url: urlData.publicUrl }));
+      toast({ title: "Video uploaded", description: formatFileSize(file.size) });
+    } catch (err: any) {
+      // Keep any existing video_url intact on failure
+      toast({ title: "Video upload failed", description: err.message, variant: "destructive" });
+    } finally {
+      setVideoUploading(false);
+      if (videoInputRef.current) videoInputRef.current.value = "";
+    }
+  };
+
 
   const PlatformBadge = ({ platform }: { platform: string }) => {
     const p = platformOptions.find((o) => o.value === platform);
