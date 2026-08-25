@@ -187,6 +187,20 @@ const SocialPosts = () => {
               <DialogTitle>{editingId ? "Edit Post" : "Add Social Post"}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
+              <div>
+                <Label>Content Category *</Label>
+                <Select value={form.content_category} onValueChange={(v) => setForm({ ...form, content_category: v })}>
+                  <SelectTrigger><SelectValue placeholder="Select Health or Business" /></SelectTrigger>
+                  <SelectContent>
+                    {categoryOptions.map((c) => (
+                      <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {!form.content_category && (
+                  <p className="text-xs text-destructive mt-1">Choose whether this post belongs to the Health or Business journey.</p>
+                )}
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Platform</Label>
@@ -214,10 +228,7 @@ const SocialPosts = () => {
                   <Input value={form.author_handle} onChange={(e) => setForm({ ...form, author_handle: e.target.value })} placeholder="janedoe" />
                 </div>
               </div>
-              <div>
-                <Label>Author Avatar URL</Label>
-                <Input value={form.author_avatar_url} onChange={(e) => setForm({ ...form, author_avatar_url: e.target.value })} placeholder="https://..." />
-              </div>
+
               <div>
                 <Label>Content / Caption</Label>
                 <Textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={3} placeholder="What they said about the product..." />
