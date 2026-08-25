@@ -246,6 +246,7 @@ const Checkout = () => {
   };
 
   const [pendingPaypalOrderId, setPendingPaypalOrderId] = useState<string | null>(null);
+  const pendingPaypalOrderIdRef = useRef<string | null>(null);
 
   // Keep a ref to formData so PayPal callbacks always read the latest values
   const formDataRef = useRef(formData);
@@ -271,10 +272,12 @@ const Checkout = () => {
     if (isBot(honeypot)) throw new Error('Validation failed');
 
     // Save order as pending_payment BEFORE PayPal redirect
-    if (!pendingPaypalOrderId) {
+    if (!pendingPaypalOrderIdRef.current) {
       const newOrderId = await saveOrderToDb('pending_payment', currentFormData);
+      pendingPaypalOrderIdRef.current = newOrderId;
       setPendingPaypalOrderId(newOrderId);
     }
+    return pendingPaypalOrderIdRef.current;
   }, [pendingPaypalOrderId, honeypot, subtotal, discount, finalTotal, currency, paymentMethod, promoApplied, items]);
 
   const handlePayPalApprove = async (paypalOrderId: string, details: any) => {
@@ -285,16 +288,15 @@ const Checkout = () => {
         throw new Error('No pending order found');
       }
 
-      await supabase
-        .from('orders')
-        .update({ 
-          status: 'paid',
-          payment_status: 'paid',
-          payment_method: 'paypal',
-          paypal_transaction_id: details.id || paypalOrderId,
-          notes: `${formData.notes || ''}\n[PayPal Transaction: ${details.id || paypalOrderId}]`.trim(),
-        } as any)
-        .eq('id', dbOrderId);
+      const { data: verifiedPayment, error: verifyError } = await supabase.functions.invoke('verify-paypal-payment', {
+        body: {
+          orderId: dbOrderId,
+          paypalOrderId,
+        },
+      });
+
+      if (verifyError) throw verifyError;
+      if (verifiedPayment?.error) throw new Error(verifiedPayment.error);
 
       // GA4 purchase event
       if (typeof window !== 'undefined' && (window as any).dataLayer) {
@@ -323,6 +325,7 @@ const Checkout = () => {
 
       clearCart();
       sessionStorage.removeItem(CHECKOUT_STORAGE_KEY);
+      pendingPaypalOrderIdRef.current = null;
       setPendingPaypalOrderId(null);
       
       // Pass order data via navigation state so confirmation page works without DB fetch
