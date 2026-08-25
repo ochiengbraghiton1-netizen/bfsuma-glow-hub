@@ -10,6 +10,7 @@ import ProductSortDropdown, { SortOption } from "./products/ProductSortDropdown"
 import ProductFilters, {
   FilterState,
   defaultFilters,
+  normalizeFilters,
   getActiveFilterCount,
   MobileFilterButton,
 } from "./products/ProductFilters";
@@ -127,7 +128,7 @@ const ProductShowcase = () => {
   const [searchQuery, setSearchQuery] = useState<string>(savedState?.searchQuery ?? "");
   const [activeCategory, setActiveCategory] = useState<string>(savedState?.activeCategory ?? "all");
   const [sortOption, setSortOption] = useState<SortOption>(savedState?.sortOption ?? "featured");
-  const [filters, setFilters] = useState<FilterState>(savedState?.filters ?? defaultFilters);
+  const [filters, setFilters] = useState<FilterState>(() => normalizeFilters(savedState?.filters));
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   // Persist catalog state so returning from a product page restores filters
@@ -167,6 +168,23 @@ const ProductShowcase = () => {
 
   const clearFilters = () => setFilters(defaultFilters);
 
+  // Real database categories (ordered by display_order) with live product counts.
+  // Categories with zero products stay visible but show a (0) count.
+  const filterCategories = useMemo(() => {
+    const counts = new Map<string, number>();
+    products.forEach((product) => {
+      const ids = new Set<string>();
+      if (product.category?.id) ids.add(product.category.id);
+      product.categories.forEach((cat) => ids.add(cat.id));
+      ids.forEach((id) => counts.set(id, (counts.get(id) ?? 0) + 1));
+    });
+    return categories.map((cat) => ({
+      id: cat.id,
+      name: cat.name,
+      productCount: counts.get(cat.id) ?? 0,
+    }));
+  }, [categories, products]);
+
   const filteredAndSortedProducts = useMemo(() => {
     let result = products.filter((product) => {
       // Search
@@ -180,17 +198,13 @@ const ProductShowcase = () => {
         product.category?.slug === activeCategory ||
         product.categories.some((cat) => cat.slug === activeCategory);
 
-      // Health concerns - match against category names and benefit text
+      // Health concern — match by stable database category IDs (primary + join table)
       const matchesConcern =
-        filters.healthConcerns.length === 0 ||
-        filters.healthConcerns.some(
-          (concern) =>
-            product.category?.name.toLowerCase().includes(concern.toLowerCase()) ||
-            product.categories.some((cat) =>
-              cat.name.toLowerCase().includes(concern.toLowerCase())
-            ) ||
-            product.benefit?.toLowerCase().includes(concern.toLowerCase()) ||
-            product.name.toLowerCase().includes(concern.toLowerCase())
+        filters.categoryIds.length === 0 ||
+        filters.categoryIds.some(
+          (categoryId) =>
+            product.category?.id === categoryId ||
+            product.categories.some((cat) => cat.id === categoryId)
         );
 
       // Price range
@@ -316,6 +330,7 @@ const ProductShowcase = () => {
               </h3>
               <ProductFilters
                 filters={filters}
+                categories={filterCategories}
                 onChange={setFilters}
                 onClear={clearFilters}
               />
@@ -383,6 +398,7 @@ const ProductShowcase = () => {
           <div className="mt-6">
             <ProductFilters
               filters={filters}
+              categories={filterCategories}
               onChange={setFilters}
               onClear={() => {
                 clearFilters();

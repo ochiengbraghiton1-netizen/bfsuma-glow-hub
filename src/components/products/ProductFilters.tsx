@@ -2,39 +2,52 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Filter, X, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export const HEALTH_CONCERNS = [
-  "Women's Health",
-  "Men's Health",
-  "Immunity",
-  "Digestive Health",
-  "Joint & Bone Health",
-  "Brain & Energy",
-  "Weight Management",
-  "Skin & Beauty",
-] as const;
+export interface FilterCategory {
+  id: string;
+  name: string;
+  /** Number of currently visible products in this category (0 is allowed). */
+  productCount?: number;
+}
 
 export interface FilterState {
-  healthConcerns: string[];
+  /** Stable database category IDs — single source of truth for category filtering. */
+  categoryIds: string[];
   priceMin: string;
   priceMax: string;
   inStockOnly: boolean;
 }
 
 export const defaultFilters: FilterState = {
-  healthConcerns: [],
+  categoryIds: [],
   priceMin: "",
   priceMax: "",
   inStockOnly: false,
 };
 
+/**
+ * Sanitises persisted filter state (sessionStorage may still hold the legacy
+ * `healthConcerns` string list from the previous text-matching implementation).
+ */
+export const normalizeFilters = (value: unknown): FilterState => {
+  if (!value || typeof value !== "object") return defaultFilters;
+  const raw = value as Record<string, unknown>;
+  return {
+    categoryIds: Array.isArray(raw.categoryIds)
+      ? (raw.categoryIds.filter((id) => typeof id === "string") as string[])
+      : [],
+    priceMin: typeof raw.priceMin === "string" ? raw.priceMin : "",
+    priceMax: typeof raw.priceMax === "string" ? raw.priceMax : "",
+    inStockOnly: raw.inStockOnly === true,
+  };
+};
+
 export const getActiveFilterCount = (filters: FilterState): number => {
   let count = 0;
-  if (filters.healthConcerns.length > 0) count += filters.healthConcerns.length;
+  count += filters.categoryIds.length;
   if (filters.priceMin) count++;
   if (filters.priceMax) count++;
   if (filters.inStockOnly) count++;
@@ -43,12 +56,13 @@ export const getActiveFilterCount = (filters: FilterState): number => {
 
 interface ProductFiltersProps {
   filters: FilterState;
+  categories: FilterCategory[];
   onChange: (filters: FilterState) => void;
   onClear: () => void;
   className?: string;
 }
 
-const ProductFilters = ({ filters, onChange, onClear, className }: ProductFiltersProps) => {
+const ProductFilters = ({ filters, categories, onChange, onClear, className }: ProductFiltersProps) => {
   const [expandedSections, setExpandedSections] = useState({
     health: true,
     price: true,
@@ -59,11 +73,11 @@ const ProductFilters = ({ filters, onChange, onClear, className }: ProductFilter
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const toggleConcern = (concern: string) => {
-    const updated = filters.healthConcerns.includes(concern)
-      ? filters.healthConcerns.filter((c) => c !== concern)
-      : [...filters.healthConcerns, concern];
-    onChange({ ...filters, healthConcerns: updated });
+  const toggleCategory = (categoryId: string) => {
+    const updated = filters.categoryIds.includes(categoryId)
+      ? filters.categoryIds.filter((id) => id !== categoryId)
+      : [...filters.categoryIds, categoryId];
+    onChange({ ...filters, categoryIds: updated });
   };
 
   return (
@@ -83,18 +97,25 @@ const ProductFilters = ({ filters, onChange, onClear, className }: ProductFilter
         </button>
         {expandedSections.health && (
           <div className="space-y-2.5">
-            {HEALTH_CONCERNS.map((concern) => (
-              <label
-                key={concern}
-                className="flex items-center gap-2.5 cursor-pointer text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <Checkbox
-                  checked={filters.healthConcerns.includes(concern)}
-                  onCheckedChange={() => toggleConcern(concern)}
-                />
-                {concern}
-              </label>
-            ))}
+            {categories.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No categories available.</p>
+            ) : (
+              categories.map((category) => (
+                <label
+                  key={category.id}
+                  className="flex items-center gap-2.5 cursor-pointer text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <Checkbox
+                    checked={filters.categoryIds.includes(category.id)}
+                    onCheckedChange={() => toggleCategory(category.id)}
+                  />
+                  <span className="flex-1">{category.name}</span>
+                  {typeof category.productCount === "number" && (
+                    <span className="text-xs text-muted-foreground/70">({category.productCount})</span>
+                  )}
+                </label>
+              ))
+            )}
           </div>
         )}
       </div>
@@ -121,7 +142,7 @@ const ProductFilters = ({ filters, onChange, onClear, className }: ProductFilter
               onChange={(e) => onChange({ ...filters, priceMin: e.target.value })}
               className="h-9 text-sm rounded-lg"
             />
-            <span className="text-muted-foreground text-sm">—</span>
+            <span className="text-muted-foreground text-sm">to</span>
             <Input
               type="number"
               placeholder="Max"
