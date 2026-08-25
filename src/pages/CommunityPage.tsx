@@ -123,7 +123,30 @@ const CommunityPage = () => {
             to transform their health and build successful businesses.
           </p>
 
+          {/* Content category tabs */}
+          <div className="flex flex-wrap justify-center gap-2 mb-3">
+            {([
+              { key: "all", label: "All" },
+              { key: "health", label: "Health" },
+              { key: "business", label: "Business" },
+            ] as const).map((c) => {
+              const isActive = activeCategory === c.key;
+              return (
+                <Button
+                  key={c.key}
+                  variant={isActive ? "default" : "outline"}
+                  size="sm"
+                  className={cn("rounded-full px-5", isActive && "shadow-md")}
+                  onClick={() => setActiveCategory(c.key)}
+                >
+                  {c.label}
+                </Button>
+              );
+            })}
+          </div>
+
           {/* Platform filters */}
+
           <div className="flex flex-wrap justify-center gap-2">
             {platforms.map((p) => {
               const PIcon = p.icon;
