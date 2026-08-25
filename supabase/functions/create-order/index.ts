@@ -1,10 +1,13 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.89.0";
+import { sendLovableEmail } from "npm:@lovable.dev/email-js";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+const FROM_EMAIL = "BF SUMA ROYAL <noreply@bfsumaroyal.com>";
+const SENDER_DOMAIN = "notify.bfsumaroyal.com";
 
 // Server-side shipping fee schedule — single source of truth
 const SHIPPING_FEES: Record<string, number> = {
@@ -359,22 +362,30 @@ Deno.serve(async (req) => {
     <a href="https://bfsumaroyal.com/admin/orders" style="background:#047857;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;">View in Admin</a>
   </p>
 </div>`;
-        // Fire-and-forget — do not await; do not block order response
-        fetch("https://api.lovable.dev/api/v1/send-email", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${lovableApiKey}`,
-          },
-          body: JSON.stringify({
-            to: ["bfsumaroyal@gmail.com"],
-            cc: ["braghiton.ochieng.125@gmail.com"],
-            subject: `🛒 New Order ${shortId} — BF SUMA ROYAL`,
-            html,
-            purpose: "transactional",
-          }),
+        const text = `New Order ${shortId} - BF SUMA ROYAL
 
-        }).catch((e) => console.error("Admin email send error:", e));
+Customer: ${customerName}
+Phone: ${customerPhone}
+${customerEmail ? `Email: ${customerEmail}\n` : ""}Total: ${fmt(totalAmount)}
+Payment Method: ${paymentMethod}
+Status: ${status}
+Delivery Location: ${deliveryLocation}
+Delivery Address: ${shippingAddress}`;
+
+        sendLovableEmail(
+          {
+            run_id: `admin-order-${orderId}`,
+            to: "bfsumaroyal@gmail.com",
+            cc: "braghiton.ochieng.125@gmail.com",
+            from: FROM_EMAIL,
+            sender_domain: SENDER_DOMAIN,
+            subject: `New Order ${shortId} - BF SUMA ROYAL`,
+            html,
+            text,
+            purpose: "transactional",
+          },
+          { apiKey: lovableApiKey }
+        ).catch((e) => console.error("Admin email send error:", e));
       } else {
         console.error("LOVABLE_API_KEY not set — admin email skipped");
       }

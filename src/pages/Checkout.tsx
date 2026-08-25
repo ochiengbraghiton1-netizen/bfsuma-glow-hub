@@ -283,7 +283,7 @@ const Checkout = () => {
   const handlePayPalApprove = async (paypalOrderId: string, details: any) => {
     setIsSubmitting(true);
     try {
-      const dbOrderId = pendingPaypalOrderId;
+      const dbOrderId = pendingPaypalOrderIdRef.current || pendingPaypalOrderId;
       if (!dbOrderId) {
         throw new Error('No pending order found');
       }
