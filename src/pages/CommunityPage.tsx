@@ -208,15 +208,30 @@ const CommunityPage = () => {
                 const PIcon = platformIcons[post.platform] || Instagram;
 
                 return (
-                  <a
+                  <div
                     key={post.id}
-                    href={post.post_url || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group block rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                    className="group block rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 hover:shadow-lg transition-all duration-300"
                     style={{ animation: `fade-in 0.4s ease-out ${index * 0.05}s both` }}
                   >
-                    {post.image_url && (
+                    {post.video_url ? (
+                      <div className="aspect-square overflow-hidden bg-black relative">
+                        <video
+                          src={post.video_url}
+                          poster={post.image_url || undefined}
+                          controls
+                          muted
+                          playsInline
+                          preload="metadata"
+                          aria-label={`Video posted by ${post.author_name}`}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute top-3 right-3 pointer-events-none">
+                          <div className={cn("p-1.5 rounded-full backdrop-blur-sm", pConfig.bgColor)}>
+                            <PIcon className={cn("w-3.5 h-3.5", pConfig.color)} />
+                          </div>
+                        </div>
+                      </div>
+                    ) : post.image_url ? (
                       <div className="aspect-square overflow-hidden bg-muted/30 relative">
                         <img
                           src={post.image_url}
@@ -230,7 +245,7 @@ const CommunityPage = () => {
                           </div>
                         </div>
                       </div>
-                    )}
+                    ) : null}
                     <div className="p-4 space-y-2">
                       <div className="flex items-center gap-2">
                         {post.author_avatar_url ? (
