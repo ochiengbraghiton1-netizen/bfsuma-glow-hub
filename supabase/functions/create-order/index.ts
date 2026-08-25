@@ -1,10 +1,13 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.89.0";
+import { sendLovableEmail } from "npm:@lovable.dev/email-js";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+const FROM_EMAIL = "BF SUMA ROYAL <noreply@bfsumaroyal.com>";
+const SENDER_DOMAIN = "notify.bfsumaroyal.com";
 
 // Server-side shipping fee schedule — single source of truth
 const SHIPPING_FEES: Record<string, number> = {
@@ -53,21 +56,28 @@ Deno.serve(async (req) => {
     }
 
     const body: CreateOrderBody = await req.json();
+    const customerName = typeof body.customer_name === "string" ? body.customer_name.trim() : "";
+    const customerPhone = typeof body.customer_phone === "string" ? body.customer_phone.trim() : "";
+    const customerEmail = typeof body.customer_email === "string" ? body.customer_email.trim() : "";
+    const shippingAddress = typeof body.shipping_address === "string" ? body.shipping_address.trim() : "";
+    const notes = typeof body.notes === "string" ? body.notes.trim() : "";
+    const promotionCodeInput = typeof body.promotion_code === "string" ? body.promotion_code.trim() : "";
+    const requestedCurrency = typeof body.currency === "string" && body.currency.trim() ? body.currency.trim().toUpperCase() : "KES";
 
     // --- Validate required fields ---
-    if (!body.customer_name || body.customer_name.trim().length < 2) {
+    if (customerName.length < 2) {
       return new Response(JSON.stringify({ error: "Invalid customer name" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    if (!body.customer_phone || body.customer_phone.trim().length < 7) {
+    if (customerPhone.length < 7) {
       return new Response(JSON.stringify({ error: "Invalid phone number" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    if (!body.shipping_address || body.shipping_address.trim().length < 10) {
+    if (shippingAddress.length < 10) {
       return new Response(JSON.stringify({ error: "Invalid shipping address" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -172,11 +182,11 @@ Deno.serve(async (req) => {
     let discountAmount = 0;
     let promotionCode: string | null = null;
     let promoToConsume: { id: string; usage_count: number } | null = null;
-    if (body.promotion_code) {
+    if (promotionCodeInput) {
       const { data: promo } = await supabase
         .from("promotions")
         .select("*")
-        .eq("code", body.promotion_code.toUpperCase())
+        .eq("code", promotionCodeInput.toUpperCase())
         .eq("is_active", true)
         .maybeSingle();
 
@@ -257,11 +267,11 @@ Deno.serve(async (req) => {
     const orderId = crypto.randomUUID();
     const { error: orderError } = await supabase.from("orders").insert({
       id: orderId,
-      customer_name: body.customer_name.trim(),
-      customer_email: body.customer_email?.trim() || null,
-      customer_phone: body.customer_phone.trim(),
-      shipping_address: body.shipping_address.trim(),
-      notes: body.notes?.trim() || null,
+      customer_name: customerName,
+      customer_email: customerEmail || null,
+      customer_phone: customerPhone,
+      shipping_address: shippingAddress,
+      notes: notes || null,
       promotion_code: promotionCode,
       subtotal,
       discount_amount: discountAmount,
@@ -269,7 +279,7 @@ Deno.serve(async (req) => {
       total_amount: totalAmount,
       delivery_location: deliveryLocation,
       status,
-      currency: body.currency || "KES",
+      currency: requestedCurrency,
       payment_method: paymentMethod,
       payment_status: paymentStatus,
       user_id: userId,
@@ -334,17 +344,17 @@ Deno.serve(async (req) => {
   <p style="margin:0 0 16px;color:#555;">A new order has just been placed on BF SUMA ROYAL.</p>
   <table style="border-collapse:collapse;width:100%;">
     <tr><td style="padding:4px 0;"><b>Order ID</b></td><td>${shortId}</td></tr>
-    <tr><td style="padding:4px 0;"><b>Customer</b></td><td>${body.customer_name.trim()}</td></tr>
-    <tr><td style="padding:4px 0;"><b>Phone</b></td><td>${body.customer_phone.trim()}</td></tr>
-    ${body.customer_email ? `<tr><td style="padding:4px 0;"><b>Email</b></td><td>${body.customer_email.trim()}</td></tr>` : ""}
+    <tr><td style="padding:4px 0;"><b>Customer</b></td><td>${customerName}</td></tr>
+    <tr><td style="padding:4px 0;"><b>Phone</b></td><td>${customerPhone}</td></tr>
+    ${customerEmail ? `<tr><td style="padding:4px 0;"><b>Email</b></td><td>${customerEmail}</td></tr>` : ""}
     <tr><td style="padding:4px 0;vertical-align:top;"><b>Products</b></td><td>${productLines}</td></tr>
     <tr><td style="padding:4px 0;"><b>Subtotal</b></td><td>${fmt(subtotal)}</td></tr>
     ${discountAmount > 0 ? `<tr><td style="padding:4px 0;"><b>Discount</b></td><td>-${fmt(discountAmount)} (${promotionCode})</td></tr>` : ""}
     <tr><td style="padding:4px 0;"><b>Shipping</b></td><td>${fmt(shippingFee)}</td></tr>
     <tr><td style="padding:4px 0;"><b>Total</b></td><td><b>${fmt(totalAmount)}</b></td></tr>
     <tr><td style="padding:4px 0;"><b>Delivery Location</b></td><td>${deliveryLocation}</td></tr>
-    <tr><td style="padding:4px 0;vertical-align:top;"><b>Delivery Address</b></td><td>${body.shipping_address.trim().replace(/\n/g, "<br/>")}</td></tr>
-    ${body.notes ? `<tr><td style="padding:4px 0;vertical-align:top;"><b>Notes</b></td><td>${body.notes.trim().replace(/\n/g, "<br/>")}</td></tr>` : ""}
+    <tr><td style="padding:4px 0;vertical-align:top;"><b>Delivery Address</b></td><td>${shippingAddress.replace(/\n/g, "<br/>")}</td></tr>
+    ${notes ? `<tr><td style="padding:4px 0;vertical-align:top;"><b>Notes</b></td><td>${notes.replace(/\n/g, "<br/>")}</td></tr>` : ""}
     <tr><td style="padding:4px 0;"><b>Payment Method</b></td><td>${paymentMethod}</td></tr>
     <tr><td style="padding:4px 0;"><b>Status</b></td><td>${status}</td></tr>
   </table>
@@ -352,22 +362,30 @@ Deno.serve(async (req) => {
     <a href="https://bfsumaroyal.com/admin/orders" style="background:#047857;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;">View in Admin</a>
   </p>
 </div>`;
-        // Fire-and-forget — do not await; do not block order response
-        fetch("https://api.lovable.dev/api/v1/send-email", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${lovableApiKey}`,
-          },
-          body: JSON.stringify({
-            to: ["bfsumaroyal@gmail.com"],
-            cc: ["braghiton.ochieng.125@gmail.com"],
-            subject: `🛒 New Order ${shortId} — BF SUMA ROYAL`,
-            html,
-            purpose: "transactional",
-          }),
+        const text = `New Order ${shortId} - BF SUMA ROYAL
 
-        }).catch((e) => console.error("Admin email send error:", e));
+Customer: ${customerName}
+Phone: ${customerPhone}
+${customerEmail ? `Email: ${customerEmail}\n` : ""}Total: ${fmt(totalAmount)}
+Payment Method: ${paymentMethod}
+Status: ${status}
+Delivery Location: ${deliveryLocation}
+Delivery Address: ${shippingAddress}`;
+
+        sendLovableEmail(
+          {
+            run_id: `admin-order-${orderId}`,
+            to: "bfsumaroyal@gmail.com",
+            cc: ["braghiton.ochieng.125@gmail.com"],
+            from: FROM_EMAIL,
+            sender_domain: SENDER_DOMAIN,
+            subject: `New Order ${shortId} - BF SUMA ROYAL`,
+            html,
+            text,
+            purpose: "transactional",
+          },
+          { apiKey: lovableApiKey }
+        ).catch((e) => console.error("Admin email send error:", e));
       } else {
         console.error("LOVABLE_API_KEY not set — admin email skipped");
       }

@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { sendLovableEmail } from "npm:@lovable.dev/email-js";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -14,6 +15,8 @@ const CURRENCY_SYMBOLS: Record<string, string> = {
 };
 
 const formatOrderId = (id: string) => `BF-${id.slice(0, 4).toUpperCase()}`;
+const FROM_EMAIL = "BF SUMA ROYAL <noreply@bfsumaroyal.com>";
+const SENDER_DOMAIN = "notify.bfsumaroyal.com";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -67,6 +70,13 @@ Deno.serve(async (req) => {
       });
     }
 
+    if (!order.customer_email) {
+      return new Response(JSON.stringify({ error: "No customer email" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // Idempotency: claim the send slot atomically; a replay finds no row to update.
     const { data: claimed, error: claimErr } = await supabase
       .from("orders")
@@ -88,14 +98,6 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-
-    if (!order.customer_email) {
-      return new Response(JSON.stringify({ error: "No customer email" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
 
     // Fetch order items
     const { data: items } = await supabase
@@ -189,6 +191,16 @@ Deno.serve(async (req) => {
   </div>
 </body>
 </html>`;
+    const text = `Order ${shortId} Confirmed - BF SUMA ROYAL
+
+Hi ${order.customer_name},
+
+Your payment has been received and your order ${shortId} is now being processed.
+
+Total: ${formatAmount(order.total_amount)}
+Payment Status: Paid
+${order.paypal_transaction_id ? `Transaction ID: ${order.paypal_transaction_id}\n` : ""}
+Need help? WhatsApp +254 795 454 053`;
 
     // Send email using Lovable's transactional email
     const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
@@ -200,23 +212,23 @@ Deno.serve(async (req) => {
       });
     }
 
-    const emailResponse = await fetch("https://api.lovable.dev/api/v1/send-email", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${lovableApiKey}`,
-      },
-      body: JSON.stringify({
-        to: [order.customer_email],
-        subject: `Order ${shortId} Confirmed - BF SUMA ROYAL`,
-        html,
-        purpose: "transactional",
-      }),
-    });
-
-    if (!emailResponse.ok) {
-      const errText = await emailResponse.text();
-      console.error("Email API error:", errText);
+    try {
+      await sendLovableEmail(
+        {
+          run_id: `order-confirmation-${orderId}`,
+          to: order.customer_email,
+          from: FROM_EMAIL,
+          sender_domain: SENDER_DOMAIN,
+          subject: `Order ${shortId} Confirmed - BF SUMA ROYAL`,
+          html,
+          text,
+          purpose: "transactional",
+        },
+        { apiKey: lovableApiKey, idempotencyKey: `order-confirmation-${orderId}` }
+      );
+    } catch (emailError) {
+      const message = emailError instanceof Error ? emailError.message : "Unknown email error";
+      console.error("Email API error:", message);
       // Release the idempotency claim so a legitimate retry can succeed
       await supabase
         .from("orders")

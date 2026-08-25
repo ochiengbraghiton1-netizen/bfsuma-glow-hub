@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 interface PayPalButtonProps {
   amount: number;
   currency?: string;
-  onCreateOrder?: () => Promise<void>;
+  onCreateOrder?: () => Promise<string | void>;
   onApprove: (orderId: string, details: any) => Promise<void>;
   onError: (error: any) => void;
   disabled?: boolean;
@@ -115,12 +115,14 @@ const PayPalButton = ({ amount, currency = 'USD', onCreateOrder, onApprove, onEr
           height: 48,
         },
         createOrder: async (_data: any, actions: any) => {
+          let dbOrderId: string | void;
           if (onCreateOrderRef.current) {
-            await onCreateOrderRef.current();
+            dbOrderId = await onCreateOrderRef.current();
           }
           return actions.order.create({
             intent: 'CAPTURE',
             purchase_units: [{
+              custom_id: dbOrderId,
               amount: {
                 value: amountRef.current.toFixed(2),
                 currency_code: currencyRef.current,
