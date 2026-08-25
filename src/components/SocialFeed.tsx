@@ -98,12 +98,19 @@ const SocialPostCard = ({ post, index }: { post: SocialPost; index: number }) =>
               <span>{post.likes_count.toLocaleString()}</span>
             </div>
           )}
-          <span className="text-xs text-muted-foreground flex items-center gap-1 ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-            View post <ExternalLink className="w-3 h-3" />
-          </span>
+          {post.post_url && (
+            <a
+              href={post.post_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1 ml-auto transition-colors"
+            >
+              View post <ExternalLink className="w-3 h-3" />
+            </a>
+          )}
         </div>
       </div>
-    </a>
+    </div>
   );
 };
 
