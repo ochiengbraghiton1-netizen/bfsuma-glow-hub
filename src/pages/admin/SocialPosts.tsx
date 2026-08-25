@@ -350,7 +350,22 @@ const SocialPosts = () => {
               ) : (
                 posts.map((post) => (
                   <TableRow key={post.id}>
-                    <TableCell><PlatformBadge platform={post.platform} /></TableCell>
+                    <TableCell>
+                      <div className="flex flex-col gap-1 items-start">
+                        <Badge
+                          variant="outline"
+                          className={
+                            post.content_category === "business"
+                              ? "text-xs border-accent/40 text-accent"
+                              : "text-xs border-primary/30 text-primary"
+                          }
+                        >
+                          {post.content_category === "business" ? "Business" : "Health"}
+                        </Badge>
+                        <PlatformBadge platform={post.platform} />
+                      </div>
+                    </TableCell>
+
                     <TableCell>
                       <div>
                         <p className="font-medium text-sm">{post.author_name}</p>
