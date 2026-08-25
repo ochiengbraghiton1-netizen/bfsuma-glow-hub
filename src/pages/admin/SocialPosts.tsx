@@ -335,7 +335,7 @@ const SocialPosts = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Platform</TableHead>
+                <TableHead>Category / Platform</TableHead>
                 <TableHead>Author</TableHead>
                 <TableHead className="hidden md:table-cell">Content</TableHead>
                 <TableHead>Status</TableHead>
