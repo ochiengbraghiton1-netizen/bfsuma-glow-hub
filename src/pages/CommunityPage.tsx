@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import PageSEO from "@/components/PageSEO";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useSocialPosts, SocialPost } from "@/hooks/use-social-posts";
+import { useSocialPosts, SocialPost, SocialContentCategory } from "@/hooks/use-social-posts";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
