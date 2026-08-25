@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import PageSEO from "@/components/PageSEO";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useSocialPosts, SocialPost } from "@/hooks/use-social-posts";
+import { useSocialPosts, SocialPost, SocialContentCategory } from "@/hooks/use-social-posts";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -74,9 +74,12 @@ const ElfsightWidget = ({ widgetId }: { widgetId: string }) => {
 
 const CommunityPage = () => {
   const [activePlatform, setActivePlatform] = useState("all");
+  const [activeCategory, setActiveCategory] = useState<"all" | SocialContentCategory>("all");
   const { data: posts, isLoading } = useSocialPosts({
     platform: activePlatform === "all" ? undefined : activePlatform,
+    contentCategory: activeCategory === "all" ? undefined : activeCategory,
   });
+
   const [widgetId, setWidgetId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -120,7 +123,30 @@ const CommunityPage = () => {
             to transform their health and build successful businesses.
           </p>
 
+          {/* Content category tabs */}
+          <div className="flex flex-wrap justify-center gap-2 mb-3">
+            {([
+              { key: "all", label: "All" },
+              { key: "health", label: "Health" },
+              { key: "business", label: "Business" },
+            ] as const).map((c) => {
+              const isActive = activeCategory === c.key;
+              return (
+                <Button
+                  key={c.key}
+                  variant={isActive ? "default" : "outline"}
+                  size="sm"
+                  className={cn("rounded-full px-5", isActive && "shadow-md")}
+                  onClick={() => setActiveCategory(c.key)}
+                >
+                  {c.label}
+                </Button>
+              );
+            })}
+          </div>
+
           {/* Platform filters */}
+
           <div className="flex flex-wrap justify-center gap-2">
             {platforms.map((p) => {
               const PIcon = p.icon;

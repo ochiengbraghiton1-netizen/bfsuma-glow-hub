@@ -22,11 +22,16 @@ const platformOptions = [
   { value: "tiktok", label: "TikTok", icon: Video },
 ];
 
+const categoryOptions = [
+  { value: "health", label: "Health" },
+  { value: "business", label: "Business" },
+];
+
 const emptyForm = {
   platform: "instagram",
+  content_category: "",
   author_name: "",
   author_handle: "",
-  author_avatar_url: "",
   content: "",
   image_url: "",
   video_url: "",
@@ -37,6 +42,7 @@ const emptyForm = {
   is_approved: true,
   display_order: 0,
 };
+
 
 const SocialPosts = () => {
   const { toast } = useToast();
@@ -111,9 +117,9 @@ const SocialPosts = () => {
     setEditingId(post.id);
     setForm({
       platform: post.platform,
+      content_category: post.content_category || "",
       author_name: post.author_name || "",
       author_handle: post.author_handle || "",
-      author_avatar_url: post.author_avatar_url || "",
       content: post.content || "",
       image_url: post.image_url || "",
       video_url: post.video_url || "",
@@ -124,6 +130,7 @@ const SocialPosts = () => {
       is_approved: post.is_approved || false,
       display_order: post.display_order || 0,
     });
+
     setDialogOpen(true);
   };
 
@@ -180,6 +187,20 @@ const SocialPosts = () => {
               <DialogTitle>{editingId ? "Edit Post" : "Add Social Post"}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
+              <div>
+                <Label>Content Category *</Label>
+                <Select value={form.content_category} onValueChange={(v) => setForm({ ...form, content_category: v })}>
+                  <SelectTrigger><SelectValue placeholder="Select Health or Business" /></SelectTrigger>
+                  <SelectContent>
+                    {categoryOptions.map((c) => (
+                      <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {!form.content_category && (
+                  <p className="text-xs text-destructive mt-1">Choose whether this post belongs to the Health or Business journey.</p>
+                )}
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Platform</Label>
@@ -207,10 +228,7 @@ const SocialPosts = () => {
                   <Input value={form.author_handle} onChange={(e) => setForm({ ...form, author_handle: e.target.value })} placeholder="janedoe" />
                 </div>
               </div>
-              <div>
-                <Label>Author Avatar URL</Label>
-                <Input value={form.author_avatar_url} onChange={(e) => setForm({ ...form, author_avatar_url: e.target.value })} placeholder="https://..." />
-              </div>
+
               <div>
                 <Label>Content / Caption</Label>
                 <Textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={3} placeholder="What they said about the product..." />
@@ -304,7 +322,7 @@ const SocialPosts = () => {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => { setDialogOpen(false); resetForm(); }}>Cancel</Button>
-              <Button onClick={() => saveMutation.mutate()} disabled={!form.author_name || saveMutation.isPending}>
+              <Button onClick={() => saveMutation.mutate()} disabled={!form.author_name || !form.content_category || saveMutation.isPending}>
                 {saveMutation.isPending ? "Saving..." : editingId ? "Update" : "Create"}
               </Button>
             </DialogFooter>
@@ -317,7 +335,7 @@ const SocialPosts = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Platform</TableHead>
+                <TableHead>Category / Platform</TableHead>
                 <TableHead>Author</TableHead>
                 <TableHead className="hidden md:table-cell">Content</TableHead>
                 <TableHead>Status</TableHead>
@@ -332,7 +350,22 @@ const SocialPosts = () => {
               ) : (
                 posts.map((post) => (
                   <TableRow key={post.id}>
-                    <TableCell><PlatformBadge platform={post.platform} /></TableCell>
+                    <TableCell>
+                      <div className="flex flex-col gap-1 items-start">
+                        <Badge
+                          variant="outline"
+                          className={
+                            post.content_category === "business"
+                              ? "text-xs border-accent/40 text-accent"
+                              : "text-xs border-primary/30 text-primary"
+                          }
+                        >
+                          {post.content_category === "business" ? "Business" : "Health"}
+                        </Badge>
+                        <PlatformBadge platform={post.platform} />
+                      </div>
+                    </TableCell>
+
                     <TableCell>
                       <div>
                         <p className="font-medium text-sm">{post.author_name}</p>

@@ -1248,6 +1248,7 @@ export type Database = {
           author_handle: string | null
           author_name: string
           content: string | null
+          content_category: string
           created_at: string
           display_order: number | null
           hashtags: string[] | null
@@ -1266,6 +1267,7 @@ export type Database = {
           author_handle?: string | null
           author_name: string
           content?: string | null
+          content_category?: string
           created_at?: string
           display_order?: number | null
           hashtags?: string[] | null
@@ -1284,6 +1286,7 @@ export type Database = {
           author_handle?: string | null
           author_name?: string
           content?: string | null
+          content_category?: string
           created_at?: string
           display_order?: number | null
           hashtags?: string[] | null

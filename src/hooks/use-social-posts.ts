@@ -1,9 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+export type SocialContentCategory = "health" | "business";
+
 export interface SocialPost {
   id: string;
   platform: string;
+  content_category: SocialContentCategory;
   author_name: string;
   author_handle: string | null;
   author_avatar_url: string | null;
@@ -19,7 +22,12 @@ export interface SocialPost {
   created_at: string;
 }
 
-export function useSocialPosts(options?: { featured?: boolean; platform?: string; limit?: number }) {
+export function useSocialPosts(options?: {
+  featured?: boolean;
+  platform?: string;
+  contentCategory?: SocialContentCategory;
+  limit?: number;
+}) {
   return useQuery({
     queryKey: ["social-posts", options],
     queryFn: async () => {
@@ -36,6 +44,9 @@ export function useSocialPosts(options?: { featured?: boolean; platform?: string
       if (options?.platform) {
         query = query.eq("platform", options.platform);
       }
+      if (options?.contentCategory) {
+        query = query.eq("content_category", options.contentCategory);
+      }
       if (options?.limit) {
         query = query.limit(options.limit);
       }
@@ -46,3 +57,4 @@ export function useSocialPosts(options?: { featured?: boolean; platform?: string
     },
   });
 }
+
