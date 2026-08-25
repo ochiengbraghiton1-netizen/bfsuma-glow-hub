@@ -376,7 +376,7 @@ Delivery Address: ${shippingAddress}`;
           {
             run_id: `admin-order-${orderId}`,
             to: "bfsumaroyal@gmail.com",
-            cc: "braghiton.ochieng.125@gmail.com",
+            cc: ["braghiton.ochieng.125@gmail.com"],
             from: FROM_EMAIL,
             sender_domain: SENDER_DOMAIN,
             subject: `New Order ${shortId} - BF SUMA ROYAL`,

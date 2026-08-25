@@ -29,7 +29,7 @@ serve(async (req) => {
       action?: unknown;
     };
 
-    // Either a valid `messages` array or a valid `action` string is required.
+    // Either a valid messages array or a valid action string is required.
     const hasAction = typeof action === "string" && action.trim().length > 0;
     const validMessages =
       Array.isArray(messages) &&
