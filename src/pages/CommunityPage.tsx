@@ -74,9 +74,12 @@ const ElfsightWidget = ({ widgetId }: { widgetId: string }) => {
 
 const CommunityPage = () => {
   const [activePlatform, setActivePlatform] = useState("all");
+  const [activeCategory, setActiveCategory] = useState<"all" | SocialContentCategory>("all");
   const { data: posts, isLoading } = useSocialPosts({
     platform: activePlatform === "all" ? undefined : activePlatform,
+    contentCategory: activeCategory === "all" ? undefined : activeCategory,
   });
+
   const [widgetId, setWidgetId] = useState<string | null>(null);
 
   useEffect(() => {
