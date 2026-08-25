@@ -277,6 +277,9 @@ const Checkout = () => {
       pendingPaypalOrderIdRef.current = newOrderId;
       setPendingPaypalOrderId(newOrderId);
     }
+    if (!pendingPaypalOrderIdRef.current) {
+      throw new Error('Unable to create PayPal order');
+    }
     return pendingPaypalOrderIdRef.current;
   }, [pendingPaypalOrderId, honeypot, subtotal, discount, finalTotal, currency, paymentMethod, promoApplied, items]);
 
