@@ -117,9 +117,9 @@ const SocialPosts = () => {
     setEditingId(post.id);
     setForm({
       platform: post.platform,
+      content_category: post.content_category || "",
       author_name: post.author_name || "",
       author_handle: post.author_handle || "",
-      author_avatar_url: post.author_avatar_url || "",
       content: post.content || "",
       image_url: post.image_url || "",
       video_url: post.video_url || "",
@@ -130,6 +130,7 @@ const SocialPosts = () => {
       is_approved: post.is_approved || false,
       display_order: post.display_order || 0,
     });
+
     setDialogOpen(true);
   };
 
