@@ -27,6 +27,13 @@ const categoryOptions = [
   { value: "business", label: "Business" },
 ];
 
+const orientationOptions = [
+  { value: "auto", label: "Auto (default)" },
+  { value: "portrait", label: "Portrait (9:16)" },
+  { value: "landscape", label: "Landscape (16:9)" },
+  { value: "square", label: "Square (1:1)" },
+];
+
 const emptyForm = {
   platform: "instagram",
   content_category: "",
@@ -35,6 +42,10 @@ const emptyForm = {
   content: "",
   image_url: "",
   video_url: "",
+  video_thumbnail_url: "",
+  video_title: "",
+  video_description: "",
+  video_orientation: "auto",
   post_url: "",
   hashtags: "",
   likes_count: 0,
