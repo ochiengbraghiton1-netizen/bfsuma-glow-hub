@@ -31,7 +31,7 @@ const SocialPostCard = ({ post, index }: { post: SocialPost; index: number }) =>
             controls
             muted
             playsInline
-            preload="metadata"
+            preload="none"
             aria-label={post.video_title || `Video posted by ${post.author_name} on ${platform.label}`}
             className={cn(
               "w-full h-full",
