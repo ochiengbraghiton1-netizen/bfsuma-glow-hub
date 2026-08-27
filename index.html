@@ -46,19 +46,10 @@
       type="image/webp"
       fetchpriority="high"
     />
-    <!-- Use the admin hero (cached from a previous visit) as the LCP image when known -->
-    <script>
-      (function(){
-        try {
-          var u = localStorage.getItem('bfs_hero_img');
-          if (u && /^https:\/\//.test(u)) {
-            var l = document.createElement('link');
-            l.rel = 'preload'; l.as = 'image'; l.href = u; l.setAttribute('fetchpriority','high');
-            document.head.appendChild(l);
-          }
-        } catch (e) {}
-      })();
-    </script>
+    <!-- Only one hero preload above: a second (admin-hero) preload competed
+         with it for bandwidth. The admin hero, when cached, is already in the
+         HTTP cache and is fetched with fetchpriority=high by the <img>. -->
+    
     
     <!-- SEO fallback is for crawlers reading HTML source — never visible to users -->
     <style>

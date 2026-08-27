@@ -14,10 +14,27 @@ const readCachedHero = () => {
   }
 };
 
+/**
+ * Width-limited variants for the admin-managed hero using Supabase's built-in
+ * image transformation endpoint (no new dependency/service). Returns null for
+ * any URL we don't recognise, in which case the original URL is used as-is.
+ */
+const supabaseHeroSrcSet = (url: string) => {
+  if (!url.includes("/storage/v1/object/public/")) return null;
+  const base = url.replace("/storage/v1/object/public/", "/storage/v1/render/image/public/");
+  const sep = base.includes("?") ? "&" : "?";
+  return [640, 960, 1280, 1920]
+    .map((w) => `${base}${sep}width=${w}&quality=70 ${w}w`)
+    .join(", ");
+};
+
 const Hero = () => {
   // Use the previously seen admin hero straight away so it is the LCP element
   // instead of swapping in later (a late swap resets LCP and tanks the score).
   const [heroImage] = useState<string | null>(readCachedHero);
+  // If the transform endpoint is unavailable, fall back to the plain URL.
+  const [heroSrcSetFailed, setHeroSrcSetFailed] = useState(false);
+  const heroSrcSet = heroImage && !heroSrcSetFailed ? supabaseHeroSrcSet(heroImage) : null;
 
   useEffect(() => {
     // Defer Supabase import to avoid loading the 169KB chunk during initial render
@@ -53,6 +70,8 @@ const Hero = () => {
       {heroImage ? (
         <img
           src={heroImage}
+          srcSet={heroSrcSet || undefined}
+          onError={() => { if (heroSrcSet) setHeroSrcSetFailed(true); }}
           alt="BF SUMA Royal wellness community with real customers and team members"
           loading="eager"
           decoding="sync"

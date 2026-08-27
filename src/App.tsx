@@ -15,8 +15,9 @@ const Sonner = lazy(() => import("@/components/ui/sonner").then(m => ({ default:
 const Chatbot = lazy(() => import("@/components/Chatbot"));
 
 
-// Index page — lazy loaded to reduce initial JS parse/execution
-const Index = lazy(() => import("./pages/Index"));
+// Index page — imported eagerly: it is the entry route, and an extra lazy
+// chunk round trip before the hero mounts is the main mobile LCP cost.
+import Index from "./pages/Index";
 
 // Lazy-loaded routes for code splitting
 const Checkout = lazy(() => import("./pages/Checkout"));
