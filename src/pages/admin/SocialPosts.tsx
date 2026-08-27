@@ -89,6 +89,10 @@ const SocialPosts = () => {
         hashtags: form.hashtags ? form.hashtags.split(",").map((t) => t.trim().replace(/^#/, "")) : [],
         likes_count: Number(form.likes_count) || 0,
         display_order: Number(form.display_order) || 0,
+        video_thumbnail_url: form.video_thumbnail_url || null,
+        video_title: form.video_title || null,
+        video_description: form.video_description || null,
+        video_orientation: form.video_orientation || "auto",
       };
 
       if (editingId) {
