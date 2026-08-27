@@ -61,68 +61,78 @@ const Index = () => {
         <meta name="twitter:description" content="Shop trusted natural supplements in Kenya. Boost energy, immunity & overall wellness with BF SUMA Royal." />
         <meta name="twitter:image" content="https://bfsumaroyal.com/og-image.png" />
       </Helmet>
-      <Suspense fallback={<div className="h-16" />}>
-        <Header />
-      </Suspense>
+      <Header />
       <main className="pt-16">
         {/* 1. Hero */}
         <Hero />
 
-        <Suspense fallback={null}>
-          {/* 2. Certification strip */}
-          <CertificationsStrip />
+        {/* Everything below the fold mounts after first paint so it cannot
+            delay the hero (LCP). Section order and content are unchanged. */}
+        {belowFoldReady && (
+          <>
+            <div className="content-auto">
+              <Suspense fallback={null}>
+                {/* 2. Certification strip */}
+                <CertificationsStrip />
 
-          {/* 3. What's bothering you today? (includes "Not sure yet?" block) */}
-          <ShopByHealthGoal />
+                {/* 3. What's bothering you today? (includes "Not sure yet?" block) */}
+                <ShopByHealthGoal />
 
-          {/* 5. Premium Products */}
-          <ProductShowcase />
+                {/* 5. Premium Products */}
+                <ProductShowcase />
 
-          {/* 6. Real Results from Real Kenyans (merged before/after + quotes) */}
-          <RealResultsMerged />
+                {/* 6. Real Results from Real Kenyans (merged before/after + quotes) */}
+                <RealResultsMerged />
 
-          {/* 7. Single consultation CTA */}
-          <ConsultationCTA
-            headline="Still unsure? Talk to a wellness expert now."
-            subtext="Get free personalised advice on the best supplements for your health goals."
-          />
+                {/* 7. Single consultation CTA */}
+                <ConsultationCTA
+                  headline="Still unsure? Talk to a wellness expert now."
+                  subtext="Get free personalised advice on the best supplements for your health goals."
+                />
 
-          {/* Why Customers Trust Us (replaces AI expert photos) */}
-          <WhyTrustUs />
-        </Suspense>
+                {/* Why Customers Trust Us (replaces AI expert photos) */}
+                <WhyTrustUs />
+              </Suspense>
+            </div>
 
-        {/* Blog posts */}
-        <div className="content-auto">
-          <Suspense fallback={null}>
-            <StoriesInsights />
-            <About />
-            <FAQ />
-          </Suspense>
-        </div>
+            {/* Blog posts */}
+            <div className="content-auto">
+              <Suspense fallback={null}>
+                <StoriesInsights />
+                <About />
+                <FAQ />
+              </Suspense>
+            </div>
 
-        <div className="content-auto">
-          <Suspense fallback={null}>
-            <JoinEarn />
-            <Community />
-            <Contact />
-            <NewsletterSignup />
-          </Suspense>
-        </div>
+            <div className="content-auto">
+              <Suspense fallback={null}>
+                <JoinEarn />
+                <Community />
+                <Contact />
+                <NewsletterSignup />
+              </Suspense>
+            </div>
 
-        {/* Final section above footer: community photos */}
-        <Suspense fallback={null}>
-          <RealPeopleSection />
-        </Suspense>
+            {/* Final section above footer: community photos */}
+            <div className="content-auto">
+              <Suspense fallback={null}>
+                <RealPeopleSection />
+              </Suspense>
+            </div>
 
-        <Suspense fallback={null}>
-          <StructuredData />
-          <SectionNav />
-          <HealthQuizPopup />
-        </Suspense>
+            <Suspense fallback={null}>
+              <StructuredData />
+              <SectionNav />
+              <HealthQuizPopup />
+            </Suspense>
+          </>
+        )}
       </main>
-      <Suspense fallback={null}>
-        <Footer />
-      </Suspense>
+      {belowFoldReady && (
+        <Suspense fallback={null}>
+          <Footer />
+        </Suspense>
+      )}
     </div>
   );
 };
