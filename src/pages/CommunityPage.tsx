@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import PageSEO from "@/components/PageSEO";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useSocialPosts, SocialPost, SocialContentCategory } from "@/hooks/use-social-posts";
+import { useSocialPosts, SocialPost, SocialContentCategory, videoAspectClass } from "@/hooks/use-social-posts";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -214,16 +214,19 @@ const CommunityPage = () => {
                     style={{ animation: `fade-in 0.4s ease-out ${index * 0.05}s both` }}
                   >
                     {post.video_url ? (
-                      <div className="aspect-square overflow-hidden bg-black relative">
+                      <div className={cn("overflow-hidden bg-black relative", videoAspectClass(post.video_orientation))}>
                         <video
                           src={post.video_url}
-                          poster={post.image_url || undefined}
+                          poster={post.video_thumbnail_url || post.image_url || undefined}
                           controls
                           muted
                           playsInline
                           preload="metadata"
-                          aria-label={`Video posted by ${post.author_name}`}
-                          className="w-full h-full object-cover"
+                          aria-label={post.video_title || `Video posted by ${post.author_name}`}
+                          className={cn(
+                            "w-full h-full",
+                            post.video_orientation && post.video_orientation !== "auto" ? "object-contain" : "object-cover"
+                          )}
                         />
                         <div className="absolute top-3 right-3 pointer-events-none">
                           <div className={cn("p-1.5 rounded-full backdrop-blur-sm", pConfig.bgColor)}>
@@ -262,6 +265,12 @@ const CommunityPage = () => {
                           )}
                         </div>
                       </div>
+                      {post.video_url && post.video_title && (
+                        <p className="text-sm font-semibold line-clamp-2">{post.video_title}</p>
+                      )}
+                      {post.video_url && post.video_description && (
+                        <p className="text-xs text-muted-foreground line-clamp-2">{post.video_description}</p>
+                      )}
                       {post.content && (
                         <p className="text-sm text-muted-foreground line-clamp-2">{post.content}</p>
                       )}

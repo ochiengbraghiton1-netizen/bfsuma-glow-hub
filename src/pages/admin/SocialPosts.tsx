@@ -27,6 +27,13 @@ const categoryOptions = [
   { value: "business", label: "Business" },
 ];
 
+const orientationOptions = [
+  { value: "auto", label: "Auto (default)" },
+  { value: "portrait", label: "Portrait (9:16)" },
+  { value: "landscape", label: "Landscape (16:9)" },
+  { value: "square", label: "Square (1:1)" },
+];
+
 const emptyForm = {
   platform: "instagram",
   content_category: "",
@@ -35,6 +42,10 @@ const emptyForm = {
   content: "",
   image_url: "",
   video_url: "",
+  video_thumbnail_url: "",
+  video_title: "",
+  video_description: "",
+  video_orientation: "auto",
   post_url: "",
   hashtags: "",
   likes_count: 0,
@@ -55,6 +66,8 @@ const SocialPosts = () => {
   const [dragActive, setDragActive] = useState(false);
   const [videoUploading, setVideoUploading] = useState(false);
   const videoInputRef = useRef<HTMLInputElement>(null);
+  const [thumbUploading, setThumbUploading] = useState(false);
+  const thumbInputRef = useRef<HTMLInputElement>(null);
 
   const { data: posts, isLoading } = useQuery({
     queryKey: ["admin-social-posts"],
@@ -76,6 +89,10 @@ const SocialPosts = () => {
         hashtags: form.hashtags ? form.hashtags.split(",").map((t) => t.trim().replace(/^#/, "")) : [],
         likes_count: Number(form.likes_count) || 0,
         display_order: Number(form.display_order) || 0,
+        video_thumbnail_url: form.video_thumbnail_url || null,
+        video_title: form.video_title || null,
+        video_description: form.video_description || null,
+        video_orientation: form.video_orientation || "auto",
       };
 
       if (editingId) {
@@ -125,6 +142,10 @@ const SocialPosts = () => {
       content: post.content || "",
       image_url: post.image_url || "",
       video_url: post.video_url || "",
+      video_thumbnail_url: post.video_thumbnail_url || "",
+      video_title: post.video_title || "",
+      video_description: post.video_description || "",
+      video_orientation: post.video_orientation || "auto",
       post_url: post.post_url || "",
       hashtags: post.hashtags?.join(", ") || "",
       likes_count: post.likes_count || 0,
@@ -136,28 +157,33 @@ const SocialPosts = () => {
     setDialogOpen(true);
   };
 
-  const handleImageUpload = async (file: File) => {
-    setUploading(true);
+  const handleImageUpload = async (
+    file: File,
+    field: "image_url" | "video_thumbnail_url" = "image_url"
+  ) => {
+    const isThumb = field === "video_thumbnail_url";
+    if (isThumb) setThumbUploading(true); else setUploading(true);
     try {
       const originalSize = file.size;
       const compressed = await compressImage(file, 1200, 1200, 0.8);
       const saved = originalSize - compressed.size;
 
       const ext = compressed.name.split(".").pop();
-      const path = `${crypto.randomUUID()}.${ext}`;
+      const path = `${isThumb ? "thumbnails/" : ""}${crypto.randomUUID()}.${ext}`;
       const { error } = await supabase.storage.from("social-posts").upload(path, compressed);
       if (error) throw error;
       const { data: urlData } = supabase.storage.from("social-posts").getPublicUrl(path);
-      setForm((prev) => ({ ...prev, image_url: urlData.publicUrl }));
+      setForm((prev) => ({ ...prev, [field]: urlData.publicUrl }));
       const desc = saved > 0
         ? `Compressed from ${formatFileSize(originalSize)} to ${formatFileSize(compressed.size)} (saved ${formatFileSize(saved)})`
         : `Uploaded ${formatFileSize(compressed.size)}`;
-      toast({ title: "Image uploaded", description: desc });
+      toast({ title: isThumb ? "Thumbnail uploaded" : "Image uploaded", description: desc });
     } catch (err: any) {
       toast({ title: "Upload failed", description: err.message, variant: "destructive" });
     } finally {
-      setUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+      if (isThumb) setThumbUploading(false); else setUploading(false);
+      const ref = isThumb ? thumbInputRef : fileInputRef;
+      if (ref.current) ref.current.value = "";
     }
   };
   const ALLOWED_VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"];
@@ -400,11 +426,102 @@ const SocialPosts = () => {
                     onChange={(e) => setForm({ ...form, video_url: e.target.value })}
                     placeholder="https://... (video URL)"
                   />
-                  {form.image_url && form.video_url && (
+                  {form.image_url && form.video_url && !form.video_thumbnail_url && (
                     <p className="text-xs text-muted-foreground">The image will be used as the video poster.</p>
                   )}
                 </div>
               </div>
+
+              {/* Video publishing options (optional) */}
+              <div className="space-y-4 rounded-lg border border-dashed p-4">
+                <p className="text-sm font-medium">Video publishing options <span className="text-muted-foreground font-normal">(optional)</span></p>
+
+                <div>
+                  <Label>Custom Thumbnail / Poster</Label>
+                  <div className="space-y-2">
+                    {form.video_thumbnail_url && (
+                      <div className="relative w-full h-32 rounded-lg overflow-hidden border bg-muted">
+                        <img src={form.video_thumbnail_url} alt="Thumbnail preview" className="w-full h-full object-cover" />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="icon"
+                          className="absolute top-2 right-2 h-6 w-6"
+                          onClick={() => setForm({ ...form, video_thumbnail_url: "" })}
+                          aria-label="Remove thumbnail"
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    )}
+                    <div
+                      className="relative border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer border-muted-foreground/25 hover:border-primary/50"
+                      onClick={() => thumbInputRef.current?.click()}
+                    >
+                      <input
+                        ref={thumbInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleImageUpload(file, "video_thumbnail_url");
+                        }}
+                      />
+                      {thumbUploading ? (
+                        <div className="flex flex-col items-center gap-1">
+                          <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                          <span className="text-sm text-muted-foreground">Uploading thumbnail...</span>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center gap-1">
+                          <Upload className="h-5 w-5 text-muted-foreground" />
+                          <span className="text-sm font-medium">Click to upload a thumbnail</span>
+                          <span className="text-xs text-muted-foreground">Falls back to the post image if left empty</span>
+                        </div>
+                      )}
+                    </div>
+                    <Input
+                      value={form.video_thumbnail_url}
+                      onChange={(e) => setForm({ ...form, video_thumbnail_url: e.target.value })}
+                      placeholder="https://... (thumbnail URL)"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Video Title</Label>
+                  <Input
+                    value={form.video_title}
+                    onChange={(e) => setForm({ ...form, video_title: e.target.value })}
+                    placeholder="e.g. How ArthroXtra helped Jane move freely again"
+                  />
+                </div>
+
+                <div>
+                  <Label>Video Description</Label>
+                  <Textarea
+                    rows={2}
+                    value={form.video_description}
+                    onChange={(e) => setForm({ ...form, video_description: e.target.value })}
+                    placeholder="Short supporting line shown under the title"
+                  />
+                </div>
+
+                <div>
+                  <Label>Display Orientation</Label>
+                  <Select value={form.video_orientation} onValueChange={(v) => setForm({ ...form, video_orientation: v })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {orientationOptions.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground mt-1">Presentation only. The video file is never modified.</p>
+                </div>
+              </div>
+
 
 
 
