@@ -75,6 +75,14 @@ const SocialPostCard = ({ post, index }: { post: SocialPost; index: number }) =>
           <PlatformIcon className={cn("w-4 h-4 shrink-0", platform.color)} />
         </div>
 
+        {/* Video publishing metadata */}
+        {post.video_url && post.video_title && (
+          <p className="text-sm font-semibold text-foreground line-clamp-2">{post.video_title}</p>
+        )}
+        {post.video_url && post.video_description && (
+          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{post.video_description}</p>
+        )}
+
         {/* Text content */}
         {post.content && (
           <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
