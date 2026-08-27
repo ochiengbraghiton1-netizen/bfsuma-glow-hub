@@ -3,6 +3,22 @@ import { supabase } from "@/integrations/supabase/client";
 
 export type SocialContentCategory = "health" | "business";
 
+export type VideoOrientation = "auto" | "portrait" | "landscape" | "square";
+
+/** Frontend-only presentation helper: maps orientation to a Tailwind aspect ratio. */
+export function videoAspectClass(orientation?: string | null) {
+  switch (orientation) {
+    case "portrait":
+      return "aspect-[9/16]";
+    case "landscape":
+      return "aspect-video";
+    case "square":
+      return "aspect-square";
+    default:
+      return "aspect-square";
+  }
+}
+
 export interface SocialPost {
   id: string;
   platform: string;
@@ -13,6 +29,10 @@ export interface SocialPost {
   content: string | null;
   image_url: string | null;
   video_url: string | null;
+  video_thumbnail_url: string | null;
+  video_title: string | null;
+  video_description: string | null;
+  video_orientation: VideoOrientation | null;
   post_url: string | null;
   hashtags: string[] | null;
   likes_count: number;
