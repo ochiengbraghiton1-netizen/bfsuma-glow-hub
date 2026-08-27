@@ -265,6 +265,12 @@ const CommunityPage = () => {
                           )}
                         </div>
                       </div>
+                      {post.video_url && post.video_title && (
+                        <p className="text-sm font-semibold line-clamp-2">{post.video_title}</p>
+                      )}
+                      {post.video_url && post.video_description && (
+                        <p className="text-xs text-muted-foreground line-clamp-2">{post.video_description}</p>
+                      )}
                       {post.content && (
                         <p className="text-sm text-muted-foreground line-clamp-2">{post.content}</p>
                       )}
