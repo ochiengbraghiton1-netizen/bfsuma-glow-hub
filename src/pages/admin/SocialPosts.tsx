@@ -66,6 +66,8 @@ const SocialPosts = () => {
   const [dragActive, setDragActive] = useState(false);
   const [videoUploading, setVideoUploading] = useState(false);
   const videoInputRef = useRef<HTMLInputElement>(null);
+  const [thumbUploading, setThumbUploading] = useState(false);
+  const thumbInputRef = useRef<HTMLInputElement>(null);
 
   const { data: posts, isLoading } = useQuery({
     queryKey: ["admin-social-posts"],
@@ -151,28 +153,33 @@ const SocialPosts = () => {
     setDialogOpen(true);
   };
 
-  const handleImageUpload = async (file: File) => {
-    setUploading(true);
+  const handleImageUpload = async (
+    file: File,
+    field: "image_url" | "video_thumbnail_url" = "image_url"
+  ) => {
+    const isThumb = field === "video_thumbnail_url";
+    if (isThumb) setThumbUploading(true); else setUploading(true);
     try {
       const originalSize = file.size;
       const compressed = await compressImage(file, 1200, 1200, 0.8);
       const saved = originalSize - compressed.size;
 
       const ext = compressed.name.split(".").pop();
-      const path = `${crypto.randomUUID()}.${ext}`;
+      const path = `${isThumb ? "thumbnails/" : ""}${crypto.randomUUID()}.${ext}`;
       const { error } = await supabase.storage.from("social-posts").upload(path, compressed);
       if (error) throw error;
       const { data: urlData } = supabase.storage.from("social-posts").getPublicUrl(path);
-      setForm((prev) => ({ ...prev, image_url: urlData.publicUrl }));
+      setForm((prev) => ({ ...prev, [field]: urlData.publicUrl }));
       const desc = saved > 0
         ? `Compressed from ${formatFileSize(originalSize)} to ${formatFileSize(compressed.size)} (saved ${formatFileSize(saved)})`
         : `Uploaded ${formatFileSize(compressed.size)}`;
-      toast({ title: "Image uploaded", description: desc });
+      toast({ title: isThumb ? "Thumbnail uploaded" : "Image uploaded", description: desc });
     } catch (err: any) {
       toast({ title: "Upload failed", description: err.message, variant: "destructive" });
     } finally {
-      setUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+      if (isThumb) setThumbUploading(false); else setUploading(false);
+      const ref = isThumb ? thumbInputRef : fileInputRef;
+      if (ref.current) ref.current.value = "";
     }
   };
   const ALLOWED_VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"];
