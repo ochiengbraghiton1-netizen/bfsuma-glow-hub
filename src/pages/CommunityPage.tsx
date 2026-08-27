@@ -221,7 +221,7 @@ const CommunityPage = () => {
                           controls
                           muted
                           playsInline
-                          preload="metadata"
+                          preload="none"
                           aria-label={post.video_title || `Video posted by ${post.author_name}`}
                           className={cn(
                             "w-full h-full",
