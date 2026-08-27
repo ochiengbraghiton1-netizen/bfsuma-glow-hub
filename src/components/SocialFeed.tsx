@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Instagram, Facebook, Twitter, Video, Heart, ExternalLink, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useSocialPosts, SocialPost } from "@/hooks/use-social-posts";
+import { useSocialPosts, SocialPost, videoAspectClass } from "@/hooks/use-social-posts";
 import { useInView } from "@/hooks/use-in-view";
 import { cn } from "@/lib/utils";
 
@@ -24,16 +24,19 @@ const SocialPostCard = ({ post, index }: { post: SocialPost; index: number }) =>
     >
       {/* Media */}
       {post.video_url ? (
-        <div className="aspect-square overflow-hidden bg-black">
+        <div className={cn("overflow-hidden bg-black", videoAspectClass(post.video_orientation))}>
           <video
             src={post.video_url}
-            poster={post.image_url || undefined}
+            poster={post.video_thumbnail_url || post.image_url || undefined}
             controls
             muted
             playsInline
             preload="metadata"
-            aria-label={`Video posted by ${post.author_name} on ${platform.label}`}
-            className="w-full h-full object-cover"
+            aria-label={post.video_title || `Video posted by ${post.author_name} on ${platform.label}`}
+            className={cn(
+              "w-full h-full",
+              post.video_orientation && post.video_orientation !== "auto" ? "object-contain" : "object-cover"
+            )}
           />
         </div>
       ) : post.image_url ? (
