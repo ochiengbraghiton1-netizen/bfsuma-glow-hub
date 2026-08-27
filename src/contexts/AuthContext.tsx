@@ -69,8 +69,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     let cancelled = false;
+    let unsubscribe: (() => void) | null = null;
 
-    getSb().then(sb => {
+    const bootstrap = () => {
+      getSb().then(sb => {
       if (cancelled) return;
       sbRef.current = sb;
 
