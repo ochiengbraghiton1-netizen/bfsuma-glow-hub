@@ -1,64 +1,53 @@
-## Site Audit Findings (no changes made)
+# Phase 4 — Mobile LCP Audit (diagnostic gate)
 
-### Area 1 — Broken links & dead ends
-- **`/blog/:slug`** — NOT a bug. `BlogPage` internally checks `useParams().slug` and renders `<BlogPostView>` when present, `<BlogList>` when absent. Individual posts render fine. (App.tsx line 147 is intentional.)
-- **Track Order button** (`OrderConfirmation.tsx:376`) — Navigates to `/order-tracking`, which IS registered in App.tsx (line 106) → `OrderTracking` page exists. ✅ Wired. Worth a live click-test to confirm the page loads customer's order without extra input.
-- **"View full policy"** in `ReturnPolicySummary.tsx` — Links to `/return-policy`, route exists. ✅
-- **Wellness "View Recommended Products"** — Uses `#recommended-products` anchor which matches `<section id="recommended-products">` in same file. ✅
-- **Business hub internal links** — Need runtime check; not yet audited.
-- No hardcoded dead-end URLs detected in nav/footer scan.
+No files were changed. Findings below come from reading `index.html`, `src/main.tsx`, `src/App.tsx`, `src/pages/Index.tsx`, `src/components/Hero.tsx`, `vite.config.ts`, `vercel.json`, `src/index.css`, and the image files on disk.
 
-### Area 2 — Console errors
-Requires live browser runs on each page. Not performed yet. Recommend a Playwright pass across the 6 key routes capturing `console` + failed network requests.
+## LCP element
 
-### Area 3 — Mobile 375px
-Requires headless screenshots at 375×viewport. Not performed yet. Recommend a Playwright pass on the 7 listed page types.
+On a cold mobile visit (how PageSpeed tests), the LCP element is the hero background image rendered by `Hero.tsx`:
+`/images/wellness-hero-1280.webp` (41 KB, already preloaded with `fetchpriority=high` and a 768/1280/1920 srcset). The hero H1 paints at the same moment, so whichever is larger by area wins — with a full-bleed image it is the image.
 
-### Area 4 — Performance
-- Hero images use `loading="eager"` ✅ (Hero.tsx lines 47/62/76).
-- Below-the-fold `loading="lazy"` and WebP coverage across product cards, wellness hubs, city pages — not yet enumerated. Needs a scripted grep + asset audit.
-- No render-blocking third-party scripts spotted beyond GTM/Meta Pixel (both async).
+The image bytes are already small and already preloaded. The 4.6s gap between FCP 2.7s and LCP 7.3s means **the hero is not being painted late because of the image download — it is painted late because nothing exists in the DOM until React executes.** The preloaded image sits in cache waiting for an `<img>` element that only appears after the JS chain finishes.
 
-### Area 5 — Forms
-Static review only. Runtime submission + DB write verification not performed. Files exist for all six:
-`HealthQuizPopup.tsx`, `consultation/ConsultationForm.tsx`, `Contact.tsx`, `Checkout.tsx`, `business-registration/…`, `NewsletterSignup.tsx`. Prior work confirmed HealthQuiz fires `fbq('Lead')` after save. Others need a live submit test each.
+## Root causes, ranked
 
-### Area 6 — SEO meta via seo-render ✅
-All 6 tested URLs return unique title/H1/meta description:
-- `/product/arthroxtra` → "ArthroXtra Tablets — Joint Support Supplement Kenya…"
-- `/product/x-power-man-capsules` → "Buy X-Power Man Capsules in Kenya…"
-- `/blog/strengthen-immune-system-naturally-kenya` → "How to Strengthen Your Immune System Naturally…"
-- `/wellness/joint-pain-mobility` → "Joint Pain & Mobility Support in Kenya…"
-- `/nairobi` → "Health Supplements in Nairobi Kenya…"
-- `/about` → "About BF SUMA Royal Kenya | Our Journey Since 2006"
+1. **Client-only rendering with a deep JS chain before the hero exists.** `#root` is empty; the hero requires `index.js` → `vendor-react` → `App` chunk → lazy `./pages/Index` chunk → `Hero`. On throttled mobile CPU every step is parse + execute. `Index` is `lazy()` in `App.tsx` even though `/` is the entry route, adding one extra round trip plus chunk-eval before the LCP element mounts. This is the single largest contributor.
+2. **Provider work runs before first paint.** `App.tsx` wraps everything in `QueryClientProvider` → `ThemeProvider` → `CartProvider` → `AuthProvider` → `TooltipProvider`. `AuthProvider` pulls in the Supabase client (a ~170 KB vendor chunk) and fires a session call on mount, on the same main thread and network as the hero paint. Chatbot/Toaster/Sonner are lazy, which is good, but the Supabase chunk is not deferrable as currently wired.
+3. **Two competing hero code paths, one of which can late-swap the LCP.** `Hero.tsx` reads `bfs_hero_img` from `localStorage` and `index.html` injects a second `<link rel=preload>` for it. For repeat visitors the admin hero is a full-size Supabase-hosted image with no `srcSet`/WebP variants (`width=736 height=920`), served at `100vw` on mobile. Cold PageSpeed runs never hit this path, but real returning users get a heavier, unoptimised LCP image and a second competing high-priority preload.
+4. **Below-the-fold sections mount in the same Suspense boundary as the fold.** In `Index.tsx`, `CertificationsStrip`, `ShopByHealthGoal`, `ProductShowcase`, `RealResultsMerged`, `ConsultationCTA` and `WhyTrustUs` share one `<Suspense>`. Their chunks and their Supabase product queries start fetching immediately, competing with the hero for bandwidth and main thread. Only the section below that uses `content-visibility: auto`.
+5. **Minor: `Header` is lazy with a 16 px fallback while `main` has a fixed `pt-16`.** No layout shift penalty measured, but the header chunk resolves in the same critical window and delays the visually complete fold.
 
-No generic homepage fallback observed. All good.
+Ruled out:
+- **Fonts** — no `@font-face`, no Google Fonts request, no external font CSS. Not a factor.
+- **Third-party scripts** — GTM and Meta Pixel are both interaction/idle-deferred in `index.html`. Correctly done, leave alone.
+- **Video / social media on the homepage** — the homepage uses `StoriesInsights`, not `SocialFeed`; no `<video>` renders above or near the fold. Phase 3's `preload="none"` neither causes nor masks this.
+- **Hero image weight** — 41 KB at 1280w, 19 KB at 768w. Already fine.
+- **Vercel config** — SPA rewrite plus security headers, nothing that delays the document.
 
-### Area 7 — Admin dashboard
-All 12 routes registered in App.tsx under protected `AdminLayout`. Component files exist for each. Functional correctness (buttons, CRUD, data connections) requires a logged-in Playwright walkthrough — not performed.
+## Minimal fix set for the next build prompt
 
-### Area 8 — Security headers ✅
-`middleware.ts` `applySecurityHeaders` sets: HSTS, X-Frame-Options SAMEORIGIN, X-Content-Type-Options nosniff, Referrer-Policy strict-origin-when-cross-origin, Permissions-Policy (camera/mic/geo/interest-cohort off), X-XSS-Protection 0, COOP same-origin-allow-popups. **Caveat:** these are only applied on the bot-prerender branch (`if (!BOT_USER_AGENT.test(userAgent)) return next()`). Human visitors get whatever Vercel default headers exist — no HSTS/XFO enforced by middleware. This is a gap worth flagging.
+1. Import `Index` eagerly in `App.tsx` (drop its `lazy()`), so the home route is in the main bundle and the hero mounts one round trip earlier. Every other route stays lazy.
+2. Import `Hero` and `Header` statically in `Index.tsx` (Hero already is) and move the below-the-fold group into its own `Suspense` boundary that mounts after first paint, so hero paint is never blocked by product-section chunks or queries.
+3. Defer `AuthProvider`'s Supabase session bootstrap off the first-paint path (idle callback / post-mount) without changing auth semantics, so `vendor-supabase` stops competing with the hero.
+4. Give the cached admin-hero path proper responsive attributes (`srcSet`/`sizes` or a width-limited transform) so returning visitors do not download an oversized LCP image, and drop the duplicate localStorage preload when the static hero is what will render.
+5. Add `content-visibility: auto` / `contain-intrinsic-size` to the remaining below-the-fold sections that lack it.
 
-### Area 9 — Route audit
-- `/blog/:slug` → `BlogPage`: intentional, works (see Area 1). No change needed.
-- `/:city` catch-all: `LocationLanding` calls `getLocationBySlug(city)` against a static list; unknown slugs render `NotFound`. All static routes (`/about`, `/contact`, `/wellness`, `/blog`, `/checkout`, `/auth`, …) are declared before `/:city` and React Router prefers exact/static matches over dynamic segments, so they are NOT intercepted. ✅ Confirmed safe.
-- One minor: `/products` maps to `CategoryPage` (line 141) — intentional alias, fine.
+## What must NOT change
 
----
+- GTM and Meta Pixel deferral logic in `index.html`, and the WhatsApp `Contact`/`whatsapp_click` delegated listeners.
+- The SEO fallback block, canonical strategy, `PageSEO`/Helmet tags, and the `seo-render` + `middleware.ts` bot path.
+- Homepage section order, copy, or design.
+- Social/UGC video rendering, `preload="none"`, posters, orientation, Featured toggle, health/business separation.
+- Product filters, checkout, orders, auth behaviour, `vercel.json` headers/rewrites.
 
-## What still needs a runtime pass before fixes
+## Expected impact
 
-To turn the "not yet audited" items into concrete findings, I recommend a Playwright sweep that:
-1. Loads each of the 7 mobile-target pages at 375×1800 and screenshots.
-2. Records `console` errors + failed network requests on the 6 key pages.
-3. Submits each of the 6 forms with valid dummy data and verifies DB row + UI feedback.
-4. Greps the codebase for `<img` tags without `loading=` and non-WebP src.
-5. Logs into `/admin` (using injected session) and clicks through each admin route capturing errors.
+Mobile LCP should move from ~7.3s toward the 3–4s range, driven almost entirely by items 1–3 (removing round trips and main-thread contention before the hero mounts). Performance score should rise from 66 into the high 70s / low 80s. Desktop is already 85 / LCP 1.2s and should be unaffected or slightly better.
 
-## Confirmed real issues to potentially fix
-1. **Security headers only ship on the bot branch of `middleware.ts`.** Human requests miss HSTS, XFO, nosniff, Referrer-Policy, Permissions-Policy.
-2. (Everything else in your list is either already correct or needs runtime verification before I can flag it.)
+Ceiling: this app is a client-rendered SPA, so the hero can never paint before the JS bundle executes. Getting mobile LCP reliably under 2.5s would need server rendering — available by migrating to Lovable's latest template ([what the upgrade gives you](https://lovable.dev/blog/building-apps-using-tanstack-start)). Not part of this phase.
 
-## Proposed next step
-Approve this plan and I'll (a) run the Playwright sweep described above and (b) fix the middleware headers gap. I will report the runtime findings back before applying any UI/form fixes so you can pick which ones to implement.
+## Regression risk
+
+- Eager `Index` import slightly increases the main bundle; it removes a chunk instead of adding one, so net transfer is roughly flat.
+- Deferring the auth bootstrap is the only behavioural change and needs a check that admin routes and the account menu still resolve correctly on direct load.
+- SEO, analytics, checkout, and video/social features are untouched by the fix set above.
