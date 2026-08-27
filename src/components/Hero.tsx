@@ -32,6 +32,9 @@ const Hero = () => {
   // Use the previously seen admin hero straight away so it is the LCP element
   // instead of swapping in later (a late swap resets LCP and tanks the score).
   const [heroImage] = useState<string | null>(readCachedHero);
+  // If the transform endpoint is unavailable, fall back to the plain URL.
+  const [heroSrcSetFailed, setHeroSrcSetFailed] = useState(false);
+  const heroSrcSet = heroImage && !heroSrcSetFailed ? supabaseHeroSrcSet(heroImage) : null;
 
   useEffect(() => {
     // Defer Supabase import to avoid loading the 169KB chunk during initial render
