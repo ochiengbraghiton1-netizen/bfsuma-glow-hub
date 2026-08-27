@@ -70,6 +70,8 @@ const Hero = () => {
       {heroImage ? (
         <img
           src={heroImage}
+          srcSet={heroSrcSet || undefined}
+          onError={() => { if (heroSrcSet) setHeroSrcSetFailed(true); }}
           alt="BF SUMA Royal wellness community with real customers and team members"
           loading="eager"
           decoding="sync"
