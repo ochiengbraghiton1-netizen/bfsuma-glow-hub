@@ -43,6 +43,8 @@ const SectionNav = lazy(() => import("@/components/SectionNav"));
 const ShopByHealthGoal = lazy(() => import("@/components/ShopByHealthGoal"));
 
 const Index = () => {
+  const belowFoldReady = useAfterPaint();
+
   return (
     <div className="min-h-screen">
       <Helmet>
