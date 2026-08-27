@@ -1,10 +1,26 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import Hero from "@/components/Hero";
+import Header from "@/components/Header";
 
-// Lazy-load Header (contains Sheet/Radix Dialog — heavy) to reduce TBT
-const Header = lazy(() => import("@/components/Header"));
 const Footer = lazy(() => import("@/components/Footer"));
+
+/**
+ * Mounts children only after the first paint, so below-the-fold chunks and
+ * their data fetches never compete with the hero (LCP) for network/CPU.
+ */
+function useAfterPaint() {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };
+    const raf = requestAnimationFrame(() => {
+      if (w.requestIdleCallback) w.requestIdleCallback(() => setReady(true), { timeout: 800 });
+      else setTimeout(() => setReady(true), 0);
+    });
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  return ready;
+}
 
 // Lazy-load below-the-fold sections
 const ProductShowcase = lazy(() => import("@/components/ProductShowcase"));
