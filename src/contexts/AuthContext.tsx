@@ -97,11 +97,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLoading(false);
       });
 
-      // Store cleanup
-      return () => subscription.unsubscribe();
+        unsubscribe = () => subscription.unsubscribe();
+        if (cancelled) unsubscribe();
+      });
+    };
+
+    // Defer the session bootstrap past first paint so the Supabase chunk and
+    // the auth request do not compete with the hero (LCP). Auth semantics are
+    // unchanged: `loading` stays true until the real session resolves.
+    const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };
+    const raf = requestAnimationFrame(() => {
+      if (w.requestIdleCallback) w.requestIdleCallback(bootstrap, { timeout: 1000 });
+      else setTimeout(bootstrap, 0);
     });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf);
+      unsubscribe?.();
+    };
   }, [checkUserRoles]);
 
   const signIn = async (email: string, password: string) => {
