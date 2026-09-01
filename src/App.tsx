@@ -9,9 +9,11 @@ import { useReferral } from "@/hooks/use-referral";
 import GTMPageView from "@/components/GTMPageView";
 import { Loader2 } from "lucide-react";
 
-// Lazy-load non-critical UI overlays
-const Toaster = lazy(() => import("@/components/ui/toaster").then(m => ({ default: m.Toaster })));
-const Sonner = lazy(() => import("@/components/ui/sonner").then(m => ({ default: m.Toaster })));
+// Toasters imported eagerly: they are tiny, and a stale lazy chunk after a
+// deploy would otherwise blank the app with "Failed to fetch dynamically imported module".
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+
 const Chatbot = lazy(() => import("@/components/Chatbot"));
 
 
@@ -91,10 +93,8 @@ const App = () => (
       <CartProvider>
         <AuthProvider>
           <TooltipProvider>
-            <Suspense fallback={null}>
-              <Toaster />
-              <Sonner />
-            </Suspense>
+            <Toaster />
+            <Sonner />
             <BrowserRouter>
               <ReferralTracker />
               <GTMPageView />
