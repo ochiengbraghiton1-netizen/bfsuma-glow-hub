@@ -307,7 +307,7 @@ const Blog = () => {
       if (!opts.silent) setSaving(true);
       setSaveState('saving');
 
-      const attempted = serialize(fd, qo);
+      const attempted = serialize(fd, qo, fq);
       // Save Draft never unpublishes an already-published post
       const status = opts.asDraft && fd.status !== 'published' ? 'draft' : fd.status;
 
@@ -443,10 +443,10 @@ const Blog = () => {
   useEffect(() => {
     if (!dialogOpen) return;
     const timer = setInterval(() => {
-      const { formData: fd, quizOptions: qo } = snapshotRef.current;
+      const { formData: fd, quizOptions: qo, faqItems: fq } = snapshotRef.current;
       if (savingRef.current) return;
       if (!fd.title.trim() || !fd.slug.trim()) return;
-      if (serialize(fd, qo) === baselineRef.current) return;
+      if (serialize(fd, qo, fq) === baselineRef.current) return;
       persist({ silent: true, asDraft: true });
     }, 20000);
     return () => clearInterval(timer);
@@ -456,8 +456,8 @@ const Blog = () => {
   useEffect(() => {
     if (!dialogOpen) return;
     const handler = (e: BeforeUnloadEvent) => {
-      const { formData: fd, quizOptions: qo } = snapshotRef.current;
-      if (serialize(fd, qo) !== baselineRef.current) {
+      const { formData: fd, quizOptions: qo, faqItems: fq } = snapshotRef.current;
+      if (serialize(fd, qo, fq) !== baselineRef.current) {
         e.preventDefault();
         e.returnValue = '';
       }
@@ -468,8 +468,8 @@ const Blog = () => {
 
   const handleDialogOpenChange = (open: boolean) => {
     if (!open) {
-      const { formData: fd, quizOptions: qo } = snapshotRef.current;
-      if (serialize(fd, qo) !== baselineRef.current && fd.title.trim()) {
+      const { formData: fd, quizOptions: qo, faqItems: fq } = snapshotRef.current;
+      if (serialize(fd, qo, fq) !== baselineRef.current && fd.title.trim()) {
         if (!confirm('You have unsaved changes. Close anyway? Use "Save Draft" to keep them.')) return;
       }
     }
