@@ -8,7 +8,7 @@ const SEO_RENDER_URL = "https://sboaeutgckyiwunfmxqp.supabase.co/functions/v1/se
 // Social/link-preview fetchers (WhatsApp, Meta, Pinterest, LinkedIn, Telegram,
 // Discord, Slack, Apple, Reddit, Mastodon/Bluesky, Skype, VK, Embedly...) do not
 // execute JavaScript, so they must also receive the prerendered deep-page HTML.
-const BOT_USER_AGENT = /(googlebot|google-inspectiontool|googleother|google-read-aloud|storebot-google|adsbot-google|bingbot|bingpreview|duckduckbot|yandex(bot|images)|baiduspider|applebot|twitterbot|facebookexternalhit|facebot|meta-externalagent|meta-externalfetcher|whatsapp|instagram|pinterest(bot|\/)|linkedinbot|slackbot|slack-imgproxy|telegrambot|discordbot|redditbot|tumblr|mastodon|bluesky|skypeuripreview|vkshare|embedly|quora link preview|nuzzel|outbrain|flipboard|w3c_validator|developers\.google\.com\/\+\/web\/snippet)/i;
+const BOT_USER_AGENT = /(googlebot|google-inspectiontool|googleother|google-read-aloud|storebot-google|adsbot-google|bingbot|bingpreview|duckduckbot|yandex(bot|images)|baiduspider|applebot|twitterbot|facebookexternalhit|facebot|meta-externalagent|meta-externalfetcher|whatsapp|pinterest(bot|\/)|linkedinbot|slackbot|slack-imgproxy|telegrambot|discordbot|redditbot|tumblr|mastodon|bluesky|skypeuripreview|vkshare|embedly|quora link preview|nuzzel|outbrain|flipboard|w3c_validator|developers\.google\.com\/\+\/web\/snippet)/i;
 
 const PUBLIC_FILE = /\.[a-z0-9]+$/i;
 
