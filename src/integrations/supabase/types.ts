@@ -174,6 +174,41 @@ export type Database = {
           },
         ]
       }
+      blog_post_faqs: {
+        Row: {
+          answer: string
+          created_at: string
+          display_order: number
+          id: string
+          post_id: string
+          question: string
+        }
+        Insert: {
+          answer: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          post_id: string
+          question: string
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          post_id?: string
+          question?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_post_faqs_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_post_products: {
         Row: {
           created_at: string

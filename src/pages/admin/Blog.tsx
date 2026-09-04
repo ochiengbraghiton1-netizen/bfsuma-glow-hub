@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Plus, Pencil, Trash2, Eye, EyeOff, ExternalLink, Calendar as CalendarIcon, Tag, Copy, Check, CircleDot } from 'lucide-react';
+import { Loader2, Plus, Pencil, Trash2, Eye, EyeOff, ExternalLink, Calendar as CalendarIcon, Tag, Copy, Check, CircleDot, ArrowUp, ArrowDown } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
 
 import {
   Dialog,
@@ -71,6 +72,14 @@ interface QuizOptionRow {
   reason: string;
 }
 
+interface FaqRow {
+  id?: string;
+  question: string;
+  answer: string;
+}
+
+
+
 interface ProductOption {
   id: string;
   name: string;
@@ -106,28 +115,31 @@ const Blog = () => {
   const [formData, setFormData] = useState(initialFormState);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [quizOptions, setQuizOptions] = useState<QuizOptionRow[]>([]);
+  const [faqItems, setFaqItems] = useState<FaqRow[]>([]);
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'dirty'>('idle');
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const savingRef = useRef(false);
   const baselineRef = useRef<string>('');
   const lastUpdatedRef = useRef<string | null>(null);
-  const snapshotRef = useRef<{ formData: typeof initialFormState; quizOptions: QuizOptionRow[]; editingPost: BlogPost | null }>({
+  const snapshotRef = useRef<{ formData: typeof initialFormState; quizOptions: QuizOptionRow[]; faqItems: FaqRow[]; editingPost: BlogPost | null }>({
     formData: initialFormState,
     quizOptions: [],
+    faqItems: [],
     editingPost: null,
   });
   const { toast } = useToast();
 
-  const serialize = (fd: typeof initialFormState, q: QuizOptionRow[]) =>
-    JSON.stringify({ ...fd, scheduled_at: fd.scheduled_at?.toISOString() || null, q });
+  const serialize = (fd: typeof initialFormState, q: QuizOptionRow[], f: FaqRow[] = []) =>
+    JSON.stringify({ ...fd, scheduled_at: fd.scheduled_at?.toISOString() || null, q, f });
 
   useEffect(() => {
-    snapshotRef.current = { formData, quizOptions, editingPost };
+    snapshotRef.current = { formData, quizOptions, faqItems, editingPost };
     if (!dialogOpen) return;
     if (savingRef.current) return;
-    const dirty = serialize(formData, quizOptions) !== baselineRef.current;
+    const dirty = serialize(formData, quizOptions, faqItems) !== baselineRef.current;
     setSaveState((prev) => (dirty ? 'dirty' : prev === 'dirty' ? (lastSavedAt ? 'saved' : 'idle') : prev));
-  }, [formData, quizOptions, editingPost, dialogOpen, lastSavedAt]);
+  }, [formData, quizOptions, faqItems, editingPost, dialogOpen, lastSavedAt]);
+
 
 
   const fetchCategories = async () => {
@@ -198,7 +210,8 @@ const Blog = () => {
     setEditingPost(null);
     setFormData(initialFormState);
     setQuizOptions([]);
-    baselineRef.current = serialize(initialFormState, []);
+    setFaqItems([]);
+    baselineRef.current = serialize(initialFormState, [], []);
     lastUpdatedRef.current = null;
     setLastSavedAt(null);
     setSaveState('idle');
@@ -239,6 +252,22 @@ const Blog = () => {
     }));
     setQuizOptions(loadedQuiz);
 
+    // Fetch FAQ items
+    const { data: faqRows } = await supabase
+      .from('blog_post_faqs')
+      .select('id, question, answer, display_order')
+      .eq('post_id', post.id)
+      .order('display_order');
+
+    const loadedFaqs: FaqRow[] = (faqRows || []).map(r => ({
+      id: r.id,
+      question: r.question,
+      answer: r.answer,
+    }));
+    setFaqItems(loadedFaqs);
+
+
+
     const loaded = {
       title: post.title,
       slug: post.slug,
@@ -256,14 +285,14 @@ const Blog = () => {
       product_ids: postProds?.map(pp => pp.product_id) || [],
     };
     setFormData(loaded);
-    baselineRef.current = serialize(loaded, loadedQuiz);
+    baselineRef.current = serialize(loaded, loadedQuiz, loadedFaqs);
     setDialogOpen(true);
 
   };
 
   const persist = useCallback(
     async (opts: { silent?: boolean; asDraft?: boolean; closeOnSuccess?: boolean } = {}) => {
-      const { formData: fd, quizOptions: qo, editingPost: ep } = snapshotRef.current;
+      const { formData: fd, quizOptions: qo, faqItems: fq, editingPost: ep } = snapshotRef.current;
 
       if (!fd.title.trim() || !fd.slug.trim()) {
         if (!opts.silent) {
@@ -278,7 +307,7 @@ const Blog = () => {
       if (!opts.silent) setSaving(true);
       setSaveState('saving');
 
-      const attempted = serialize(fd, qo);
+      const attempted = serialize(fd, qo, fq);
       // Save Draft never unpublishes an already-published post
       const status = opts.asDraft && fd.status !== 'published' ? 'draft' : fd.status;
 
@@ -378,6 +407,22 @@ const Blog = () => {
         );
       }
 
+      // Update FAQ items
+      await supabase.from('blog_post_faqs').delete().eq('post_id', postId);
+      const validFaqs = fq.filter(f => f.question.trim() && f.answer.trim());
+      if (validFaqs.length > 0) {
+        await supabase.from('blog_post_faqs').insert(
+          validFaqs.map((f, i) => ({
+            post_id: postId!,
+            question: f.question.trim(),
+            answer: f.answer.trim(),
+            display_order: i,
+          }))
+        );
+      }
+
+
+
       lastUpdatedRef.current = newUpdatedAt;
       baselineRef.current = attempted;
       setLastSavedAt(new Date());
@@ -414,10 +459,10 @@ const Blog = () => {
   useEffect(() => {
     if (!dialogOpen) return;
     const timer = setInterval(() => {
-      const { formData: fd, quizOptions: qo } = snapshotRef.current;
+      const { formData: fd, quizOptions: qo, faqItems: fq } = snapshotRef.current;
       if (savingRef.current) return;
       if (!fd.title.trim() || !fd.slug.trim()) return;
-      if (serialize(fd, qo) === baselineRef.current) return;
+      if (serialize(fd, qo, fq) === baselineRef.current) return;
       persist({ silent: true, asDraft: true });
     }, 20000);
     return () => clearInterval(timer);
@@ -427,8 +472,8 @@ const Blog = () => {
   useEffect(() => {
     if (!dialogOpen) return;
     const handler = (e: BeforeUnloadEvent) => {
-      const { formData: fd, quizOptions: qo } = snapshotRef.current;
-      if (serialize(fd, qo) !== baselineRef.current) {
+      const { formData: fd, quizOptions: qo, faqItems: fq } = snapshotRef.current;
+      if (serialize(fd, qo, fq) !== baselineRef.current) {
         e.preventDefault();
         e.returnValue = '';
       }
@@ -439,8 +484,8 @@ const Blog = () => {
 
   const handleDialogOpenChange = (open: boolean) => {
     if (!open) {
-      const { formData: fd, quizOptions: qo } = snapshotRef.current;
-      if (serialize(fd, qo) !== baselineRef.current && fd.title.trim()) {
+      const { formData: fd, quizOptions: qo, faqItems: fq } = snapshotRef.current;
+      if (serialize(fd, qo, fq) !== baselineRef.current && fd.title.trim()) {
         if (!confirm('You have unsaved changes. Close anyway? Use "Save Draft" to keep them.')) return;
       }
     }
@@ -950,6 +995,84 @@ const Blog = () => {
                 </Button>
               )}
             </div>
+
+            {/* Frequently Asked Questions */}
+            <div className="space-y-2">
+              <Label className="text-[hsl(var(--admin-text))]">Frequently Asked Questions (optional)</Label>
+              <p className="text-xs text-muted-foreground">
+                Add question and answer pairs shown as an accordion at the end of this article. Leave empty to hide the section.
+              </p>
+              <div className="space-y-2">
+                {faqItems.map((f, idx) => (
+                  <div key={idx} className="space-y-2 p-3 border rounded-md bg-muted/20">
+                    <div className="flex items-start gap-2">
+                      <Input
+                        value={f.question}
+                        placeholder="Question, e.g. How long before I see results?"
+                        onChange={(e) => setFaqItems(prev => prev.map((r, i) => i === idx ? { ...r, question: e.target.value } : r))}
+                        className="text-[hsl(var(--admin-text))] bg-background"
+                      />
+                      <div className="flex shrink-0">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          aria-label="Move FAQ up"
+                          disabled={idx === 0}
+                          onClick={() => setFaqItems(prev => {
+                            const next = [...prev];
+                            [next[idx - 1], next[idx]] = [next[idx], next[idx - 1]];
+                            return next;
+                          })}
+                        >
+                          <ArrowUp className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          aria-label="Move FAQ down"
+                          disabled={idx === faqItems.length - 1}
+                          onClick={() => setFaqItems(prev => {
+                            const next = [...prev];
+                            [next[idx + 1], next[idx]] = [next[idx], next[idx + 1]];
+                            return next;
+                          })}
+                        >
+                          <ArrowDown className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          aria-label="Remove FAQ"
+                          onClick={() => setFaqItems(prev => prev.filter((_, i) => i !== idx))}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    </div>
+                    <Textarea
+                      value={f.answer}
+                      placeholder="Answer"
+                      rows={3}
+                      onChange={(e) => setFaqItems(prev => prev.map((r, i) => i === idx ? { ...r, answer: e.target.value } : r))}
+                      className="text-[hsl(var(--admin-text))] bg-background"
+                    />
+                  </div>
+                ))}
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setFaqItems(prev => [...prev, { question: '', answer: '' }])}
+              >
+                <Plus className="h-4 w-4 mr-2" /> Add FAQ
+              </Button>
+            </div>
+
+
 
             {/* Scheduling */}
             <div className="grid gap-4 md:grid-cols-2">
