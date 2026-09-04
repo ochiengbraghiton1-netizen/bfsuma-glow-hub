@@ -15,6 +15,7 @@ import SocialShareButtons from '@/components/blog/SocialShareButtons';
 import BlogLeadCapture, { type BlogQuizOption } from '@/components/blog/BlogLeadCapture';
 import BlogRelatedProducts from '@/components/blog/BlogRelatedProducts';
 import RelatedWellnessHubs from '@/components/RelatedWellnessHubs';
+import BlogPostFAQ from '@/components/blog/BlogPostFAQ';
 import { stripHtmlTags } from '@/lib/html-utils';
 import { SITE_BASE_URL } from '@/config/routes';
 import { generateBlogAltText } from '@/lib/image-seo';
@@ -571,6 +572,9 @@ const BlogPostView = ({ slug, expectedContentType }: { slug: string; expectedCon
                   </div>
                 </div>
               </div>
+
+              {/* Per-article FAQs */}
+              <BlogPostFAQ postId={post.id} />
 
               {/* Related Products */}
               <BlogRelatedProducts products={relatedProducts} />
