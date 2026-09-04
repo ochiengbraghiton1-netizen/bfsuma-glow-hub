@@ -261,68 +261,111 @@ const Blog = () => {
 
   };
 
-  const handleSave = async () => {
-    if (!formData.title.trim() || !formData.slug.trim()) {
-      toast({ title: 'Error', description: 'Title and slug are required', variant: 'destructive' });
-      return;
-    }
+  const persist = useCallback(
+    async (opts: { silent?: boolean; asDraft?: boolean; closeOnSuccess?: boolean } = {}) => {
+      const { formData: fd, quizOptions: qo, editingPost: ep } = snapshotRef.current;
 
-    setSaving(true);
+      if (!fd.title.trim() || !fd.slug.trim()) {
+        if (!opts.silent) {
+          toast({ title: 'Error', description: 'Title and slug are required', variant: 'destructive' });
+        }
+        return false;
+      }
 
-    const postData = {
-      title: formData.title.trim(),
-      slug: formData.slug.trim(),
-      excerpt: formData.excerpt.trim() || null,
-      content: formData.content || null,
-      featured_image: formData.featured_image.trim() || null,
-      video_url: formData.video_url.trim() || null,
-      is_featured: formData.is_featured,
-      meta_title: formData.meta_title.trim() || null,
-      meta_description: formData.meta_description.trim() || null,
-      status: formData.status,
-      content_type: formData.content_type,
-      published_at: formData.status === 'published' ? new Date().toISOString() : null,
-      scheduled_at: formData.scheduled_at?.toISOString() || null,
-    };
+      // Prevent overlapping saves (autosave vs manual save)
+      if (savingRef.current) return false;
+      savingRef.current = true;
+      if (!opts.silent) setSaving(true);
+      setSaveState('saving');
 
-    let postId: string | null = null;
-    let error;
+      const attempted = serialize(fd, qo);
+      // Save Draft never unpublishes an already-published post
+      const status = opts.asDraft && fd.status !== 'published' ? 'draft' : fd.status;
 
-    if (editingPost) {
-      const result = await supabase
-        .from('blog_posts')
-        .update(postData)
-        .eq('id', editingPost.id);
-      error = result.error;
-      postId = editingPost.id;
-    } else {
-      const result = await supabase.from('blog_posts').insert(postData).select('id').single();
-      error = result.error;
-      postId = result.data?.id || null;
-    }
+      const postData = {
+        title: fd.title.trim(),
+        slug: fd.slug.trim(),
+        excerpt: fd.excerpt.trim() || null,
+        content: fd.content || null,
+        featured_image: fd.featured_image.trim() || null,
+        video_url: fd.video_url.trim() || null,
+        is_featured: fd.is_featured,
+        meta_title: fd.meta_title.trim() || null,
+        meta_description: fd.meta_description.trim() || null,
+        status,
+        content_type: fd.content_type,
+        published_at: status === 'published' ? (ep?.published_at || new Date().toISOString()) : null,
+        scheduled_at: fd.scheduled_at?.toISOString() || null,
+      };
 
-    if (error) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
-    } else if (postId) {
+      let postId: string | null = null;
+      let error: { message: string } | null = null;
+      let newUpdatedAt: string | null = null;
+      let stale = false;
+
+      if (ep) {
+        let query = supabase.from('blog_posts').update(postData).eq('id', ep.id);
+        // Concurrency guard: refuse to overwrite a row changed since we loaded/saved it
+        if (lastUpdatedRef.current) {
+          query = query.lte('updated_at', lastUpdatedRef.current);
+        }
+        const result = await query.select('*').maybeSingle();
+        error = result.error;
+        if (!result.error && !result.data) {
+          stale = true;
+        } else if (result.data) {
+          postId = ep.id;
+          newUpdatedAt = (result.data as BlogPost).updated_at;
+        }
+      } else {
+        const result = await supabase.from('blog_posts').insert(postData).select('*').single();
+        error = result.error;
+        postId = result.data?.id || null;
+        newUpdatedAt = (result.data as BlogPost | null)?.updated_at || null;
+        if (result.data) setEditingPost(result.data as BlogPost);
+      }
+
+      if (stale) {
+        savingRef.current = false;
+        setSaving(false);
+        setSaveState('dirty');
+        toast({
+          title: 'Not saved',
+          description: 'This article was changed somewhere else. Reopen it to get the latest version before saving again.',
+          variant: 'destructive',
+        });
+        return false;
+      }
+
+      if (error || !postId) {
+        savingRef.current = false;
+        setSaving(false);
+        setSaveState('dirty');
+        if (!opts.silent) {
+          toast({ title: 'Error', description: error?.message || 'Failed to save', variant: 'destructive' });
+        }
+        return false;
+      }
+
       // Update categories
       await supabase.from('blog_post_categories').delete().eq('post_id', postId);
-      if (formData.category_ids.length > 0) {
+      if (fd.category_ids.length > 0) {
         await supabase.from('blog_post_categories').insert(
-          formData.category_ids.map(catId => ({ post_id: postId!, category_id: catId }))
+          fd.category_ids.map(catId => ({ post_id: postId!, category_id: catId }))
         );
       }
 
       // Update product links
       await supabase.from('blog_post_products').delete().eq('post_id', postId);
-      if (formData.product_ids.length > 0) {
+      if (fd.product_ids.length > 0) {
         await supabase.from('blog_post_products').insert(
-          formData.product_ids.map(prodId => ({ post_id: postId!, product_id: prodId }))
+          fd.product_ids.map(prodId => ({ post_id: postId!, product_id: prodId }))
         );
       }
 
       // Update quiz options
       await supabase.from('blog_post_quiz_options').delete().eq('post_id', postId);
-      const validQuiz = quizOptions.filter(q => q.label.trim() && q.product_id);
+      const validQuiz = qo.filter(q => q.label.trim() && q.product_id);
       if (validQuiz.length > 0) {
         await supabase.from('blog_post_quiz_options').insert(
           validQuiz.map((q, i) => ({
@@ -335,18 +378,75 @@ const Blog = () => {
         );
       }
 
-      toast({ title: 'Success', description: `Blog post ${editingPost ? 'updated' : 'created'} successfully` });
-      setDialogOpen(false);
+      lastUpdatedRef.current = newUpdatedAt;
+      baselineRef.current = attempted;
+      setLastSavedAt(new Date());
+      setSaveState('saved');
+      savingRef.current = false;
+      setSaving(false);
+
+      if (!opts.silent) {
+        toast({
+          title: 'Saved',
+          description: status === 'published' ? 'Article saved and published' : 'Draft saved',
+        });
+      }
+
       fetchPosts();
 
-      // Notify IndexNow
-      if (formData.status === 'published') {
-        const blogUrl = `/blog/${formData.slug.trim()}`;
-        notifyIndexNow([blogUrl, '/blog'], editingPost ? 'blog_updated' : 'blog_published');
+      if (opts.closeOnSuccess) setDialogOpen(false);
+
+      // Notify IndexNow only for published articles
+      if (status === 'published') {
+        const blogUrl = `/blog/${fd.slug.trim()}`;
+        notifyIndexNow([blogUrl, '/blog'], ep ? 'blog_updated' : 'blog_published');
+      }
+
+      return true;
+    },
+    [toast]
+  );
+
+  const handleSave = () => persist({ closeOnSuccess: true });
+  const handleSaveDraft = () => persist({ asDraft: true });
+
+  // Autosave every 20s while there are unsaved changes
+  useEffect(() => {
+    if (!dialogOpen) return;
+    const timer = setInterval(() => {
+      const { formData: fd, quizOptions: qo } = snapshotRef.current;
+      if (savingRef.current) return;
+      if (!fd.title.trim() || !fd.slug.trim()) return;
+      if (serialize(fd, qo) === baselineRef.current) return;
+      persist({ silent: true, asDraft: true });
+    }, 20000);
+    return () => clearInterval(timer);
+  }, [dialogOpen, persist]);
+
+  // Warn before closing the browser with unsaved changes
+  useEffect(() => {
+    if (!dialogOpen) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      const { formData: fd, quizOptions: qo } = snapshotRef.current;
+      if (serialize(fd, qo) !== baselineRef.current) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [dialogOpen]);
+
+  const handleDialogOpenChange = (open: boolean) => {
+    if (!open) {
+      const { formData: fd, quizOptions: qo } = snapshotRef.current;
+      if (serialize(fd, qo) !== baselineRef.current && fd.title.trim()) {
+        if (!confirm('You have unsaved changes. Close anyway? Use "Save Draft" to keep them.')) return;
       }
     }
-    setSaving(false);
+    setDialogOpen(open);
   };
+
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this post?')) return;
