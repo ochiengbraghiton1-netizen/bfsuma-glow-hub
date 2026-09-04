@@ -231,16 +231,15 @@ const Blog = () => {
       .eq('post_id', post.id)
       .order('display_order');
 
-    setQuizOptions(
-      (quizRows || []).map(r => ({
-        id: r.id,
-        label: r.label,
-        product_id: r.product_id,
-        reason: r.reason || '',
-      }))
-    );
+    const loadedQuiz: QuizOptionRow[] = (quizRows || []).map(r => ({
+      id: r.id,
+      label: r.label,
+      product_id: r.product_id,
+      reason: r.reason || '',
+    }));
+    setQuizOptions(loadedQuiz);
 
-    setFormData({
+    const loaded = {
       title: post.title,
       slug: post.slug,
       excerpt: post.excerpt || '',
@@ -251,12 +250,15 @@ const Blog = () => {
       meta_title: post.meta_title || '',
       meta_description: post.meta_description || '',
       status: post.status,
-      content_type: ((post as any).content_type === 'business' ? 'business' : 'health'),
+      content_type: ((post as any).content_type === 'business' ? 'business' : 'health') as 'health' | 'business',
       scheduled_at: post.scheduled_at ? new Date(post.scheduled_at) : null,
       category_ids: postCats?.map(pc => pc.category_id) || [],
       product_ids: postProds?.map(pp => pp.product_id) || [],
-    });
+    };
+    setFormData(loaded);
+    baselineRef.current = serialize(loaded, loadedQuiz);
     setDialogOpen(true);
+
   };
 
   const handleSave = async () => {
