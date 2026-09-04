@@ -115,28 +115,31 @@ const Blog = () => {
   const [formData, setFormData] = useState(initialFormState);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [quizOptions, setQuizOptions] = useState<QuizOptionRow[]>([]);
+  const [faqItems, setFaqItems] = useState<FaqRow[]>([]);
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'dirty'>('idle');
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const savingRef = useRef(false);
   const baselineRef = useRef<string>('');
   const lastUpdatedRef = useRef<string | null>(null);
-  const snapshotRef = useRef<{ formData: typeof initialFormState; quizOptions: QuizOptionRow[]; editingPost: BlogPost | null }>({
+  const snapshotRef = useRef<{ formData: typeof initialFormState; quizOptions: QuizOptionRow[]; faqItems: FaqRow[]; editingPost: BlogPost | null }>({
     formData: initialFormState,
     quizOptions: [],
+    faqItems: [],
     editingPost: null,
   });
   const { toast } = useToast();
 
-  const serialize = (fd: typeof initialFormState, q: QuizOptionRow[]) =>
-    JSON.stringify({ ...fd, scheduled_at: fd.scheduled_at?.toISOString() || null, q });
+  const serialize = (fd: typeof initialFormState, q: QuizOptionRow[], f: FaqRow[] = []) =>
+    JSON.stringify({ ...fd, scheduled_at: fd.scheduled_at?.toISOString() || null, q, f });
 
   useEffect(() => {
-    snapshotRef.current = { formData, quizOptions, editingPost };
+    snapshotRef.current = { formData, quizOptions, faqItems, editingPost };
     if (!dialogOpen) return;
     if (savingRef.current) return;
-    const dirty = serialize(formData, quizOptions) !== baselineRef.current;
+    const dirty = serialize(formData, quizOptions, faqItems) !== baselineRef.current;
     setSaveState((prev) => (dirty ? 'dirty' : prev === 'dirty' ? (lastSavedAt ? 'saved' : 'idle') : prev));
-  }, [formData, quizOptions, editingPost, dialogOpen, lastSavedAt]);
+  }, [formData, quizOptions, faqItems, editingPost, dialogOpen, lastSavedAt]);
+
 
 
   const fetchCategories = async () => {
