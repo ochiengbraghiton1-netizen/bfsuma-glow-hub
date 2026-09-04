@@ -996,6 +996,84 @@ const Blog = () => {
               )}
             </div>
 
+            {/* Frequently Asked Questions */}
+            <div className="space-y-2">
+              <Label className="text-[hsl(var(--admin-text))]">Frequently Asked Questions (optional)</Label>
+              <p className="text-xs text-muted-foreground">
+                Add question and answer pairs shown as an accordion at the end of this article. Leave empty to hide the section.
+              </p>
+              <div className="space-y-2">
+                {faqItems.map((f, idx) => (
+                  <div key={idx} className="space-y-2 p-3 border rounded-md bg-muted/20">
+                    <div className="flex items-start gap-2">
+                      <Input
+                        value={f.question}
+                        placeholder="Question, e.g. How long before I see results?"
+                        onChange={(e) => setFaqItems(prev => prev.map((r, i) => i === idx ? { ...r, question: e.target.value } : r))}
+                        className="text-[hsl(var(--admin-text))] bg-background"
+                      />
+                      <div className="flex shrink-0">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          aria-label="Move FAQ up"
+                          disabled={idx === 0}
+                          onClick={() => setFaqItems(prev => {
+                            const next = [...prev];
+                            [next[idx - 1], next[idx]] = [next[idx], next[idx - 1]];
+                            return next;
+                          })}
+                        >
+                          <ArrowUp className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          aria-label="Move FAQ down"
+                          disabled={idx === faqItems.length - 1}
+                          onClick={() => setFaqItems(prev => {
+                            const next = [...prev];
+                            [next[idx + 1], next[idx]] = [next[idx], next[idx + 1]];
+                            return next;
+                          })}
+                        >
+                          <ArrowDown className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          aria-label="Remove FAQ"
+                          onClick={() => setFaqItems(prev => prev.filter((_, i) => i !== idx))}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    </div>
+                    <Textarea
+                      value={f.answer}
+                      placeholder="Answer"
+                      rows={3}
+                      onChange={(e) => setFaqItems(prev => prev.map((r, i) => i === idx ? { ...r, answer: e.target.value } : r))}
+                      className="text-[hsl(var(--admin-text))] bg-background"
+                    />
+                  </div>
+                ))}
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setFaqItems(prev => [...prev, { question: '', answer: '' }])}
+              >
+                <Plus className="h-4 w-4 mr-2" /> Add FAQ
+              </Button>
+            </div>
+
+
+
             {/* Scheduling */}
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
