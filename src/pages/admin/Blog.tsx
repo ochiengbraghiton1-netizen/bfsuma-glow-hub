@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Plus, Pencil, Trash2, Eye, EyeOff, ExternalLink, Calendar as CalendarIcon, Tag, Copy } from 'lucide-react';
+import { Loader2, Plus, Pencil, Trash2, Eye, EyeOff, ExternalLink, Calendar as CalendarIcon, Tag, Copy, Check, CircleDot } from 'lucide-react';
+
 import {
   Dialog,
   DialogContent,
