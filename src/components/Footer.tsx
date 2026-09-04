@@ -24,6 +24,16 @@ const Footer = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Deep link support: arriving at /#products or /#about scrolls once mounted.
+  useEffect(() => {
+    if (location.pathname === "/" && location.hash) {
+      scrollToSection(location.hash.slice(1));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname, location.hash]);
+
+
+
   const handleSectionLink = (id: string) => (e: React.MouseEvent) => {
     e.preventDefault();
     if (location.pathname !== "/") {
