@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { Facebook, Instagram, Phone, Mail, MapPin } from "lucide-react";
+
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import TikTokIcon from "@/components/icons/TikTokIcon";
 
