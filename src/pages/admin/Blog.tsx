@@ -1038,15 +1038,34 @@ const Blog = () => {
             </div>
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSave} disabled={saving}>
-              {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              {editingPost ? 'Update Post' : 'Create Post'}
-            </Button>
+          <DialogFooter className="gap-2 sm:justify-between">
+            <div className="flex items-center text-xs text-muted-foreground min-h-[1.5rem]">
+              {saveState === 'saving' && (
+                <span className="flex items-center gap-1.5"><Loader2 className="h-3 w-3 animate-spin" /> Saving…</span>
+              )}
+              {saveState === 'saved' && (
+                <span className="flex items-center gap-1.5 text-green-600">
+                  <Check className="h-3 w-3" /> Saved{lastSavedAt ? ` at ${format(lastSavedAt, 'HH:mm')}` : ''}
+                </span>
+              )}
+              {saveState === 'dirty' && (
+                <span className="flex items-center gap-1.5 text-amber-600"><CircleDot className="h-3 w-3" /> Unsaved changes</span>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => handleDialogOpenChange(false)}>
+                Cancel
+              </Button>
+              <Button variant="secondary" onClick={handleSaveDraft} disabled={saving}>
+                Save Draft
+              </Button>
+              <Button onClick={handleSave} disabled={saving}>
+                {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                {editingPost ? 'Update Post' : 'Create Post'}
+              </Button>
+            </div>
           </DialogFooter>
+
         </DialogContent>
       </Dialog>
 
