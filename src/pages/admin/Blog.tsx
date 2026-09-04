@@ -407,6 +407,22 @@ const Blog = () => {
         );
       }
 
+      // Update FAQ items
+      await supabase.from('blog_post_faqs').delete().eq('post_id', postId);
+      const validFaqs = fq.filter(f => f.question.trim() && f.answer.trim());
+      if (validFaqs.length > 0) {
+        await supabase.from('blog_post_faqs').insert(
+          validFaqs.map((f, i) => ({
+            post_id: postId!,
+            question: f.question.trim(),
+            answer: f.answer.trim(),
+            display_order: i,
+          }))
+        );
+      }
+
+
+
       lastUpdatedRef.current = newUpdatedAt;
       baselineRef.current = attempted;
       setLastSavedAt(new Date());
