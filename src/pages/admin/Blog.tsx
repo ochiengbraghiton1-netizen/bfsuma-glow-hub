@@ -198,11 +198,19 @@ const Blog = () => {
     setEditingPost(null);
     setFormData(initialFormState);
     setQuizOptions([]);
+    baselineRef.current = serialize(initialFormState, []);
+    lastUpdatedRef.current = null;
+    setLastSavedAt(null);
+    setSaveState('idle');
     setDialogOpen(true);
   };
 
   const openEditDialog = async (post: BlogPost) => {
     setEditingPost(post);
+    lastUpdatedRef.current = post.updated_at;
+    setLastSavedAt(null);
+    setSaveState('idle');
+
     
     // Fetch post categories
     const { data: postCats } = await supabase
