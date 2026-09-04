@@ -285,14 +285,14 @@ const Blog = () => {
       product_ids: postProds?.map(pp => pp.product_id) || [],
     };
     setFormData(loaded);
-    baselineRef.current = serialize(loaded, loadedQuiz);
+    baselineRef.current = serialize(loaded, loadedQuiz, loadedFaqs);
     setDialogOpen(true);
 
   };
 
   const persist = useCallback(
     async (opts: { silent?: boolean; asDraft?: boolean; closeOnSuccess?: boolean } = {}) => {
-      const { formData: fd, quizOptions: qo, editingPost: ep } = snapshotRef.current;
+      const { formData: fd, quizOptions: qo, faqItems: fq, editingPost: ep } = snapshotRef.current;
 
       if (!fd.title.trim() || !fd.slug.trim()) {
         if (!opts.silent) {
