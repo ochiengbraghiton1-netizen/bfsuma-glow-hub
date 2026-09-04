@@ -210,7 +210,8 @@ const Blog = () => {
     setEditingPost(null);
     setFormData(initialFormState);
     setQuizOptions([]);
-    baselineRef.current = serialize(initialFormState, []);
+    setFaqItems([]);
+    baselineRef.current = serialize(initialFormState, [], []);
     lastUpdatedRef.current = null;
     setLastSavedAt(null);
     setSaveState('idle');
