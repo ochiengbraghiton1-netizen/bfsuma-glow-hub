@@ -72,6 +72,14 @@ interface QuizOptionRow {
   reason: string;
 }
 
+interface FaqRow {
+  id?: string;
+  question: string;
+  answer: string;
+}
+
+
+
 interface ProductOption {
   id: string;
   name: string;
