@@ -1,11 +1,62 @@
+import { useEffect } from "react";
 import { Facebook, Instagram, Phone, Mail, MapPin } from "lucide-react";
-import { Link } from "react-router-dom";
+
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import TikTokIcon from "@/components/icons/TikTokIcon";
 
+/**
+ * Scrolls to a homepage section, retrying briefly because the below-the-fold
+ * sections mount after the first paint (and after a route change to "/").
+ */
+const scrollToSection = (id: string) => {
+  const started = Date.now();
+  let found = 0;
+  const tick = () => {
+    const el = document.getElementById(id);
+    if (el) {
+      const top = el.getBoundingClientRect().top + window.scrollY - 80;
+      // Re-align while lazy sections above keep mounting and shifting layout.
+      if (Math.abs(top - window.scrollY) > 4) {
+        window.scrollTo({ top, behavior: found ? "auto" : "smooth" });
+      }
+      if (!found) found = Date.now();
+      if (Date.now() - found < 2500) requestAnimationFrame(tick);
+      return;
+    }
+    if (Date.now() - started < 5000) requestAnimationFrame(tick);
+  };
+  tick();
+
+};
+
 const Footer = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Deep link support: arriving at /#products or /#about scrolls once mounted.
+  useEffect(() => {
+    if (location.pathname === "/" && location.hash) {
+      scrollToSection(location.hash.slice(1));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname, location.hash]);
+
+
+
+  const handleSectionLink = (id: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (location.pathname !== "/") {
+      navigate(`/#${id}`);
+      requestAnimationFrame(() => scrollToSection(id));
+    } else {
+      scrollToSection(id);
+    }
+  };
+
   return (
     <footer className="relative bg-gradient-to-b from-secondary via-muted to-secondary text-white py-12">
       <div className="container mx-auto px-4">
+
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           {/* Brand */}
           <div>
@@ -22,15 +73,16 @@ const Footer = () => {
             <h4 className="font-bold mb-4 text-accent">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#products" onClick={(e) => { e.preventDefault(); document.getElementById("products")?.scrollIntoView({ behavior: "smooth" }); }} className="text-white/80 hover:text-accent transition-colors cursor-pointer">
+                <a href="/#products" onClick={handleSectionLink("products")} className="text-white/80 hover:text-accent transition-colors cursor-pointer">
                   Products
                 </a>
               </li>
               <li>
-                <a href="#about" onClick={(e) => { e.preventDefault(); document.getElementById("about")?.scrollIntoView({ behavior: "smooth" }); }} className="text-white/80 hover:text-accent transition-colors cursor-pointer">
+                <a href="/#about" onClick={handleSectionLink("about")} className="text-white/80 hover:text-accent transition-colors cursor-pointer">
                   About Us
                 </a>
               </li>
+
               <li>
                 <Link to="/wellness" className="text-white/80 hover:text-accent transition-colors">
                   Wellness Hubs
