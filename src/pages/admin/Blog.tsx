@@ -252,6 +252,22 @@ const Blog = () => {
     }));
     setQuizOptions(loadedQuiz);
 
+    // Fetch FAQ items
+    const { data: faqRows } = await supabase
+      .from('blog_post_faqs')
+      .select('id, question, answer, display_order')
+      .eq('post_id', post.id)
+      .order('display_order');
+
+    const loadedFaqs: FaqRow[] = (faqRows || []).map(r => ({
+      id: r.id,
+      question: r.question,
+      answer: r.answer,
+    }));
+    setFaqItems(loadedFaqs);
+
+
+
     const loaded = {
       title: post.title,
       slug: post.slug,
