@@ -54,15 +54,16 @@ const Footer = () => {
             <h4 className="font-bold mb-4 text-accent">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#products" onClick={(e) => { e.preventDefault(); document.getElementById("products")?.scrollIntoView({ behavior: "smooth" }); }} className="text-white/80 hover:text-accent transition-colors cursor-pointer">
+                <a href="/#products" onClick={handleSectionLink("products")} className="text-white/80 hover:text-accent transition-colors cursor-pointer">
                   Products
                 </a>
               </li>
               <li>
-                <a href="#about" onClick={(e) => { e.preventDefault(); document.getElementById("about")?.scrollIntoView({ behavior: "smooth" }); }} className="text-white/80 hover:text-accent transition-colors cursor-pointer">
+                <a href="/#about" onClick={handleSectionLink("about")} className="text-white/80 hover:text-accent transition-colors cursor-pointer">
                   About Us
                 </a>
               </li>
+
               <li>
                 <Link to="/wellness" className="text-white/80 hover:text-accent transition-colors">
                   Wellness Hubs
