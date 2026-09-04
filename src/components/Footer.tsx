@@ -1,11 +1,43 @@
 import { Facebook, Instagram, Phone, Mail, MapPin } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import TikTokIcon from "@/components/icons/TikTokIcon";
 
+/**
+ * Scrolls to a homepage section, retrying briefly because the below-the-fold
+ * sections mount after the first paint (and after a route change to "/").
+ */
+const scrollToSection = (id: string) => {
+  const started = Date.now();
+  const tick = () => {
+    const el = document.getElementById(id);
+    if (el) {
+      const top = el.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top, behavior: "smooth" });
+      return;
+    }
+    if (Date.now() - started < 5000) requestAnimationFrame(tick);
+  };
+  tick();
+};
+
 const Footer = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleSectionLink = (id: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (location.pathname !== "/") {
+      navigate(`/#${id}`);
+      requestAnimationFrame(() => scrollToSection(id));
+    } else {
+      scrollToSection(id);
+    }
+  };
+
   return (
     <footer className="relative bg-gradient-to-b from-secondary via-muted to-secondary text-white py-12">
       <div className="container mx-auto px-4">
+
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           {/* Brand */}
           <div>
