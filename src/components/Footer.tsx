@@ -10,16 +10,23 @@ import TikTokIcon from "@/components/icons/TikTokIcon";
  */
 const scrollToSection = (id: string) => {
   const started = Date.now();
+  let found = 0;
   const tick = () => {
     const el = document.getElementById(id);
     if (el) {
       const top = el.getBoundingClientRect().top + window.scrollY - 80;
-      window.scrollTo({ top, behavior: "smooth" });
+      // Re-align while lazy sections above keep mounting and shifting layout.
+      if (Math.abs(top - window.scrollY) > 4) {
+        window.scrollTo({ top, behavior: found ? "auto" : "smooth" });
+      }
+      if (!found) found = Date.now();
+      if (Date.now() - found < 2500) requestAnimationFrame(tick);
       return;
     }
     if (Date.now() - started < 5000) requestAnimationFrame(tick);
   };
   tick();
+
 };
 
 const Footer = () => {
