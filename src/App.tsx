@@ -72,6 +72,7 @@ const WellnessHubPage = lazy(() => import("./pages/WellnessHubPage"));
 const AdminWellnessHubs = lazy(() => import("./pages/admin/WellnessHubs"));
 const AdminLocationProducts = lazy(() => import("./pages/admin/LocationProducts"));
 const AdminLocationPages = lazy(() => import("./pages/admin/LocationPages"));
+const AnalyticsDebug = lazy(() => import("./pages/AnalyticsDebug"));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-background">
@@ -162,6 +163,7 @@ const App = () => (
                   <Route path="/business" element={<BusinessHubPage />} />
                   <Route path="/business/blog" element={<BusinessBlogPage />} />
                   <Route path="/business/blog/:slug" element={<BlogPage />} />
+                  <Route path="/analytics-debug" element={<AnalyticsDebug />} />
                   <Route path="/:city" element={<LocationLanding />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
