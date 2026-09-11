@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import type { LocationData } from "@/config/locations";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 const WHATSAPP = "https://wa.me/254795454053";
 
@@ -126,6 +127,7 @@ const LocationLongForm = ({ location }: { location: LocationData }) => {
         <p className="not-prose mt-8 flex flex-wrap gap-3">
           <a
             href={`${WHATSAPP}?text=Hi, I'm in ${city} and would like wellness guidance.`}
+            onClick={() => trackWhatsAppClick(undefined, "location_page")}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center h-12 px-6 rounded-xl bg-accent text-accent-foreground font-bold hover:scale-[1.03] transition-transform"
