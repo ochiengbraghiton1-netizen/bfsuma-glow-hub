@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Star, ShoppingCart, MessageCircle, Users, Play } from 'lucide-react';
 import RichTextContent from '@/components/ui/rich-text-content';
 import { format } from 'date-fns';
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 interface BlogCategory {
   id: string;
@@ -138,6 +139,7 @@ const BlogPostUGC = ({ post, relatedProducts }: UGCPostProps) => {
           <Button asChild variant="outline" size="lg" className="rounded-full">
             <a
               href="https://wa.me/254742167567?text=Hi%2C%20I%27d%20like%20to%20order%20a%20BF%20SUMA%20product"
+              onClick={() => trackWhatsAppClick(undefined, "blog_ugc")}
               target="_blank"
               rel="noopener noreferrer"
             >

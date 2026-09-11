@@ -22,6 +22,7 @@ import { businessRegistrationSchema, BusinessRegistrationFormData } from '@/lib/
 import { HoneypotField } from '@/components/ui/honeypot-field';
 import { isBot } from '@/lib/honeypot';
 import { PhoneInput } from '@/components/ui/phone-input';
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 const WHATSAPP_URL = 'https://wa.me/254795454053?text=Hi%20BF%20SUMA%20team%20%F0%9F%91%8B%20I%20want%20to%20join%20the%20business.';
 
@@ -119,7 +120,7 @@ const RegistrationFormSection = ({ onSuccess }: RegistrationFormSectionProps) =>
           </p>
           <p className="text-sm text-muted-foreground mt-2">
             Prefer WhatsApp?{' '}
-            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center gap-1">
+            <a href={WHATSAPP_URL} onClick={() => trackWhatsAppClick(undefined, "join_business_form")} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center gap-1">
               <MessageCircle className="h-3.5 w-3.5" /> Chat with our team directly
             </a>
           </p>

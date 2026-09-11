@@ -1,6 +1,7 @@
 import { MessageCircle, ArrowDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import heroImage from '@/assets/join-business-hero.webp';
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 const WHATSAPP_URL = 'https://wa.me/254795454053?text=Hi%20BF%20SUMA%20team%20%F0%9F%91%8B%20I%20want%20to%20learn%20more%20about%20joining%20the%20business.';
 
@@ -28,7 +29,7 @@ const HeroSection = () => {
             asChild
             className="bg-accent text-accent-foreground hover:bg-accent/90 h-14 px-8 text-lg shadow-lg"
           >
-            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+            <a href={WHATSAPP_URL} onClick={() => trackWhatsAppClick(undefined, "join_business_hero")} target="_blank" rel="noopener noreferrer">
               <MessageCircle className="mr-2 h-5 w-5" />
               Join via WhatsApp
             </a>

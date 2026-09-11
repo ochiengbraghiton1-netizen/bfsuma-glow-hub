@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Sparkles, CheckCircle2, ArrowRight, ArrowLeft, MessageCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 const WHATSAPP_NUMBER = "254795454053";
 
@@ -271,7 +272,7 @@ const BlogLeadCapture = ({ contentType, postSlug, postTitle, quizOptions = [] }:
                   <Link to={`/product/${selected.product.slug}`}>View product details</Link>
                 </Button>
                 <Button asChild className="rounded-full">
-                  <a href={waUrl} target="_blank" rel="noopener noreferrer">
+                  <a href={waUrl} onClick={() => trackWhatsAppClick(selected?.product?.name, `blog_${postSlug}`)} target="_blank" rel="noopener noreferrer">
                     <MessageCircle className="w-4 h-4 mr-2" />
                     Order Now via WhatsApp
                   </a>
@@ -297,6 +298,7 @@ const BlogLeadCapture = ({ contentType, postSlug, postTitle, quizOptions = [] }:
           </p>
           <a
             href={`https://wa.me/${WHATSAPP_NUMBER}`}
+            onClick={() => trackWhatsAppClick(undefined, `blog_${postSlug}`)}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block text-sm font-medium text-primary underline underline-offset-4"

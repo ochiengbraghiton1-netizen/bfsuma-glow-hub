@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { MessageCircle, GraduationCap, Heart } from "lucide-react";
 import communityBg from "@/assets/community-bg.webp";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 const Community = () => {
   const openWhatsApp = () => {
+    trackWhatsAppClick(undefined, "community");
     window.open("https://wa.me/254795454053", "_blank");
   };
 

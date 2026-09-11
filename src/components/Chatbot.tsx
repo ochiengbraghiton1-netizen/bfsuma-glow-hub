@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { X, Send, Loader2, Sparkles, Phone, ArrowRight, HelpCircle, BookOpen, Briefcase, ShoppingBag, Stethoscope } from "lucide-react";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-assistant`;
 const WHATSAPP_NUMBER = "254795454053";
@@ -206,6 +207,7 @@ const Chatbot = () => {
 
     if (reply.type === "whatsapp") {
       trackEvent("chatbot_whatsapp_redirect", { source: "quick_reply", message: reply.whatsappMsg || "" });
+      trackWhatsAppClick(pageContext.type === "product" ? pageContext.name : undefined, "chatbot");
       window.open(getWhatsAppUrl(reply.whatsappMsg || "Hi, I'd like help choosing the right supplement for my needs."), "_blank");
       return;
     }
@@ -258,6 +260,7 @@ const Chatbot = () => {
       ? `Hi, I'm interested in ${pageContext.name}. Can you guide me?`
       : "Hi, I'd like help choosing the right supplement for my needs.";
     trackEvent("chatbot_whatsapp_redirect", { source: "talk_to_us", page_context: pageContext.type });
+    trackWhatsAppClick(pageContext.type === "product" ? pageContext.name : undefined, "chatbot");
     window.open(getWhatsAppUrl(msg), "_blank");
   };
 

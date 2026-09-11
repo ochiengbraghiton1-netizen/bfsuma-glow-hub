@@ -26,6 +26,7 @@ import {
   Tag,
 } from "lucide-react";
 import { format } from "date-fns";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 interface BusinessPost {
   id: string;
@@ -152,7 +153,7 @@ const BusinessHubPage = () => {
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-full">
-                <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+                <a href={WHATSAPP_URL} onClick={() => trackWhatsAppClick(undefined, "business_hub")} target="_blank" rel="noopener noreferrer">
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Talk on WhatsApp
                 </a>
@@ -313,7 +314,7 @@ const BusinessHubPage = () => {
                 <Link to="/join-business">Register Now</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-full bg-transparent border-white text-white hover:bg-white/10">
-                <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+                <a href={WHATSAPP_URL} onClick={() => trackWhatsAppClick(undefined, "business_hub")} target="_blank" rel="noopener noreferrer">
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Chat with a mentor
                 </a>
