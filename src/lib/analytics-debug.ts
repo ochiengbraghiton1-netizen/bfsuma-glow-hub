@@ -67,6 +67,12 @@ function record(name: string, params: Record<string, unknown>) {
 export function installRecorder() {
   if (installed || typeof window === "undefined") return;
   installed = true;
+  try {
+    sessionStorage.setItem("ga4-debug-armed", "1");
+  } catch {
+    /* storage unavailable */
+  }
+
 
   const original = window.gtag;
 
