@@ -9,6 +9,7 @@ import {
   subscribe,
   readEvents,
   clearEvents,
+  stopRecording,
   isGaLoaded,
   type RecordedEvent,
 } from "@/lib/analytics-debug";
