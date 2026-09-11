@@ -76,8 +76,9 @@ const AnalyticsDebug = () => {
         <header className="space-y-2">
           <h1 className="text-2xl font-bold">Analytics check</h1>
           <p className="text-sm text-muted-foreground">
-            Every event this site sends to Google Analytics is listed below as it happens. Leave this
-            page open in one tab, use the site in another, then come back to see what was recorded.
+            Every event this site sends to Google Analytics is listed below as it happens. Browse the
+            site from here in this same tab, click a WhatsApp button or open a product, then come back
+            to this page to see exactly what was recorded.
           </p>
         </header>
 
@@ -136,8 +137,8 @@ const AnalyticsDebug = () => {
               Test product view
             </Button>
             <Button size="sm" variant="ghost" asChild>
-              <Link to="/products" target="_blank" rel="noreferrer">
-                Open shop in a new tab <ExternalLink className="w-3 h-3 ml-1" />
+              <Link to="/products">
+                Browse products <ExternalLink className="w-3 h-3 ml-1" />
               </Link>
             </Button>
           </div>
