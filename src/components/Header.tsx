@@ -9,6 +9,7 @@ import ThemeToggle from "./ThemeToggle";
 import productGeneric from "@/assets/product-generic.webp";
 import bfSumaLogo from "@/assets/bf-suma-logo-new-sm.webp";
 import { Separator } from "@/components/ui/separator";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 const navLinks = [
   { href: "/products", label: "Shop", isAnchor: false },
@@ -106,6 +107,7 @@ const Header = () => {
             <Button variant="outline" size="sm" asChild>
               <a
                 href="https://wa.me/254795454053?text=Hi%2C%20I'd%20like%20to%20book%20a%20free%20health%20consultation."
+                onClick={() => trackWhatsAppClick(undefined, "header")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5"
@@ -133,6 +135,7 @@ const Header = () => {
             <Button variant="outline" size="icon" asChild aria-label="Book Consultation">
               <a
                 href="https://wa.me/254795454053?text=Hi%2C%20I'd%20like%20to%20book%20a%20free%20health%20consultation."
+                onClick={() => trackWhatsAppClick(undefined, "header")}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -289,6 +292,7 @@ const Header = () => {
                 <Button size="sm" asChild onClick={() => setIsMobileMenuOpen(false)}>
                   <a
                     href="https://wa.me/254795454053?text=Hi%2C%20I'd%20like%20to%20book%20a%20free%20health%20consultation."
+                onClick={() => trackWhatsAppClick(undefined, "header")}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2"

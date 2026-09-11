@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Stethoscope, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 const WHATSAPP_URL = "https://wa.me/254795454053?text=Hi%2C%20I'd%20like%20to%20book%20a%20free%20health%20consultation.";
 
@@ -25,7 +26,7 @@ const ConsultationCTA = ({
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
           <Button asChild size="lg" className="gap-2">
-            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+            <a href={WHATSAPP_URL} onClick={() => trackWhatsAppClick(undefined, "consultation_cta")} target="_blank" rel="noopener noreferrer">
               <Stethoscope className="w-4 h-4" />
               Book Consultation
               <ArrowRight className="w-4 h-4" />

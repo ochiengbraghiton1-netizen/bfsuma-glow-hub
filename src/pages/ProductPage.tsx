@@ -15,6 +15,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 import { stripHtmlTags, truncateText } from "@/lib/html-utils";
+import { trackWhatsAppClick, trackViewItem } from "@/lib/analytics";
 
 const trustSignals = [
   { icon: Shield, label: "Quality Assured" },
@@ -118,6 +119,12 @@ const ProductPage = () => {
         currency: "KES",
       });
     }
+    trackViewItem({
+      item_id: product.sku || product.slug,
+      item_name: product.name,
+      price: product.price,
+      currency: "KES",
+    });
   }, [product]);
 
   if (loading) {
@@ -354,6 +361,7 @@ const ProductPage = () => {
                 {/* WhatsApp consultation CTA */}
                 <a
                   href={`https://wa.me/254795454053?text=${encodeURIComponent(`Hi, I'd like advice on ${product.name}.`)}`}
+                  onClick={() => trackWhatsAppClick(product.name, "product_page")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 w-full rounded-full border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary font-medium px-4 py-3 text-sm mb-6 transition"
