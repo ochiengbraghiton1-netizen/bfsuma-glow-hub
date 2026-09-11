@@ -8,8 +8,8 @@
       function gtag(){dataLayer.push(arguments);}
       window.gtag = gtag;
       gtag('js', new Date());
-      // SPA route changes are sent manually from the app (GA4 page_view).
-      gtag('config', 'G-5S6XHDLTPF', { send_page_view: true });
+      // All page views (initial + SPA route changes) are sent manually from the app.
+      gtag('config', 'G-5S6XHDLTPF', { send_page_view: false });
     </script>
 
     <meta charset="UTF-8" />
