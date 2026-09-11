@@ -1,49 +1,60 @@
-# Audit report: blog URL fetch + Quick Links
+# Fix GA4 tracking: direct gtag.js, honest WhatsApp click events
 
-No code was changed. Findings below are from live fetches, the database record, and the current source.
+## Audit findings (before any change)
 
-## Issue 1 — Blog article "returns homepage content"
+**1. There is no G-5S6XHDLTPF tag anywhere in the code.** All analytics currently flows through a Google Tag Manager container (`GTM-PDTHQJND`) loaded in `index.html`. Whatever GA4 tags exist live inside that container, invisible to the codebase — this is the main reason the numbers can't be reconciled.
 
-### Confirmed facts
-- The article exists and is live: slug `vaginal-dryness-discomfort-before-40-kenya`, status `published`, type `health`, published 6 Aug 2026, ~6,000 characters of content.
-- Fetched as a normal browser agent: HTTP 200, but the returned file is the app shell, whose built-in placeholder title is "BF SUMA Royal | Premium Health Supplements Kenya". This is the same shell every page returns, by design.
-- Fetched as Google: HTTP 200 with headers `x-bot-prerender: vercel-middleware` and `x-seo-render: 1`, correct title "Vaginal Dryness Before 40: Why It Happens and What Actually Helps", and correct canonical `https://bfsumaroyal.com/blog/vaginal-dryness-discomfort-before-40-kenya`.
+**2. Analytics loads late.** Both GTM and the Meta Pixel only load after the first click/scroll/keypress, or after a 4–5 second idle fallback. Short visits go uncounted, and any event fired before load is lost.
 
-### Root cause
-Not a bug. The site is a single-page app: the real article is assembled in the browser, so a simple external fetcher (which does not run scripts) only ever sees the shared shell. Search engines and social crawlers are detected and served fully rendered article HTML, which is what matters for indexing and previews.
+**3. `whatsapp_click` fires from exactly one place** — a global click listener in `index.html` (lines 127–153) that matches links pointing at `wa.me/254795454053`. It is a genuine click handler, not a render/mount effect. The inflation to ~2.88 events per user therefore comes from double counting, not phantom firing:
+- The handler pushes to `dataLayer` *and* calls `gtag` depending on what is defined, and GTM commonly defines both — so a container-side trigger on the same click can add a second hit.
+- Any outbound-link or click trigger configured inside the GTM container fires on the same click as a third hit.
+- The de-duplication uses a `WeakSet` of link elements; React re-renders replace those elements, so repeat clicks on a re-rendered button count again.
 
-### Severity
-None for users or Google. Low, cosmetic risk only: the shell's placeholder title is homepage wording, so any non-listed scraper or link tool that does not run scripts will show the homepage title for every URL.
+**4. WhatsApp CTAs that are NOT tracked at all** (they call `window.open(...)` instead of rendering a link, so the global listener never sees them):
+- Chatbot — quick replies and both "Chat on WhatsApp" buttons (`Chatbot.tsx`)
+- Community section button (`Community.tsx`)
+- Contact page form submit (`ContactPage.tsx`)
+- Contact section (`Contact.tsx`), Health Quiz popup (`HealthQuizPopup.tsx`), blog lead capture (`BlogLeadCapture.tsx`) where they use `window.open`
 
-### Affected files
-- `index.html` (placeholder title/description in the shell)
-- `middleware.ts` (bot list that decides who gets rendered HTML)
-- `supabase/functions/seo-render/index.ts` (renders the real article HTML)
+Tracked today (they are real `<a href>` links): product page CTA, sticky consultation button, consultation CTA, header, footer, hero, join-business hero and banner, location pages, wellness/business hub pages, order pages.
 
-### Safest minimal fix (optional)
-Add more non-JS fetchers to the bot list in `middleware.ts` (WhatsApp, Telegram, Discord, Pinterest, Applebot, Yandex, DuckDuckBot, Ahrefs/Semrush) so previews and audit tools also receive the real page. No routing or app changes needed.
+**5. Product pages fire the Meta Pixel `ViewContent` but no GA4 `view_item`.** Purchase and lead events push raw `dataLayer` objects that only work if GTM is present.
 
-## Issue 2 — Quick Links
+## The fix
 
-### Confirmed facts
-- Footer "Products" and "About Us" are in-page jump links: they cancel the normal link behaviour and scroll to a section on the current page.
-- The footer appears on every page. On any page other than the homepage those two sections do not exist, so the click is cancelled and nothing at all happens. This is the reported failure.
-- Even on the homepage there is a timing hole: the Products, About and FAQ sections are mounted only after the first paint, so a very early click can scroll nowhere.
-- All other footer Quick Links are real routes and all resolve correctly: `/wellness`, `/faq`, `/contact`, `/return-policy`, `/terms`, `/blog`, `/business`, `/join-business`, plus the ten city links.
-- The top navigation handles this correctly already: if you are not on the homepage it navigates home first, then scrolls.
+**Tag setup** — remove the GTM container (script and noscript) and load Google Analytics directly with measurement ID `G-5S6XHDLTPF`, initialised once in one place, loading immediately on every page. No GTM, no other analytics scripts. Meta Pixel stays as-is.
 
-### Root cause
-The footer's two jump links assume the visitor is on the homepage. They were never given the "go home first, then scroll" behaviour the header has.
+**One tracking helper** — a single `src/lib/analytics.ts` exposing `trackWhatsAppClick(productName?, placement?)`, `trackViewItem(...)`, `trackPurchase(...)`, `trackLead(...)`, each calling `window.gtag` directly.
 
-### Severity
-Medium. Two links are dead on roughly every page except the homepage, on a component shown site-wide.
+**Remove the duplicate path** — delete the inline GA4 branch inside the `index.html` click listener, keeping only the Meta Pixel `Contact` call there. GA4's `whatsapp_click` will then be fired once, explicitly, by each CTA.
 
-### Affected files
-- `src/components/Footer.tsx` (lines with the Products and About Us links)
-- Secondary, timing only: `src/pages/Index.tsx` (deferred mounting of those sections)
+**Wire every WhatsApp CTA** to call the helper exactly once per click, with placement labels:
+- product detail page → product name + `product_page`
+- sticky button → `sticky_cta`
+- chatbot (all entry points) → `chatbot`
+- blog/article CTAs → `blog_<post-slug>`
+- others get descriptive placements: `header`, `footer`, `hero`, `community`, `contact_page`, `contact_section`, `consultation_cta`, `health_quiz`, `join_business_hero`, `join_business_banner`, `location_page`, `wellness_hub`, `business_hub`, `order_page`
 
-### Safest minimal fix
-In `Footer.tsx` only, make those two links behave like the header's: when already on the homepage, scroll; otherwise navigate to `/#products` or `/#about` and scroll once the section is present (retry briefly instead of a fixed delay, which also closes the early-click timing hole). Roughly 15 lines in one file, no routing, data or SEO changes.
+**Product detail pages** fire `view_item` once per page view with `item_id`, `item_name`, `price`, `currency: "KES"`, alongside the existing pixel event.
 
-## Recommendation
-Fix the footer links. Treat the blog URL as working; optionally widen the crawler list so link-preview tools stop showing homepage wording.
+**Existing dataLayer pushes** (purchase on PayPal capture, exit-intent lead, chatbot events) are converted to `gtag` calls so they keep working after GTM is removed. Page views on route changes keep firing — `GTMPageView.tsx` is repointed to `gtag('event','page_view')`.
+
+## Files touched
+
+- `index.html` — remove GTM script + noscript, add gtag.js for `G-5S6XHDLTPF` loaded immediately, strip the GA4 branch from the WhatsApp click listener
+- `src/lib/analytics.ts` — new helper (plus a small unit test for the payload shape)
+- `src/components/GTMPageView.tsx` — SPA page views via gtag
+- WhatsApp CTA components: `Chatbot.tsx`, `Community.tsx`, `Contact.tsx`, `ContactPage.tsx`, `ConsultationCTA.tsx`, `StickyConsultationCTA.tsx`, `Header.tsx`, `Footer.tsx`, `Hero.tsx`, `HealthQuizPopup.tsx`, `LocationPage.tsx`, `LocationLongForm.tsx`, `ShopByHealthGoal.tsx`, `WellnessHubPage.tsx`, `BusinessHubPage.tsx`, `ProductPage.tsx`, `blog/BlogLeadCapture.tsx`, `blog/BlogPostUGC.tsx`, `join-business/HeroSection.tsx`, `join-business/CTABanner.tsx`, `join-business/RegistrationFormSection.tsx`, `consultation/ConsultationSuccess.tsx`, `business-registration/RegistrationSuccess.tsx`
+- `src/pages/Checkout.tsx`, `src/components/ExitIntentPopup.tsx` — purchase and lead events via gtag
+- `docs/PRD.md` — update the one line describing the tag setup
+
+No database, routing, SEO, prerender or styling changes.
+
+## Verification
+
+Type check and build; browser run of the preview confirming a single GA collect request per page, one `whatsapp_click` per WhatsApp click (verified on product page, sticky button and chatbot), one `view_item` per product page view, and no GTM script present.
+
+## Important note
+
+Once GTM is removed, anything configured inside that container stops firing — if you have tags in GTM beyond GA4 (for example Google Ads conversions), tell me and I'll re-create them in code.
