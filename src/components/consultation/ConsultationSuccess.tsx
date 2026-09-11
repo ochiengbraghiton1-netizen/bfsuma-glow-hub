@@ -2,6 +2,7 @@ import { CheckCircle, MessageCircle, Clock, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { ConsultationData } from "./ConsultationForm";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 interface ConsultationSuccessProps {
   data: ConsultationData;
@@ -30,6 +31,7 @@ I would like to proceed with a professional consultation. Thank you!`;
   };
 
   const openWhatsApp = () => {
+    trackWhatsAppClick(undefined, "consultation_success");
     window.open(buildWhatsAppUrl(), "_blank");
   };
 

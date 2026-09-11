@@ -10,6 +10,7 @@ import { CheckCircle, MessageCircle, Copy, ArrowLeft, Loader2, Phone, ExternalLi
 import { format } from 'date-fns';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 const WHATSAPP_NUMBER = "254795454053";
 const WHATSAPP_DISPLAY = "+254 795 454 053";
@@ -179,6 +180,7 @@ const OrderConfirmation = () => {
     const url = isMobile
       ? `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`
       : `https://web.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${message}`;
+    trackWhatsAppClick(undefined, 'order_confirmation');
     window.open(url, '_blank');
 
     // Re-enable after a short delay to prevent spam clicks

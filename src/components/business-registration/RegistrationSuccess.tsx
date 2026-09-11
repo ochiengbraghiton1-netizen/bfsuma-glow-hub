@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
+import { trackWhatsAppClick } from "@/lib/analytics";
   CheckCircle, 
   Clock, 
   Rocket, 
@@ -113,6 +114,7 @@ const RegistrationSuccess = ({ registrationData, onStartNew }: RegistrationSucce
 
   const handleCompleteOnWhatsApp = () => {
     const url = buildWhatsAppUrl();
+    trackWhatsAppClick(undefined, 'registration_success');
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
