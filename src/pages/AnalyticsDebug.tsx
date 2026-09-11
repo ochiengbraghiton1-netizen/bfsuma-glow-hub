@@ -76,9 +76,10 @@ const AnalyticsDebug = () => {
         <header className="space-y-2">
           <h1 className="text-2xl font-bold">Analytics check</h1>
           <p className="text-sm text-muted-foreground">
-            Every event this site sends to Google Analytics is listed below as it happens. Browse the
-            site from here in this same tab, click a WhatsApp button or open a product, then come back
-            to this page to see exactly what was recorded.
+            Every event this site sends to Google Analytics is listed below as it happens. Recording
+            starts the moment you open this page and keeps running while you use the site in this tab,
+            even across refreshes. Browse around, click a WhatsApp button or open a product, then come
+            back here to see exactly what was recorded.
           </p>
         </header>
 
@@ -140,6 +141,16 @@ const AnalyticsDebug = () => {
               <Link to="/products">
                 Browse products <ExternalLink className="w-3 h-3 ml-1" />
               </Link>
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                stopRecording();
+                clearEvents();
+              }}
+            >
+              Stop recording
             </Button>
           </div>
         </Card>
