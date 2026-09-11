@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { X, Send, Loader2, Sparkles, Phone, ArrowRight, HelpCircle, BookOpen, Briefcase, ShoppingBag, Stethoscope } from "lucide-react";
-import { trackWhatsAppClick } from "@/lib/analytics";
+import { trackWhatsAppClick, trackEvent } from "@/lib/analytics";
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-assistant`;
 const WHATSAPP_NUMBER = "254795454053";
@@ -24,14 +24,7 @@ function getWhatsAppUrl(message: string) {
   return `${WHATSAPP_BASE}?text=${encodeURIComponent(message)}`;
 }
 
-function trackEvent(eventName: string, data?: Record<string, string>) {
-  if (typeof window !== "undefined" && (window as any).dataLayer) {
-    (window as any).dataLayer.push({
-      event: eventName,
-      ...data,
-    });
-  }
-}
+
 
 async function streamChat({
   messages,
