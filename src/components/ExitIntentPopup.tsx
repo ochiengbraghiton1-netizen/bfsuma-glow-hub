@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Gift, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { trackLead } from "@/lib/analytics";
 
 const STORAGE_KEY = "exit-popup-dismissed";
 const COOLDOWN_DAYS = 7;
@@ -174,13 +175,7 @@ const ExitIntentPopup = () => {
       return;
     }
 
-    if (typeof window !== "undefined" && (window as any).dataLayer) {
-      (window as any).dataLayer.push({
-        event: "generate_lead",
-        lead_source: "exit_popup",
-        page_location: window.location.href,
-      });
-    }
+    trackLead("exit_popup");
 
     setSubmitted(true);
     setCooldown();

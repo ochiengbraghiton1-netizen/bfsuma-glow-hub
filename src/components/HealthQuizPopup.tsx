@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Sparkles, ArrowRight, ArrowLeft, CheckCircle2, MessageCircle, Stethoscope } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 const STORAGE_KEY = "health-quiz-state-v1";
 const COOLDOWN_DAYS = 30;
@@ -330,12 +331,12 @@ const HealthQuizPopup = () => {
               </div>
               <div className="space-y-2">
                 <Button asChild size="lg" className="w-full rounded-full bg-green-600 hover:bg-green-700">
-                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={handleClose}>
+                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={() => { trackWhatsAppClick(recommendation?.name, "health_quiz"); handleClose(); }}>
                     <MessageCircle className="mr-2 w-5 h-5" /> Order Now via WhatsApp
                   </a>
                 </Button>
                 <Button asChild variant="outline" size="lg" className="w-full rounded-full">
-                  <a href={consultUrl} target="_blank" rel="noopener noreferrer" onClick={handleClose}>
+                  <a href={consultUrl} target="_blank" rel="noopener noreferrer" onClick={() => { trackWhatsAppClick(undefined, "health_quiz"); handleClose(); }}>
                     <Stethoscope className="mr-2 w-5 h-5" /> Talk to a Wellness Expert
                   </a>
                 </Button>

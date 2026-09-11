@@ -80,7 +80,7 @@ Products, categories, orders, leads, promotions, social/UGC, wellness hubs, city
 - Dynamic sitemap edge function covering all content types (~117 URLs), plus robots.txt and IndexNow.
 
 ### 4.6 Analytics
-Meta Pixel `951783873944798` (PageView, ViewContent, Contact, Lead) and GA4 via GTM (`whatsapp_click`, SPA page views, purchase on PayPal capture only).
+Meta Pixel `951783873944798` (PageView, ViewContent, Contact, Lead) and direct GA4 gtag.js `G-5S6XHDLTPF` (`whatsapp_click`, `view_item`, SPA page views, purchase on PayPal capture only).
 
 ---
 

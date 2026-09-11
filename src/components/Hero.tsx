@@ -1,5 +1,6 @@
 import { ArrowRight, ShoppingBag, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 const WHATSAPP_URL = 'https://wa.me/254795454053?text=Hi%2C%20I%20need%20help%20choosing%20the%20right%20supplement%20for%20my%20health.';
 
@@ -129,6 +130,7 @@ const Hero = () => {
           </button>
           <a
             href={WHATSAPP_URL}
+            onClick={() => trackWhatsAppClick(undefined, "hero")}
             target="_blank"
             rel="noopener noreferrer"
             className="group relative w-full lg:w-auto inline-flex items-center justify-center gap-2 md:gap-3 h-14 md:h-[4.5rem] px-5 md:px-14 text-base md:text-[1.35rem] font-extrabold tracking-wide rounded-2xl bg-white/15 backdrop-blur-md text-white border-2 border-accent shadow-[0_0_30px_hsl(43_96%_56%/0.25),inset_0_1px_0_hsl(0_0%_100%/0.15)] hover:bg-accent hover:text-accent-foreground hover:shadow-[0_0_50px_hsl(43_96%_56%/0.6),0_8px_32px_hsl(43_96%_56%/0.35)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300 ease-out whitespace-nowrap"

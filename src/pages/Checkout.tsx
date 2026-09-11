@@ -22,6 +22,7 @@ import ReturnPolicySummary from '@/components/ReturnPolicySummary';
 import TrustBadgesInline from '@/components/TrustBadgesInline';
 
 import { useCurrency } from '@/hooks/use-currency';
+import { trackWhatsAppClick, trackPurchase } from "@/lib/analytics";
 
 const WHATSAPP_NUMBER = "254795454053";
 const CHECKOUT_STORAGE_KEY = "bf_checkout_form";
@@ -302,22 +303,17 @@ const Checkout = () => {
       if (verifiedPayment?.error) throw new Error(verifiedPayment.error);
 
       // GA4 purchase event
-      if (typeof window !== 'undefined' && (window as any).dataLayer) {
-        (window as any).dataLayer.push({
-          event: 'purchase',
-          ecommerce: {
-            transaction_id: dbOrderId,
-            value: convert(finalTotal),
-            currency: currency,
-            items: items.map(item => ({
-              item_id: item.id,
-              item_name: item.name,
-              price: convert(item.price),
-              quantity: item.quantity,
-            })),
-          },
-        });
-      }
+      trackPurchase({
+        transaction_id: dbOrderId,
+        value: convert(finalTotal),
+        currency: currency,
+        items: items.map(item => ({
+          item_id: item.id,
+          item_name: item.name,
+          price: convert(item.price),
+          quantity: item.quantity,
+        })),
+      });
 
       // Send confirmation email if customer provided email
       if (formData.customerEmail) {
@@ -473,7 +469,7 @@ const Checkout = () => {
             </Button>
             <Button 
               variant="outline"
-              onClick={() => window.open(`https://wa.me/${WHATSAPP_NUMBER}`, '_blank')}
+              onClick={() => { trackWhatsAppClick(undefined, 'checkout'); window.open(`https://wa.me/${WHATSAPP_NUMBER}`, '_blank'); }}
               className="w-full"
             >
               <MessageCircle className="h-4 w-4 mr-2" />

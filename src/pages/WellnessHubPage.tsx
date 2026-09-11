@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import { Loader2, ArrowRight, Phone, MapPin, HelpCircle, ShoppingBag, BookOpen, Sparkles, CheckCircle2 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { autoLinkProducts } from "@/lib/auto-link-products";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 interface Hub {
   id: string;
@@ -162,7 +163,7 @@ const WellnessHubPage = () => {
             <h1 className="text-3xl md:text-5xl font-bold mb-4">{hub.hero_title}</h1>
             <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">{hub.hero_description}</p>
             <div className="flex flex-wrap gap-3 justify-center">
-              <a href={`${WHATSAPP}?text=Hi, I'd like guidance on ${encodeURIComponent(hub.name)}.`} target="_blank" rel="noopener noreferrer"
+              <a href={`${WHATSAPP}?text=Hi, I'd like guidance on ${encodeURIComponent(hub.name)}.`} onClick={() => trackWhatsAppClick(hub.name, "wellness_hub")} target="_blank" rel="noopener noreferrer"
                  className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-accent text-accent-foreground font-bold hover:scale-105 transition-transform">
                 <Phone className="w-4 h-4" /> Free WhatsApp Consultation
               </a>
@@ -216,7 +217,7 @@ const WellnessHubPage = () => {
                           <Link to={`/product/${p.slug}`} className="flex-1 inline-flex items-center justify-center gap-1 h-10 px-3 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors">
                             View Product
                           </Link>
-                          <a href={`${WHATSAPP}?text=${waMsg}`} target="_blank" rel="noopener noreferrer" aria-label={`Order ${p.name} on WhatsApp`}
+                          <a href={`${WHATSAPP}?text=${waMsg}`} onClick={() => trackWhatsAppClick(p.name, "wellness_hub_product")} target="_blank" rel="noopener noreferrer" aria-label={`Order ${p.name} on WhatsApp`}
                              className="inline-flex items-center justify-center h-10 w-10 rounded-lg bg-accent text-accent-foreground hover:scale-105 transition-transform">
                             <Phone className="w-4 h-4" />
                           </a>
@@ -317,7 +318,7 @@ const WellnessHubPage = () => {
           <div className="container mx-auto px-4 max-w-3xl text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-3">Not sure which product is right for you?</h2>
             <p className="text-white/90 mb-6">Chat with our wellness team on WhatsApp — free, confidential, no pressure.</p>
-            <a href={`${WHATSAPP}?text=Hi, I'd like guidance on ${encodeURIComponent(hub.name)}.`} target="_blank" rel="noopener noreferrer"
+            <a href={`${WHATSAPP}?text=Hi, I'd like guidance on ${encodeURIComponent(hub.name)}.`} onClick={() => trackWhatsAppClick(hub.name, "wellness_hub")} target="_blank" rel="noopener noreferrer"
                className="inline-flex items-center gap-2 h-12 px-8 rounded-full bg-accent text-accent-foreground font-bold hover:scale-105 transition-transform">
               <Phone className="w-4 h-4" /> Free WhatsApp Consultation
             </a>

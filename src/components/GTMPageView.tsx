@@ -1,21 +1,13 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { trackPageView } from "@/lib/analytics";
 
-declare global {
-  interface Window {
-    dataLayer: Record<string, unknown>[];
-  }
-}
-
+/** Sends a GA4 page_view on every SPA route change. */
 const GTMPageView = () => {
   const location = useLocation();
 
   useEffect(() => {
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({
-      event: "pageview",
-      page: location.pathname + location.search,
-    });
+    trackPageView(location.pathname + location.search);
   }, [location]);
 
   return null;

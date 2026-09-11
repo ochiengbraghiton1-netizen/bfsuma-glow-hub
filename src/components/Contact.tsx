@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { MapPin, Phone, Mail, Facebook, Instagram } from "lucide-react";
 
 import TikTokIcon from "@/components/icons/TikTokIcon";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 /** Lazy-loaded Google Maps iframe — only renders when scrolled into view */
 const LazyMap = () => {
@@ -158,7 +159,7 @@ const Contact = () => {
               </div>
 
               <Button 
-                onClick={() => window.open("https://wa.me/254795454053", "_blank")}
+                onClick={() => { trackWhatsAppClick(undefined, "contact_section"); window.open("https://wa.me/254795454053", "_blank"); }}
                 variant="hero" 
                 className="w-full mt-6"
                 size="lg"

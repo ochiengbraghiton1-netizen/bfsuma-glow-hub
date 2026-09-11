@@ -1,32 +1,17 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Defer GTM until first user interaction to avoid unused JS -->
+    <!-- Google Analytics 4 (gtag.js) — loaded immediately, initialised once -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-5S6XHDLTPF"></script>
     <script>
-      (function(){
-        var loaded=false;
-        function boot(){
-          if(loaded)return;loaded=true;
-          // Google Tag Manager (includes GA via GTM container config)
-          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-          })(window,document,'script','dataLayer','GTM-PDTHQJND');
-          window.dataLayer=window.dataLayer||[];
-          // Clean up listeners
-          ['click','scroll','keydown','touchstart'].forEach(function(e){
-            document.removeEventListener(e,boot,{capture:true,passive:true});
-          });
-        }
-        ['click','scroll','keydown','touchstart'].forEach(function(e){
-          document.addEventListener(e,boot,{capture:true,passive:true,once:true});
-        });
-        // Fallback: load after 5s idle even without interaction
-        if('requestIdleCallback' in window){requestIdleCallback(boot,{timeout:5000})}
-        else{setTimeout(boot,5000)}
-      })();
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      // All page views (initial + SPA route changes) are sent manually from the app.
+      gtag('config', 'G-5S6XHDLTPF', { send_page_view: false });
     </script>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
@@ -135,20 +120,9 @@
           if (typeof window.fbq === 'function') {
             window.fbq('track', 'Contact', { content_name: 'WhatsApp Click' });
           }
-          // GA4 (via GTM-PDTHQJND) custom conversion event
-          if (typeof window.gtag === 'function') {
-            window.gtag('event', 'whatsapp_click', {
-              event_category: 'engagement',
-              event_label: 'WhatsApp Button Click'
-            });
-          } else {
-            window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({
-              event: 'whatsapp_click',
-              event_category: 'engagement',
-              event_label: 'WhatsApp Button Click'
-            });
-          }
+          // GA4 whatsapp_click is fired explicitly by each CTA in the app
+          // (src/lib/analytics.ts) — do NOT fire it here, it would double count.
+
         }, { capture: true, passive: true });
       })();
     </script>
@@ -156,12 +130,7 @@
   </head>
 
   <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript>
-      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PDTHQJND"
-        height="0" width="0" style="display:none;visibility:hidden"></iframe>
-    </noscript>
-    <!-- End Google Tag Manager (noscript) -->
+
 
     <!-- Meta Pixel (noscript) -->
     <noscript><img height="1" width="1" style="display:none"

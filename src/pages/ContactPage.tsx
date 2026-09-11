@@ -12,6 +12,7 @@ import PageSEO from "@/components/PageSEO";
 import { Helmet } from "react-helmet-async";
 
 import TikTokIcon from "@/components/icons/TikTokIcon";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 const contactLocalBusinessSchema = {
   "@context": "https://schema.org",
@@ -61,6 +62,7 @@ const ContactPage = () => {
     }
     setIsSubmitting(true);
     const msg = `Hello BF Suma Royal,\n\nName: ${formData.name}\nEmail: ${formData.email}\nSubject: ${formData.subject}\n\nMessage:\n${formData.message}`;
+    trackWhatsAppClick(undefined, "contact_page_form");
     window.open(`https://wa.me/254795454053?text=${encodeURIComponent(msg)}`, "_blank");
     toast.success("Redirecting to WhatsApp to send your message!");
     setIsSubmitting(false);

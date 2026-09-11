@@ -10,6 +10,7 @@ import LocationLongForm from "@/components/LocationLongForm";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { autoLinkProducts } from "@/lib/auto-link-products";
 import type { LocationData, LocationProduct } from "@/config/locations";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 const WHATSAPP_URL = "https://wa.me/254795454053";
 const SITE_URL = "https://bfsumaroyal.com";
@@ -201,7 +202,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
 
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-lg mx-auto">
-              <a href={buildWa(`Hi, I'd like to order supplements. I'm in ${city}.`, pageUrl)} target="_blank" rel="noopener noreferrer"
+              <a href={buildWa(`Hi, I'd like to order supplements. I'm in ${city}.`, pageUrl)} onClick={() => trackWhatsAppClick(undefined, "location_page")} target="_blank" rel="noopener noreferrer"
                 className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 h-14 px-10 text-lg font-bold rounded-2xl bg-accent text-accent-foreground shadow-[0_0_40px_hsl(43_96%_56%/0.5)] hover:shadow-[0_0_60px_hsl(43_96%_56%/0.7)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300">
                 <Phone className="w-5 h-5" />
                 Order via WhatsApp
@@ -256,7 +257,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
                         <Link to={`/product/${product.slug}`} className="flex-1 inline-flex items-center justify-center gap-1 h-10 px-3 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors">
                           View Product
                         </Link>
-                        <a href={waHref} target="_blank" rel="noopener noreferrer" aria-label={`Order ${product.name} on WhatsApp`}
+                        <a href={waHref} onClick={() => trackWhatsAppClick(product.name, "location_page_product")} target="_blank" rel="noopener noreferrer" aria-label={`Order ${product.name} on WhatsApp`}
                           className="inline-flex items-center justify-center h-10 w-10 rounded-lg bg-accent text-accent-foreground hover:scale-105 transition-transform">
                           <Phone className="w-4 h-4" />
                         </a>
@@ -327,7 +328,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-4">Fast Delivery to {city}</h2>
             <p className="text-xl text-primary font-semibold mb-4">We deliver to {city} {deliveryTime}</p>
             <p className="text-muted-foreground leading-relaxed mb-8">{deliveryNote}</p>
-            <a href={buildWa(`Hi, I'd like to place an order for delivery to ${city}.`, pageUrl)} target="_blank" rel="noopener noreferrer"
+            <a href={buildWa(`Hi, I'd like to place an order for delivery to ${city}.`, pageUrl)} onClick={() => trackWhatsAppClick(undefined, "location_page")} target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 h-12 px-8 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors">
               <Phone className="w-5 h-5" />
               Order Now for {city} Delivery

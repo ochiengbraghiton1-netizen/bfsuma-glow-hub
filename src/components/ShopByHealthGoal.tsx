@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Activity, Zap, Leaf, Heart, Scale, Shield, Moon, ArrowRight, HelpCircle } from "lucide-react";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 const goals = [
   {
@@ -95,6 +96,7 @@ const ShopByHealthGoal = () => {
           </p>
           <a
             href="https://wa.me/254795454053?text=Hi%2C%20I%27m%20not%20sure%20which%20supplement%20fits%20me.%20Can%20you%20help%3F"
+            onClick={() => trackWhatsAppClick(undefined, "shop_by_goal")}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-accent text-accent-foreground font-bold hover:scale-105 transition-transform"
