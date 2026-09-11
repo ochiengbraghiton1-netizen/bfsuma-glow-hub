@@ -91,3 +91,12 @@ export function isGaLoaded(): boolean {
   if (typeof window === "undefined") return false;
   return Array.isArray(window.dataLayer) && typeof window.gtag === "function";
 }
+
+/** Stops recording for future page loads in this tab. Sending to GA4 is unaffected. */
+export function stopRecording() {
+  try {
+    sessionStorage.removeItem("ga4-debug-armed");
+  } catch {
+    /* storage unavailable */
+  }
+}
