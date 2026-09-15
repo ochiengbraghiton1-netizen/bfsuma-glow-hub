@@ -21,7 +21,7 @@ const HeroSection = () => {
           Start Your Own Health &amp; Wellness Business in Kenya
         </h1>
         <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8 text-white/90">
-          Build income, grow your network, and access exclusive rewards — all with the support of BF Suma Royal.
+          Build income, grow your network, and access exclusive rewards, all with the support of BF Suma Royal.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Button

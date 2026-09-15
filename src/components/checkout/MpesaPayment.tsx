@@ -46,7 +46,7 @@ const MpesaPayment = ({ amount }: MpesaPaymentProps) => {
           size="lg"
         >
           <Phone className="h-4 w-4 mr-2" />
-          Pay with M-Pesa — Coming Soon
+          Pay with M-Pesa, Coming Soon
         </Button>
       </div>
     </div>

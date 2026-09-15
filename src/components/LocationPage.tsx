@@ -159,8 +159,8 @@ const LocationPage = ({ location }: { location: LocationData }) => {
       { "@type": "Question", name: `What are the best health supplements available in ${city}?`, acceptedAnswer: { "@type": "Answer", text: `Our top supplements for ${city} residents include ${products.map(p => p.name).join(", ")}. These are chosen specifically for the health needs and lifestyle of people in ${city}.` } },
       { "@type": "Question", name: `Are BF Suma Royal products genuine and certified?`, acceptedAnswer: { "@type": "Answer", text: "Yes, all BF Suma Royal products are GMP-certified, Halal-approved, and sourced directly from the manufacturer. We guarantee 100% authentic wellness products." } },
       { "@type": "Question", name: `Do you deliver to all areas in ${city}?`, acceptedAnswer: { "@type": "Answer", text: `Yes, we deliver to all areas in ${city} including ${landmarks.slice(0, 5).join(", ")}${landmarks.length > 5 ? " and more" : ""}. Contact us via WhatsApp for delivery details.` } },
-      { "@type": "Question", name: `Can I order via WhatsApp from ${city}?`, acceptedAnswer: { "@type": "Answer", text: `Yes — most ${city} customers prefer ordering on WhatsApp at +254 795 454 053. Our team confirms availability, total and delivery time within minutes.` } },
-      { "@type": "Question", name: `Do you accept M-Pesa payments in ${city}?`, acceptedAnswer: { "@type": "Answer", text: `Yes. We accept M-Pesa, bank transfer and PayPal. Cash on delivery is available in selected ${city} areas — confirm with our team on WhatsApp.` } },
+      { "@type": "Question", name: `Can I order via WhatsApp from ${city}?`, acceptedAnswer: { "@type": "Answer", text: `Yes, most ${city} customers prefer ordering on WhatsApp at +254 795 454 053. Our team confirms availability, total and delivery time within minutes.` } },
+      { "@type": "Question", name: `Do you accept M-Pesa payments in ${city}?`, acceptedAnswer: { "@type": "Answer", text: `Yes. We accept M-Pesa, bank transfer and PayPal. Cash on delivery is available in selected ${city} areas, confirm with our team on WhatsApp.` } },
       { "@type": "Question", name: `Are BF SUMA Royal supplements safe to take with my medication?`, acceptedAnswer: { "@type": "Answer", text: `Most of our natural supplements are well tolerated, but always show the product to your doctor or pharmacist if you take prescription medication for blood pressure, diabetes or heart conditions.` } },
       { "@type": "Question", name: `How discreet is delivery to ${city}?`, acceptedAnswer: { "@type": "Answer", text: `All orders to ${city} arrive in plain, unbranded packaging. Only you and our delivery partner know what is inside.` } },
       ...((location.extraFaqs || []).map(f => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } }))),
@@ -228,7 +228,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
               </div>
               <h2 className="text-2xl md:text-4xl font-bold mb-3">Top Supplements Available in {city}</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Hand-picked for {city} residents — order via WhatsApp for fast delivery ({deliveryTime}).
+                Hand-picked for {city} residents, order via WhatsApp for fast delivery ({deliveryTime}).
               </p>
             </div>
 

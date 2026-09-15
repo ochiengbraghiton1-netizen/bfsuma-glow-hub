@@ -13,7 +13,7 @@ const CTABanner = () => {
         </h2>
         <p className="text-lg text-white/90 mb-8">
           Join thousands of Kenyans who are building their future with BF Suma Royal. 
-          Whether you want extra income or a full-time business — we'll help you get there.
+          Whether you want extra income or a full-time business, we'll help you get there.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button

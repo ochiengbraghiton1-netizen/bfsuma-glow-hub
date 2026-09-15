@@ -219,7 +219,7 @@ const ContentCard = ({ sectionKey, label, description, hasImageUpload, data, onS
           {/* Image upload for hero */}
           {hasImageUpload && (
             <div className="space-y-3">
-              <Label>Hero Image (Upload a real photo — team, community, or customers)</Label>
+              <Label>Hero Image (Upload a real photo, team, community, or customers)</Label>
               {imagePreview ? (
                 <div className="relative rounded-lg overflow-hidden border border-border max-w-md">
                   <img src={imagePreview} alt="Preview" className="w-full h-48 object-cover" />

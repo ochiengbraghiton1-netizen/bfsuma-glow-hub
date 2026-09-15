@@ -50,7 +50,7 @@ const ExpertAuthority = () => {
                 <div className="aspect-square overflow-hidden">
                   <img
                     src={expert.image}
-                    alt={`${expert.name} — ${expert.title} at BF Suma Royal`}
+                    alt={`${expert.name}, ${expert.title} at BF Suma Royal`}
                     loading="lazy"
                     width={512}
                     height={512}

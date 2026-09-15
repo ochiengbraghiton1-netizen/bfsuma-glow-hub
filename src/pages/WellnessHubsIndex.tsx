@@ -35,7 +35,7 @@ const WellnessHubsIndex = () => {
         <title>Wellness Hubs | BF SUMA Royal Kenya</title>
         <meta
           name="description"
-          content="Explore 7 wellness hubs from BF SUMA Royal Kenya — joint pain, weight, digestion, hormones, energy, sleep & immunity. Expert guides and natural supplements."
+          content="Explore 7 wellness hubs from BF SUMA Royal Kenya, joint pain, weight, digestion, hormones, energy, sleep & immunity. Expert guides and natural supplements."
         />
         <link rel="canonical" href="https://bfsumaroyal.com/wellness" />
       </Helmet>

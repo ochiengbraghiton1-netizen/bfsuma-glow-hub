@@ -14,7 +14,7 @@ const RewardsIncentives = () => {
             Rewards & Incentives
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            BF Suma doesn't just pay you — it celebrates your success with life-changing rewards.
+            BF Suma doesn't just pay you, it celebrates your success with life-changing rewards.
           </p>
         </div>
 
@@ -93,7 +93,7 @@ const RewardsIncentives = () => {
                 </li>
                 <li className="flex items-start gap-2">
                   <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-muted-foreground">Must stay active every month — assessed once per BF Suma Value Year</span>
+                  <span className="text-muted-foreground">Must stay active every month, assessed once per BF Suma Value Year</span>
                 </li>
               </ul>
             </CardContent>
@@ -125,7 +125,7 @@ const RewardsIncentives = () => {
           <div className="flex items-start gap-3">
             <Sparkles className="h-6 w-6 text-accent mt-1 flex-shrink-0" />
             <div>
-              <h3 className="text-lg font-bold text-foreground mb-2">7-Star Special Support — 3% Cash Bonus</h3>
+              <h3 className="text-lg font-bold text-foreground mb-2">7-Star Special Support: 3% Cash Bonus</h3>
               <p className="text-sm text-muted-foreground mb-3">
                 When you reach 7-Star status and have at least two 7-Star team members, you qualify for a special monthly cash bonus of 3% of your team's group sales volume. This is BF Suma's way of supporting top distributors who are building strong teams.
               </p>
@@ -143,9 +143,9 @@ const RewardsIncentives = () => {
           <div className="flex items-start gap-3">
             <Store className="h-6 w-6 text-secondary mt-1 flex-shrink-0" />
             <div>
-              <h3 className="text-lg font-bold text-foreground mb-2">Special Store Service Bonus (SSSB) — Up to 6%</h3>
+              <h3 className="text-lg font-bold text-foreground mb-2">Special Store Service Bonus (SSSB), Up to 6%</h3>
               <p className="text-sm text-muted-foreground mb-3">
-                Successful leaders can qualify to operate a BF Suma special store. You'll earn a monthly bonus of up to 6% based on your store's total PV performance — including operation allowance, maintenance allowance, and a performance bonus.
+                Successful leaders can qualify to operate a BF Suma special store. You'll earn a monthly bonus of up to 6% based on your store's total PV performance, including operation allowance, maintenance allowance, and a performance bonus.
               </p>
               <div className="flex flex-wrap gap-4 text-sm">
                 <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">2–6% total bonus</span>
@@ -166,7 +166,7 @@ const RewardsIncentives = () => {
           <div className="text-center p-6 rounded-2xl bg-accent/5 border border-accent/10">
             <Gift className="h-8 w-8 text-accent mx-auto mb-3" />
             <h4 className="font-semibold text-foreground mb-2">Up to 20% Retail Profit</h4>
-            <p className="text-sm text-muted-foreground">Buy at distributor price, sell at retail price — keep the difference</p>
+            <p className="text-sm text-muted-foreground">Buy at distributor price, sell at retail price, keep the difference</p>
           </div>
           <div className="text-center p-6 rounded-2xl bg-secondary/5 border border-secondary/10">
             <Star className="h-8 w-8 text-secondary mx-auto mb-3" />

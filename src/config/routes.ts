@@ -169,7 +169,7 @@ export const routes: RouteConfig[] = [
     changefreq: 'monthly',
     priority: 0.8,
     title: 'Health Supplements in Kakamega Kenya | BF Suma Royal',
-    description: 'Buy health supplements in Kakamega, Kenya — our home base. Same-day delivery! Boost energy & wellness naturally. Order via WhatsApp today!',
+    description: 'Buy health supplements in Kakamega, Kenya, our home base. Same-day delivery! Boost energy & wellness naturally. Order via WhatsApp today!',
   },
   {
     path: '/eldoret',

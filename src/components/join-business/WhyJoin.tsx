@@ -2,7 +2,7 @@ import { Briefcase, Clock, Heart, Globe, ShieldCheck, TrendingUp } from 'lucide-
 
 const reasons = [
   { icon: Briefcase, title: 'Extra Income', description: 'Earn commissions, retail profit, and performance bonuses alongside your current job or as a full-time business.' },
-  { icon: Clock, title: 'Flexible Work', description: 'Work on your own schedule. Sell products and build your team when it suits you — from anywhere.' },
+  { icon: Clock, title: 'Flexible Work', description: 'Work on your own schedule. Sell products and build your team when it suits you, from anywhere.' },
   { icon: Heart, title: 'Personal Growth', description: 'Develop leadership, communication, and business skills through real experience and mentorship.' },
   { icon: Globe, title: 'Global Rewards', description: 'Unlock travel, car awards, and bonuses as you advance through the ranks.' },
   { icon: ShieldCheck, title: 'Trusted Brand', description: 'BF Suma is a globally recognised health and wellness company with products sold across Africa and beyond.' },

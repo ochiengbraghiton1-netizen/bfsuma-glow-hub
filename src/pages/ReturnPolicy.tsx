@@ -62,15 +62,15 @@ const ReturnPolicy = () => {
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
                     <span className="text-primary mt-0.5">•</span>
-                    <strong className="text-foreground">Defective product</strong> — manufacturing defects or quality issues.
+                    <strong className="text-foreground">Defective product</strong>: manufacturing defects or quality issues.
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-primary mt-0.5">•</span>
-                    <strong className="text-foreground">Wrong product received</strong> — item does not match your order.
+                    <strong className="text-foreground">Wrong product received</strong>: item does not match your order.
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-primary mt-0.5">•</span>
-                    <strong className="text-foreground">Expired product</strong> — product delivered past its expiry date.
+                    <strong className="text-foreground">Expired product</strong>: product delivered past its expiry date.
                   </li>
                 </ul>
               </div>
