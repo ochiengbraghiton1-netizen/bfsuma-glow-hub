@@ -185,30 +185,61 @@ const WellnessHubPage = () => {
       <main className="flex-1 pt-20">
         {/* Hero */}
         <section className="bg-gradient-to-br from-secondary via-secondary/90 to-primary/80 text-white py-16">
-          <div className="container mx-auto px-4 max-w-4xl text-center">
-            <div className="inline-flex items-center gap-2 mb-4 text-accent">
-              <Sparkles className="w-5 h-5" />
-              <span className="uppercase tracking-wider text-xs font-semibold">Wellness Hub</span>
-            </div>
-            <h1 className="text-3xl md:text-5xl font-bold mb-4">{hub.hero_title}</h1>
-            <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">{hub.hero_description}</p>
-            <div className="flex flex-wrap gap-3 justify-center">
-              <a href={`${WHATSAPP}?text=Hi, I'd like guidance on ${encodeURIComponent(hub.name)}.`} onClick={() => trackWhatsAppClick(hub.name, "wellness_hub")} target="_blank" rel="noopener noreferrer"
-                 className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-accent text-accent-foreground font-bold hover:scale-105 transition-transform">
-                <Phone className="w-4 h-4" /> Free WhatsApp Consultation
-              </a>
-              {products.length > 0 ? (
-                <a href="#recommended-products" className="inline-flex items-center gap-2 h-12 px-6 rounded-full border-2 border-white/30 text-white hover:bg-white/10 font-semibold">
-                  <ShoppingBag className="w-4 h-4" /> View Recommended Products
+          <div className={`container mx-auto px-4 ${media.hero ? "max-w-6xl grid lg:grid-cols-2 gap-10 items-center" : "max-w-4xl text-center"}`}>
+            <div className={media.hero ? "text-center lg:text-left" : ""}>
+              <div className="inline-flex items-center gap-2 mb-4 text-accent">
+                <Sparkles className="w-5 h-5" />
+                <span className="uppercase tracking-wider text-xs font-semibold">Wellness Hub</span>
+              </div>
+              <h1 className="text-3xl md:text-5xl font-bold mb-4">{hub.hero_title}</h1>
+              <p className={`text-lg text-white/90 mb-8 max-w-2xl ${media.hero ? "" : "mx-auto"}`}>{hub.hero_description}</p>
+              <div className={`flex flex-wrap gap-3 ${media.hero ? "justify-center lg:justify-start" : "justify-center"}`}>
+                <a href={`${WHATSAPP}?text=Hi, I'd like guidance on ${encodeURIComponent(hub.name)}.`} onClick={() => trackWhatsAppClick(hub.name, "wellness_hub")} target="_blank" rel="noopener noreferrer"
+                   className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-accent text-accent-foreground font-bold hover:scale-105 transition-transform">
+                  <Phone className="w-4 h-4" /> Free WhatsApp Consultation
                 </a>
-              ) : (
-                <Link to="/products" className="inline-flex items-center gap-2 h-12 px-6 rounded-full border-2 border-white/30 text-white hover:bg-white/10 font-semibold">
-                  <ShoppingBag className="w-4 h-4" /> Shop All Products
-                </Link>
-              )}
+                {products.length > 0 ? (
+                  <a href="#recommended-products" className="inline-flex items-center gap-2 h-12 px-6 rounded-full border-2 border-white/30 text-white hover:bg-white/10 font-semibold">
+                    <ShoppingBag className="w-4 h-4" /> View Recommended Products
+                  </a>
+                ) : (
+                  <Link to="/products" className="inline-flex items-center gap-2 h-12 px-6 rounded-full border-2 border-white/30 text-white hover:bg-white/10 font-semibold">
+                    <ShoppingBag className="w-4 h-4" /> Shop All Products
+                  </Link>
+                )}
+              </div>
             </div>
+            {media.hero && (
+              <MediaBlock item={media.hero} className="lg:justify-self-end w-full [&_figcaption]:text-white/80" rounded="rounded-3xl shadow-elegant" />
+            )}
           </div>
         </section>
+
+        {/* Recognition */}
+        {media.recognition && (
+          <section className="py-12 bg-background">
+            <div className="container mx-auto px-4 max-w-5xl grid md:grid-cols-2 gap-8 items-center">
+              <div>
+                <h2 className="text-2xl md:text-3xl font-bold mb-3">Does this sound familiar?</h2>
+                {media.recognition.caption && <p className="text-muted-foreground">{media.recognition.caption}</p>}
+              </div>
+              <MediaBlock item={{ ...media.recognition, caption: null }} className="w-full" />
+            </div>
+          </section>
+        )}
+
+        {/* Desired outcome */}
+        {media.desired_outcome && (
+          <section className="py-12 bg-muted/30">
+            <div className="container mx-auto px-4 max-w-5xl grid md:grid-cols-2 gap-8 items-center">
+              <MediaBlock item={{ ...media.desired_outcome, caption: null }} className="w-full md:order-1" />
+              <div className="md:order-2">
+                <h2 className="text-2xl md:text-3xl font-bold mb-3">What better days can look like</h2>
+                {media.desired_outcome.caption && <p className="text-muted-foreground">{media.desired_outcome.caption}</p>}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* RECOMMENDED PRODUCTS — moved ABOVE educational content */}
         {products.length > 0 && (
