@@ -59,8 +59,8 @@ const Hero = () => {
     return () => window.clearTimeout(t);
   }, []);
 
-  const scrollToProducts = () => {
-    document.getElementById("products")?.scrollIntoView({ behavior: "smooth" });
+  const scrollToHealthGoals = () => {
+    document.getElementById("health-goals")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -106,26 +106,26 @@ const Hero = () => {
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
         <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4 md:mb-6 leading-tight">
-          Feel Better Naturally
+          Not Sure What Your Body Needs?
           <br />
           <span className="bg-gradient-to-r from-accent via-accent-glow to-accent bg-clip-text text-transparent [-webkit-box-decoration-break:clone] [box-decoration-break:clone]">
-            Joint Pain, Energy, Digestion & Hormonal Support
+            Start With What You're Feeling.
           </span>
         </h1>
-        <p className="sr-only">Natural supplements trusted by thousands of Kenyans for joint comfort, fatigue, bloating, hormone balance and daily wellness.</p>
+        <p className="sr-only">Explore natural wellness support for joints, energy, digestion, hormonal health and more with clear product information and personal guidance from our wellness team.</p>
 
         <p className="text-base md:text-xl text-white/90 mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed">
-          Natural supplements trusted by thousands of Kenyans for stiff joints, low energy, bloating, hormonal balance and everyday wellness, with free WhatsApp guidance from our wellness team.
+          Explore natural wellness support for joints, energy, digestion, hormonal health and more — with clear product information and personal guidance from our wellness team.
         </p>
 
 
         <div className="flex flex-col lg:flex-row gap-3 md:gap-5 justify-center items-stretch lg:items-center w-full max-w-xl lg:max-w-none mx-auto">
           <button
-            onClick={scrollToProducts}
+            onClick={scrollToHealthGoals}
             className="group relative w-full lg:w-auto inline-flex items-center justify-center gap-2 md:gap-3 h-14 md:h-[4.5rem] px-5 md:px-14 text-base md:text-[1.35rem] font-extrabold tracking-wide rounded-2xl bg-accent text-accent-foreground shadow-[0_0_50px_hsl(43_96%_56%/0.6),0_8px_32px_hsl(43_96%_56%/0.35)] hover:shadow-[0_0_70px_hsl(43_96%_56%/0.8),0_12px_40px_hsl(43_96%_56%/0.5)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300 ease-out animate-cta-pulse whitespace-nowrap"
           >
             <ShoppingBag className="w-5 h-5 md:w-7 md:h-7 shrink-0" />
-            <span>Find the Right Supplement</span>
+            <span>Find Support for My Concern</span>
             <ArrowRight className="w-5 h-5 md:w-7 md:h-7 shrink-0 group-hover:translate-x-1.5 transition-transform duration-300" />
           </button>
           <a
@@ -139,6 +139,10 @@ const Hero = () => {
             <span>Talk to a Wellness Expert</span>
           </a>
         </div>
+
+        <p className="mt-6 text-[11px] md:text-xs text-white/60 tracking-wide">
+          GMP · Halal · ISO 22000 Certified · Delivery across Kenya · Order on WhatsApp, pay via M-Pesa
+        </p>
       </div>
 
       {/* Bottom gradient fade */}
