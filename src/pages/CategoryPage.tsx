@@ -236,8 +236,8 @@ const CategoryPage = () => {
       </Helmet>
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 pt-header py-12">
-          <div className="container mx-auto px-4">
+        <main className="flex-1 pt-header pb-12">
+          <div className="container mx-auto px-4 pt-8">
             <Link to="/category" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
               <ArrowLeft className="h-4 w-4 mr-1" />
               All Categories
