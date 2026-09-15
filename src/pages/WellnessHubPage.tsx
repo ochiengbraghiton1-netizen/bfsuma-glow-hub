@@ -9,6 +9,33 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { autoLinkProducts } from "@/lib/auto-link-products";
 import { trackWhatsAppClick } from "@/lib/analytics";
 import { generateProductAltText, generateBlogAltText } from "@/lib/image-seo";
+import { fetchContentMedia, MediaMap, ContentMediaItem } from "@/lib/content-media";
+
+/** Renders one visual story slot. Images use alt text, videos use it as an aria-label. */
+const MediaBlock = ({ item, className = "", rounded = "rounded-2xl" }: { item?: ContentMediaItem; className?: string; rounded?: string }) => {
+  if (!item?.media_url) return null;
+  return (
+    <figure className={className}>
+      {item.media_type === "video" ? (
+        <video
+          src={item.media_url}
+          controls
+          preload="metadata"
+          aria-label={item.alt_text}
+          className={`w-full ${rounded} border border-border/40`}
+        />
+      ) : (
+        <img
+          src={item.media_url}
+          alt={item.alt_text}
+          loading="lazy"
+          className={`w-full object-cover ${rounded}`}
+        />
+      )}
+      {item.caption && <figcaption className="text-sm text-muted-foreground mt-2">{item.caption}</figcaption>}
+    </figure>
+  );
+};
 
 interface Hub {
   id: string;
@@ -46,6 +73,7 @@ const WellnessHubPage = () => {
   const [articles, setArticles] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [media, setMedia] = useState<MediaMap>({});
 
   useEffect(() => {
     if (!slug) return;
@@ -60,6 +88,7 @@ const WellnessHubPage = () => {
 
       if (!h) { setNotFound(true); setLoading(false); return; }
       setHub(h as Hub);
+      setMedia(await fetchContentMedia("wellness_hub", h.id));
 
       const { data: prodLinks } = await (supabase as any)
         .from("wellness_hub_products")
@@ -156,30 +185,61 @@ const WellnessHubPage = () => {
       <main className="flex-1 pt-20">
         {/* Hero */}
         <section className="bg-gradient-to-br from-secondary via-secondary/90 to-primary/80 text-white py-16">
-          <div className="container mx-auto px-4 max-w-4xl text-center">
-            <div className="inline-flex items-center gap-2 mb-4 text-accent">
-              <Sparkles className="w-5 h-5" />
-              <span className="uppercase tracking-wider text-xs font-semibold">Wellness Hub</span>
-            </div>
-            <h1 className="text-3xl md:text-5xl font-bold mb-4">{hub.hero_title}</h1>
-            <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">{hub.hero_description}</p>
-            <div className="flex flex-wrap gap-3 justify-center">
-              <a href={`${WHATSAPP}?text=Hi, I'd like guidance on ${encodeURIComponent(hub.name)}.`} onClick={() => trackWhatsAppClick(hub.name, "wellness_hub")} target="_blank" rel="noopener noreferrer"
-                 className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-accent text-accent-foreground font-bold hover:scale-105 transition-transform">
-                <Phone className="w-4 h-4" /> Free WhatsApp Consultation
-              </a>
-              {products.length > 0 ? (
-                <a href="#recommended-products" className="inline-flex items-center gap-2 h-12 px-6 rounded-full border-2 border-white/30 text-white hover:bg-white/10 font-semibold">
-                  <ShoppingBag className="w-4 h-4" /> View Recommended Products
+          <div className={`container mx-auto px-4 ${media.hero ? "max-w-6xl grid lg:grid-cols-2 gap-10 items-center" : "max-w-4xl text-center"}`}>
+            <div className={media.hero ? "text-center lg:text-left" : ""}>
+              <div className="inline-flex items-center gap-2 mb-4 text-accent">
+                <Sparkles className="w-5 h-5" />
+                <span className="uppercase tracking-wider text-xs font-semibold">Wellness Hub</span>
+              </div>
+              <h1 className="text-3xl md:text-5xl font-bold mb-4">{hub.hero_title}</h1>
+              <p className={`text-lg text-white/90 mb-8 max-w-2xl ${media.hero ? "" : "mx-auto"}`}>{hub.hero_description}</p>
+              <div className={`flex flex-wrap gap-3 ${media.hero ? "justify-center lg:justify-start" : "justify-center"}`}>
+                <a href={`${WHATSAPP}?text=Hi, I'd like guidance on ${encodeURIComponent(hub.name)}.`} onClick={() => trackWhatsAppClick(hub.name, "wellness_hub")} target="_blank" rel="noopener noreferrer"
+                   className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-accent text-accent-foreground font-bold hover:scale-105 transition-transform">
+                  <Phone className="w-4 h-4" /> Free WhatsApp Consultation
                 </a>
-              ) : (
-                <Link to="/products" className="inline-flex items-center gap-2 h-12 px-6 rounded-full border-2 border-white/30 text-white hover:bg-white/10 font-semibold">
-                  <ShoppingBag className="w-4 h-4" /> Shop All Products
-                </Link>
-              )}
+                {products.length > 0 ? (
+                  <a href="#recommended-products" className="inline-flex items-center gap-2 h-12 px-6 rounded-full border-2 border-white/30 text-white hover:bg-white/10 font-semibold">
+                    <ShoppingBag className="w-4 h-4" /> View Recommended Products
+                  </a>
+                ) : (
+                  <Link to="/products" className="inline-flex items-center gap-2 h-12 px-6 rounded-full border-2 border-white/30 text-white hover:bg-white/10 font-semibold">
+                    <ShoppingBag className="w-4 h-4" /> Shop All Products
+                  </Link>
+                )}
+              </div>
             </div>
+            {media.hero && (
+              <MediaBlock item={media.hero} className="lg:justify-self-end w-full [&_figcaption]:text-white/80" rounded="rounded-3xl shadow-elegant" />
+            )}
           </div>
         </section>
+
+        {/* Recognition */}
+        {media.recognition && (
+          <section className="py-12 bg-background">
+            <div className="container mx-auto px-4 max-w-5xl grid md:grid-cols-2 gap-8 items-center">
+              <div>
+                <h2 className="text-2xl md:text-3xl font-bold mb-3">Does this sound familiar?</h2>
+                {media.recognition.caption && <p className="text-muted-foreground">{media.recognition.caption}</p>}
+              </div>
+              <MediaBlock item={{ ...media.recognition, caption: null }} className="w-full" />
+            </div>
+          </section>
+        )}
+
+        {/* Desired outcome */}
+        {media.desired_outcome && (
+          <section className="py-12 bg-muted/30">
+            <div className="container mx-auto px-4 max-w-5xl grid md:grid-cols-2 gap-8 items-center">
+              <MediaBlock item={{ ...media.desired_outcome, caption: null }} className="w-full md:order-1" />
+              <div className="md:order-2">
+                <h2 className="text-2xl md:text-3xl font-bold mb-3">What better days can look like</h2>
+                {media.desired_outcome.caption && <p className="text-muted-foreground">{media.desired_outcome.caption}</p>}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* RECOMMENDED PRODUCTS — moved ABOVE educational content */}
         {products.length > 0 && (
@@ -193,6 +253,9 @@ const WellnessHubPage = () => {
                 <h2 className="text-2xl md:text-3xl font-bold mb-2">Best Supplements for {hub.name}</h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">Hand-picked formulas that may support your goals. Tap any product for full details and ingredients.</p>
               </div>
+              {media.product_context && (
+                <MediaBlock item={media.product_context} className="mb-10 max-w-4xl mx-auto text-center" />
+              )}
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {products.map((p) => {
                   const benefitText = p.benefit || stripHtml(p.description, 120);
@@ -249,9 +312,16 @@ const WellnessHubPage = () => {
         )}
 
         {/* Intro / educational content — now BELOW products, with auto-linked product mentions */}
-        {linkedIntro && (
+        {(linkedIntro || media.education) && (
           <section className="py-12 bg-background">
-            <div className="container mx-auto px-4 max-w-3xl prose dark:prose-invert" dangerouslySetInnerHTML={{ __html: linkedIntro }} />
+            {media.education ? (
+              <div className="container mx-auto px-4 max-w-6xl grid lg:grid-cols-2 gap-10 items-start">
+                {linkedIntro && <div className="prose dark:prose-invert" dangerouslySetInnerHTML={{ __html: linkedIntro }} />}
+                <MediaBlock item={media.education} className="w-full lg:sticky lg:top-24" />
+              </div>
+            ) : (
+              <div className="container mx-auto px-4 max-w-3xl prose dark:prose-invert" dangerouslySetInnerHTML={{ __html: linkedIntro }} />
+            )}
           </section>
         )}
 
@@ -290,6 +360,17 @@ const WellnessHubPage = () => {
           </div>
         </section>
 
+        {/* Trust */}
+        {media.trust && (
+          <section className="py-12 bg-background">
+            <div className="container mx-auto px-4 max-w-4xl text-center">
+              <h2 className="text-2xl md:text-3xl font-bold mb-3">Real people, real support</h2>
+              {media.trust.caption && <p className="text-muted-foreground mb-6">{media.trust.caption}</p>}
+              <MediaBlock item={{ ...media.trust, caption: null }} className="w-full" />
+            </div>
+          </section>
+        )}
+
         {/* FAQ */}
         {hub.faq?.length > 0 && (
           <section className="py-12 bg-muted/30">
@@ -317,6 +398,9 @@ const WellnessHubPage = () => {
         {/* Final CTA */}
         <section className="py-12 bg-gradient-to-br from-primary to-secondary text-white">
           <div className="container mx-auto px-4 max-w-3xl text-center">
+            {media.closing && (
+              <MediaBlock item={media.closing} className="mb-8 max-w-2xl mx-auto [&_figcaption]:text-white/80" rounded="rounded-3xl" />
+            )}
             <h2 className="text-2xl md:text-3xl font-bold mb-3">Not sure which product is right for you?</h2>
             <p className="text-white/90 mb-6">Chat with our wellness team on WhatsApp, free, confidential, no pressure.</p>
             <a href={`${WHATSAPP}?text=Hi, I'd like guidance on ${encodeURIComponent(hub.name)}.`} onClick={() => trackWhatsAppClick(hub.name, "wellness_hub")} target="_blank" rel="noopener noreferrer"
