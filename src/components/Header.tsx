@@ -51,12 +51,10 @@ const Header = () => {
       const targetId = href.replace("#", "");
       
       if (location.pathname !== "/") {
-        navigate("/");
-        setTimeout(() => {
-          document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
-        }, 100);
+        navigate(`/#${targetId}`);
+        requestAnimationFrame(() => scrollToSection(targetId));
       } else {
-        document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+        scrollToSection(targetId);
       }
     }
   };
