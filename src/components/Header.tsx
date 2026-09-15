@@ -10,6 +10,7 @@ import productGeneric from "@/assets/product-generic.webp";
 import bfSumaLogo from "@/assets/bf-suma-logo-new-sm.webp";
 import { Separator } from "@/components/ui/separator";
 import { trackWhatsAppClick } from "@/lib/analytics";
+import { scrollToSection } from "@/lib/scroll-to-section";
 
 const navLinks = [
   { href: "/products", label: "Shop", isAnchor: false },
