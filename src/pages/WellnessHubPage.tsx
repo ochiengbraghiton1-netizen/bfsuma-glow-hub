@@ -312,9 +312,16 @@ const WellnessHubPage = () => {
         )}
 
         {/* Intro / educational content — now BELOW products, with auto-linked product mentions */}
-        {linkedIntro && (
+        {(linkedIntro || media.education) && (
           <section className="py-12 bg-background">
-            <div className="container mx-auto px-4 max-w-3xl prose dark:prose-invert" dangerouslySetInnerHTML={{ __html: linkedIntro }} />
+            {media.education ? (
+              <div className="container mx-auto px-4 max-w-6xl grid lg:grid-cols-2 gap-10 items-start">
+                {linkedIntro && <div className="prose dark:prose-invert" dangerouslySetInnerHTML={{ __html: linkedIntro }} />}
+                <MediaBlock item={media.education} className="w-full lg:sticky lg:top-24" />
+              </div>
+            ) : (
+              <div className="container mx-auto px-4 max-w-3xl prose dark:prose-invert" dangerouslySetInnerHTML={{ __html: linkedIntro }} />
+            )}
           </section>
         )}
 
