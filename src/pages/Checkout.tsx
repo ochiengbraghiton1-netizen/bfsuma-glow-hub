@@ -687,7 +687,7 @@ const Checkout = () => {
                         ) : (
                           <>
                             <MessageCircle className="h-5 w-5 mr-2" />
-                            Order on WhatsApp, {formatCurrency(finalTotal)}
+                            Order on WhatsApp ({formatCurrency(finalTotal)})
                           </>
                         )}
                       </Button>

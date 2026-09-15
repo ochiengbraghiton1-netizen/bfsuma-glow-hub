@@ -143,7 +143,7 @@ const RewardsIncentives = () => {
           <div className="flex items-start gap-3">
             <Store className="h-6 w-6 text-secondary mt-1 flex-shrink-0" />
             <div>
-              <h3 className="text-lg font-bold text-foreground mb-2">Special Store Service Bonus (SSSB), Up to 6%</h3>
+              <h3 className="text-lg font-bold text-foreground mb-2">Special Store Service Bonus (SSSB): Up to 6%</h3>
               <p className="text-sm text-muted-foreground mb-3">
                 Successful leaders can qualify to operate a BF Suma special store. You'll earn a monthly bonus of up to 6% based on your store's total PV performance, including operation allowance, maintenance allowance, and a performance bonus.
               </p>
