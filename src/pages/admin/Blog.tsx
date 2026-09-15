@@ -441,8 +441,8 @@ const Blog = () => {
 
       if (opts.closeOnSuccess) setDialogOpen(false);
 
-      // Notify IndexNow only for published articles
-      if (status === 'published') {
+      // Notify IndexNow only for published articles saved explicitly (not autosave)
+      if (status === 'published' && !opts.silent) {
         const blogUrl = `/blog/${fd.slug.trim()}`;
         notifyIndexNow([blogUrl, '/blog'], ep ? 'blog_updated' : 'blog_published');
       }
