@@ -499,6 +499,48 @@ export type Database = {
         }
         Relationships: []
       }
+      content_media: {
+        Row: {
+          alt_text: string
+          caption: string | null
+          content_id: string
+          content_type: string
+          created_at: string
+          display_order: number
+          id: string
+          media_type: string
+          media_url: string
+          slot_key: string
+          updated_at: string
+        }
+        Insert: {
+          alt_text: string
+          caption?: string | null
+          content_id: string
+          content_type: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          media_type: string
+          media_url: string
+          slot_key: string
+          updated_at?: string
+        }
+        Update: {
+          alt_text?: string
+          caption?: string | null
+          content_id?: string
+          content_type?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          media_type?: string
+          media_url?: string
+          slot_key?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       distributor_pv_logs: {
         Row: {
           created_at: string
