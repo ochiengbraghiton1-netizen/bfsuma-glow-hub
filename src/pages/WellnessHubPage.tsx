@@ -9,6 +9,33 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { autoLinkProducts } from "@/lib/auto-link-products";
 import { trackWhatsAppClick } from "@/lib/analytics";
 import { generateProductAltText, generateBlogAltText } from "@/lib/image-seo";
+import { fetchContentMedia, MediaMap, ContentMediaItem } from "@/lib/content-media";
+
+/** Renders one visual story slot. Images use alt text, videos use it as an aria-label. */
+const MediaBlock = ({ item, className = "", rounded = "rounded-2xl" }: { item?: ContentMediaItem; className?: string; rounded?: string }) => {
+  if (!item?.media_url) return null;
+  return (
+    <figure className={className}>
+      {item.media_type === "video" ? (
+        <video
+          src={item.media_url}
+          controls
+          preload="metadata"
+          aria-label={item.alt_text}
+          className={`w-full ${rounded} border border-border/40`}
+        />
+      ) : (
+        <img
+          src={item.media_url}
+          alt={item.alt_text}
+          loading="lazy"
+          className={`w-full object-cover ${rounded}`}
+        />
+      )}
+      {item.caption && <figcaption className="text-sm text-muted-foreground mt-2">{item.caption}</figcaption>}
+    </figure>
+  );
+};
 
 interface Hub {
   id: string;
