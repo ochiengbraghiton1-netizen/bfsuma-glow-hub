@@ -253,6 +253,9 @@ const WellnessHubPage = () => {
                 <h2 className="text-2xl md:text-3xl font-bold mb-2">Best Supplements for {hub.name}</h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">Hand-picked formulas that may support your goals. Tap any product for full details and ingredients.</p>
               </div>
+              {media.product_context && (
+                <MediaBlock item={media.product_context} className="mb-10 max-w-4xl mx-auto text-center" />
+              )}
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {products.map((p) => {
                   const benefitText = p.benefit || stripHtml(p.description, 120);
