@@ -1,6 +1,7 @@
 import { ArrowRight, ShoppingBag, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { trackWhatsAppClick } from "@/lib/analytics";
+import { scrollToSection } from "@/lib/scroll-to-section";
 
 const WHATSAPP_URL = 'https://wa.me/254795454053?text=Hi%2C%20I%20need%20help%20choosing%20the%20right%20supplement%20for%20my%20health.';
 
