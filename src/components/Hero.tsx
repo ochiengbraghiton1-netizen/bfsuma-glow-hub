@@ -60,7 +60,7 @@ const Hero = () => {
   }, []);
 
   const scrollToHealthGoals = () => {
-    document.getElementById("health-goals")?.scrollIntoView({ behavior: "smooth" });
+    scrollToSection("health-goals");
   };
 
   return (
