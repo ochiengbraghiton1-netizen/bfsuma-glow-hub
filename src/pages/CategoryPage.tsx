@@ -147,8 +147,9 @@ const CategoryPage = () => {
         </Helmet>
         <div className="min-h-screen flex flex-col">
           <Header />
-          <main className="flex-1 pt-header py-12">
-            <div className="container mx-auto px-4">
+          <main className="flex-1 pt-header pb-12">
+            <div className="container mx-auto px-4 pt-8">
+
               <h1 className="text-3xl font-bold mb-8">Product Categories</h1>
 
               {allCategories.length === 0 ? (
