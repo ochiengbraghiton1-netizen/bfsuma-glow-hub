@@ -463,6 +463,9 @@ const Blog = () => {
       if (savingRef.current) return;
       if (!fd.title.trim() || !fd.slug.trim()) return;
       if (serialize(fd, qo, fq) === baselineRef.current) return;
+      // Never autosave a live article: readers would see half-written edits.
+      // Published articles are updated only when the editor saves explicitly.
+      if (fd.status === 'published') return;
       persist({ silent: true, asDraft: true });
     }, 20000);
     return () => clearInterval(timer);
