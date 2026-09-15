@@ -317,7 +317,7 @@ const WellnessHubPage = () => {
         <section className="py-12 bg-gradient-to-br from-primary to-secondary text-white">
           <div className="container mx-auto px-4 max-w-3xl text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-3">Not sure which product is right for you?</h2>
-            <p className="text-white/90 mb-6">Chat with our wellness team on WhatsApp — free, confidential, no pressure.</p>
+            <p className="text-white/90 mb-6">Chat with our wellness team on WhatsApp, free, confidential, no pressure.</p>
             <a href={`${WHATSAPP}?text=Hi, I'd like guidance on ${encodeURIComponent(hub.name)}.`} onClick={() => trackWhatsAppClick(hub.name, "wellness_hub")} target="_blank" rel="noopener noreferrer"
                className="inline-flex items-center gap-2 h-12 px-8 rounded-full bg-accent text-accent-foreground font-bold hover:scale-105 transition-transform">
               <Phone className="w-4 h-4" /> Free WhatsApp Consultation

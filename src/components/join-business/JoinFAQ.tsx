@@ -16,7 +16,7 @@ const faqs = [
   },
   {
     question: 'How do I earn money?',
-    answer: 'You earn in three main ways: (1) Retail profit — buy products at distributor price and sell at retail price for up to 20% profit. (2) Performance bonus — earn up to 28% based on your team\'s total sales. (3) Leadership bonus — earn an additional 25% when you develop qualified leaders in your team.',
+    answer: 'You earn in three main ways: (1) Retail profit, buy products at distributor price and sell at retail price for up to 20% profit. (2) Performance bonus, earn up to 28% based on your team\'s total sales. (3) Leadership bonus, earn an additional 25% when you develop qualified leaders in your team.',
   },
   {
     question: 'What support do I get as a new member?',

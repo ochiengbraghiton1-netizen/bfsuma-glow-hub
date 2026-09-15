@@ -19,7 +19,7 @@ const steps = [
   {
     icon: Users,
     title: 'Grow Your Network',
-    description: 'Invite others to join your team. As they succeed, you rise through the ranks — from 1 Star all the way to Senior Crown Leader.',
+    description: 'Invite others to join your team. As they succeed, you rise through the ranks, from 1 Star all the way to Senior Crown Leader.',
   },
   {
     icon: Gift,

@@ -36,7 +36,7 @@ const RankProgressionGraphic = () => {
     <div ref={ref} className="mb-14">
       <h3 className="text-xl font-bold text-foreground mb-2 text-center">Your Journey to the Top</h3>
       <p className="text-muted-foreground text-center mb-8 text-sm max-w-lg mx-auto">
-        Every distributor starts at 1 Star. Each rank unlocks higher bonuses — and at the top, cars and travel rewards.
+        Every distributor starts at 1 Star. Each rank unlocks higher bonuses, and at the top, cars and travel rewards.
       </p>
 
       <div className="relative max-w-2xl mx-auto">

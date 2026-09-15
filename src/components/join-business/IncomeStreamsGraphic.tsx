@@ -21,7 +21,7 @@ const IncomeStreamsGraphic = () => {
             6 Ways You Earn
           </h2>
           <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-            BF Suma rewards you through multiple income streams — the higher you rise, the more streams you unlock.
+            BF Suma rewards you through multiple income streams, the higher you rise, the more streams you unlock.
           </p>
         </div>
 

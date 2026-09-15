@@ -313,7 +313,7 @@ const ProductAffiliate = () => {
                     <span className={`inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1 rounded-full ${stockBadgeStyles[stockStatus.status]}`}>
                       {isLowStock && <AlertTriangle className="w-3.5 h-3.5" />}
                       {stockStatus.label}
-                      {isLowStock && <span className="ml-1">— Only {product.stock_quantity} left!</span>}
+                      {isLowStock && <span className="ml-1">Only {product.stock_quantity} left!</span>}
                     </span>
                   </div>
                 )}

@@ -61,7 +61,7 @@ const ElfsightWidget = ({ widgetId }: { widgetId: string }) => {
           Follow Us on Instagram
         </h2>
         <p className="text-muted-foreground mt-2">
-          Latest posts from our Instagram — updated in real time
+          Latest posts from our Instagram, updated in real time
         </p>
       </div>
       <div

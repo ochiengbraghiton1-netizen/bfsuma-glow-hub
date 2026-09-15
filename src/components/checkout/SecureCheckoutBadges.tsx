@@ -45,7 +45,7 @@ const SecureCheckoutBadges = () => {
         <div className="flex items-center justify-center gap-2">
           <Shield className="h-4 w-4 text-primary" />
           <p className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">Secure Checkout</span> — Your payment information is protected with industry-standard encryption.
+            <span className="font-medium text-foreground">Secure Checkout</span>, Your payment information is protected with industry-standard encryption.
           </p>
         </div>
 

@@ -176,7 +176,7 @@ const AboutPage = () => {
               </span>
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed mb-8">
-              From Los Angeles in 2006 to a trusted global wellness brand across 15+ countries —
+              From Los Angeles in 2006 to a trusted global wellness brand across 15+ countries,
               helping people live healthier lives and build brighter futures.
             </p>
           </AnimatedSection>

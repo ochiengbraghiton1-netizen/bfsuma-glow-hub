@@ -13,7 +13,7 @@ const LocationLongForm = ({ location }: { location: LocationData }) => {
   const { city, county, landmarks, deliveryTime, products, localContext } = location;
   const area = landmarks[0] || city;
   const editorial = location.editorial ?? {
-    climateNote: localContext[0] || `Life in ${city} brings its own rhythm — work, family, weather and commute all shape how the body feels by the end of the day.`,
+    climateNote: localContext[0] || `Life in ${city} brings its own rhythm, work, family, weather and commute all shape how the body feels by the end of the day.`,
     workLifeNote: localContext[1] || `Long hours, irregular meals and limited downtime quietly chip away at energy, immunity and joint comfort for many ${city} residents.`,
     topConcerns: [
       "Low energy and afternoon crashes",
@@ -22,7 +22,7 @@ const LocationLongForm = ({ location }: { location: LocationData }) => {
       "Stress, poor sleep and weight that won't shift",
       "Hormonal changes affecting mood and skin",
     ],
-    foodNote: `The traditional ${city} diet has real strengths — sukuma, beans, fish or chicken, fruit and whole grains. The challenge today is convenience: too much sugar, soda, deep-fried snacks and rushed meals.`,
+    foodNote: `The traditional ${city} diet has real strengths, sukuma, beans, fish or chicken, fruit and whole grains. The challenge today is convenience: too much sugar, soda, deep-fried snacks and rushed meals.`,
     recoveryNote: `Recovery is as important as effort. Whether you're farming, commuting through ${area} or sitting at a desk all day, your body needs sleep, hydration and quiet time to repair.`,
     trustNote: `BF SUMA Royal has been serving Kenyans since our founding, with a real local team you can reach on WhatsApp and discreet delivery to ${city} ${deliveryTime}.`,
   };
@@ -43,21 +43,21 @@ const LocationLongForm = ({ location }: { location: LocationData }) => {
         <h2>Food, water and the {city} plate</h2>
         <p>{editorial.foodNote}</p>
         <p>
-          A balanced plate in {city} doesn’t require expensive imports. Half the plate vegetables — sukuma, spinach, managu,
-          terere or cabbage — a quarter lean protein like beans, fish or chicken, and a sensible fist-sized portion of ugali,
+          A balanced plate in {city} doesn’t require expensive imports. Half the plate vegetables, sukuma, spinach, managu,
+          terere or cabbage, a quarter lean protein like beans, fish or chicken, and a sensible fist-sized portion of ugali,
           rice or sweet potato keeps blood sugar steady through long workdays around {area} and beyond.
         </p>
         <p>
           Hydration is the second easy win. Two litres of water daily, more if you spend hours outdoors or in {city}'s warmer
           months, keeps energy, focus and joints working as they should. Replace one daily soda with water or unsweetened
-          lemon water and you remove around 35,000 empty calories a year — without dieting.
+          lemon water and you remove around 35,000 empty calories a year, without dieting.
         </p>
 
         <h2>Movement that fits real life in {city}</h2>
         <p>
           You don’t need a gym membership to stay healthy in {city}. A 30-minute brisk walk, climbing stairs at work, weekend
           hikes, dancing, swimming or playing football on a free pitch all count. Aim for 150 minutes of movement per week
-          spread across most days. Two short strength sessions — squats, push-ups, planks — protect bone density and metabolism,
+          spread across most days. Two short strength sessions, squats, push-ups, planks, protect bone density and metabolism,
           which both decline naturally after 30.
         </p>
         <p>{editorial.recoveryNote}</p>
@@ -77,9 +77,9 @@ const LocationLongForm = ({ location }: { location: LocationData }) => {
 
         <h2>Where natural supplements fit in</h2>
         <p>
-          Even with the best food and habits, modern Kenyan life leaves real nutrition gaps — soils are tired, vegetables travel
+          Even with the best food and habits, modern Kenyan life leaves real nutrition gaps, soils are tired, vegetables travel
           long distances and most adults don’t get enough oily fish, magnesium or vitamin D from food alone. Targeted natural
-          supplements quietly bridge those gaps. They are not magic — but combined with sleep, water and movement, they
+          supplements quietly bridge those gaps. They are not magic, but combined with sleep, water and movement, they
           accelerate results that food alone delivers slowly.
         </p>
 
@@ -88,7 +88,7 @@ const LocationLongForm = ({ location }: { location: LocationData }) => {
           {products.map((p) => (
             <li key={p.slug}>
               <Link to={`/product/${p.slug}`} className="font-semibold">{p.name}</Link>
-              {" — "}{p.reason}
+              {", "}{p.reason}
             </li>
           ))}
         </ul>
@@ -101,10 +101,10 @@ const LocationLongForm = ({ location }: { location: LocationData }) => {
           and energy follow.
         </p>
 
-        <h2>When to ask for help — and when to see a doctor</h2>
+        <h2>When to ask for help, and when to see a doctor</h2>
         <p>
           Daily fatigue, low mood, joint stiffness or weight gain that lingers more than a few weeks deserves attention.
-          Start with the basics — sleep, hydration, nutrition. If symptoms persist, please consult your nearest clinic.
+          Start with the basics, sleep, hydration, nutrition. If symptoms persist, please consult your nearest clinic.
           Conditions like anaemia, thyroid imbalance, hypertension or diabetes are common across Kenya and very treatable
           when caught early.
         </p>
@@ -113,15 +113,15 @@ const LocationLongForm = ({ location }: { location: LocationData }) => {
         <p>{editorial.trustNote}</p>
         <p>
           Every BF SUMA Royal product is GMP, ISO 22000 and Halal certified, used in 15+ countries and supported by a real
-          Kenyan team you can talk to. Delivery to {city} typically arrives {deliveryTime}, and ordering is simple — through
+          Kenyan team you can talk to. Delivery to {city} typically arrives {deliveryTime}, and ordering is simple, through
           this website or directly via WhatsApp.
         </p>
 
         <h2>Your simple next step</h2>
         <p>
           Pick one habit this week. Maybe a daily walk. Maybe replacing soda with water. Maybe a single supplement aligned
-          with your biggest concern — energy, joints, immunity or hormones. Layer the next change two weeks later. That’s
-          how lasting wellness is built — quietly, consistently, in {city} just as anywhere else.
+          with your biggest concern, energy, joints, immunity or hormones. Layer the next change two weeks later. That’s
+          how lasting wellness is built, quietly, consistently, in {city} just as anywhere else.
         </p>
 
         <p className="not-prose mt-8 flex flex-wrap gap-3">
@@ -144,10 +144,10 @@ const LocationLongForm = ({ location }: { location: LocationData }) => {
 
         <h2 className="mt-12">Internal linking for {city} readers</h2>
         <ul>
-          <li><Link to="/wellness/joint-pain-mobility">Joint pain &amp; mobility wellness hub</Link> — for stiff knees, arthritis and active joint care.</li>
-          <li><Link to="/wellness/energy-focus-fatigue">Energy, focus &amp; fatigue hub</Link> — practical advice for tiredness that won't quit.</li>
-          <li><Link to="/wellness/womens-wellness-hormones">Women’s wellness &amp; hormones hub</Link> — periods, perimenopause and beyond.</li>
-          <li><Link to="/wellness/immune-support-healthy-aging">Immune support &amp; healthy aging hub</Link> — strong defences at any age.</li>
+          <li><Link to="/wellness/joint-pain-mobility">Joint pain &amp; mobility wellness hub</Link>, for stiff knees, arthritis and active joint care.</li>
+          <li><Link to="/wellness/energy-focus-fatigue">Energy, focus &amp; fatigue hub</Link>, practical advice for tiredness that won't quit.</li>
+          <li><Link to="/wellness/womens-wellness-hormones">Women’s wellness &amp; hormones hub</Link>, periods, perimenopause and beyond.</li>
+          <li><Link to="/wellness/immune-support-healthy-aging">Immune support &amp; healthy aging hub</Link>, strong defences at any age.</li>
           <li><Link to="/blog">Latest health articles</Link> on the BF SUMA Royal blog.</li>
           <li><Link to="/contact">Contact our {county || "Kenya"} team</Link> for personalised guidance.</li>
         </ul>

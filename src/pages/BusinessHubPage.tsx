@@ -101,7 +101,7 @@ const BusinessHubPage = () => {
           <meta property="og:title" content="BF SUMA Royal Business Hub Kenya | Income Opportunity" />
           <meta
             property="og:description"
-            content="Build extra income with wellness — real distributor stories, training and resources."
+            content="Build extra income with wellness, real distributor stories, training and resources."
           />
           <meta property="og:url" content="https://bfsumaroyal.com/business" />
           <meta property="og:type" content="website" />
@@ -143,7 +143,7 @@ const BusinessHubPage = () => {
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
               Ordinary Kenyans are using the BF SUMA Royal distributor system to build
-              part-time and full-time income — sharing products that genuinely change lives.
+              part-time and full-time income, sharing products that genuinely change lives.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
               <Button asChild size="lg" className="rounded-full">
@@ -176,7 +176,7 @@ const BusinessHubPage = () => {
                 {
                   icon: Users,
                   title: "Mentor-led support",
-                  desc: "Every new distributor gets paired with a sponsor who's already walking the path — not a faceless system.",
+                  desc: "Every new distributor gets paired with a sponsor who's already walking the path, not a faceless system.",
                 },
                 {
                   icon: GraduationCap,

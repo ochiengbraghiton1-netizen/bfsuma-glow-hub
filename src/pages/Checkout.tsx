@@ -600,8 +600,8 @@ const Checkout = () => {
                       <SelectValue placeholder="Select delivery location" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="nairobi">Nairobi — KSh 200</SelectItem>
-                      <SelectItem value="outside_nairobi">Outside Nairobi — KSh 350</SelectItem>
+                      <SelectItem value="nairobi">Nairobi: KSh 200</SelectItem>
+                      <SelectItem value="outside_nairobi">Outside Nairobi: KSh 350</SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground mt-1.5">
@@ -687,7 +687,7 @@ const Checkout = () => {
                         ) : (
                           <>
                             <MessageCircle className="h-5 w-5 mr-2" />
-                            Order on WhatsApp — {formatCurrency(finalTotal)}
+                            Order on WhatsApp ({formatCurrency(finalTotal)})
                           </>
                         )}
                       </Button>

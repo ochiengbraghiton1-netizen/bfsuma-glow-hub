@@ -105,7 +105,7 @@ const CategoryPage = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 flex items-center justify-center">
+        <main className="flex-1 pt-header flex items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </main>
         <Footer />
@@ -117,7 +117,7 @@ const CategoryPage = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 flex flex-col items-center justify-center">
+        <main className="flex-1 pt-header flex flex-col items-center justify-center">
           <h2 className="text-2xl font-bold mb-4">Category Not Found</h2>
           <p className="text-muted-foreground mb-6">The category you're looking for doesn't exist.</p>
           <Link to="/category">
@@ -147,8 +147,9 @@ const CategoryPage = () => {
         </Helmet>
         <div className="min-h-screen flex flex-col">
           <Header />
-          <main className="flex-1 py-12">
-            <div className="container mx-auto px-4">
+          <main className="flex-1 pt-header pb-12">
+            <div className="container mx-auto px-4 pt-8">
+
               <h1 className="text-3xl font-bold mb-8">Product Categories</h1>
 
               {allCategories.length === 0 ? (
@@ -236,8 +237,8 @@ const CategoryPage = () => {
       </Helmet>
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 py-12">
-          <div className="container mx-auto px-4">
+        <main className="flex-1 pt-header pb-12">
+          <div className="container mx-auto px-4 pt-8">
             <Link to="/category" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
               <ArrowLeft className="h-4 w-4 mr-1" />
               All Categories

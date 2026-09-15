@@ -4,7 +4,7 @@ import RankProgressionGraphic from './RankProgressionGraphic';
 import NetworkTreeGraphic from './NetworkTreeGraphic';
 
 const beginnerLevels = [
-  { rank: '1 Star', condition: 'Purchase starter kit (US$200)', bonus: '0%', description: 'You just joined — welcome! Start by buying and selling products.' },
+  { rank: '1 Star', condition: 'Purchase starter kit (US$200)', bonus: '0%', description: 'You just joined, welcome! Start by buying and selling products.' },
   { rank: '2 Star', condition: '3 pax, ≥20 PV each', bonus: '5%', description: 'You begin earning performance bonuses as your personal sales grow.' },
   { rank: '3 Star', condition: '≥300 PV, ≥20 PV personal', bonus: '9%', description: 'Your network is building. Enjoy higher bonuses on team performance.' },
   { rank: '4 Star', condition: '≥1,000 PV, ≥30 PV personal', bonus: '13%', description: 'You\'re leading a team. Your earnings increase with your team\'s success.' },
@@ -30,7 +30,7 @@ const StarLevels = () => {
             Your Growth Path
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            As you sell more products and build your team, you move up through levels — unlocking bigger bonuses and rewards at each stage.
+            As you sell more products and build your team, you move up through levels, unlocking bigger bonuses and rewards at each stage.
           </p>
         </div>
 
@@ -96,9 +96,9 @@ const StarLevels = () => {
             <div className="flex items-start gap-3">
               <Users className="h-6 w-6 text-accent mt-1 flex-shrink-0" />
               <div>
-                <h4 className="font-semibold text-foreground mb-2">Leader Sponsoring Bonus (LSB) — 6.5%</h4>
+                <h4 className="font-semibold text-foreground mb-2">Leader Sponsoring Bonus (LSB): 6.5%</h4>
                 <p className="text-sm text-muted-foreground mb-3">
-                  As a Senior Leader or above, you earn extra bonuses from the sales of qualified leaders you've personally developed — across up to 3 generations of your network.
+                  As a Senior Leader or above, you earn extra bonuses from the sales of qualified leaders you've personally developed, across up to 3 generations of your network.
                 </p>
                 <ul className="text-sm text-muted-foreground space-y-1">
                   <li>• <strong className="text-foreground">1st Generation:</strong> 5–10% based on your rank</li>
@@ -113,9 +113,9 @@ const StarLevels = () => {
             <div className="flex items-start gap-3">
               <Globe className="h-6 w-6 text-secondary mt-1 flex-shrink-0" />
               <div>
-                <h4 className="font-semibold text-foreground mb-2">Leader Global Bonus (LGB) — 3%</h4>
+                <h4 className="font-semibold text-foreground mb-2">Leader Global Bonus (LGB): 3%</h4>
                 <p className="text-sm text-muted-foreground mb-3">
-                  BF Suma sets aside 3% of total company sales into a global bonus pool. Senior Diamond Leaders and above share in this pool — giving you a slice of the company's worldwide success.
+                  BF Suma sets aside 3% of total company sales into a global bonus pool. Senior Diamond Leaders and above share in this pool, giving you a slice of the company's worldwide success.
                 </p>
                 <ul className="text-sm text-muted-foreground space-y-1">
                   <li>• Available to SDL, CL, and SCL ranks</li>

@@ -116,7 +116,7 @@ const Hero = () => {
         <p className="sr-only">Explore natural wellness support for joints, energy, digestion, hormonal health and more with clear product information and personal guidance from our wellness team.</p>
 
         <p className="text-base md:text-xl text-white/90 mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed">
-          Explore natural wellness support for joints, energy, digestion, hormonal health and more — with clear product information and personal guidance from our wellness team.
+          Explore natural wellness support for joints, energy, digestion, hormonal health and more, with clear product information and personal guidance from our wellness team.
         </p>
 
 

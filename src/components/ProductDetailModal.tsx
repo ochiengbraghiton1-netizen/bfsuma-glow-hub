@@ -142,7 +142,7 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
                     {isLowStock && <AlertTriangle className="w-3.5 h-3.5" />}
                     {stockStatus.label}
                     {isLowStock && product.stockQuantity && (
-                      <span className="ml-1">— Only {product.stockQuantity} left!</span>
+                      <span className="ml-1">Only {product.stockQuantity} left!</span>
                     )}
                   </span>
                 </div>
