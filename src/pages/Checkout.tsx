@@ -249,6 +249,22 @@ const Checkout = () => {
   const [pendingPaypalOrderId, setPendingPaypalOrderId] = useState<string | null>(null);
   const pendingPaypalOrderIdRef = useRef<string | null>(null);
 
+  // If the cart, promo code or delivery location changes after a PayPal order
+  // was staged (e.g. the shopper cancelled and edited the order), drop the
+  // stale pending order so the next PayPal attempt saves a fresh order with
+  // the amount that is actually charged.
+  const paypalOrderSignature = `${finalTotal}|${promoApplied?.code || ''}|${deliveryLocation}|${items
+    .map(i => `${i.id}x${i.quantity}@${i.price}`)
+    .join(',')}`;
+  const paypalSignatureRef = useRef(paypalOrderSignature);
+  useEffect(() => {
+    if (paypalSignatureRef.current !== paypalOrderSignature) {
+      paypalSignatureRef.current = paypalOrderSignature;
+      pendingPaypalOrderIdRef.current = null;
+      setPendingPaypalOrderId(null);
+    }
+  }, [paypalOrderSignature]);
+
   // Keep a ref to formData so PayPal callbacks always read the latest values
   const formDataRef = useRef(formData);
   formDataRef.current = formData;
