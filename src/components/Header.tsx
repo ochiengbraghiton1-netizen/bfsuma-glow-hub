@@ -136,12 +136,6 @@ const Header = () => {
                 <Stethoscope className="h-4 w-4" />
               </a>
             </Button>
-            <Button variant="premium" size="sm" asChild>
-              <Link to="/join-business" className="flex items-center gap-1.5">
-                <UserPlus className="h-4 w-4" />
-                Join
-              </Link>
-            </Button>
           </div>
 
           <ThemeToggle />
