@@ -23,6 +23,7 @@ import TrustBadgesInline from '@/components/TrustBadgesInline';
 
 import { useCurrency } from '@/hooks/use-currency';
 import { trackWhatsAppClick, trackPurchase } from "@/lib/analytics";
+import { generateProductAltText } from "@/lib/image-seo";
 
 const WHATSAPP_NUMBER = "254795454053";
 const CHECKOUT_STORAGE_KEY = "bf_checkout_form";
@@ -742,7 +743,7 @@ const Checkout = () => {
                   <div key={item.id} className="flex gap-4">
                     <img
                       src={item.image || productGeneric}
-                      alt={item.name}
+                      alt={generateProductAltText(item.name)}
                       className="w-16 h-16 object-cover rounded-lg"
                     />
                     <div className="flex-1 min-w-0">

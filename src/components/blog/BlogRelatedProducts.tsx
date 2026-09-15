@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Eye } from 'lucide-react';
 import { formatPrice } from '@/hooks/use-products';
 import productGeneric from '@/assets/product-generic.webp';
+import { generateProductAltText } from "@/lib/image-seo";
 
 interface RelatedProduct {
   id: string;
@@ -33,7 +34,7 @@ const BlogRelatedProducts = ({ products }: BlogRelatedProductsProps) => {
             <div className="relative overflow-hidden">
               <img
                 src={product.image_url || productGeneric}
-                alt={product.name}
+                alt={generateProductAltText(product.name)}
                 className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 loading="lazy"
               />

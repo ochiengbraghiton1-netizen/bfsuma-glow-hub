@@ -11,6 +11,7 @@ import bfSumaLogo from "@/assets/bf-suma-logo-new-sm.webp";
 import { Separator } from "@/components/ui/separator";
 import { trackWhatsAppClick } from "@/lib/analytics";
 import { scrollToSection } from "@/lib/scroll-to-section";
+import { generateProductAltText } from "@/lib/image-seo";
 
 const navLinks = [
   { href: "/products", label: "Shop", isAnchor: false },
@@ -192,7 +193,7 @@ const Header = () => {
                         <div key={item.id} className="flex gap-3 p-3 bg-muted/50 rounded-xl">
                           <img 
                             src={item.image || productGeneric} 
-                            alt={item.name}
+                            alt={generateProductAltText(item.name)}
                             className="w-16 h-16 object-cover rounded-lg"
                           />
                           <div className="flex-1 min-w-0">

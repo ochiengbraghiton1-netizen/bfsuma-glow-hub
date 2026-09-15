@@ -8,6 +8,7 @@ import { Loader2, ArrowLeft, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Helmet } from 'react-helmet-async';
 import categoryPlaceholder from '@/assets/category-placeholder.jpg';
+import { generateCategoryAltText } from "@/lib/image-seo";
 
 interface Category {
   id: string;
@@ -168,7 +169,7 @@ const CategoryPage = () => {
                       <div className="relative h-52 overflow-hidden">
                         <img
                           src={cat.image_url || categoryPlaceholder}
-                          alt={`${cat.name} supplements Kenya`}
+                          alt={generateCategoryAltText(cat.name)}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           loading="lazy"
                         />

@@ -5,6 +5,7 @@ import { Star, ShoppingCart, MessageCircle, Users, Play } from 'lucide-react';
 import RichTextContent from '@/components/ui/rich-text-content';
 import { format } from 'date-fns';
 import { trackWhatsAppClick } from "@/lib/analytics";
+import { generateProductAltText } from "@/lib/image-seo";
 
 interface BlogCategory {
   id: string;
@@ -102,7 +103,7 @@ const BlogPostUGC = ({ post, relatedProducts }: UGCPostProps) => {
                 {product.image_url && (
                   <img
                     src={product.image_url}
-                    alt={product.name}
+                    alt={generateProductAltText(product.name)}
                     loading="lazy"
                     decoding="async"
                     className="w-16 h-16 rounded-lg object-cover flex-shrink-0"

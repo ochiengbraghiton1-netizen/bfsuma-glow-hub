@@ -14,6 +14,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import productGeneric from "@/assets/product-generic.webp";
 import { stripHtmlTags, truncateText } from "@/lib/html-utils";
+import { generateProductAltText } from "@/lib/image-seo";
 
 const trustSignals = [
   { icon: Shield, label: "Quality Assured" },
@@ -284,7 +285,7 @@ const ProductAffiliate = () => {
             <div className="relative rounded-2xl overflow-hidden bg-muted/30 aspect-square">
               <img
                 src={product.image_url || productGeneric}
-                alt={`${product.name} - BF SUMA Royal natural health supplement`}
+                alt={generateProductAltText(product.name)}
                 className="w-full h-full object-cover"
               />
               <button

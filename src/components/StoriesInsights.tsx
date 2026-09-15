@@ -14,6 +14,7 @@ import fallback2 from "@/assets/fallback-story-2.webp";
 import fallback3 from "@/assets/fallback-story-3.webp";
 import fallback4 from "@/assets/fallback-story-4.webp";
 import fallback5 from "@/assets/fallback-story-5.webp";
+import { generateBlogAltText } from "@/lib/image-seo";
 
 interface StoryItem {
   id: string;
@@ -190,7 +191,7 @@ const StoriesInsights = () => {
                   {item.image ? (
                     <img
                       src={item.image}
-                      alt={item.title}
+                      alt={generateBlogAltText(item.title)}
                       loading="lazy"
                       decoding="async"
                       width={768}

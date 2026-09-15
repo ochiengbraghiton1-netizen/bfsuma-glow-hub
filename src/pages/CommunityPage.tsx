@@ -238,7 +238,7 @@ const CommunityPage = () => {
                       <div className="aspect-square overflow-hidden bg-muted/30 relative">
                         <img
                           src={post.image_url}
-                          alt={`${post.author_name}'s post`}
+                          alt={`Wellness journey photo shared by ${post.author_name} with BF SUMA Royal`}
                           loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
