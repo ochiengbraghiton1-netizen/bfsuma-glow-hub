@@ -138,7 +138,19 @@ All colors MUST be HSL.
 }
 
 /* App layout resets */
+/* Single source of truth for the fixed header height (Header.tsx uses h-16 = 4rem).
+   Pages whose content starts at the top of the viewport use .pt-header so nothing
+   is clipped behind the fixed header at any breakpoint. */
+:root {
+  --header-height: 4rem;
+}
+
+.pt-header {
+  padding-top: var(--header-height);
+}
+
 #root {
+
   width: 100%;
   max-width: 100%;
   margin: 0;
