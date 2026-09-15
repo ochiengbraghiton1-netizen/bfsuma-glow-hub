@@ -73,6 +73,7 @@ const WellnessHubPage = () => {
   const [articles, setArticles] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [media, setMedia] = useState<MediaMap>({});
 
   useEffect(() => {
     if (!slug) return;
@@ -87,6 +88,7 @@ const WellnessHubPage = () => {
 
       if (!h) { setNotFound(true); setLoading(false); return; }
       setHub(h as Hub);
+      setMedia(await fetchContentMedia("wellness_hub", h.id));
 
       const { data: prodLinks } = await (supabase as any)
         .from("wellness_hub_products")
