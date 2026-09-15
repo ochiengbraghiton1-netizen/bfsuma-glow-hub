@@ -122,12 +122,6 @@ const Header = () => {
                 Buy Products
               </Link>
             </Button>
-            <Button variant="premium" size="sm" asChild>
-              <Link to="/join-business" className="flex items-center gap-1.5">
-                <UserPlus className="h-4 w-4" />
-                Join the Business
-              </Link>
-            </Button>
           </div>
 
           {/* Compact CTAs for lg–xl range */}
