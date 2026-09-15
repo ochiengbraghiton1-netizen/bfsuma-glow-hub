@@ -234,6 +234,14 @@ const WellnessHubs = () => {
                   ))}
                 </div>
               </div>
+
+              <ContentMediaEditor
+                contentType="wellness_hub"
+                contentId={editing.id}
+                media={media}
+                onChange={setMedia}
+              />
+
             </div>
           )}
           <DialogFooter>
