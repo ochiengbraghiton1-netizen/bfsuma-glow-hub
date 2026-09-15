@@ -360,6 +360,17 @@ const WellnessHubPage = () => {
           </div>
         </section>
 
+        {/* Trust */}
+        {media.trust && (
+          <section className="py-12 bg-background">
+            <div className="container mx-auto px-4 max-w-4xl text-center">
+              <h2 className="text-2xl md:text-3xl font-bold mb-3">Real people, real support</h2>
+              {media.trust.caption && <p className="text-muted-foreground mb-6">{media.trust.caption}</p>}
+              <MediaBlock item={{ ...media.trust, caption: null }} className="w-full" />
+            </div>
+          </section>
+        )}
+
         {/* FAQ */}
         {hub.faq?.length > 0 && (
           <section className="py-12 bg-muted/30">
@@ -387,6 +398,9 @@ const WellnessHubPage = () => {
         {/* Final CTA */}
         <section className="py-12 bg-gradient-to-br from-primary to-secondary text-white">
           <div className="container mx-auto px-4 max-w-3xl text-center">
+            {media.closing && (
+              <MediaBlock item={media.closing} className="mb-8 max-w-2xl mx-auto [&_figcaption]:text-white/80" rounded="rounded-3xl" />
+            )}
             <h2 className="text-2xl md:text-3xl font-bold mb-3">Not sure which product is right for you?</h2>
             <p className="text-white/90 mb-6">Chat with our wellness team on WhatsApp, free, confidential, no pressure.</p>
             <a href={`${WHATSAPP}?text=Hi, I'd like guidance on ${encodeURIComponent(hub.name)}.`} onClick={() => trackWhatsAppClick(hub.name, "wellness_hub")} target="_blank" rel="noopener noreferrer"
