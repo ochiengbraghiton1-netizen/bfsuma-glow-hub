@@ -122,12 +122,6 @@ const Header = () => {
                 Buy Products
               </Link>
             </Button>
-            <Button variant="premium" size="sm" asChild>
-              <Link to="/join-business" className="flex items-center gap-1.5">
-                <UserPlus className="h-4 w-4" />
-                Join the Business
-              </Link>
-            </Button>
           </div>
 
           {/* Compact CTAs for lg–xl range */}
@@ -141,12 +135,6 @@ const Header = () => {
               >
                 <Stethoscope className="h-4 w-4" />
               </a>
-            </Button>
-            <Button variant="premium" size="sm" asChild>
-              <Link to="/join-business" className="flex items-center gap-1.5">
-                <UserPlus className="h-4 w-4" />
-                Join
-              </Link>
             </Button>
           </div>
 
@@ -307,12 +295,6 @@ const Header = () => {
                     Buy Products
                   </Link>
                 </Button>
-                <Button variant="premium" size="sm" asChild onClick={() => setIsMobileMenuOpen(false)}>
-                  <Link to="/join-business" className="flex items-center justify-center gap-2">
-                    <UserPlus className="h-4 w-4" />
-                    Join the Business
-                  </Link>
-                </Button>
               </div>
 
               <Separator className="my-3 mx-1" />
@@ -417,21 +399,7 @@ const Header = () => {
                 )}
               </nav>
 
-              {/* Sticky CTA Button */}
-              <div className="pt-4 border-t border-border mt-auto">
-                <Button
-                  asChild
-                  variant="premium"
-                  className="w-full"
-                  size="lg"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <Link to="/join-business" className="flex items-center justify-center gap-2">
-                    <UserPlus className="h-5 w-5" />
-                    Become a Distributor
-                  </Link>
-                </Button>
-              </div>
+            
             </SheetContent>
           </Sheet>
         </div>
