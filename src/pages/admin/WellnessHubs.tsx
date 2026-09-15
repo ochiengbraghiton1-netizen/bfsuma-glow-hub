@@ -13,6 +13,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, Plus, Pencil, Trash2, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
+import ContentMediaEditor from '@/components/admin/ContentMediaEditor';
+import { MediaMap, fetchContentMedia, saveContentMedia } from '@/lib/content-media';
 
 interface Hub {
   id: string; slug: string; name: string;
@@ -36,6 +38,7 @@ const WellnessHubs = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [linkedProducts, setLinkedProducts] = useState<Set<string>>(new Set());
   const [linkedPosts, setLinkedPosts] = useState<Set<string>>(new Set());
+  const [media, setMedia] = useState<MediaMap>({});
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
 
@@ -58,8 +61,9 @@ const WellnessHubs = () => {
       setLinkedProducts(new Set((pl || []).map((r: any) => r.product_id)));
       const { data: al } = await (supabase as any).from('wellness_hub_articles').select('blog_post_id').eq('hub_id', hub.id);
       setLinkedPosts(new Set((al || []).map((r: any) => r.blog_post_id)));
+      setMedia(await fetchContentMedia('wellness_hub', hub.id));
     } else {
-      setLinkedProducts(new Set()); setLinkedPosts(new Set());
+      setLinkedProducts(new Set()); setLinkedPosts(new Set()); setMedia({});
     }
   };
 
