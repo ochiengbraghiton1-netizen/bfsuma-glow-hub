@@ -58,7 +58,7 @@ const SocialPostCard = ({ post, index }: { post: SocialPost; index: number }) =>
           {post.author_avatar_url ? (
             <img
               src={post.author_avatar_url}
-              alt={post.author_name}
+              alt={`${post.author_name}, BF SUMA Royal community member`}
               className="w-8 h-8 rounded-full object-cover border border-border"
             />
           ) : (

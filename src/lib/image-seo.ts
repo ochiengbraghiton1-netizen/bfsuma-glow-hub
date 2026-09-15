@@ -40,6 +40,38 @@ export function generateBlogAltText(title: string): string {
   return base.length <= 125 ? base : title.slice(0, 120);
 }
 
+/**
+ * For category card / banner images.
+ *  "[Category Name] Supplements | BF SUMA Royal"
+ */
+export function generateCategoryAltText(
+  categoryName: string,
+  override?: string | null
+): string {
+  const trimmedOverride = override?.trim();
+  if (trimmedOverride) return trimmedOverride.slice(0, 125);
+  const base = `${categoryName} Supplements | ${BRAND_SUFFIX}`;
+  return base.length <= 125 ? base : categoryName.slice(0, 125);
+}
+
+/**
+ * For location / city page images.
+ *  context describes the image's role on the page, e.g. a product name
+ *  or "delivery". Falls back to a plain city alt.
+ */
+export function generateLocationAltText(
+  locationName: string,
+  context?: string,
+  override?: string | null
+): string {
+  const trimmedOverride = override?.trim();
+  if (trimmedOverride) return trimmedOverride.slice(0, 125);
+  const base = context
+    ? `${context} available in ${locationName}, Kenya | ${BRAND_SUFFIX}`
+    : `Health supplements in ${locationName}, Kenya | ${BRAND_SUFFIX}`;
+  return base.length <= 125 ? base : `${context || locationName}`.slice(0, 125);
+}
+
 export function generateImageSlug(name: string): string {
   return name
     .toLowerCase()

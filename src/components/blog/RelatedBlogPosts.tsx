@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Play, ArrowRight } from 'lucide-react';
+import { generateBlogAltText } from "@/lib/image-seo";
 
 interface RelatedPost {
   id: string;
@@ -59,7 +60,7 @@ const RelatedBlogPosts = ({ productId }: RelatedBlogPostsProps) => {
                   {post.featured_image ? (
                     <img
                       src={post.featured_image}
-                      alt={post.title}
+                      alt={generateBlogAltText(post.title)}
                       className="w-full h-full object-cover"
                       loading="lazy"
                     />

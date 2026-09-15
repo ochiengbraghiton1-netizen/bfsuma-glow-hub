@@ -54,7 +54,7 @@ const RealPeopleSection = () => {
             >
               <img
                 src={img.image_url!}
-                alt={img.author_name}
+                alt={`${img.author_name}, member of the BF SUMA Royal wellness community in Kenya`}
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

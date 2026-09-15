@@ -11,6 +11,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { autoLinkProducts } from "@/lib/auto-link-products";
 import type { LocationData, LocationProduct } from "@/config/locations";
 import { trackWhatsAppClick } from "@/lib/analytics";
+import { generateLocationAltText } from "@/lib/image-seo";
 
 const WHATSAPP_URL = "https://wa.me/254795454053";
 const SITE_URL = "https://bfsumaroyal.com";
@@ -240,7 +241,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
                   <div key={product.slug} className="group bg-card rounded-2xl overflow-hidden border border-border hover:shadow-glow transition-all duration-300 flex flex-col">
                     <Link to={`/product/${product.slug}`} className="block">
                       {db?.image_url ? (
-                        <img src={db.image_url} alt={`${product.name} | BF SUMA Royal`} className="w-full aspect-square object-cover group-hover:scale-105 transition-transform" loading="lazy" />
+                        <img src={db.image_url} alt={generateLocationAltText(city, product.name)} className="w-full aspect-square object-cover group-hover:scale-105 transition-transform" loading="lazy" />
                       ) : (
                         <div className="w-full aspect-square bg-muted flex items-center justify-center text-muted-foreground">
                           <ShoppingBag className="w-12 h-12 opacity-40" />

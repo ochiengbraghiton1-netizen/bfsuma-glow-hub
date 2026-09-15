@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Loader2, ArrowLeft, Calendar, Tag, Play, Search, ChevronLeft, ChevronRight, Briefcase } from "lucide-react";
 import { format } from "date-fns";
+import { generateBlogAltText } from "@/lib/image-seo";
 
 interface BusinessPost {
   id: string;
@@ -191,7 +192,7 @@ const PostCard = ({ post }: { post: BusinessPost }) => (
       <div className="relative aspect-video overflow-hidden bg-muted">
         <img
           src={post.featured_image}
-          alt={post.title}
+          alt={generateBlogAltText(post.title)}
           loading="lazy"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />

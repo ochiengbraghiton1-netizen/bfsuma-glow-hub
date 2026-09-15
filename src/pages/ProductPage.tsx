@@ -16,6 +16,7 @@ import Footer from "@/components/Footer";
 
 import { stripHtmlTags, truncateText } from "@/lib/html-utils";
 import { trackWhatsAppClick, trackViewItem } from "@/lib/analytics";
+import { generateProductAltText } from "@/lib/image-seo";
 
 const trustSignals = [
   { icon: Shield, label: "Quality Assured" },
@@ -295,7 +296,7 @@ const ProductPage = () => {
                 {product.image_url ? (
                   <img
                     src={product.image_url}
-                    alt={`${product.name} | BF SUMA Royal`}
+                    alt={generateProductAltText(product.name)}
                     className="w-full aspect-square object-cover"
                     loading="eager"
                   />
