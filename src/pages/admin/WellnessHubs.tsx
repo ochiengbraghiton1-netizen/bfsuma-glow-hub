@@ -72,6 +72,10 @@ const WellnessHubs = () => {
     if (!editing.slug || !editing.name || !editing.hero_title) {
       toast({ title: 'Slug, name and hero title are required', variant: 'destructive' }); return;
     }
+    const missingAlt = Object.values(media).find((m) => m && !m.alt_text.trim());
+    if (missingAlt) {
+      toast({ title: 'Alt text is required for every uploaded visual', variant: 'destructive' }); return;
+    }
     setSaving(true);
     const payload = { ...editing };
     let id = editing.id;
@@ -96,6 +100,14 @@ const WellnessHubs = () => {
     if (linkedPosts.size) {
       const rows = Array.from(linkedPosts).map((blog_post_id, i) => ({ hub_id: id, blog_post_id, position: i }));
       await (supabase as any).from('wellness_hub_articles').insert(rows);
+    }
+
+    // Sync visual story media
+    try {
+      await saveContentMedia('wellness_hub', id, media);
+    } catch (err: any) {
+      toast({ title: 'Media save failed', description: err?.message, variant: 'destructive' });
+      setSaving(false); return;
     }
 
     toast({ title: 'Hub saved' });
