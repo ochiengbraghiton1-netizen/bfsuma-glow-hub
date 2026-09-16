@@ -12,6 +12,8 @@ import { autoLinkProducts } from "@/lib/auto-link-products";
 import type { LocationData, LocationProduct } from "@/config/locations";
 import { trackWhatsAppClick } from "@/lib/analytics";
 import { generateLocationAltText } from "@/lib/image-seo";
+import ContentMediaBlock from "@/components/ContentMediaBlock";
+import { fetchContentMedia, type MediaMap } from "@/lib/content-media";
 
 const WHATSAPP_URL = "https://wa.me/254795454053";
 const SITE_URL = "https://bfsumaroyal.com";
@@ -44,6 +46,11 @@ const LocationPage = ({ location }: { location: LocationData }) => {
   const [dbProducts, setDbProducts] = useState<Record<string, DbProduct>>({});
   const [dbAssignments, setDbAssignments] = useState<LocationProduct[] | null>(null);
   const [cms, setCms] = useState<CmsPage | null>(null);
+  const [media, setMedia] = useState<MediaMap>({});
+
+  useEffect(() => {
+    (async () => setMedia(await fetchContentMedia("location", slug)))();
+  }, [slug]);
 
   // CMS-overridable per-city SEO content
   useEffect(() => {
@@ -214,10 +221,45 @@ const LocationPage = ({ location }: { location: LocationData }) => {
                 View Products
               </a>
             </div>
+
+            {media.hero && (
+              <ContentMediaBlock
+                item={media.hero}
+                className="mt-10 max-w-3xl mx-auto [&_figcaption]:text-white/80"
+                rounded="rounded-3xl shadow-elegant"
+              />
+            )}
           </div>
 
           <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent" />
         </section>
+
+        {/* ── RECOGNITION ── */}
+        {media.recognition && (
+          <section className="py-12 bg-background">
+            <div className="container mx-auto px-4 max-w-5xl grid md:grid-cols-2 gap-8 items-center">
+              <div>
+                <h2 className="text-2xl md:text-3xl font-bold mb-3">Does this sound familiar?</h2>
+                {media.recognition.caption && <p className="text-muted-foreground">{media.recognition.caption}</p>}
+              </div>
+              <ContentMediaBlock item={{ ...media.recognition, caption: null }} className="w-full" />
+            </div>
+          </section>
+        )}
+
+        {/* ── DESIRED OUTCOME ── */}
+        {media.desired_outcome && (
+          <section className="py-12 bg-muted/30">
+            <div className="container mx-auto px-4 max-w-5xl grid md:grid-cols-2 gap-8 items-center">
+              <div className="md:order-2">
+                <h2 className="text-2xl md:text-3xl font-bold mb-3">How life can feel instead</h2>
+                {media.desired_outcome.caption && <p className="text-muted-foreground">{media.desired_outcome.caption}</p>}
+              </div>
+              <ContentMediaBlock item={{ ...media.desired_outcome, caption: null }} className="w-full md:order-1" />
+            </div>
+          </section>
+        )}
+
 
         {/* ── FEATURED PRODUCTS — moved ABOVE editorial content ── */}
         <section id="featured-products" className="py-14 md:py-20 bg-muted/40 border-b border-border">
@@ -232,6 +274,8 @@ const LocationPage = ({ location }: { location: LocationData }) => {
                 Hand-picked for {city} residents, order via WhatsApp for fast delivery ({deliveryTime}).
               </p>
             </div>
+
+            <ContentMediaBlock item={media.product_context} className="mb-10 max-w-4xl mx-auto text-center" />
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map((product) => {
