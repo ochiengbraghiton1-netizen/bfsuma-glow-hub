@@ -173,6 +173,15 @@ export default function LocationPages() {
             ))}
           </div>
 
+          <div className="pt-4 border-t">
+            <ContentMediaEditor
+              contentType="location"
+              contentId={slug}
+              media={media}
+              onChange={setMedia}
+            />
+          </div>
+
           <div className="grid md:grid-cols-2 gap-3 pt-4 border-t">
             <div>
               <Label>Meta Title</Label>
