@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Save, Plus, Trash2 } from "lucide-react";
+import ContentMediaEditor from "@/components/admin/ContentMediaEditor";
+import { MediaMap, fetchContentMedia, saveContentMedia } from "@/lib/content-media";
 
 interface FAQ { q: string; a: string }
 
@@ -49,6 +51,7 @@ export default function LocationPages() {
   const [page, setPage] = useState<CityPage>(empty(locations[0].slug));
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [media, setMedia] = useState<MediaMap>({});
 
   useEffect(() => {
     (async () => {
@@ -68,6 +71,7 @@ export default function LocationPages() {
       } else {
         setPage(empty(slug));
       }
+      setMedia(await fetchContentMedia("location", slug));
       setLoading(false);
     })();
   }, [slug]);
@@ -77,12 +81,20 @@ export default function LocationPages() {
     const { error } = await (supabase as any)
       .from("location_pages")
       .upsert(page, { onConflict: "city_slug" });
-    setSaving(false);
     if (error) {
+      setSaving(false);
       toast({ title: "Save failed", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Saved", description: `Updated /${slug} SEO content.` });
+      return;
     }
+    try {
+      await saveContentMedia("location", slug, media);
+    } catch (err: any) {
+      setSaving(false);
+      toast({ title: "Visuals could not be saved", description: err?.message, variant: "destructive" });
+      return;
+    }
+    setSaving(false);
+    toast({ title: "Saved", description: `Updated /${slug} SEO content.` });
   };
 
   const updateField = <K extends keyof CityPage>(k: K, v: CityPage[K]) =>
