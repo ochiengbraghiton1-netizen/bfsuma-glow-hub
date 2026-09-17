@@ -340,17 +340,21 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-8 text-center">
               Why {city} Residents Choose BF Suma Royal
             </h2>
-            <div className="space-y-6">
-              {localContext.map((paragraph, i) => (
-                <p
-                  key={i}
-                  className="text-muted-foreground leading-relaxed text-base md:text-lg"
-                  dangerouslySetInnerHTML={{ __html: autoLinkProducts(paragraph, linkInfo) }}
-                />
-              ))}
+            <div className={media.education ? "grid md:grid-cols-2 gap-8 md:gap-12 items-center" : ""}>
+              <div className="space-y-6">
+                {localContext.map((paragraph, i) => (
+                  <p
+                    key={i}
+                    className="text-muted-foreground leading-relaxed text-base md:text-lg"
+                    dangerouslySetInnerHTML={{ __html: autoLinkProducts(paragraph, linkInfo) }}
+                  />
+                ))}
+              </div>
+              {media.education && <ContentMediaBlock item={media.education} className="w-full" />}
             </div>
           </div>
         </section>
+
 
         {/* ── LONG-FORM EDITORIAL ── */}
         {cms?.main_content_html && (
