@@ -340,17 +340,21 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-8 text-center">
               Why {city} Residents Choose BF Suma Royal
             </h2>
-            <div className="space-y-6">
-              {localContext.map((paragraph, i) => (
-                <p
-                  key={i}
-                  className="text-muted-foreground leading-relaxed text-base md:text-lg"
-                  dangerouslySetInnerHTML={{ __html: autoLinkProducts(paragraph, linkInfo) }}
-                />
-              ))}
+            <div className={media.education ? "grid md:grid-cols-2 gap-8 md:gap-12 items-center" : ""}>
+              <div className="space-y-6">
+                {localContext.map((paragraph, i) => (
+                  <p
+                    key={i}
+                    className="text-muted-foreground leading-relaxed text-base md:text-lg"
+                    dangerouslySetInnerHTML={{ __html: autoLinkProducts(paragraph, linkInfo) }}
+                  />
+                ))}
+              </div>
+              {media.education && <ContentMediaBlock item={media.education} className="w-full" />}
             </div>
           </div>
         </section>
+
 
         {/* ── LONG-FORM EDITORIAL ── */}
         {cms?.main_content_html && (
@@ -373,6 +377,8 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-4">Fast Delivery to {city}</h2>
             <p className="text-xl text-primary font-semibold mb-4">We deliver to {city} {deliveryTime}</p>
             <p className="text-muted-foreground leading-relaxed mb-8">{deliveryNote}</p>
+            <ContentMediaBlock item={media.closing} className="mb-8 max-w-2xl mx-auto" />
+
             <a href={buildWa(`Hi, I'd like to place an order for delivery to ${city}.`, pageUrl)} onClick={() => trackWhatsAppClick(undefined, "location_page")} target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 h-12 px-8 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors">
               <Phone className="w-5 h-5" />
@@ -385,6 +391,12 @@ const LocationPage = ({ location }: { location: LocationData }) => {
         <section className="py-16 md:py-24 bg-muted/50">
           <div className="container mx-auto px-4 max-w-5xl">
             <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-12 text-center">What {city} Customers Say</h2>
+            {media.trust && (
+              <div className="max-w-3xl mx-auto mb-12 text-center">
+                <ContentMediaBlock item={media.trust} />
+              </div>
+            )}
+
             <div className="grid md:grid-cols-3 gap-8">
               {testimonials.map((t, i) => (
                 <div key={i} className="bg-card rounded-2xl p-6 shadow-elegant border border-border">
