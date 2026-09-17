@@ -15,6 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 import ContentMediaEditor from '@/components/admin/ContentMediaEditor';
 import { MediaMap, fetchContentMedia, saveContentMedia } from '@/lib/content-media';
+import RichTextEditor from '@/components/ui/rich-text-editor';
 
 interface Hub {
   id: string; slug: string; name: string;
@@ -186,7 +187,7 @@ const WellnessHubs = () => {
               </div>
               <div><Label>Hero Title</Label><Input value={editing.hero_title} onChange={(e) => setEditing({ ...editing, hero_title: e.target.value })} /></div>
               <div><Label>Hero Description</Label><Textarea rows={2} value={editing.hero_description} onChange={(e) => setEditing({ ...editing, hero_description: e.target.value })} /></div>
-              <div><Label>Intro HTML</Label><Textarea rows={5} value={editing.intro_html || ''} onChange={(e) => setEditing({ ...editing, intro_html: e.target.value })} /></div>
+              <div><Label>Intro HTML</Label><RichTextEditor content={editing.intro_html || ''} onChange={(html) => setEditing({ ...editing, intro_html: html })} placeholder="Write the hub educational content..." minHeight="200px" /></div>
               <div className="grid grid-cols-2 gap-3">
                 <div><Label>Meta Title</Label><Input value={editing.meta_title || ''} onChange={(e) => setEditing({ ...editing, meta_title: e.target.value })} /></div>
                 <div><Label>Meta Description</Label><Input value={editing.meta_description || ''} onChange={(e) => setEditing({ ...editing, meta_description: e.target.value })} /></div>
