@@ -377,6 +377,8 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-4">Fast Delivery to {city}</h2>
             <p className="text-xl text-primary font-semibold mb-4">We deliver to {city} {deliveryTime}</p>
             <p className="text-muted-foreground leading-relaxed mb-8">{deliveryNote}</p>
+            <ContentMediaBlock item={media.closing} className="mb-8 max-w-2xl mx-auto" />
+
             <a href={buildWa(`Hi, I'd like to place an order for delivery to ${city}.`, pageUrl)} onClick={() => trackWhatsAppClick(undefined, "location_page")} target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 h-12 px-8 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors">
               <Phone className="w-5 h-5" />
