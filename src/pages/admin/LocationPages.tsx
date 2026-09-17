@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Save, Plus, Trash2 } from "lucide-react";
+import RichTextEditor from "@/components/ui/rich-text-editor";
 import ContentMediaEditor from "@/components/admin/ContentMediaEditor";
 import { MediaMap, fetchContentMedia, saveContentMedia } from "@/lib/content-media";
 
@@ -152,7 +153,12 @@ export default function LocationPages() {
             </div>
             <div>
               <Label>Main SEO Content (HTML)</Label>
-              <Textarea rows={12} className="font-mono text-xs" value={page.main_content_html} onChange={(e) => updateField("main_content_html", e.target.value)} placeholder="<h2>Heading</h2><p>Paragraph...</p>" />
+              <RichTextEditor
+                content={page.main_content_html}
+                onChange={(html) => updateField("main_content_html", html)}
+                placeholder="Write the city page content..."
+                minHeight="300px"
+              />
               <p className="text-xs opacity-60 mt-1">Supports HTML: h2, h3, p, ul, ol, li, strong, a. Product mentions auto-link.</p>
             </div>
           </div>
