@@ -391,6 +391,12 @@ const LocationPage = ({ location }: { location: LocationData }) => {
         <section className="py-16 md:py-24 bg-muted/50">
           <div className="container mx-auto px-4 max-w-5xl">
             <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-12 text-center">What {city} Customers Say</h2>
+            {media.trust && (
+              <div className="max-w-3xl mx-auto mb-12 text-center">
+                <ContentMediaBlock item={media.trust} />
+              </div>
+            )}
+
             <div className="grid md:grid-cols-3 gap-8">
               {testimonials.map((t, i) => (
                 <div key={i} className="bg-card rounded-2xl p-6 shadow-elegant border border-border">
