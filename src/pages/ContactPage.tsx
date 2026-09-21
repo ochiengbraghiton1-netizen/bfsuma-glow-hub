@@ -84,8 +84,8 @@ const ContactPage = () => {
   return (
     <div className="min-h-screen">
       <PageSEO
-        title="Contact BF SUMA Royal | Order Supplements in Kenya"
-        description="Contact BF SUMA Royal for orders, consultations, and support. Reach us on WhatsApp, email, or visit our Kakamega office in Kenya. We reply fast."
+        title="Contact BF Suma Royal Kenya | WhatsApp, M-Pesa & Delivery Help"
+        description="Reach BF Suma Royal by WhatsApp, phone or email. Get delivery, pricing, M-Pesa payment and product authenticity questions answered fast."
         path="/contact"
       />
       <Helmet>
