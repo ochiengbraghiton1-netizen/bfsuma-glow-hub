@@ -51,14 +51,14 @@ const Index = () => {
         <title>Natural Support for Joint Pain, Energy & Digestion | BF SUMA Royal Kenya</title>
         <meta name="description" content="Helping Kenyans feel better naturally with supplements for joint pain, low energy, bloating, hormonal balance and sleep. Free WhatsApp guidance." />
         <link rel="canonical" href="https://bfsumaroyal.com/" />
-        <meta property="og:title" content="Feel Better Naturally | Joint, Energy, Digestion & Hormone Support | BF SUMA Royal" />
-        <meta property="og:description" content="Trusted natural supplements for stiff joints, fatigue, bloating, hormonal balance and everyday wellness in Kenya." />
+        <meta property="og:title" content="Not Sure What Your Body Needs? | BF Suma Royal Kenya" />
+        <meta property="og:description" content="Explore natural wellness support for joints, energy, digestion, hormonal health and more, with clear product information and personal guidance from our wellness team." />
         <meta property="og:url" content="https://bfsumaroyal.com/" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://bfsumaroyal.com/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="BF SUMA Royal | Premium Supplements in Kenya" />
-        <meta name="twitter:description" content="Shop trusted natural supplements in Kenya. Boost energy, immunity & overall wellness with BF SUMA Royal." />
+        <meta name="twitter:title" content="Not Sure What Your Body Needs? | BF Suma Royal Kenya" />
+        <meta name="twitter:description" content="Explore natural wellness support for joints, energy, digestion, hormonal health and more, with clear product information and personal guidance from our wellness team." />
         <meta name="twitter:image" content="https://bfsumaroyal.com/og-image.png" />
       </Helmet>
       <Header />

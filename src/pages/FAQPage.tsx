@@ -48,8 +48,8 @@ const FAQPage = () => {
   return (
     <div className="min-h-screen">
       <PageSEO
-        title="FAQ – BF SUMA Royal Kenya | Your Questions Answered"
-        description="Get answers about BF SUMA supplements, distributor program & business opportunity in Kenya. Product safety, earnings, delivery & more. Learn now."
+        title="FAQ | Delivery, M-Pesa, Authenticity | BF Suma Royal Kenya"
+        description="Answers on delivery areas, M-Pesa payment, order tracking and how to verify genuine BF Suma products in Kenya."
         path="/faq"
       />
       <Helmet>
