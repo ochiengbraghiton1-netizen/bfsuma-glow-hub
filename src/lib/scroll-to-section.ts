@@ -5,7 +5,21 @@
 export const scrollToSection = (id: string) => {
   const started = Date.now();
   let found = 0;
+  let cancelled = false;
+
+  // Any deliberate input from the visitor wins immediately.
+  const cancel = () => {
+    cancelled = true;
+    removeListeners();
+  };
+  const events = ["wheel", "touchstart", "touchmove", "keydown", "pointerdown"] as const;
+  const removeListeners = () => {
+    events.forEach((e) => window.removeEventListener(e, cancel));
+  };
+  events.forEach((e) => window.addEventListener(e, cancel, { passive: true }));
+
   const tick = () => {
+    if (cancelled) return;
     const el = document.getElementById(id);
     if (el) {
       const top = el.getBoundingClientRect().top + window.scrollY - 80;
@@ -14,10 +28,15 @@ export const scrollToSection = (id: string) => {
         window.scrollTo({ top, behavior: found ? "auto" : "smooth" });
       }
       if (!found) found = Date.now();
-      if (Date.now() - found < 2500) requestAnimationFrame(tick);
+      if (Date.now() - found < 2500) {
+        requestAnimationFrame(tick);
+      } else {
+        removeListeners();
+      }
       return;
     }
     if (Date.now() - started < 5000) requestAnimationFrame(tick);
+    else removeListeners();
   };
   tick();
 };
