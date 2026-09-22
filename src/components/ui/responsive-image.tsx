@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { storageSrcSet } from "@/lib/image-url";
 
 interface ResponsiveImageProps {
   src: string;
@@ -74,6 +75,7 @@ const ResponsiveImage = ({
       )}
       <img
         src={imageSrc}
+        srcSet={storageSrcSet(imageSrc)}
         alt={alt}
         width={width}
         height={height}
