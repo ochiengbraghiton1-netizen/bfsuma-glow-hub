@@ -179,7 +179,7 @@ const ContentCard = ({ sectionKey, label, description, hasImageUpload, data, onS
 
       const { error: uploadError } = await supabase.storage
         .from('categories')
-        .upload(`site-content/${fileName}`, compressed, { upsert: true });
+        .upload(`site-content/${fileName}`, compressed, { upsert: true, cacheControl: '31536000' });
 
       if (uploadError) throw uploadError;
 

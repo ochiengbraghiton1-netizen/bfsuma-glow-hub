@@ -17,6 +17,7 @@ import Footer from "@/components/Footer";
 import { stripHtmlTags, truncateText } from "@/lib/html-utils";
 import { trackWhatsAppClick, trackViewItem } from "@/lib/analytics";
 import { generateProductAltText } from "@/lib/image-seo";
+import { storageSrcSet, storageImageUrl } from "@/lib/image-url";
 
 const trustSignals = [
   { icon: Shield, label: "Quality Assured" },
@@ -295,10 +296,15 @@ const ProductPage = () => {
               <div className="relative rounded-2xl overflow-hidden bg-card border">
                 {product.image_url ? (
                   <img
-                    src={product.image_url}
+                    src={storageImageUrl(product.image_url, 768)}
+                    srcSet={storageSrcSet(product.image_url, [480, 768, 1024])}
+                    sizes="(max-width: 1024px) 100vw, 600px"
+                    width={768}
+                    height={768}
                     alt={generateProductAltText(product.name)}
                     className="w-full aspect-square object-cover"
                     loading="eager"
+                    decoding="async"
                   />
                 ) : (
                   <div className="w-full aspect-square bg-muted flex items-center justify-center text-muted-foreground text-sm">

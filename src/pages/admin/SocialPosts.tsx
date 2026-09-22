@@ -170,7 +170,7 @@ const SocialPosts = () => {
 
       const ext = compressed.name.split(".").pop();
       const path = `${isThumb ? "thumbnails/" : ""}${crypto.randomUUID()}.${ext}`;
-      const { error } = await supabase.storage.from("social-posts").upload(path, compressed);
+      const { error } = await supabase.storage.from("social-posts").upload(path, compressed, { cacheControl: '31536000' });
       if (error) throw error;
       const { data: urlData } = supabase.storage.from("social-posts").getPublicUrl(path);
       setForm((prev) => ({ ...prev, [field]: urlData.publicUrl }));
@@ -215,7 +215,7 @@ const SocialPosts = () => {
       const path = `videos/${crypto.randomUUID()}.${ext}`;
       const { error } = await supabase.storage
         .from("social-posts")
-        .upload(path, file, { contentType: file.type });
+        .upload(path, file, { contentType: file.type, cacheControl: '31536000' });
       if (error) throw error;
       const { data: urlData } = supabase.storage.from("social-posts").getPublicUrl(path);
       setForm((prev) => ({ ...prev, video_url: urlData.publicUrl }));

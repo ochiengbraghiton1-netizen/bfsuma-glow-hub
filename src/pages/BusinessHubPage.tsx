@@ -28,6 +28,7 @@ import {
 import { format } from "date-fns";
 import { trackWhatsAppClick } from "@/lib/analytics";
 import { generateBlogAltText } from "@/lib/image-seo";
+import { storageSrcSet, SIZES_CARD_WIDE } from "@/lib/image-url";
 
 interface BusinessPost {
   id: string;
@@ -230,6 +231,11 @@ const BusinessHubPage = () => {
                       <div className="relative aspect-video overflow-hidden bg-muted">
                         <img
                           src={post.featured_image}
+                          srcSet={storageSrcSet(post.featured_image)}
+                          sizes={SIZES_CARD_WIDE}
+                          width={400}
+                          height={225}
+                          decoding="async"
                           alt={generateBlogAltText(post.title)}
                           loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

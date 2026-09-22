@@ -263,7 +263,7 @@ const RichTextEditor = ({
       const fileExt = file.name.split('.').pop();
       const fileName = `blog-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
       const filePath = `blog-images/${fileName}`;
-      const { error: uploadError } = await supabase.storage.from('products').upload(filePath, file);
+      const { error: uploadError } = await supabase.storage.from('products').upload(filePath, file, { cacheControl: '31536000' });
       if (uploadError) throw uploadError;
       const { data: { publicUrl } } = supabase.storage.from('products').getPublicUrl(filePath);
       chain().focus().setImage({ src: publicUrl }).run();

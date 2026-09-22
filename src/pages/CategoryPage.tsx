@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Helmet } from 'react-helmet-async';
 import categoryPlaceholder from '@/assets/category-placeholder.jpg';
 import { generateCategoryAltText } from "@/lib/image-seo";
+import { storageSrcSet, SIZES_CARD } from "@/lib/image-url";
 
 interface Category {
   id: string;
@@ -169,6 +170,11 @@ const CategoryPage = () => {
                       <div className="relative h-52 overflow-hidden">
                         <img
                           src={cat.image_url || categoryPlaceholder}
+                          srcSet={storageSrcSet(cat.image_url)}
+                          sizes={SIZES_CARD}
+                          width={400}
+                          height={400}
+                          decoding="async"
                           alt={generateCategoryAltText(cat.name)}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           loading="lazy"

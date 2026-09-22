@@ -134,7 +134,7 @@ const Categories = () => {
 
       const { error: uploadError } = await supabase.storage
         .from('categories')
-        .upload(filePath, compressed, { contentType: 'image/webp', upsert: true });
+        .upload(filePath, compressed, { contentType: 'image/webp', upsert: true, cacheControl: '31536000' });
 
       if (uploadError) throw uploadError;
 

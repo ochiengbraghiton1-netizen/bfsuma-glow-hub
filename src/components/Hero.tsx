@@ -2,6 +2,7 @@ import { ArrowRight, ShoppingBag, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { trackWhatsAppClick } from "@/lib/analytics";
 import { scrollToSection } from "@/lib/scroll-to-section";
+import { storageSrcSet, storageImageUrl } from "@/lib/image-url";
 
 const WHATSAPP_URL = 'https://wa.me/254795454053?text=Hi%2C%20I%20need%20help%20choosing%20the%20right%20supplement%20for%20my%20health.';
 
@@ -17,18 +18,12 @@ const readCachedHero = () => {
 };
 
 /**
- * Width-limited variants for the admin-managed hero using Supabase's built-in
- * image transformation endpoint (no new dependency/service). Returns null for
- * any URL we don't recognise, in which case the original URL is used as-is.
+ * Width-limited variants for the admin-managed hero, via the shared storage
+ * image helper. Returns null for URLs we don't recognise, in which case the
+ * original URL is used as-is.
  */
-const supabaseHeroSrcSet = (url: string) => {
-  if (!url.includes("/storage/v1/object/public/")) return null;
-  const base = url.replace("/storage/v1/object/public/", "/storage/v1/render/image/public/");
-  const sep = base.includes("?") ? "&" : "?";
-  return [640, 960, 1280, 1920]
-    .map((w) => `${base}${sep}width=${w}&quality=70 ${w}w`)
-    .join(", ");
-};
+const supabaseHeroSrcSet = (url: string) =>
+  storageSrcSet(url, [480, 640, 960, 1280, 1920]) || null;
 
 const Hero = () => {
   // Use the previously seen admin hero straight away so it is the LCP element
@@ -71,7 +66,7 @@ const Hero = () => {
 
       {heroImage ? (
         <img
-          src={heroImage}
+          src={heroSrcSetFailed ? heroImage : storageImageUrl(heroImage, 1280)}
           srcSet={heroSrcSet || undefined}
           onError={() => { if (heroSrcSet) setHeroSrcSetFailed(true); }}
           alt="BF SUMA Royal wellness community with real customers and team members"

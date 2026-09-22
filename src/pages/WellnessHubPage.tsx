@@ -10,6 +10,7 @@ import { autoLinkProducts } from "@/lib/auto-link-products";
 import { trackWhatsAppClick } from "@/lib/analytics";
 import { generateProductAltText, generateBlogAltText } from "@/lib/image-seo";
 import { fetchContentMedia, MediaMap, ContentMediaItem } from "@/lib/content-media";
+import { storageSrcSet, SIZES_CARD, SIZES_CARD_WIDE } from "@/lib/image-url";
 
 /** Renders one visual story slot. Images use alt text, videos use it as an aria-label. */
 const MediaBlock = ({ item, className = "", rounded = "rounded-2xl" }: { item?: ContentMediaItem; className?: string; rounded?: string }) => {
@@ -27,8 +28,11 @@ const MediaBlock = ({ item, className = "", rounded = "rounded-2xl" }: { item?: 
       ) : (
         <img
           src={item.media_url}
+          srcSet={storageSrcSet(item.media_url, [480, 768, 1024, 1280])}
+          sizes={SIZES_CARD_WIDE}
           alt={item.alt_text}
           loading="lazy"
+          decoding="async"
           className={`w-full object-cover ${rounded}`}
         />
       )}
@@ -264,7 +268,7 @@ const WellnessHubPage = () => {
                     <div key={p.id} className="group bg-card border border-border rounded-2xl overflow-hidden hover:shadow-elegant transition-all flex flex-col">
                       <Link to={`/product/${p.slug}`} className="block">
                         {p.image_url ? (
-                          <img src={p.image_url} alt={generateProductAltText(p.name)} className="w-full aspect-square object-cover group-hover:scale-105 transition-transform" loading="lazy" />
+                          <img src={p.image_url} srcSet={storageSrcSet(p.image_url)} sizes={SIZES_CARD} width={400} height={400} alt={generateProductAltText(p.name)} className="w-full aspect-square object-cover group-hover:scale-105 transition-transform" loading="lazy" decoding="async" />
                         ) : (
                           <div className="w-full aspect-square bg-muted flex items-center justify-center text-muted-foreground">
                             <ShoppingBag className="w-12 h-12 opacity-40" />
@@ -334,7 +338,7 @@ const WellnessHubPage = () => {
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {articles.map((a) => (
                   <Link key={a.id} to={`/blog/${a.slug}`} className="group bg-card border border-border rounded-2xl overflow-hidden hover:shadow-elegant transition-all">
-                    {a.featured_image && <img src={a.featured_image} alt={generateBlogAltText(a.title)} className="w-full aspect-video object-cover group-hover:scale-105 transition-transform" loading="lazy" />}
+                    {a.featured_image && <img src={a.featured_image} srcSet={storageSrcSet(a.featured_image)} sizes={SIZES_CARD_WIDE} width={400} height={225} alt={generateBlogAltText(a.title)} className="w-full aspect-video object-cover group-hover:scale-105 transition-transform" loading="lazy" decoding="async" />}
                     <div className="p-5">
                       <h3 className="font-bold mb-2 group-hover:text-primary transition-colors line-clamp-2">{a.title}</h3>
                       {a.excerpt && <p className="text-sm text-muted-foreground line-clamp-3">{a.excerpt}</p>}

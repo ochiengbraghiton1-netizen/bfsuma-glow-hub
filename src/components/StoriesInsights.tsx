@@ -15,6 +15,7 @@ import fallback3 from "@/assets/fallback-story-3.webp";
 import fallback4 from "@/assets/fallback-story-4.webp";
 import fallback5 from "@/assets/fallback-story-5.webp";
 import { generateBlogAltText } from "@/lib/image-seo";
+import { storageSrcSet, SIZES_CARD_WIDE } from "@/lib/image-url";
 
 interface StoryItem {
   id: string;
@@ -191,6 +192,8 @@ const StoriesInsights = () => {
                   {item.image ? (
                     <img
                       src={item.image}
+                      srcSet={storageSrcSet(item.image, [480, 768, 1024])}
+                      sizes={SIZES_CARD_WIDE}
                       alt={generateBlogAltText(item.title)}
                       loading="lazy"
                       decoding="async"

@@ -1,4 +1,5 @@
 import type { ContentMediaItem } from "@/lib/content-media";
+import { storageSrcSet, SIZES_CARD_WIDE } from "@/lib/image-url";
 
 interface Props {
   item?: ContentMediaItem;
@@ -22,8 +23,11 @@ const ContentMediaBlock = ({ item, className = "", rounded = "rounded-2xl" }: Pr
       ) : (
         <img
           src={item.media_url}
+          srcSet={storageSrcSet(item.media_url, [480, 768, 1024, 1280])}
+          sizes={SIZES_CARD_WIDE}
           alt={item.alt_text}
           loading="lazy"
+          decoding="async"
           className={`w-full object-cover ${rounded}`}
         />
       )}

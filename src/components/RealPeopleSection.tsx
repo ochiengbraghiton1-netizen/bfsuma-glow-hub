@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Heart } from "lucide-react";
+import { storageSrcSet, SIZES_CARD } from "@/lib/image-url";
 
 interface CommunityImage {
   id: string;
@@ -54,6 +55,10 @@ const RealPeopleSection = () => {
             >
               <img
                 src={img.image_url!}
+                srcSet={storageSrcSet(img.image_url)}
+                sizes={SIZES_CARD}
+                width={400}
+                height={400}
                 alt={`${img.author_name}, member of the BF SUMA Royal wellness community in Kenya`}
                 loading="lazy"
                 decoding="async"

@@ -19,6 +19,7 @@ import BlogPostFAQ from '@/components/blog/BlogPostFAQ';
 import { stripHtmlTags } from '@/lib/html-utils';
 import { SITE_BASE_URL } from '@/config/routes';
 import { generateBlogAltText } from '@/lib/image-seo';
+import { storageSrcSet, storageImageUrl, SIZES_CARD_WIDE } from "@/lib/image-url";
 
 interface BlogCategory {
   id: string;
@@ -181,6 +182,11 @@ const BlogList = () => {
                     <div className="relative aspect-video overflow-hidden bg-muted">
                       <img
                         src={post.featured_image}
+                        srcSet={storageSrcSet(post.featured_image)}
+                        sizes={SIZES_CARD_WIDE}
+                        width={400}
+                        height={225}
+                        decoding="async"
                         alt={generateBlogAltText(post.title)}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
@@ -501,7 +507,7 @@ const BlogPostView = ({ slug, expectedContentType }: { slug: string; expectedCon
             if (post.featured_image) {
               return (
                 <div className="aspect-video overflow-hidden rounded-lg mb-8">
-                  <img src={post.featured_image} alt={generateBlogAltText(post.title)} className="w-full h-full object-cover" />
+                  <img src={storageImageUrl(post.featured_image, 1024)} srcSet={storageSrcSet(post.featured_image, [480, 768, 1024, 1280])} sizes="(max-width: 1024px) 100vw, 800px" alt={generateBlogAltText(post.title)} className="w-full h-full object-cover" decoding="async" />
                 </div>
               );
             }
