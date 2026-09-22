@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Play, ArrowRight } from 'lucide-react';
 import { generateBlogAltText } from "@/lib/image-seo";
+import { storageSrcSet, SIZES_CARD_WIDE } from "@/lib/image-url";
 
 interface RelatedPost {
   id: string;
@@ -60,6 +61,11 @@ const RelatedBlogPosts = ({ productId }: RelatedBlogPostsProps) => {
                   {post.featured_image ? (
                     <img
                       src={post.featured_image}
+                      srcSet={storageSrcSet(post.featured_image)}
+                      sizes={SIZES_CARD_WIDE}
+                      width={400}
+                      height={225}
+                      decoding="async"
                       alt={generateBlogAltText(post.title)}
                       className="w-full h-full object-cover"
                       loading="lazy"

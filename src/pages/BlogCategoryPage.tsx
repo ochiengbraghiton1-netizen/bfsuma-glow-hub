@@ -10,6 +10,7 @@ import { Loader2, ArrowLeft, Calendar, Tag, Play } from 'lucide-react';
 import { format } from 'date-fns';
 import { Helmet } from 'react-helmet-async';
 import { generateBlogAltText } from "@/lib/image-seo";
+import { storageSrcSet, SIZES_CARD_WIDE } from "@/lib/image-url";
 
 interface BlogCategory {
   id: string;
@@ -211,6 +212,11 @@ const BlogCategoryPage = () => {
                       <div className="relative aspect-video overflow-hidden bg-muted">
                         <img
                           src={post.featured_image}
+                          srcSet={storageSrcSet(post.featured_image)}
+                          sizes={SIZES_CARD_WIDE}
+                          width={400}
+                          height={225}
+                          decoding="async"
                           alt={generateBlogAltText(post.title)}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           loading="lazy"
