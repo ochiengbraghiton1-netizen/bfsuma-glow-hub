@@ -510,11 +510,12 @@ async function buildMeta(pathname: string, supabase: ReturnType<typeof createCli
   // /wellness index
   if (pathname === "/wellness") {
     return {
-      title: "Wellness Hubs | BF SUMA Royal Kenya",
-      description: "Explore 7 wellness hubs from BF SUMA Royal Kenya — joint pain, weight, digestion, hormones, energy, sleep & immunity.",
+      title: "Wellness Hubs | Natural Support by Health Goal | BF Suma Royal Kenya",
+      description:
+        "Explore wellness hubs for joint health, energy, hormones and digestion. Find genuine Kenyan-delivered supplements and free WhatsApp guidance.",
       canonical,
-      h1: "Wellness Hubs",
-      body: `<p>Curated supplements, expert guides and FAQs across 7 wellness areas Kenyans care about most.</p>`,
+      h1: "Wellness Hubs: Natural Support by Health Goal",
+      body: `<p>Explore wellness hubs for joint health, energy, hormones and digestion. Find genuine Kenyan-delivered supplements and free WhatsApp guidance.</p>`,
     };
   }
   // /wellness/:slug
