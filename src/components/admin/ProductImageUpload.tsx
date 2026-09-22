@@ -87,12 +87,12 @@
        const fileName = `${crypto.randomUUID()}.${fileExt}`;
        const filePath = `product-images/${fileName}`;
  
-       const { error: uploadError } = await supabase.storage
-         .from('products')
-         .upload(filePath, compressedFile, {
-           cacheControl: '3600',
-           upsert: false,
-         });
+        const { error: uploadError } = await supabase.storage
+          .from('products')
+          .upload(filePath, compressedFile, {
+            cacheControl: '31536000',
+            upsert: false,
+          });
  
        if (uploadError) throw uploadError;
  
