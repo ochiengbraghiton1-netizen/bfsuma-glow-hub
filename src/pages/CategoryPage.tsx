@@ -141,6 +141,7 @@ const CategoryPage = () => {
         <Helmet>
           <title>Health Supplements Kenya | Shop by Category & Price | BF Suma Royal</title>
           <meta name="description" content="Browse BF Suma Royal's full range of health supplements in Kenya by category. See prices, check authenticity, and order via WhatsApp or M-Pesa." />
+          {/* /products and /category render the same listing, so both consolidate on /category. */}
           <link rel="canonical" href="https://bfsumaroyal.com/category" />
           <meta property="og:title" content="Health Supplements Kenya | Shop by Category & Price | BF Suma Royal" />
           <meta property="og:description" content="Browse BF Suma Royal's full range of health supplements in Kenya by category. See prices, check authenticity, and order via WhatsApp or M-Pesa." />

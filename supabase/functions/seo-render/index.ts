@@ -1,4 +1,4 @@
-// Last deployed: 2026-08-04
+// Last deployed: 2026-09-22
 // SEO renderer: fetches the static SPA shell (index.html) and rewrites
 // per-route <title>, meta, canonical, OG/Twitter, JSON-LD and the visible
 // SEO fallback block so crawlers receive unique signals on the first byte.
@@ -73,11 +73,11 @@ const buildProductIngredients = (slug: string, plainDescription: string) => {
 
 const staticMeta: Record<string, Omit<Meta, "canonical">> = {
   "/": {
-    title: "Natural Health Supplements Kenya | Joint Pain, Hormonal Balance and Energy | BF SUMA Royal",
+    title: "Natural Support for Joint Pain, Energy & Digestion | BF SUMA Royal Kenya",
     description:
-      "Trusted by Kenyan families for joint pain, hormonal balance, low energy and digestive health. Natural herbal supplements with free WhatsApp wellness guidance.",
-    h1: "BF SUMA Royal — Premium Health Supplements Kenya",
-    body: `<p>Premium natural supplements to support immunity, energy and wellness. GMP, ISO and Halal certified. Order via WhatsApp for fast delivery across Kenya.</p>`,
+      "Helping Kenyans feel better naturally with supplements for joint pain, low energy, bloating, hormonal balance and sleep. Free WhatsApp guidance.",
+    h1: "Natural Support for Joint Pain, Energy and Digestion",
+    body: `<p>Helping Kenyans feel better naturally with supplements for joint pain, low energy, bloating, hormonal balance and sleep. GMP, ISO 22000 and Halal certified, with free WhatsApp guidance and delivery across Kenya.</p>`,
   },
   "/about": {
     title: "About BF SUMA Royal Kenya | Our Journey Since 2006",
@@ -101,25 +101,25 @@ const staticMeta: Record<string, Omit<Meta, "canonical">> = {
     body: `<p>Real distributor stories, income insights, training and honest advice about building a wellness business with BF SUMA Royal in Kenya.</p>`,
   },
   "/blog": {
-    title: "Health & Wellness Blog | BF SUMA Royal Kenya",
+    title: "Health & Wellness Guides for Kenyans | BF Suma Royal Blog",
     description:
-      "Read expert health tips, supplement guides, and wellness advice from BF SUMA Royal Kenya. Stay informed and shop natural products.",
-    h1: "BF SUMA Royal Health & Wellness Blog",
-    body: `<p>Expert health tips, supplement guides and wellness advice for Kenyans — covering immunity, joint care, energy, hormones and healthy aging.</p>`,
+      "Practical, Kenya-specific guides on joint pain, energy, hormonal health, digestion and more, with genuine supplement options and WhatsApp support.",
+    h1: "Health and Wellness Guides for Kenyans",
+    body: `<p>Practical, Kenya-specific guides on joint pain, energy, hormonal health, digestion and more, with genuine supplement options and free WhatsApp support.</p>`,
   },
   "/contact": {
-    title: "Contact BF SUMA Royal | Orders & Support Kenya",
+    title: "Contact BF Suma Royal Kenya | WhatsApp, M-Pesa & Delivery Help",
     description:
-      "Reach BF SUMA Royal Kenya via WhatsApp, email, or visit us in Kakamega. Get fast support for orders, products, and business inquiries.",
+      "Reach BF Suma Royal by WhatsApp, phone or email. Get delivery, pricing, M-Pesa payment and product authenticity questions answered fast.",
     h1: "Contact BF SUMA Royal Kenya",
     body: `<p>Reach our team in Kakamega via WhatsApp +254 795 454 053 or email bfsumaroyal@gmail.com for orders, product advice and distributor support.</p>`,
   },
   "/faq": {
-    title: "FAQ | BF SUMA Royal Kenya - Common Questions",
+    title: "FAQ | Delivery, M-Pesa, Authenticity | BF Suma Royal Kenya",
     description:
-      "Get answers about BF SUMA Royal supplements, distributor program, and business opportunity in Kenya. Start your wellness journey today.",
-    h1: "Frequently Asked Questions — BF SUMA Royal Kenya",
-    body: `<p>Common questions about BF SUMA Royal supplements, ordering, delivery, certifications and the distributor business opportunity in Kenya.</p>`,
+      "Answers on delivery areas, M-Pesa payment, order tracking and how to verify genuine BF Suma products in Kenya.",
+    h1: "Frequently Asked Questions",
+    body: `<p>Answers on delivery areas, M-Pesa payment, order tracking and how to verify genuine BF Suma products in Kenya.</p>`,
   },
   "/community": {
     title: "Community | BF SUMA Royal Kenya Stories",
@@ -129,18 +129,18 @@ const staticMeta: Record<string, Omit<Meta, "canonical">> = {
     body: `<p>Real wellness and business success stories from BF SUMA Royal members across Kenya — from Nairobi to Mombasa, Kakamega and beyond.</p>`,
   },
   "/products": {
-    title: "Shop Natural Supplements in Kenya | BF SUMA Royal",
+    title: "Health Supplements Kenya | Shop by Category & Price | BF Suma Royal",
     description:
-      "Browse the full BF SUMA Royal product catalogue: immunity, joint care, energy, hormones, weight & more. Fast nationwide delivery in Kenya.",
-    h1: "BF SUMA Royal Products",
-    body: `<p>Browse our full catalogue of GMP-certified natural supplements for immunity, joint health, energy, hormones, weight management and healthy aging.</p>`,
+      "Browse BF Suma Royal's full range of health supplements in Kenya by category. See prices, check authenticity, and order via WhatsApp or M-Pesa.",
+    h1: "Health Supplements in Kenya by Category",
+    body: `<p>Browse BF Suma Royal's full range of health supplements in Kenya by category. See prices, check authenticity, and order via WhatsApp or M-Pesa with delivery across Kenya.</p>`,
   },
   "/category": {
-    title: "Product Categories | BF SUMA Royal Kenya",
+    title: "Health Supplements Kenya | Shop by Category & Price | BF Suma Royal",
     description:
-      "Explore BF SUMA Royal supplement categories — joints, immunity, women's wellness, energy, weight & detox. Quality natural products in Kenya.",
-    h1: "Browse Product Categories",
-    body: `<p>Explore BF SUMA Royal supplement categories: joint care, immune support, women's wellness, energy, weight management and digestive health.</p>`,
+      "Browse BF Suma Royal's full range of health supplements in Kenya by category. See prices, check authenticity, and order via WhatsApp or M-Pesa.",
+    h1: "Health Supplements in Kenya by Category",
+    body: `<p>Browse BF Suma Royal's full range of health supplements in Kenya by category. See prices, check authenticity, and order via WhatsApp or M-Pesa with delivery across Kenya.</p>`,
   },
   "/return-policy": {
     title: "Return & Exchange Policy | BF SUMA Royal Kenya",
@@ -228,7 +228,9 @@ const noIndexPrefixes = [
 // ---- Meta builders ----------------------------------------------------------
 
 async function buildMeta(pathname: string, supabase: ReturnType<typeof createClient>): Promise<Meta> {
-  const canonical = `${SITE}${pathname === "/" ? "" : pathname}`;
+  // /products and /category render identical content; consolidate on /category.
+  const canonicalPath = pathname === "/products" ? "/category" : pathname;
+  const canonical = `${SITE}${canonicalPath === "/" ? "" : canonicalPath}`;
 
   if (noIndexPrefixes.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
     return {
@@ -508,11 +510,12 @@ async function buildMeta(pathname: string, supabase: ReturnType<typeof createCli
   // /wellness index
   if (pathname === "/wellness") {
     return {
-      title: "Wellness Hubs | BF SUMA Royal Kenya",
-      description: "Explore 7 wellness hubs from BF SUMA Royal Kenya — joint pain, weight, digestion, hormones, energy, sleep & immunity.",
+      title: "Wellness Hubs | Natural Support by Health Goal | BF Suma Royal Kenya",
+      description:
+        "Explore wellness hubs for joint health, energy, hormones and digestion. Find genuine Kenyan-delivered supplements and free WhatsApp guidance.",
       canonical,
-      h1: "Wellness Hubs",
-      body: `<p>Curated supplements, expert guides and FAQs across 7 wellness areas Kenyans care about most.</p>`,
+      h1: "Wellness Hubs: Natural Support by Health Goal",
+      body: `<p>Explore wellness hubs for joint health, energy, hormones and digestion. Find genuine Kenyan-delivered supplements and free WhatsApp guidance.</p>`,
     };
   }
   // /wellness/:slug
