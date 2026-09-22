@@ -64,7 +64,7 @@ export const uploadContentMedia = async (
 
   const { error } = await supabase.storage
     .from(MEDIA_BUCKET)
-    .upload(path, file, { contentType: file.type, upsert: true });
+    .upload(path, file, { contentType: file.type, upsert: true, cacheControl: '31536000' });
   if (error) throw error;
 
   const { data, error: signErr } = await supabase.storage

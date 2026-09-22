@@ -858,7 +858,7 @@ const Blog = () => {
                         const fileExt = file.name.split('.').pop();
                         const fileName = `blog-featured-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
                         const filePath = `blog-images/${fileName}`;
-                        const { error: uploadError } = await supabase.storage.from('products').upload(filePath, file);
+                        const { error: uploadError } = await supabase.storage.from('products').upload(filePath, file, { cacheControl: '31536000' });
                         if (uploadError) {
                           toast({ title: 'Upload failed', description: uploadError.message, variant: 'destructive' });
                           return;
