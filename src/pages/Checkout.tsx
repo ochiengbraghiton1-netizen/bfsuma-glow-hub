@@ -443,6 +443,8 @@ const Checkout = () => {
           currency,
           notes: formData.notes || null,
           created_at: new Date().toISOString(),
+          shipping_fee: shippingFee,
+          delivery_location: DELIVERY_LABELS[deliveryLocation],
         },
         orderItems: items.map(item => ({
           id: item.id,

@@ -44,6 +44,8 @@ interface Order {
   notes: string | null;
   created_at: string;
   currency: string;
+  shipping_fee: number;
+  delivery_location: string | null;
 }
 
 const formatOrderId = (id: string) => `BF-${id.slice(0, 4).toUpperCase()}`;
@@ -101,6 +103,8 @@ const OrderConfirmation = () => {
           notes: null,
           created_at: new Date().toISOString(),
           currency: 'KES',
+          shipping_fee: 0,
+          delivery_location: null,
         });
         setLoading(false);
         return;
@@ -148,6 +152,7 @@ const OrderConfirmation = () => {
     if (order.discount_amount > 0) {
       message += `Discount${order.promotion_code ? ` (${order.promotion_code})` : ''}: -${formatAmount(order.discount_amount)}\n`;
     }
+    message += `Delivery${order.delivery_location ? ` (${order.delivery_location})` : ''}: ${formatAmount(order.shipping_fee)}\n`;
     message += `\n*Total: ${formatAmount(order.total_amount)}*\n\n`;
     if (order.shipping_address) {
       message += `📍 *Delivery Address:*\n${order.shipping_address}\n`;
