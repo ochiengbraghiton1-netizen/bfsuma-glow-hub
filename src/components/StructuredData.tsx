@@ -18,7 +18,7 @@ const StructuredData = () => {
     "url": "https://bfsumaroyal.com",
     "logo": "https://bfsumaroyal.com/favicon.png",
     "image": "https://bfsumaroyal.com/og-image.png",
-    "description": "BF SUMA Royal offers trusted wellness products designed to support your health journey. Premium supplements backed by a real business opportunity in Kenya.",
+    "description": "BF SUMA ROYAL is an authorized independent distributor of BF Suma, offering certified natural wellness products and free health guidance across Kenya.",
     "slogan": "Premium Supplements for Better Health",
     "address": {
       "@type": "PostalAddress",
