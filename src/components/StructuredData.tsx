@@ -84,7 +84,7 @@ const StructuredData = () => {
     "name": "BF SUMA Royal",
     "alternateName": "BF SUMA Royal Kenya",
     "url": "https://bfsumaroyal.com",
-    "description": "Premium Supplements for Better Health - Backed by a Real Business Opportunity",
+    "description": "Premium Supplements for Better Health, Naturally.",
     "potentialAction": {
       "@type": "SearchAction",
       "target": "https://bfsumaroyal.com/?search={search_term_string}",
