@@ -45,7 +45,7 @@ const StructuredData = () => {
     "image": "https://bfsumaroyal.com/og-image.png",
     "url": "https://bfsumaroyal.com",
     "telephone": "+254795454053",
-    "description": "Premium wellness supplements and natural health products in Kenya. Quality supplements backed by a real business opportunity.",
+    "description": "Certified natural health supplements and wellness guidance in Kenya, from an authorized BF Suma distributor.",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Kakamega",
