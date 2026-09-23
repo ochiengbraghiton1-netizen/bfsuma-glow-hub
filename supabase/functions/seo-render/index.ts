@@ -103,9 +103,9 @@ const staticMeta: Record<string, Omit<Meta, "canonical">> = {
   "/blog": {
     title: "Health & Wellness Guides for Kenyans | WhatsApp Support | BF Suma Royal",
     description:
-      "Kenya-specific wellness guides on joints, energy, hormones and digestion — genuine supplement options with free WhatsApp support from our team.",
+      "Kenya-specific wellness guides on joints, energy, hormones and digestion, with genuine supplement options and free WhatsApp support from our team.",
     h1: "Health and Wellness Guides for Kenyans",
-    body: `<p>Kenya-specific wellness guides on joints, energy, hormones and digestion — genuine supplement options with free WhatsApp support from our team.</p>`,
+    body: `<p>Kenya-specific wellness guides on joints, energy, hormones and digestion, with genuine supplement options and free WhatsApp support from our team.</p>`,
   },
   "/contact": {
     title: "Contact BF Suma Royal Kenya | WhatsApp, M-Pesa & Delivery Help",
