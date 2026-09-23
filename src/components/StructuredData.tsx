@@ -176,10 +176,10 @@ const StructuredData = () => {
     }))
   } : null;
 
-  const faqSchema = faqData.length > 0 ? {
+  const faqSchema = faqs.length > 0 ? {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": faqData.map(faq => ({
+    "mainEntity": faqs.map(faq => ({
       "@type": "Question",
       "name": faq.question,
       "acceptedAnswer": {
