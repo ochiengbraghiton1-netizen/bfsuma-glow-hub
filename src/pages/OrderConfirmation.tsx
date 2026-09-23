@@ -152,6 +152,7 @@ const OrderConfirmation = () => {
     if (order.discount_amount > 0) {
       message += `Discount${order.promotion_code ? ` (${order.promotion_code})` : ''}: -${formatAmount(order.discount_amount)}\n`;
     }
+    message += `Delivery${order.delivery_location ? ` (${order.delivery_location})` : ''}: ${formatAmount(order.shipping_fee)}\n`;
     message += `\n*Total: ${formatAmount(order.total_amount)}*\n\n`;
     if (order.shipping_address) {
       message += `📍 *Delivery Address:*\n${order.shipping_address}\n`;
