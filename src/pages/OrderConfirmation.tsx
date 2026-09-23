@@ -44,6 +44,8 @@ interface Order {
   notes: string | null;
   created_at: string;
   currency: string;
+  shipping_fee: number;
+  delivery_location: string | null;
 }
 
 const formatOrderId = (id: string) => `BF-${id.slice(0, 4).toUpperCase()}`;
