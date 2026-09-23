@@ -326,6 +326,12 @@ const OrderConfirmation = () => {
                         <span>-{formatAmount(order.discount_amount)}</span>
                       </div>
                     )}
+                    {order.shipping_fee > 0 && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Delivery {order.delivery_location && `(${order.delivery_location})`}</span>
+                        <span>{formatAmount(order.shipping_fee)}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between font-bold text-lg pt-1">
                       <span>Total</span>
                       <span>{formatAmount(order.total_amount)}</span>
