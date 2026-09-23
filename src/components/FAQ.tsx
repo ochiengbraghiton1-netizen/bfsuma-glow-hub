@@ -56,7 +56,7 @@ const FAQ = () => {
             </span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Everything you need to know about BF SUMA ROYAL products and business opportunity
+            Everything you need to know about our products, ordering, and delivery
           </p>
         </div>
 

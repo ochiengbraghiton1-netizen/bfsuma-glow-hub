@@ -3,37 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { generateProductAltText } from "@/lib/image-seo";
 import { useProducts } from "@/hooks/use-products";
 import { useProductRatings } from "@/hooks/use-product-ratings";
-
-const faqData = [
-  {
-    question: "What is BF SUMA Royal?",
-    answer: "BF SUMA Royal is a global health and wellness company offering premium natural supplements backed by scientific research. We operate in over 40 countries, helping people improve their health while providing legitimate business opportunities through our network marketing model."
-  },
-  {
-    question: "Are BF SUMA Royal products safe and certified?",
-    answer: "Yes, all BF SUMA Royal products are manufactured in GMP-certified facilities and undergo rigorous quality testing. Our products are made from 100% natural ingredients and are certified by relevant health authorities. We hold HALAL certification for applicable products."
-  },
-  {
-    question: "How does the BF SUMA Royal business opportunity work?",
-    answer: "You can join as a BF SUMA Royal distributor by paying a one-time registration fee of KES 7,000. As a member, you earn through product sales commissions, team bonuses, and leadership rewards. There's no requirement to buy large inventories - you can start small and grow at your own pace."
-  },
-  {
-    question: "Is BF SUMA Royal a pyramid scheme?",
-    answer: "No, BF SUMA Royal is a legitimate network marketing company. Unlike pyramid schemes, our income is based on actual product sales, not recruitment alone. We sell real health products with genuine value, and our compensation plan rewards both sales and team building ethically."
-  },
-  {
-    question: "What products does BF SUMA Royal offer?",
-    answer: "We offer a wide range of natural health supplements including: NMN Capsules for cellular health, Ganoderma Spore Capsules for immunity, ArthroXtra for joint support, Feminegy for women's health, X-Power Man for men's vitality, and many more specialized wellness products."
-  },
-  {
-    question: "How much can I earn with BF SUMA Royal?",
-    answer: "Earnings vary based on your effort and team size. New distributors can earn 15-30% commission on personal sales. As you build a team and advance in rank, you unlock additional bonuses. Top performers earn significant monthly incomes, but results depend on individual commitment."
-  },
-  {
-    question: "How do I get started as a BF SUMA Royal distributor in Kenya?",
-    answer: "Getting started is simple: 1) Register through our website or contact us on WhatsApp, 2) Pay the KES 7,000 registration fee, 3) Receive your membership and starter resources, 4) Begin sharing products and building your team with our full support."
-  }
-];
+import { faqs } from "@/components/FAQ";
 
 const StructuredData = () => {
   const { products } = useProducts();
@@ -48,7 +18,7 @@ const StructuredData = () => {
     "url": "https://bfsumaroyal.com",
     "logo": "https://bfsumaroyal.com/favicon.png",
     "image": "https://bfsumaroyal.com/og-image.png",
-    "description": "BF SUMA Royal offers trusted wellness products designed to support your health journey. Premium supplements backed by a real business opportunity in Kenya.",
+    "description": "BF SUMA ROYAL is an authorized independent distributor of BF Suma, offering certified natural wellness products and free health guidance across Kenya.",
     "slogan": "Premium Supplements for Better Health",
     "address": {
       "@type": "PostalAddress",
@@ -75,7 +45,7 @@ const StructuredData = () => {
     "image": "https://bfsumaroyal.com/og-image.png",
     "url": "https://bfsumaroyal.com",
     "telephone": "+254795454053",
-    "description": "Premium wellness supplements and natural health products in Kenya. Quality supplements backed by a real business opportunity.",
+    "description": "Certified natural health supplements and wellness guidance in Kenya, from an authorized BF Suma distributor.",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Kakamega",
@@ -114,7 +84,7 @@ const StructuredData = () => {
     "name": "BF SUMA Royal",
     "alternateName": "BF SUMA Royal Kenya",
     "url": "https://bfsumaroyal.com",
-    "description": "Premium Supplements for Better Health - Backed by a Real Business Opportunity",
+    "description": "Premium Supplements for Better Health, Naturally.",
     "potentialAction": {
       "@type": "SearchAction",
       "target": "https://bfsumaroyal.com/?search={search_term_string}",
@@ -206,10 +176,10 @@ const StructuredData = () => {
     }))
   } : null;
 
-  const faqSchema = faqData.length > 0 ? {
+  const faqSchema = faqs.length > 0 ? {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": faqData.map(faq => ({
+    "mainEntity": faqs.map(faq => ({
       "@type": "Question",
       "name": faq.question,
       "acceptedAnswer": {
