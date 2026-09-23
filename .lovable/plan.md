@@ -1,16 +1,16 @@
-# Analytics Setup — No Code Changes
+# Correct BF SUMA ROYAL brand identity
 
-## Decision
-Leave everything as is. No code changes required.
-
-## Confirmed state
-- `/analytics-debug` stays live, unlinked, and `noindex, nofollow` — not visible to the public through navigation or search.
-- GA4 events (`whatsapp_click`, `view_item`, `page_view`, `purchase`, `generate_lead`) flow automatically with no manual event creation needed.
-- Historical inflated GA4 data cannot be corrected retroactively; new data is clean from the direct-gtag fix.
-
-## Optional GA4 console steps (user-side, not code)
-1. Mark `whatsapp_click` as a Key event: GA4 Admin → Events → toggle.
-2. Register `product_name` and `cta_placement` as custom dimensions: GA4 Admin → Custom definitions.
+## Changes
+- Replace the homepage SEO fallback About paragraph in `index.html` with the approved authorized-distributor wording.
+- Update `src/components/About.tsx` with the approved Kenyan distributor introduction and rename “Global Brand” to “Global Heritage.”
+- Update `src/pages/AboutPage.tsx` with the exact approved hero, mission, vision, timeline, innovation, certification, and closing copy.
+- Add the Kakamega 2018 timeline entry after the existing “Today” entry.
+- Replace the distributor CTA with the established WhatsApp CTA pattern and track it using placement `about_page`.
+- Reframe About page title, descriptions, social tags, and JSON-LD so BF SUMA ROYAL Kenya is an independent distributor founded in Kakamega in 2018, with BF Suma represented separately as its parent organization.
 
 ## Verification
-- Check GA4 → Reports → Realtime while clicking a WhatsApp button and viewing a product page to confirm events arrive.
+- Run TypeScript checks and the project build.
+- Open `/about` in the desktop and mobile previews, confirm the new copy and CTA, and check for console errors.
+
+## Scope
+Only `index.html`, `src/components/About.tsx`, and `src/pages/AboutPage.tsx` will change.
