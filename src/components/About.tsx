@@ -4,7 +4,7 @@ const About = () => {
   const features = [
     {
       icon: Globe,
-      title: "Global Brand",
+      title: "Global Heritage",
       description: "Trusted worldwide for premium wellness products"
     },
     {
@@ -35,9 +35,9 @@ const About = () => {
             </span>
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            BF SUMA ROYAL is a global health and wellness brand offering premium natural supplements 
-            that support longevity, immunity, and overall vitality. Trusted worldwide, 
-            now empowering entrepreneurs in Kenya to build successful wellness businesses.
+            BF SUMA ROYAL is an authorized Kenyan distributor of BF Suma, a global health and wellness
+            brand trusted since 2006. For over 8 years, we've brought Kakamega and communities across
+            Kenya certified natural supplements and free wellness guidance from our team.
           </p>
         </div>
 

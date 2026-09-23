@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useInView } from "@/hooks/use-in-view";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 const timelineEvents = [
   {
@@ -64,6 +65,13 @@ const timelineEvents = [
       "Today, BF SUMA operates as a trusted global health and wellness company with 200+ supplement formulations, patents registered in USA, China, Japan, India, and South Korea, and distribution across 15+ countries worldwide.",
     highlight: true,
   },
+  {
+    year: "2018",
+    title: "BF SUMA ROYAL Begins in Kakamega",
+    description:
+      "BF SUMA ROYAL was established in Kakamega as an authorized independent distributor of BF Suma products. For over 8 years, we've built a local team of trained wellness consultants, offering health screenings, product guidance, and delivery across Kenya.",
+    highlight: true,
+  },
 ];
 
 const coreValues = [
@@ -83,28 +91,40 @@ const certifications = [
 const aboutPageSchema = {
   "@context": "https://schema.org",
   "@type": "AboutPage",
-  name: "About BF SUMA ROYAL Kenya - Our Journey Since 2006",
+  name: "About BF SUMA ROYAL Kenya | Authorized BF Suma Distributor",
   description:
-    "Discover BF SUMA's journey from Los Angeles in 2006 to becoming a trusted global wellness brand across 15+ countries. Learn about our mission, vision, and 15+ years of impact in Africa.",
+    "Learn about BF SUMA ROYAL Kenya, an authorized BF Suma distributor based in Kakamega since 2018, offering certified wellness products and personal guidance.",
   url: "https://bfsumaroyal.com/about",
   mainEntity: {
     "@type": "Organization",
     name: "BF SUMA ROYAL Kenya",
-    alternateName: ["BF SUMA", "Bright Future Superior Unique Manufacturer of America"],
-    foundingDate: "2006",
+    foundingDate: "2018",
     foundingLocation: {
       "@type": "Place",
       address: {
         "@type": "PostalAddress",
-        addressLocality: "Los Angeles",
-        addressRegion: "California",
-        addressCountry: "USA",
+        addressLocality: "Kakamega",
+        addressCountry: "Kenya",
       },
     },
-    numberOfEmployees: "1000+",
-    areaServed: "15+ Countries",
+    areaServed: "Kenya",
     url: "https://bfsumaroyal.com",
     logo: "https://bfsumaroyal.com/favicon.png",
+    parentOrganization: {
+      "@type": "Organization",
+      name: "BF Suma",
+      foundingDate: "2006",
+      foundingLocation: {
+        "@type": "Place",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: "Los Angeles",
+          addressRegion: "California",
+          addressCountry: "USA",
+        },
+      },
+      numberOfEmployees: "1000+",
+    },
     sameAs: [
       "https://www.facebook.com/share/18KxrewVoN/",
       "https://www.instagram.com/bf_suma_royal",
@@ -143,22 +163,22 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>About BF SUMA Royal Kenya | Trusted Since 2006</title>
+        <title>About BF SUMA Royal Kenya | Authorized BF Suma Distributor</title>
         <meta
           name="description"
-          content="Learn about BF SUMA Royal – from Los Angeles (2006) to Africa's trusted wellness brand. GMP, ISO & Halal certified natural supplements in 15+ countries."
+          content="Learn about BF SUMA ROYAL Kenya, an authorized BF Suma distributor based in Kakamega since 2018, offering certified products and wellness guidance."
         />
         <link rel="canonical" href="https://bfsumaroyal.com/about" />
-        <meta property="og:title" content="About BF SUMA Royal Kenya | Trusted Since 2006" />
-        <meta property="og:description" content="From Los Angeles in 2006 to Africa's leading wellness brand. GMP, ISO & Halal certified." />
+        <meta property="og:title" content="About BF SUMA Royal Kenya | Authorized BF Suma Distributor" />
+        <meta property="og:description" content="Authorized BF Suma distributor based in Kakamega since 2018, offering certified wellness products and personal guidance across Kenya." />
         <meta property="og:url" content="https://bfsumaroyal.com/about" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://bfsumaroyal.com/og-image.png" />
         <meta property="og:site_name" content="BF SUMA Royal" />
         <meta property="og:locale" content="en_KE" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="About BF SUMA Royal Kenya | Trusted Since 2006" />
-        <meta name="twitter:description" content="From Los Angeles in 2006 to Africa's leading wellness brand. Discover our story." />
+        <meta name="twitter:title" content="About BF SUMA Royal Kenya | Authorized BF Suma Distributor" />
+        <meta name="twitter:description" content="Authorized BF Suma distributor based in Kakamega since 2018, offering certified wellness products and personal guidance across Kenya." />
         <meta name="twitter:image" content="https://bfsumaroyal.com/og-image.png" />
 
         <script type="application/ld+json">{JSON.stringify(aboutPageSchema)}</script>
@@ -176,8 +196,8 @@ const AboutPage = () => {
               </span>
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed mb-8">
-              From Los Angeles in 2006 to a trusted global wellness brand across 15+ countries,
-              helping people live healthier lives and build brighter futures.
+              An authorized BF Suma distributor bringing certified natural supplements and personal
+              wellness guidance to Kenyan families, based in Kakamega since 2018.
             </p>
           </AnimatedSection>
         </div>
@@ -193,8 +213,8 @@ const AboutPage = () => {
               </div>
               <h2 className="text-2xl font-bold mb-4">Our Mission</h2>
               <p className="text-muted-foreground leading-relaxed">
-                To improve the quality of life worldwide by providing effective, safe, and innovative
-                health and wellness products.
+                To bring certified, effective wellness products and honest health guidance to every
+                Kenyan family we serve, in person and on WhatsApp.
               </p>
             </AnimatedSection>
 
@@ -204,8 +224,8 @@ const AboutPage = () => {
               </div>
               <h2 className="text-2xl font-bold mb-4">Our Vision</h2>
               <p className="text-muted-foreground leading-relaxed">
-                To become a trusted global leader in wellness, empowering individuals and communities
-                across the world.
+                To be the most trusted wellness partner for communities across Kenya, known for genuine
+                care, not just sales.
               </p>
             </AnimatedSection>
           </div>
@@ -216,9 +236,10 @@ const AboutPage = () => {
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
           <AnimatedSection className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">The BF SUMA Story</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">About BF Suma International</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              A chronological journey from our founding to becoming a global wellness leader.
+              BF SUMA ROYAL is an independent Kenyan distributor of BF Suma International. Here's BF
+              Suma's global story, and ours.
             </p>
           </AnimatedSection>
 
@@ -284,7 +305,8 @@ const AboutPage = () => {
           <AnimatedSection className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Innovation & Global Reach</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Our commitment to research and development has led to major achievements.
+              BF Suma International's commitment to research has led to major achievements across the
+              products we distribute:
             </p>
           </AnimatedSection>
 
@@ -343,7 +365,7 @@ const AboutPage = () => {
           <AnimatedSection className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Certifications & Quality</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Our commitment to quality is backed by international certifications and rigorous testing.
+              Every product we carry is backed by international certifications and rigorous testing:
             </p>
           </AnimatedSection>
 
@@ -370,14 +392,21 @@ const AboutPage = () => {
         <div className="container mx-auto px-4">
           <AnimatedSection className="max-w-3xl mx-auto text-center bg-gradient-to-r from-primary/10 to-accent/10 rounded-3xl p-8 md:p-12 border border-border">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              Ready to Start Your Wellness Journey?
+              Ready to Feel Better?
             </h2>
             <p className="text-muted-foreground mb-8">
-              Join thousands of entrepreneurs building successful wellness businesses with BF SUMA ROYAL.
+              Talk to our wellness team on WhatsApp, or browse our full range of certified supplements.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild variant="premium" size="lg">
-                <Link to="/join-business">Become a Distributor</Link>
+                <a
+                  href="https://wa.me/254795454053"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => trackWhatsAppClick(undefined, "about_page")}
+                >
+                  Talk to a Wellness Expert
+                </a>
               </Button>
               <Button asChild variant="outline" size="lg">
                 <Link to="/#products">Browse Products</Link>
