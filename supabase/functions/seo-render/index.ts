@@ -101,11 +101,11 @@ const staticMeta: Record<string, Omit<Meta, "canonical">> = {
     body: `<p>Real distributor stories, income insights, training and honest advice about building a wellness business with BF SUMA Royal in Kenya.</p>`,
   },
   "/blog": {
-    title: "Health & Wellness Guides for Kenyans | BF Suma Royal Blog",
+    title: "Health & Wellness Guides for Kenyans | WhatsApp Support | BF Suma Royal",
     description:
-      "Practical, Kenya-specific guides on joint pain, energy, hormonal health, digestion and more, with genuine supplement options and WhatsApp support.",
+      "Kenya-specific wellness guides on joints, energy, hormones and digestion — genuine supplement options with free WhatsApp support from our team.",
     h1: "Health and Wellness Guides for Kenyans",
-    body: `<p>Practical, Kenya-specific guides on joint pain, energy, hormonal health, digestion and more, with genuine supplement options and free WhatsApp support.</p>`,
+    body: `<p>Kenya-specific wellness guides on joints, energy, hormones and digestion — genuine supplement options with free WhatsApp support from our team.</p>`,
   },
   "/contact": {
     title: "Contact BF Suma Royal Kenya | WhatsApp, M-Pesa & Delivery Help",
@@ -510,12 +510,12 @@ async function buildMeta(pathname: string, supabase: ReturnType<typeof createCli
   // /wellness index
   if (pathname === "/wellness") {
     return {
-      title: "Wellness Hubs | Natural Support by Health Goal | BF Suma Royal Kenya",
+      title: "Wellness Hubs by Health Goal | Free WhatsApp Guidance | BF Suma Royal",
       description:
-        "Explore wellness hubs for joint health, energy, hormones and digestion. Find genuine Kenyan-delivered supplements and free WhatsApp guidance.",
+        "Explore wellness hubs for joints, energy, hormones and digestion. Genuine Kenyan-delivered supplements with free WhatsApp guidance from our team.",
       canonical,
       h1: "Wellness Hubs: Natural Support by Health Goal",
-      body: `<p>Explore wellness hubs for joint health, energy, hormones and digestion. Find genuine Kenyan-delivered supplements and free WhatsApp guidance.</p>`,
+      body: `<p>Explore wellness hubs for joints, energy, hormones and digestion. Genuine Kenyan-delivered supplements with free WhatsApp guidance from our team.</p>`,
     };
   }
   // /wellness/:slug

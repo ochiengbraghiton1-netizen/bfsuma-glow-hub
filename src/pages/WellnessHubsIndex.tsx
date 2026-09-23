@@ -32,10 +32,10 @@ const WellnessHubsIndex = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Helmet>
-        <title>Wellness Hubs | Natural Support by Health Goal | BF Suma Royal Kenya</title>
+        <title>Wellness Hubs by Health Goal | Free WhatsApp Guidance | BF Suma Royal</title>
         <meta
           name="description"
-          content="Explore wellness hubs for joint health, energy, hormones and digestion. Find genuine Kenyan-delivered supplements and free WhatsApp guidance."
+          content="Explore wellness hubs for joints, energy, hormones and digestion. Genuine Kenyan-delivered supplements with free WhatsApp guidance from our team."
         />
         <link rel="canonical" href="https://bfsumaroyal.com/wellness" />
       </Helmet>

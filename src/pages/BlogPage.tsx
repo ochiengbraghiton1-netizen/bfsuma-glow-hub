@@ -117,11 +117,11 @@ const BlogList = () => {
   return (
     <>
        <Helmet>
-        <title>Health & Wellness Guides for Kenyans | BF Suma Royal Blog</title>
-        <meta name="description" content="Practical, Kenya-specific guides on joint pain, energy, hormonal health, digestion and more, with genuine supplement options and WhatsApp support." />
+        <title>Health & Wellness Guides for Kenyans | WhatsApp Support | BF Suma Royal</title>
+        <meta name="description" content="Kenya-specific wellness guides on joints, energy, hormones and digestion — genuine supplement options with free WhatsApp support from our team." />
         <link rel="canonical" href="https://bfsumaroyal.com/blog" />
-        <meta property="og:title" content="Health & Wellness Guides for Kenyans | BF Suma Royal Blog" />
-        <meta property="og:description" content="Practical, Kenya-specific guides on joint pain, energy, hormonal health, digestion and more, with genuine supplement options and WhatsApp support." />
+        <meta property="og:title" content="Health & Wellness Guides for Kenyans | WhatsApp Support | BF Suma Royal" />
+        <meta property="og:description" content="Kenya-specific wellness guides on joints, energy, hormones and digestion — genuine supplement options with free WhatsApp support from our team." />
         <meta property="og:url" content="https://bfsumaroyal.com/blog" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
