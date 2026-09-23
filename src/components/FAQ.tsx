@@ -6,49 +6,42 @@ import {
 } from "@/components/ui/accordion";
 import { HelpCircle } from "lucide-react";
 
+export const faqs = [
+  {
+    question: "What is BF SUMA ROYAL?",
+    answer: "BF SUMA ROYAL is an authorized independent distributor of BF Suma, a global health and wellness brand trusted since 2006. Based in Kakamega, we've served Kenyan families for over 8 years with certified natural supplements and free wellness guidance on WhatsApp."
+  },
+  {
+    question: "Are BF SUMA ROYAL products safe and certified?",
+    answer: "Yes. Our products are manufactured in GMP-certified facilities and undergo rigorous quality testing. They're made from natural ingredients and hold Halal, ISO 22000, and FDA certification where applicable."
+  },
+  {
+    question: "How do I know the products are genuine?",
+    answer: "Every product we sell is sourced directly from BF Suma and carries the certifications above. To guarantee authenticity, order only through our official website or our WhatsApp number, not through unofficial resellers."
+  },
+  {
+    question: "How do I place an order?",
+    answer: "Add products to your cart and check out on the website. We'll confirm your order on WhatsApp, then you can pay via M-Pesa or PayPal."
+  },
+  {
+    question: "Do you deliver across Kenya?",
+    answer: "Yes, we deliver nationwide. Delivery cost and timing depend on your location and are shown at checkout."
+  },
+  {
+    question: "What products does BF SUMA ROYAL offer?",
+    answer: "We carry a wide range of natural health supplements for joint support, immunity, energy, women's and men's health, and more. Browse the full range on our Products page."
+  },
+  {
+    question: "Can I return a product?",
+    answer: "Yes, see our Return Policy page for full details on returns and exchanges."
+  },
+  {
+    question: "Interested in becoming a distributor?",
+    answer: "Learn more about joining the BF SUMA ROYAL team on our Join the Business page."
+  }
+];
+
 const FAQ = () => {
-  const faqs = [
-    {
-      question: "What is BF SUMA ROYAL?",
-      answer: "BF SUMA ROYAL is a global health and wellness company founded in 2011, offering premium natural supplements backed by scientific research. We operate in over 40 countries, helping people improve their health while providing legitimate business opportunities through our network marketing model."
-    },
-    {
-      question: "Are BF SUMA ROYAL products safe and certified?",
-      answer: "Yes, all BF SUMA ROYAL products are manufactured in GMP-certified facilities and undergo rigorous quality testing. Our products are made from 100% natural ingredients and are certified by relevant health authorities. We hold HALAL certification for applicable products."
-    },
-    {
-      question: "How does the BF SUMA ROYAL business opportunity work?",
-      answer: "You can join as a BF SUMA ROYAL distributor by paying a one-time registration fee of KES 7,000. As a member, you earn through product sales commissions, team bonuses, and leadership rewards. There's no requirement to buy large inventories - you can start small and grow at your own pace."
-    },
-    {
-      question: "Is BF SUMA ROYAL a pyramid scheme?",
-      answer: "No, BF SUMA ROYAL is a legitimate network marketing company. Unlike pyramid schemes, our income is based on actual product sales, not recruitment alone. We sell real health products with genuine value, and our compensation plan rewards both sales and team building ethically."
-    },
-    {
-      question: "What products does BF SUMA ROYAL offer?",
-      answer: "We offer a wide range of natural health supplements including: NMN Capsules for cellular health, Ganoderma Spore Capsules for immunity, ArthroXtra for joint support, Feminegy for women's health, X-Power Man for men's vitality, and many more specialized wellness products."
-    },
-    {
-      question: "How much can I earn with BF SUMA ROYAL?",
-      answer: "Earnings vary based on your effort and team size. New distributors can earn 15-30% commission on personal sales. As you build a team and advance in rank, you unlock additional bonuses. Top performers earn significant monthly incomes, but results depend on individual commitment."
-    },
-    {
-      question: "Do I need to be a health expert to sell these products?",
-      answer: "No health expertise is required. We provide comprehensive training on all products, their benefits, and how to share them with others. Many successful distributors started with no prior experience in health or sales."
-    },
-    {
-      question: "How do I get started as a BF SUMA ROYAL distributor in Kenya?",
-      answer: "Getting started is simple: 1) Register through our website or contact us on WhatsApp, 2) Pay the KES 7,000 registration fee, 3) Receive your membership and starter resources, 4) Begin sharing products and building your team with our full support."
-    },
-    {
-      question: "What support do new distributors receive?",
-      answer: "New members receive comprehensive onboarding including: product training, sales techniques, marketing materials, access to our community of successful distributors, regular webinars, and one-on-one mentorship from experienced team leaders."
-    },
-    {
-      question: "Can I do this business part-time?",
-      answer: "Absolutely! Many of our successful distributors started part-time while maintaining other jobs. The flexibility of network marketing allows you to work around your schedule. You can gradually transition to full-time as your business grows."
-    }
-  ];
 
   return (
     <section id="faq" className="py-24 bg-muted/30">
