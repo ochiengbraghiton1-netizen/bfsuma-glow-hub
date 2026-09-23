@@ -103,6 +103,8 @@ const OrderConfirmation = () => {
           notes: null,
           created_at: new Date().toISOString(),
           currency: 'KES',
+          shipping_fee: 0,
+          delivery_location: null,
         });
         setLoading(false);
         return;
