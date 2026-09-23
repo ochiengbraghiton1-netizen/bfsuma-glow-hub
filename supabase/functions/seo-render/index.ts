@@ -101,11 +101,11 @@ const staticMeta: Record<string, Omit<Meta, "canonical">> = {
     body: `<p>Real distributor stories, income insights, training and honest advice about building a wellness business with BF SUMA Royal in Kenya.</p>`,
   },
   "/blog": {
-    title: "Health & Wellness Guides for Kenyans | BF Suma Royal Blog",
+    title: "Health & Wellness Guides for Kenyans | WhatsApp Support | BF Suma Royal",
     description:
-      "Practical, Kenya-specific guides on joint pain, energy, hormonal health, digestion and more, with genuine supplement options and WhatsApp support.",
+      "Kenya-specific wellness guides on joints, energy, hormones and digestion — genuine supplement options with free WhatsApp support from our team.",
     h1: "Health and Wellness Guides for Kenyans",
-    body: `<p>Practical, Kenya-specific guides on joint pain, energy, hormonal health, digestion and more, with genuine supplement options and free WhatsApp support.</p>`,
+    body: `<p>Kenya-specific wellness guides on joints, energy, hormones and digestion — genuine supplement options with free WhatsApp support from our team.</p>`,
   },
   "/contact": {
     title: "Contact BF Suma Royal Kenya | WhatsApp, M-Pesa & Delivery Help",
