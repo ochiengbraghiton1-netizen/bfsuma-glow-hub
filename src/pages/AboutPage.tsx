@@ -337,7 +337,7 @@ const AboutPage = () => {
           <AnimatedSection className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Core Values</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              The principles that guide everything we do at BF SUMA.
+              The principles that guide everything we do at BF SUMA ROYAL.
             </p>
           </AnimatedSection>
 
