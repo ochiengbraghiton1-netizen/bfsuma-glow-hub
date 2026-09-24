@@ -274,9 +274,9 @@ const CategoryPage = () => {
 
             {media.recognition && (
               <section className="mb-8 grid gap-5 md:grid-cols-2 md:items-center">
-                <ContentMediaBlock item={media.recognition} rounded="rounded-lg" />
+                <ContentMediaBlock item={media.recognition} rounded="rounded-lg" showHeading={false} />
                 <div>
-                  <h2 className="text-xl font-semibold">Does this sound familiar?</h2>
+                  <h2 className="text-xl font-semibold">{media.recognition.heading || 'Does this sound familiar?'}</h2>
                   <p className="mt-2 text-muted-foreground">Explore options selected for this everyday wellness goal.</p>
                 </div>
               </section>
@@ -285,10 +285,10 @@ const CategoryPage = () => {
             {media.desired_outcome && (
               <section className="mb-8 grid gap-5 md:grid-cols-2 md:items-center">
                 <div className="md:order-2">
-                  <ContentMediaBlock item={media.desired_outcome} rounded="rounded-lg" />
+                  <ContentMediaBlock item={media.desired_outcome} rounded="rounded-lg" showHeading={false} />
                 </div>
                 <div className="md:order-1">
-                  <h2 className="text-xl font-semibold">Support your wellness routine</h2>
+                  <h2 className="text-xl font-semibold">{media.desired_outcome.heading || 'Support your wellness routine'}</h2>
                   <p className="mt-2 text-muted-foreground">Compare genuine options and choose what fits your goals and daily routine.</p>
                 </div>
               </section>
@@ -296,9 +296,9 @@ const CategoryPage = () => {
 
             {media.education && (
               <section className="mb-8 grid gap-5 md:grid-cols-2 md:items-center">
-                <ContentMediaBlock item={media.education} rounded="rounded-lg" />
+                <ContentMediaBlock item={media.education} rounded="rounded-lg" showHeading={false} />
                 <div>
-                  <h2 className="text-xl font-semibold">Understand your options</h2>
+                  <h2 className="text-xl font-semibold">{media.education.heading || 'Understand your options'}</h2>
                   <p className="mt-2 text-muted-foreground">Review each product's details and ingredients before deciding what may suit you.</p>
                 </div>
               </section>
@@ -313,7 +313,10 @@ const CategoryPage = () => {
             ) : (
               <>
                 {media.product_context && (
-                  <ContentMediaBlock item={media.product_context} className="mb-8" rounded="rounded-lg" />
+                  <div className="mb-8">
+                    {media.product_context.heading && <h2 className="text-xl font-semibold mb-4">{media.product_context.heading}</h2>}
+                    <ContentMediaBlock item={media.product_context} rounded="rounded-lg" showHeading={false} />
+                  </div>
                 )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {products.map((product) => (
@@ -340,16 +343,19 @@ const CategoryPage = () => {
               <section className="mt-10 border-y border-border py-8">
                 <div className="grid gap-5 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] md:items-center">
                   <div>
-                    <h2 className="text-xl font-semibold">Genuine support from our team</h2>
+                    <h2 className="text-xl font-semibold">{media.trust.heading || 'Genuine support from our team'}</h2>
                     <p className="mt-2 text-muted-foreground">Ask questions before ordering and get guidance from our Kenya-based team.</p>
                   </div>
-                  <ContentMediaBlock item={media.trust} rounded="rounded-lg" />
+                  <ContentMediaBlock item={media.trust} rounded="rounded-lg" showHeading={false} />
                 </div>
               </section>
             )}
 
             {media.closing && (
-              <ContentMediaBlock item={media.closing} className="mt-10" rounded="rounded-lg" />
+              <div className="mt-10">
+                {media.closing.heading && <h2 className="text-xl font-semibold mb-4">{media.closing.heading}</h2>}
+                <ContentMediaBlock item={media.closing} rounded="rounded-lg" showHeading={false} />
+              </div>
             )}
           </div>
         </main>

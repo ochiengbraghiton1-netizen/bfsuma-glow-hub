@@ -36,7 +36,10 @@ export interface ContentMediaItem {
   slot_key: SlotKey;
   media_type: MediaType;
   media_url: string;
+  before_media_url: string | null;
   alt_text: string;
+  before_alt_text: string | null;
+  heading: string | null;
   caption: string | null;
   display_order: number;
 }
@@ -57,10 +60,11 @@ export const uploadContentMedia = async (
   file: File,
   contentType: string,
   contentId: string,
-  slotKey: SlotKey
+  slotKey: SlotKey,
+  variant: 'main' | 'before' = 'main'
 ): Promise<string> => {
   const ext = (file.name.split('.').pop() || 'bin').toLowerCase();
-  const path = `${contentType}/${contentId}/${slotKey}-${Date.now()}.${ext}`;
+  const path = `${contentType}/${contentId}/${slotKey}-${variant}-${Date.now()}.${ext}`;
 
   const { error } = await supabase.storage
     .from(MEDIA_BUCKET)
@@ -98,22 +102,35 @@ export const saveContentMedia = async (
   contentId: string,
   media: MediaMap
 ) => {
+  const invalidItem = Object.values(media).find((item) => item && (
+    !item.alt_text.trim()
+    || (item.before_media_url && !item.before_alt_text?.trim())
+  ));
+  if (invalidItem) throw new Error('Alt text is required for every uploaded image.');
+
   await (supabase as any)
     .from('content_media')
     .delete()
     .eq('content_type', contentType)
     .eq('content_id', contentId);
 
-  const rows = MEDIA_SLOTS.map((slot, i) => media[slot.key] && ({
-    content_type: contentType,
-    content_id: contentId,
-    slot_key: slot.key,
-    media_type: media[slot.key]!.media_type,
-    media_url: media[slot.key]!.media_url,
-    alt_text: media[slot.key]!.alt_text,
-    caption: media[slot.key]!.caption || null,
-    display_order: i,
-  })).filter(Boolean);
+  const rows = MEDIA_SLOTS.flatMap((slot, i) => {
+    const item = media[slot.key];
+    if (!item) return [];
+    return [{
+      content_type: contentType,
+      content_id: contentId,
+      slot_key: slot.key,
+      media_type: item.media_type,
+      media_url: item.media_url,
+      before_media_url: slot.key === 'desired_outcome' ? item.before_media_url || null : null,
+      alt_text: item.alt_text,
+      before_alt_text: slot.key === 'desired_outcome' ? item.before_alt_text || null : null,
+      heading: item.heading?.trim() || null,
+      caption: item.caption || null,
+      display_order: i,
+    }];
+  });
 
   if (rows.length) {
     const { error } = await (supabase as any).from('content_media').insert(rows);

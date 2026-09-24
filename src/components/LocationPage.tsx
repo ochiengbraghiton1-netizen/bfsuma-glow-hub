@@ -225,7 +225,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             {media.hero && (
               <ContentMediaBlock
                 item={media.hero}
-                className="mt-10 max-w-3xl mx-auto [&_figcaption]:text-white/80"
+                className="mt-10 max-w-3xl mx-auto [&_h2]:text-white [&_figcaption]:text-white/80"
                 rounded="rounded-3xl shadow-elegant"
               />
             )}
@@ -239,10 +239,10 @@ const LocationPage = ({ location }: { location: LocationData }) => {
           <section className="py-12 bg-background">
             <div className="container mx-auto px-4 max-w-5xl grid md:grid-cols-2 gap-8 items-center">
               <div>
-                <h2 className="text-2xl md:text-3xl font-bold mb-3">Does this sound familiar?</h2>
+                <h2 className="text-2xl md:text-3xl font-bold mb-3">{media.recognition.heading || "Does this sound familiar?"}</h2>
                 {media.recognition.caption && <p className="text-muted-foreground">{media.recognition.caption}</p>}
               </div>
-              <ContentMediaBlock item={{ ...media.recognition, caption: null }} className="w-full" />
+              <ContentMediaBlock item={{ ...media.recognition, caption: null }} className="w-full" showHeading={false} />
             </div>
           </section>
         )}
@@ -252,10 +252,10 @@ const LocationPage = ({ location }: { location: LocationData }) => {
           <section className="py-12 bg-muted/30">
             <div className="container mx-auto px-4 max-w-5xl grid md:grid-cols-2 gap-8 items-center">
               <div className="md:order-2">
-                <h2 className="text-2xl md:text-3xl font-bold mb-3">How life can feel instead</h2>
+                <h2 className="text-2xl md:text-3xl font-bold mb-3">{media.desired_outcome.heading || "How life can feel instead"}</h2>
                 {media.desired_outcome.caption && <p className="text-muted-foreground">{media.desired_outcome.caption}</p>}
               </div>
-              <ContentMediaBlock item={{ ...media.desired_outcome, caption: null }} className="w-full md:order-1" />
+              <ContentMediaBlock item={{ ...media.desired_outcome, caption: null }} className="w-full md:order-1" showHeading={false} />
             </div>
           </section>
         )}
@@ -275,7 +275,12 @@ const LocationPage = ({ location }: { location: LocationData }) => {
               </p>
             </div>
 
-            <ContentMediaBlock item={media.product_context} className="mb-10 max-w-4xl mx-auto text-center" />
+            {media.product_context && (
+              <div className="mb-10 max-w-4xl mx-auto text-center">
+                {media.product_context.heading && <h3 className="text-xl font-bold mb-4">{media.product_context.heading}</h3>}
+                <ContentMediaBlock item={media.product_context} showHeading={false} />
+              </div>
+            )}
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map((product) => {
@@ -350,7 +355,12 @@ const LocationPage = ({ location }: { location: LocationData }) => {
                   />
                 ))}
               </div>
-              {media.education && <ContentMediaBlock item={media.education} className="w-full" />}
+              {media.education && (
+                <div className="w-full">
+                  {media.education.heading && <h3 className="text-xl font-bold mb-4">{media.education.heading}</h3>}
+                  <ContentMediaBlock item={media.education} showHeading={false} />
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -377,7 +387,12 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-4">Fast Delivery to {city}</h2>
             <p className="text-xl text-primary font-semibold mb-4">We deliver to {city} {deliveryTime}</p>
             <p className="text-muted-foreground leading-relaxed mb-8">{deliveryNote}</p>
-            <ContentMediaBlock item={media.closing} className="mb-8 max-w-2xl mx-auto" />
+            {media.closing && (
+              <div className="mb-8 max-w-2xl mx-auto">
+                {media.closing.heading && <h3 className="text-xl font-bold mb-4">{media.closing.heading}</h3>}
+                <ContentMediaBlock item={media.closing} showHeading={false} />
+              </div>
+            )}
 
             <a href={buildWa(`Hi, I'd like to place an order for delivery to ${city}.`, pageUrl)} onClick={() => trackWhatsAppClick(undefined, "location_page")} target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 h-12 px-8 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors">
@@ -393,7 +408,8 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-12 text-center">What {city} Customers Say</h2>
             {media.trust && (
               <div className="max-w-3xl mx-auto mb-12 text-center">
-                <ContentMediaBlock item={media.trust} />
+                {media.trust.heading && <h3 className="text-xl font-bold mb-4">{media.trust.heading}</h3>}
+                <ContentMediaBlock item={media.trust} showHeading={false} />
               </div>
             )}
 

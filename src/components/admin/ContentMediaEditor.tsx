@@ -19,7 +19,9 @@ interface Props {
 
 const ContentMediaEditor = ({ contentType, contentId, media, onChange }: Props) => {
   const [uploading, setUploading] = useState<SlotKey | null>(null);
+  const [uploadingBefore, setUploadingBefore] = useState(false);
   const inputs = useRef<Record<string, HTMLInputElement | null>>({});
+  const beforeInput = useRef<HTMLInputElement | null>(null);
   const { toast } = useToast();
 
   const patch = (slot: SlotKey, values: Partial<MediaMap[SlotKey]>) => {
@@ -56,7 +58,10 @@ const ContentMediaEditor = ({ contentType, contentId, media, onChange }: Props) 
           slot_key: slot,
           media_type: mediaType,
           media_url: url,
+          before_media_url: mediaType === 'image' ? media[slot]?.before_media_url || null : null,
           alt_text: media[slot]?.alt_text || '',
+          before_alt_text: mediaType === 'image' ? media[slot]?.before_alt_text || null : null,
+          heading: media[slot]?.heading || null,
           caption: media[slot]?.caption || null,
           display_order: MEDIA_SLOTS.findIndex((s) => s.key === slot),
         },
@@ -69,6 +74,35 @@ const ContentMediaEditor = ({ contentType, contentId, media, onChange }: Props) 
       setUploading(null);
       const el = inputs.current[slot];
       if (el) el.value = '';
+    }
+  };
+
+  const handleBeforeFile = async (file: File) => {
+    const slot: SlotKey = 'desired_outcome';
+    if (!file.type.startsWith('image/')) {
+      toast({ title: 'Please choose an image file', variant: 'destructive' });
+      return;
+    }
+    if (file.size > maxBytesFor('image')) {
+      toast({
+        title: 'Image is too large',
+        description: `Maximum ${formatFileSize(maxBytesFor('image'))}. This file is ${formatFileSize(file.size)}.`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setUploadingBefore(true);
+    try {
+      const url = await uploadContentMedia(file, contentType, contentId || 'unsaved', slot, 'before');
+      patch(slot, { before_media_url: url });
+      toast({ title: 'Before image uploaded' });
+    } catch (err: any) {
+      console.error('Before image upload failed', err);
+      toast({ title: 'Upload failed', description: err?.message, variant: 'destructive' });
+    } finally {
+      setUploadingBefore(false);
+      if (beforeInput.current) beforeInput.current.value = '';
     }
   };
 
@@ -142,6 +176,15 @@ const ContentMediaEditor = ({ contentType, contentId, media, onChange }: Props) 
 
             {item?.media_url && (
               <div className="grid gap-2 sm:grid-cols-2">
+                <div className="sm:col-span-2">
+                  <Label className="text-xs">Heading (optional)</Label>
+                  <Input
+                    value={item.heading || ''}
+                    maxLength={100}
+                    placeholder="Write a short heading for this section"
+                    onChange={(e) => patch(slot.key, { heading: e.target.value })}
+                  />
+                </div>
                 <div>
                   <Label className="text-xs">Alt text (required)</Label>
                   <Input
@@ -158,6 +201,52 @@ const ContentMediaEditor = ({ contentType, contentId, media, onChange }: Props) 
                     onChange={(e) => patch(slot.key, { caption: e.target.value })}
                   />
                 </div>
+              </div>
+            )}
+
+            {slot.key === 'desired_outcome' && item?.media_url && item.media_type === 'image' && (
+              <div className="space-y-2 border-t border-border pt-3">
+                <div>
+                  <Label className="text-sm">Before image (optional)</Label>
+                  <p className="text-xs text-muted-foreground mt-1">Add a second image to create a draggable before and after comparison.</p>
+                </div>
+                {item.before_media_url && (
+                  <div className="rounded-md overflow-hidden border bg-background max-w-xs">
+                    <img src={item.before_media_url} alt={item.before_alt_text || 'Before comparison preview'} className="w-full object-cover" />
+                  </div>
+                )}
+                <input
+                  ref={beforeInput}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleBeforeFile(file);
+                  }}
+                />
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button type="button" size="sm" variant="outline" disabled={uploadingBefore} onClick={() => beforeInput.current?.click()}>
+                    {uploadingBefore
+                      ? <><Loader2 className="w-3 h-3 mr-1 animate-spin" />Uploading</>
+                      : <><Upload className="w-3 h-3 mr-1" />{item.before_media_url ? 'Replace before image' : 'Upload before image'}</>}
+                  </Button>
+                  {item.before_media_url && (
+                    <Button type="button" size="sm" variant="ghost" onClick={() => patch(slot.key, { before_media_url: null, before_alt_text: null })}>
+                      <Trash2 className="w-3 h-3 mr-1" />Remove before image
+                    </Button>
+                  )}
+                </div>
+                {item.before_media_url && (
+                  <div>
+                    <Label className="text-xs">Before image alt text (required)</Label>
+                    <Input
+                      value={item.before_alt_text || ''}
+                      placeholder="Describe what the before image shows"
+                      onChange={(e) => patch(slot.key, { before_alt_text: e.target.value })}
+                    />
+                  </div>
+                )}
               </div>
             )}
           </div>
