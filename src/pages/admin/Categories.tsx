@@ -121,8 +121,14 @@ const Categories = () => {
       is_active: category.is_active,
     });
     setImagePreview(category.image_url || null);
+    setMedia({});
     setDialogOpen(true);
-    setMedia(await fetchContentMedia('category', category.id));
+    try {
+      setMedia(await fetchContentMedia('category', category.id));
+    } catch (err) {
+      console.error('Category visuals could not be loaded', err);
+      toast({ title: 'Visuals could not be loaded', variant: 'destructive' });
+    }
   };
 
   const handleImageUpload = async (file: File) => {
