@@ -225,9 +225,8 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             {media.hero && (
               <ContentMediaBlock
                 item={media.hero}
-                className="mt-10 max-w-3xl mx-auto [&_figcaption]:text-white/80"
+                className="mt-10 max-w-3xl mx-auto [&_h2]:text-white [&_figcaption]:text-white/80"
                 rounded="rounded-3xl shadow-elegant"
-                showHeading={false}
               />
             )}
           </div>

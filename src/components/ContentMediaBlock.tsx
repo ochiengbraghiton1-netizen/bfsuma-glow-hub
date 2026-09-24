@@ -26,7 +26,7 @@ const ContentMediaBlock = ({ item, className = "", rounded = "rounded-2xl", show
     >
       {showHeading && item.heading && <h2 className="text-xl md:text-2xl font-bold mb-4">{item.heading}</h2>}
       {hasComparison ? (
-        <div className={`relative aspect-[4/3] overflow-hidden ${rounded} border border-border/40 bg-muted`}>
+        <div className={`relative aspect-[4/3] overflow-hidden ${rounded} border border-border/40 bg-muted focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2`}>
           <img
             src={item.media_url}
             srcSet={storageSrcSet(item.media_url, [480, 768, 1024, 1280])}
@@ -58,7 +58,7 @@ const ContentMediaBlock = ({ item, className = "", rounded = "rounded-2xl", show
             value={comparison}
             onChange={(event) => setComparison(Number(event.target.value))}
             aria-label="Reveal before and after images"
-            className="absolute inset-0 h-full w-full cursor-ew-resize opacity-0 focus-visible:opacity-100 focus-visible:[accent-color:hsl(var(--primary))]"
+            className="absolute inset-0 h-full w-full cursor-ew-resize opacity-0"
           />
         </div>
       ) : item.media_type === "video" ? (
