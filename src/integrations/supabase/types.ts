@@ -502,11 +502,14 @@ export type Database = {
       content_media: {
         Row: {
           alt_text: string
+          before_alt_text: string | null
+          before_media_url: string | null
           caption: string | null
           content_id: string
           content_type: string
           created_at: string
           display_order: number
+          heading: string | null
           id: string
           media_type: string
           media_url: string
@@ -515,11 +518,14 @@ export type Database = {
         }
         Insert: {
           alt_text: string
+          before_alt_text?: string | null
+          before_media_url?: string | null
           caption?: string | null
           content_id: string
           content_type: string
           created_at?: string
           display_order?: number
+          heading?: string | null
           id?: string
           media_type: string
           media_url: string
@@ -528,11 +534,14 @@ export type Database = {
         }
         Update: {
           alt_text?: string
+          before_alt_text?: string | null
+          before_media_url?: string | null
           caption?: string | null
           content_id?: string
           content_type?: string
           created_at?: string
           display_order?: number
+          heading?: string | null
           id?: string
           media_type?: string
           media_url?: string
