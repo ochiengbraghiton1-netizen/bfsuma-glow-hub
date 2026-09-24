@@ -52,6 +52,13 @@ const timelineEvents = [
       "BF SUMA continued expanding its African footprint through a structured distributor and shop-based model, reaching Uganda, Ghana, Zambia, Burundi, DRC, and Namibia. The company strengthened brand recognition, hosted large regional events, and empowered thousands through wellness entrepreneurship.",
   },
   {
+    year: "2018",
+    title: "BF SUMA ROYAL Begins in Kakamega",
+    description:
+      "BF SUMA ROYAL was established in Kakamega as an authorized independent distributor of BF Suma products. For over 8 years, we've built a local team of trained wellness consultants, offering health screenings, product guidance, and delivery across Kenya.",
+    highlight: true,
+  },
+  {
     year: "2023",
     title: "15+ Years of Impact in Africa",
     description:
@@ -63,13 +70,6 @@ const timelineEvents = [
     title: "A Global Wellness Brand",
     description:
       "Today, BF SUMA operates as a trusted global health and wellness company with 200+ supplement formulations, patents registered in USA, China, Japan, India, and South Korea, and distribution across 15+ countries worldwide.",
-    highlight: true,
-  },
-  {
-    year: "2018",
-    title: "BF SUMA ROYAL Begins in Kakamega",
-    description:
-      "BF SUMA ROYAL was established in Kakamega as an authorized independent distributor of BF Suma products. For over 8 years, we've built a local team of trained wellness consultants, offering health screenings, product guidance, and delivery across Kenya.",
     highlight: true,
   },
 ];
