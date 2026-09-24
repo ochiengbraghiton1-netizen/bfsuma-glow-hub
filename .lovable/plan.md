@@ -1,34 +1,35 @@
-# Extend visual stories to category detail pages
+# Visual Story Improvements
 
 ## Scope
-- Reuse the existing `content_media` table, `content-media` storage, `ContentMediaEditor`, and `ContentMediaBlock`.
-- Make no new tables, buckets, shared components, or changes to category-listing behavior.
-- Keep the category breadcrumb/back link, product query/grid, and both JSON-LD blocks unchanged.
+Improve the existing visual-story system across wellness hubs, location pages, and category pages without changing unrelated page content or layout.
 
-## Admin category editor
-- Add category media state and load all seven slots when an existing category opens, using `content_type = 'category'` and the category UUID.
-- Reset media when the dialog closes or a new category is opened, preventing one category’s visuals from appearing in another edit.
-- Show `ContentMediaEditor` only for an existing category, below Image, Display Order, and Active.
-- Require alt text for every uploaded visual, matching the existing wellness-hub save behavior.
-- Save category fields first, then save its full media set. If media saving fails, keep the dialog open and report that failure instead of claiming the whole edit succeeded.
+## Implementation
+1. **Shared scroll reveal**
+   - Add a one-time IntersectionObserver reveal to `ContentMediaBlock` using the existing `useInView` hook.
+   - Use a subtle opacity and upward transition lasting about 500ms with ease-out.
+   - Render media normally when reduced motion is enabled.
+   - Replace the duplicate wellness-hub media renderer with `ContentMediaBlock` so all three surfaces receive identical behavior.
 
-## Category detail page
-- Fetch category media after the active category UUID is available.
-- Keep the zero-media layout visually equivalent to the current page.
-- Render only populated slots:
-  - `hero`: category heading/description area, side-by-side on larger screens.
-  - `recognition`: conditional early two-column section.
-  - `desired_outcome`: conditional follow-up section with reversed visual order.
-  - `education`: conditional short section pairing the category description context with its media.
-  - `product_context`: immediately above the existing product grid.
-  - `trust`: conditional support strip after the product grid.
-  - `closing`: conditional final visual near the bottom of the category content.
-- Use the shared renderer so images retain responsive loading and videos remain native-controls-only with no autoplay or carousel.
+2. **Editable slot headings**
+   - Add a nullable `heading` field to `content_media` through a database migration.
+   - Add a short heading input to every populated slot in `ContentMediaEditor`.
+   - Preserve the heading in upload and save operations.
+   - Use custom headings on category, wellness-hub, and location pages, falling back to each page's current generic heading when blank.
+
+3. **Desired-outcome before/after comparison**
+   - Add nullable `before_media_url` and `before_alt_text` fields to `content_media`; the existing image remains the “after” image.
+   - In the editor, show an optional second-image uploader only for `desired_outcome`, with preview, replacement, removal, and required alt text when present.
+   - In `ContentMediaBlock`, render an accessible pointer/touch/keyboard comparison slider only when the desired-outcome item has two images.
+   - Keep the existing single image or video rendering when no before image exists. The optional before image will accept images only.
+
+## Technical details
+- The comparison uses a clipped image layer, range control semantics, visible Before/After labels, stable aspect sizing, and no autoplay.
+- Existing access policies remain unchanged; only nullable fields are added.
+- Existing records continue working because all new fields are optional.
+- No new animation library, table, storage bucket, or unrelated page changes.
 
 ## Verification
-- Run the project’s TypeScript check and production build, then inspect the latest preview build signal.
-- Browser-test a real category detail page at 1280px and 375px with its current zero-media state; confirm no console/runtime errors and no empty visual sections.
-- Temporarily populate all seven category slots with test media, verify every render point plus the admin editor, then remove the temporary media and confirm the real category returns to zero-media state.
-
-## Mandatory security follow-up
-- The current `content-media` storage read rule allows every signed-in account to download every stored object. Tightening it to privileged content editors would remove that unintended access while preserving the long-lived URLs already rendered publicly. This is separate from the category wiring and changes behavior only for non-admin signed-in users attempting direct storage access.
+- Run TypeScript checks and the production build.
+- Verify one wellness hub, location page, and category page in the browser.
+- Confirm custom-heading fallbacks, one-time reveal behavior, reduced-motion behavior, pointer/touch/keyboard comparison controls, mobile layout, and no console errors.
+- Use temporary records only if needed for complete visual testing, then remove them.
