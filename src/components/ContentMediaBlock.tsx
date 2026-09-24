@@ -34,18 +34,16 @@ const ContentMediaBlock = ({ item, className = "", rounded = "rounded-2xl" }: Pr
             decoding="async"
             className="absolute inset-0 h-full w-full object-cover"
           />
-          <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${comparison}%` }}>
-            <img
-              src={item.before_media_url || ''}
-              srcSet={storageSrcSet(item.before_media_url, [480, 768, 1024, 1280])}
-              sizes={SIZES_CARD_WIDE}
-              alt={item.before_alt_text || 'Before comparison'}
-              loading="lazy"
-              decoding="async"
-              className="absolute inset-y-0 left-0 h-full max-w-none object-cover"
-              style={{ width: `${10000 / comparison}%` }}
-            />
-          </div>
+          <img
+            src={item.before_media_url || ''}
+            srcSet={storageSrcSet(item.before_media_url, [480, 768, 1024, 1280])}
+            sizes={SIZES_CARD_WIDE}
+            alt={item.before_alt_text || 'Before comparison'}
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ clipPath: `inset(0 ${100 - comparison}% 0 0)` }}
+          />
           <span className="absolute left-3 top-3 rounded bg-background/90 px-2 py-1 text-xs font-semibold text-foreground shadow-sm">Before</span>
           <span className="absolute right-3 top-3 rounded bg-background/90 px-2 py-1 text-xs font-semibold text-foreground shadow-sm">After</span>
           <div className="pointer-events-none absolute inset-y-0 w-0.5 bg-background shadow-md" style={{ left: `${comparison}%` }}>
@@ -58,7 +56,7 @@ const ContentMediaBlock = ({ item, className = "", rounded = "rounded-2xl" }: Pr
             value={comparison}
             onChange={(event) => setComparison(Number(event.target.value))}
             aria-label="Reveal before and after images"
-            className="absolute inset-0 h-full w-full cursor-ew-resize opacity-0 focus:opacity-100 focus:[accent-color:hsl(var(--primary))]"
+            className="absolute inset-0 h-full w-full cursor-ew-resize opacity-0 focus-visible:opacity-100 focus-visible:[accent-color:hsl(var(--primary))]"
           />
         </div>
       ) : item.media_type === "video" ? (

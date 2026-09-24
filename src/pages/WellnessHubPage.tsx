@@ -11,35 +11,7 @@ import { trackWhatsAppClick } from "@/lib/analytics";
 import { generateProductAltText, generateBlogAltText } from "@/lib/image-seo";
 import { fetchContentMedia, MediaMap, ContentMediaItem } from "@/lib/content-media";
 import { storageSrcSet, SIZES_CARD, SIZES_CARD_WIDE } from "@/lib/image-url";
-
-/** Renders one visual story slot. Images use alt text, videos use it as an aria-label. */
-const MediaBlock = ({ item, className = "", rounded = "rounded-2xl" }: { item?: ContentMediaItem; className?: string; rounded?: string }) => {
-  if (!item?.media_url) return null;
-  return (
-    <figure className={className}>
-      {item.media_type === "video" ? (
-        <video
-          src={item.media_url}
-          controls
-          preload="metadata"
-          aria-label={item.alt_text}
-          className={`w-full ${rounded} border border-border/40`}
-        />
-      ) : (
-        <img
-          src={item.media_url}
-          srcSet={storageSrcSet(item.media_url, [480, 768, 1024, 1280])}
-          sizes={SIZES_CARD_WIDE}
-          alt={item.alt_text}
-          loading="lazy"
-          decoding="async"
-          className={`w-full object-cover ${rounded}`}
-        />
-      )}
-      {item.caption && <figcaption className="text-sm text-muted-foreground mt-2">{item.caption}</figcaption>}
-    </figure>
-  );
-};
+import ContentMediaBlock from "@/components/ContentMediaBlock";
 
 interface Hub {
   id: string;
@@ -214,7 +186,7 @@ const WellnessHubPage = () => {
               </div>
             </div>
             {media.hero && (
-              <MediaBlock item={media.hero} className="lg:justify-self-end w-full [&_figcaption]:text-white/80" rounded="rounded-3xl shadow-elegant" />
+              <ContentMediaBlock item={media.hero} className="lg:justify-self-end w-full [&_figcaption]:text-white/80" rounded="rounded-3xl shadow-elegant" />
             )}
           </div>
         </section>
@@ -224,10 +196,10 @@ const WellnessHubPage = () => {
           <section className="py-12 bg-background">
             <div className="container mx-auto px-4 max-w-5xl grid md:grid-cols-2 gap-8 items-center">
               <div>
-                <h2 className="text-2xl md:text-3xl font-bold mb-3">Does this sound familiar?</h2>
+                <h2 className="text-2xl md:text-3xl font-bold mb-3">{media.recognition.heading || "Does this sound familiar?"}</h2>
                 {media.recognition.caption && <p className="text-muted-foreground">{media.recognition.caption}</p>}
               </div>
-              <MediaBlock item={{ ...media.recognition, caption: null }} className="w-full" />
+              <ContentMediaBlock item={{ ...media.recognition, caption: null }} className="w-full" />
             </div>
           </section>
         )}
@@ -236,9 +208,9 @@ const WellnessHubPage = () => {
         {media.desired_outcome && (
           <section className="py-12 bg-muted/30">
             <div className="container mx-auto px-4 max-w-5xl grid md:grid-cols-2 gap-8 items-center">
-              <MediaBlock item={{ ...media.desired_outcome, caption: null }} className="w-full md:order-1" />
+              <ContentMediaBlock item={{ ...media.desired_outcome, caption: null }} className="w-full md:order-1" />
               <div className="md:order-2">
-                <h2 className="text-2xl md:text-3xl font-bold mb-3">What better days can look like</h2>
+                <h2 className="text-2xl md:text-3xl font-bold mb-3">{media.desired_outcome.heading || "What better days can look like"}</h2>
                 {media.desired_outcome.caption && <p className="text-muted-foreground">{media.desired_outcome.caption}</p>}
               </div>
             </div>
@@ -258,7 +230,10 @@ const WellnessHubPage = () => {
                 <p className="text-muted-foreground max-w-2xl mx-auto">Hand-picked formulas that may support your goals. Tap any product for full details and ingredients.</p>
               </div>
               {media.product_context && (
-                <MediaBlock item={media.product_context} className="mb-10 max-w-4xl mx-auto text-center" />
+                <div className="mb-10 max-w-4xl mx-auto text-center">
+                  {media.product_context.heading && <h3 className="text-xl font-bold mb-4">{media.product_context.heading}</h3>}
+                  <ContentMediaBlock item={media.product_context} />
+                </div>
               )}
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {products.map((p) => {
@@ -321,7 +296,10 @@ const WellnessHubPage = () => {
             {media.education ? (
               <div className="container mx-auto px-4 max-w-6xl grid lg:grid-cols-2 gap-10 items-start">
                 {linkedIntro && <div className="prose dark:prose-invert" dangerouslySetInnerHTML={{ __html: linkedIntro }} />}
-                <MediaBlock item={media.education} className="w-full lg:sticky lg:top-24" />
+                <div className="w-full lg:sticky lg:top-24">
+                  {media.education.heading && <h2 className="text-2xl font-bold mb-4">{media.education.heading}</h2>}
+                  <ContentMediaBlock item={media.education} />
+                </div>
               </div>
             ) : (
               <div className="container mx-auto px-4 max-w-3xl prose dark:prose-invert" dangerouslySetInnerHTML={{ __html: linkedIntro }} />
@@ -368,9 +346,9 @@ const WellnessHubPage = () => {
         {media.trust && (
           <section className="py-12 bg-background">
             <div className="container mx-auto px-4 max-w-4xl text-center">
-              <h2 className="text-2xl md:text-3xl font-bold mb-3">Real people, real support</h2>
+              <h2 className="text-2xl md:text-3xl font-bold mb-3">{media.trust.heading || "Real people, real support"}</h2>
               {media.trust.caption && <p className="text-muted-foreground mb-6">{media.trust.caption}</p>}
-              <MediaBlock item={{ ...media.trust, caption: null }} className="w-full" />
+              <ContentMediaBlock item={{ ...media.trust, caption: null }} className="w-full" />
             </div>
           </section>
         )}
@@ -403,7 +381,10 @@ const WellnessHubPage = () => {
         <section className="py-12 bg-gradient-to-br from-primary to-secondary text-white">
           <div className="container mx-auto px-4 max-w-3xl text-center">
             {media.closing && (
-              <MediaBlock item={media.closing} className="mb-8 max-w-2xl mx-auto [&_figcaption]:text-white/80" rounded="rounded-3xl" />
+              <div className="mb-8 max-w-2xl mx-auto">
+                {media.closing.heading && <h2 className="text-2xl font-bold mb-4">{media.closing.heading}</h2>}
+                <ContentMediaBlock item={media.closing} className="[&_figcaption]:text-white/80" rounded="rounded-3xl" />
+              </div>
             )}
             <h2 className="text-2xl md:text-3xl font-bold mb-3">Not sure which product is right for you?</h2>
             <p className="text-white/90 mb-6">Chat with our wellness team on WhatsApp, free, confidential, no pressure.</p>

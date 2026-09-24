@@ -102,6 +102,12 @@ export const saveContentMedia = async (
   contentId: string,
   media: MediaMap
 ) => {
+  const invalidItem = Object.values(media).find((item) => item && (
+    !item.alt_text.trim()
+    || (item.before_media_url && !item.before_alt_text?.trim())
+  ));
+  if (invalidItem) throw new Error('Alt text is required for every uploaded image.');
+
   await (supabase as any)
     .from('content_media')
     .delete()
