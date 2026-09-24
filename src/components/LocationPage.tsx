@@ -242,7 +242,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
                 <h2 className="text-2xl md:text-3xl font-bold mb-3">{media.recognition.heading || "Does this sound familiar?"}</h2>
                 {media.recognition.caption && <p className="text-muted-foreground">{media.recognition.caption}</p>}
               </div>
-              <ContentMediaBlock item={{ ...media.recognition, caption: null }} className="w-full" />
+              <ContentMediaBlock item={{ ...media.recognition, caption: null }} className="w-full" showHeading={false} />
             </div>
           </section>
         )}
@@ -255,7 +255,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
                 <h2 className="text-2xl md:text-3xl font-bold mb-3">{media.desired_outcome.heading || "How life can feel instead"}</h2>
                 {media.desired_outcome.caption && <p className="text-muted-foreground">{media.desired_outcome.caption}</p>}
               </div>
-              <ContentMediaBlock item={{ ...media.desired_outcome, caption: null }} className="w-full md:order-1" />
+              <ContentMediaBlock item={{ ...media.desired_outcome, caption: null }} className="w-full md:order-1" showHeading={false} />
             </div>
           </section>
         )}
@@ -278,7 +278,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             {media.product_context && (
               <div className="mb-10 max-w-4xl mx-auto text-center">
                 {media.product_context.heading && <h3 className="text-xl font-bold mb-4">{media.product_context.heading}</h3>}
-                <ContentMediaBlock item={media.product_context} />
+                <ContentMediaBlock item={media.product_context} showHeading={false} />
               </div>
             )}
 
@@ -358,7 +358,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
               {media.education && (
                 <div className="w-full">
                   {media.education.heading && <h3 className="text-xl font-bold mb-4">{media.education.heading}</h3>}
-                  <ContentMediaBlock item={media.education} />
+                  <ContentMediaBlock item={media.education} showHeading={false} />
                 </div>
               )}
             </div>
@@ -390,7 +390,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             {media.closing && (
               <div className="mb-8 max-w-2xl mx-auto">
                 {media.closing.heading && <h3 className="text-xl font-bold mb-4">{media.closing.heading}</h3>}
-                <ContentMediaBlock item={media.closing} />
+                <ContentMediaBlock item={media.closing} showHeading={false} />
               </div>
             )}
 
@@ -409,7 +409,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             {media.trust && (
               <div className="max-w-3xl mx-auto mb-12 text-center">
                 {media.trust.heading && <h3 className="text-xl font-bold mb-4">{media.trust.heading}</h3>}
-                <ContentMediaBlock item={media.trust} />
+                <ContentMediaBlock item={media.trust} showHeading={false} />
               </div>
             )}
 

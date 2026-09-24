@@ -9,7 +9,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { autoLinkProducts } from "@/lib/auto-link-products";
 import { trackWhatsAppClick } from "@/lib/analytics";
 import { generateProductAltText, generateBlogAltText } from "@/lib/image-seo";
-import { fetchContentMedia, MediaMap, ContentMediaItem } from "@/lib/content-media";
+import { fetchContentMedia, MediaMap } from "@/lib/content-media";
 import { storageSrcSet, SIZES_CARD, SIZES_CARD_WIDE } from "@/lib/image-url";
 import ContentMediaBlock from "@/components/ContentMediaBlock";
 
@@ -199,7 +199,7 @@ const WellnessHubPage = () => {
                 <h2 className="text-2xl md:text-3xl font-bold mb-3">{media.recognition.heading || "Does this sound familiar?"}</h2>
                 {media.recognition.caption && <p className="text-muted-foreground">{media.recognition.caption}</p>}
               </div>
-              <ContentMediaBlock item={{ ...media.recognition, caption: null }} className="w-full" />
+              <ContentMediaBlock item={{ ...media.recognition, caption: null }} className="w-full" showHeading={false} />
             </div>
           </section>
         )}
@@ -208,7 +208,7 @@ const WellnessHubPage = () => {
         {media.desired_outcome && (
           <section className="py-12 bg-muted/30">
             <div className="container mx-auto px-4 max-w-5xl grid md:grid-cols-2 gap-8 items-center">
-              <ContentMediaBlock item={{ ...media.desired_outcome, caption: null }} className="w-full md:order-1" />
+              <ContentMediaBlock item={{ ...media.desired_outcome, caption: null }} className="w-full md:order-1" showHeading={false} />
               <div className="md:order-2">
                 <h2 className="text-2xl md:text-3xl font-bold mb-3">{media.desired_outcome.heading || "What better days can look like"}</h2>
                 {media.desired_outcome.caption && <p className="text-muted-foreground">{media.desired_outcome.caption}</p>}
@@ -232,7 +232,7 @@ const WellnessHubPage = () => {
               {media.product_context && (
                 <div className="mb-10 max-w-4xl mx-auto text-center">
                   {media.product_context.heading && <h3 className="text-xl font-bold mb-4">{media.product_context.heading}</h3>}
-                  <ContentMediaBlock item={media.product_context} />
+                  <ContentMediaBlock item={media.product_context} showHeading={false} />
                 </div>
               )}
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -298,7 +298,7 @@ const WellnessHubPage = () => {
                 {linkedIntro && <div className="prose dark:prose-invert" dangerouslySetInnerHTML={{ __html: linkedIntro }} />}
                 <div className="w-full lg:sticky lg:top-24">
                   {media.education.heading && <h2 className="text-2xl font-bold mb-4">{media.education.heading}</h2>}
-                  <ContentMediaBlock item={media.education} />
+                  <ContentMediaBlock item={media.education} showHeading={false} />
                 </div>
               </div>
             ) : (
@@ -348,7 +348,7 @@ const WellnessHubPage = () => {
             <div className="container mx-auto px-4 max-w-4xl text-center">
               <h2 className="text-2xl md:text-3xl font-bold mb-3">{media.trust.heading || "Real people, real support"}</h2>
               {media.trust.caption && <p className="text-muted-foreground mb-6">{media.trust.caption}</p>}
-              <ContentMediaBlock item={{ ...media.trust, caption: null }} className="w-full" />
+              <ContentMediaBlock item={{ ...media.trust, caption: null }} className="w-full" showHeading={false} />
             </div>
           </section>
         )}
@@ -383,7 +383,7 @@ const WellnessHubPage = () => {
             {media.closing && (
               <div className="mb-8 max-w-2xl mx-auto">
                 {media.closing.heading && <h2 className="text-2xl font-bold mb-4">{media.closing.heading}</h2>}
-                <ContentMediaBlock item={media.closing} className="[&_figcaption]:text-white/80" rounded="rounded-3xl" />
+                <ContentMediaBlock item={media.closing} className="[&_figcaption]:text-white/80" rounded="rounded-3xl" showHeading={false} />
               </div>
             )}
             <h2 className="text-2xl md:text-3xl font-bold mb-3">Not sure which product is right for you?</h2>

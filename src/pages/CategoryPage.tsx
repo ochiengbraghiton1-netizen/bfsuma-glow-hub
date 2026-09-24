@@ -274,7 +274,7 @@ const CategoryPage = () => {
 
             {media.recognition && (
               <section className="mb-8 grid gap-5 md:grid-cols-2 md:items-center">
-                <ContentMediaBlock item={media.recognition} rounded="rounded-lg" />
+                <ContentMediaBlock item={media.recognition} rounded="rounded-lg" showHeading={false} />
                 <div>
                   <h2 className="text-xl font-semibold">{media.recognition.heading || 'Does this sound familiar?'}</h2>
                   <p className="mt-2 text-muted-foreground">Explore options selected for this everyday wellness goal.</p>
@@ -285,7 +285,7 @@ const CategoryPage = () => {
             {media.desired_outcome && (
               <section className="mb-8 grid gap-5 md:grid-cols-2 md:items-center">
                 <div className="md:order-2">
-                  <ContentMediaBlock item={media.desired_outcome} rounded="rounded-lg" />
+                  <ContentMediaBlock item={media.desired_outcome} rounded="rounded-lg" showHeading={false} />
                 </div>
                 <div className="md:order-1">
                   <h2 className="text-xl font-semibold">{media.desired_outcome.heading || 'Support your wellness routine'}</h2>
@@ -296,7 +296,7 @@ const CategoryPage = () => {
 
             {media.education && (
               <section className="mb-8 grid gap-5 md:grid-cols-2 md:items-center">
-                <ContentMediaBlock item={media.education} rounded="rounded-lg" />
+                <ContentMediaBlock item={media.education} rounded="rounded-lg" showHeading={false} />
                 <div>
                   <h2 className="text-xl font-semibold">{media.education.heading || 'Understand your options'}</h2>
                   <p className="mt-2 text-muted-foreground">Review each product's details and ingredients before deciding what may suit you.</p>
@@ -315,7 +315,7 @@ const CategoryPage = () => {
                 {media.product_context && (
                   <div className="mb-8">
                     {media.product_context.heading && <h2 className="text-xl font-semibold mb-4">{media.product_context.heading}</h2>}
-                    <ContentMediaBlock item={media.product_context} rounded="rounded-lg" />
+                    <ContentMediaBlock item={media.product_context} rounded="rounded-lg" showHeading={false} />
                   </div>
                 )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -346,7 +346,7 @@ const CategoryPage = () => {
                     <h2 className="text-xl font-semibold">{media.trust.heading || 'Genuine support from our team'}</h2>
                     <p className="mt-2 text-muted-foreground">Ask questions before ordering and get guidance from our Kenya-based team.</p>
                   </div>
-                  <ContentMediaBlock item={media.trust} rounded="rounded-lg" />
+                  <ContentMediaBlock item={media.trust} rounded="rounded-lg" showHeading={false} />
                 </div>
               </section>
             )}
@@ -354,7 +354,7 @@ const CategoryPage = () => {
             {media.closing && (
               <div className="mt-10">
                 {media.closing.heading && <h2 className="text-xl font-semibold mb-4">{media.closing.heading}</h2>}
-                <ContentMediaBlock item={media.closing} rounded="rounded-lg" />
+                <ContentMediaBlock item={media.closing} rounded="rounded-lg" showHeading={false} />
               </div>
             )}
           </div>

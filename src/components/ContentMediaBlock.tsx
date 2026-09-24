@@ -7,10 +7,11 @@ interface Props {
   item?: ContentMediaItem;
   className?: string;
   rounded?: string;
+  showHeading?: boolean;
 }
 
 /** Renders one visual-story slot (image or video) with optional caption. */
-const ContentMediaBlock = ({ item, className = "", rounded = "rounded-2xl" }: Props) => {
+const ContentMediaBlock = ({ item, className = "", rounded = "rounded-2xl", showHeading = true }: Props) => {
   const [ref, isInView] = useInView<HTMLElement>({ threshold: 0.15, rootMargin: "0px 0px -40px", triggerOnce: true });
   const [comparison, setComparison] = useState(50);
   if (!item?.media_url) return null;
@@ -23,6 +24,7 @@ const ContentMediaBlock = ({ item, className = "", rounded = "rounded-2xl" }: Pr
       ref={ref}
       className={`${className} transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none motion-reduce:opacity-100 motion-reduce:translate-y-0 ${isInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"}`}
     >
+      {showHeading && item.heading && <h2 className="text-xl md:text-2xl font-bold mb-4">{item.heading}</h2>}
       {hasComparison ? (
         <div className={`relative aspect-[4/3] overflow-hidden ${rounded} border border-border/40 bg-muted`}>
           <img
