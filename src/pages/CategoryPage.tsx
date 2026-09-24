@@ -268,7 +268,7 @@ const CategoryPage = () => {
                 )}
               </div>
               {media.hero && (
-                <ContentMediaBlock item={media.hero} rounded="rounded-lg" />
+                <ContentMediaBlock item={media.hero} rounded="rounded-lg" showHeading={false} />
               )}
             </div>
 

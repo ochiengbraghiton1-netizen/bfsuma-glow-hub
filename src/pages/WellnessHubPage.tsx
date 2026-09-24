@@ -186,7 +186,7 @@ const WellnessHubPage = () => {
               </div>
             </div>
             {media.hero && (
-              <ContentMediaBlock item={media.hero} className="lg:justify-self-end w-full [&_figcaption]:text-white/80" rounded="rounded-3xl shadow-elegant" />
+              <ContentMediaBlock item={media.hero} className="lg:justify-self-end w-full [&_figcaption]:text-white/80" rounded="rounded-3xl shadow-elegant" showHeading={false} />
             )}
           </div>
         </section>
