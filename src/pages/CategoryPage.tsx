@@ -10,6 +10,8 @@ import { Helmet } from 'react-helmet-async';
 import categoryPlaceholder from '@/assets/category-placeholder.jpg';
 import { generateCategoryAltText } from "@/lib/image-seo";
 import { storageSrcSet, SIZES_CARD } from "@/lib/image-url";
+import ContentMediaBlock from '@/components/ContentMediaBlock';
+import { fetchContentMedia, type MediaMap } from '@/lib/content-media';
 
 interface Category {
   id: string;
@@ -69,6 +71,12 @@ const CategoryPage = () => {
     },
     enabled: !!slug,
     retry: false,
+  });
+
+  const { data: media = {} } = useQuery<MediaMap>({
+    queryKey: ['category-content-media', category?.id],
+    queryFn: () => fetchContentMedia('category', category?.id || ''),
+    enabled: !!category?.id,
   });
 
   // Fetch products for the category (via join table)
@@ -252,12 +260,49 @@ const CategoryPage = () => {
               All Categories
             </Link>
 
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold">{category?.name}</h1>
-              {category?.description && (
-                <p className="text-muted-foreground mt-2">{category.description}</p>
+            <div className={`mb-8 ${media.hero ? 'grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.8fr)] lg:items-center' : ''}`}>
+              <div>
+                <h1 className="text-3xl font-bold">{category?.name}</h1>
+                {category?.description && (
+                  <p className="text-muted-foreground mt-2">{category.description}</p>
+                )}
+              </div>
+              {media.hero && (
+                <ContentMediaBlock item={media.hero} rounded="rounded-lg" />
               )}
             </div>
+
+            {media.recognition && (
+              <section className="mb-8 grid gap-5 md:grid-cols-2 md:items-center">
+                <ContentMediaBlock item={media.recognition} rounded="rounded-lg" />
+                <div>
+                  <h2 className="text-xl font-semibold">Does this sound familiar?</h2>
+                  <p className="mt-2 text-muted-foreground">Explore options selected for this everyday wellness goal.</p>
+                </div>
+              </section>
+            )}
+
+            {media.desired_outcome && (
+              <section className="mb-8 grid gap-5 md:grid-cols-2 md:items-center">
+                <div className="md:order-2">
+                  <ContentMediaBlock item={media.desired_outcome} rounded="rounded-lg" />
+                </div>
+                <div className="md:order-1">
+                  <h2 className="text-xl font-semibold">Support your wellness routine</h2>
+                  <p className="mt-2 text-muted-foreground">Compare genuine options and choose what fits your goals and daily routine.</p>
+                </div>
+              </section>
+            )}
+
+            {media.education && (
+              <section className="mb-8 grid gap-5 md:grid-cols-2 md:items-center">
+                <ContentMediaBlock item={media.education} rounded="rounded-lg" />
+                <div>
+                  <h2 className="text-xl font-semibold">Understand your options</h2>
+                  <p className="mt-2 text-muted-foreground">Review each product's details and ingredients before deciding what may suit you.</p>
+                </div>
+              </section>
+            )}
 
             {products.length === 0 ? (
               <div className="text-center py-12 bg-card border rounded-lg">
@@ -266,24 +311,45 @@ const CategoryPage = () => {
                 <p className="text-muted-foreground">Products will appear here when added to this category.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {products.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    id={product.id}
-                    name={product.name}
-                    slug={product.slug}
-                    price={`KSh ${product.price.toLocaleString()}`}
-                    numericPrice={product.price}
-                    benefit={product.benefit || ''}
-                    description={product.description || ''}
-                    image={product.image_url || ''}
-                    stockQuantity={product.stock_quantity}
-                    lowStockThreshold={product.low_stock_threshold}
-                    trackInventory={product.track_inventory}
-                  />
-                ))}
-              </div>
+              <>
+                {media.product_context && (
+                  <ContentMediaBlock item={media.product_context} className="mb-8" rounded="rounded-lg" />
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {products.map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      id={product.id}
+                      name={product.name}
+                      slug={product.slug}
+                      price={`KSh ${product.price.toLocaleString()}`}
+                      numericPrice={product.price}
+                      benefit={product.benefit || ''}
+                      description={product.description || ''}
+                      image={product.image_url || ''}
+                      stockQuantity={product.stock_quantity}
+                      lowStockThreshold={product.low_stock_threshold}
+                      trackInventory={product.track_inventory}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+
+            {media.trust && (
+              <section className="mt-10 border-y border-border py-8">
+                <div className="grid gap-5 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] md:items-center">
+                  <div>
+                    <h2 className="text-xl font-semibold">Genuine support from our team</h2>
+                    <p className="mt-2 text-muted-foreground">Ask questions before ordering and get guidance from our Kenya-based team.</p>
+                  </div>
+                  <ContentMediaBlock item={media.trust} rounded="rounded-lg" />
+                </div>
+              </section>
+            )}
+
+            {media.closing && (
+              <ContentMediaBlock item={media.closing} className="mt-10" rounded="rounded-lg" />
             )}
           </div>
         </main>
