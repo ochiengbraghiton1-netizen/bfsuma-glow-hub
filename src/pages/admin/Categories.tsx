@@ -23,6 +23,8 @@ import {
 import { Plus, Pencil, Trash2, Loader2, FolderTree, Upload, X, ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { compressImage } from '@/lib/image-compression';
+import ContentMediaEditor from '@/components/admin/ContentMediaEditor';
+import { fetchContentMedia, saveContentMedia, type MediaMap } from '@/lib/content-media';
 
 interface Category {
   id: string;
@@ -43,6 +45,7 @@ const Categories = () => {
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [media, setMedia] = useState<MediaMap>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -104,9 +107,10 @@ const Categories = () => {
     });
     setEditingCategory(null);
     setImagePreview(null);
+    setMedia({});
   };
 
-  const handleEdit = (category: Category) => {
+  const handleEdit = async (category: Category) => {
     setEditingCategory(category);
     setFormData({
       name: category.name,
@@ -118,6 +122,7 @@ const Categories = () => {
     });
     setImagePreview(category.image_url || null);
     setDialogOpen(true);
+    setMedia(await fetchContentMedia('category', category.id));
   };
 
   const handleImageUpload = async (file: File) => {
@@ -167,6 +172,11 @@ const Categories = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const missingAlt = Object.values(media).find((item) => item && !item.alt_text.trim());
+    if (missingAlt) {
+      toast({ title: 'Alt text is required for every uploaded visual', variant: 'destructive' });
+      return;
+    }
     setSubmitting(true);
 
     const categoryData = {
@@ -187,6 +197,13 @@ const Categories = () => {
       if (error) {
         toast({ title: 'Error updating category', variant: 'destructive' });
       } else {
+        try {
+          await saveContentMedia('category', editingCategory.id, media);
+        } catch (err: any) {
+          toast({ title: 'Visuals could not be saved', description: err?.message, variant: 'destructive' });
+          setSubmitting(false);
+          return;
+        }
         toast({ title: 'Category updated successfully' });
         setDialogOpen(false);
         resetForm();
@@ -373,6 +390,16 @@ const Categories = () => {
                   onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
                 />
               </div>
+              {editingCategory && (
+                <div className="pt-4 border-t">
+                  <ContentMediaEditor
+                    contentType="category"
+                    contentId={editingCategory.id}
+                    media={media}
+                    onChange={setMedia}
+                  />
+                </div>
+              )}
               <Button type="submit" className="w-full" disabled={submitting || uploading}>
                 {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                 {editingCategory ? 'Update Category' : 'Create Category'}

@@ -10,6 +10,8 @@ import { Helmet } from 'react-helmet-async';
 import categoryPlaceholder from '@/assets/category-placeholder.jpg';
 import { generateCategoryAltText } from "@/lib/image-seo";
 import { storageSrcSet, SIZES_CARD } from "@/lib/image-url";
+import ContentMediaBlock from '@/components/ContentMediaBlock';
+import { fetchContentMedia, type MediaMap } from '@/lib/content-media';
 
 interface Category {
   id: string;
@@ -34,6 +36,12 @@ interface Product {
 
 const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
+
+  const { data: media = {} } = useQuery<MediaMap>({
+    queryKey: ['category-content-media', category?.id],
+    queryFn: () => fetchContentMedia('category', category?.id || ''),
+    enabled: !!category?.id,
+  });
 
   // Fetch all active categories (used when showing category list)
   const { data: allCategories = [], isLoading: loadingCategories } = useQuery({
