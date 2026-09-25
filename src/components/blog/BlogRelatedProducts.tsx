@@ -31,12 +31,15 @@ const BlogRelatedProducts = ({ products }: BlogRelatedProductsProps) => {
             key={product.id}
             className="group overflow-hidden bg-card border-border/50 rounded-2xl transition-shadow duration-300 hover:shadow-glow flex flex-col"
           >
-            <div className="relative overflow-hidden">
+            <div className="relative aspect-square overflow-hidden bg-muted/30">
               <img
                 src={product.image_url || productGeneric}
                 alt={generateProductAltText(product.name)}
-                className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                width={400}
+                height={400}
+                className="w-full h-full object-contain p-3"
                 loading="lazy"
+                decoding="async"
               />
             </div>
             <div className="p-5 flex flex-col flex-1">

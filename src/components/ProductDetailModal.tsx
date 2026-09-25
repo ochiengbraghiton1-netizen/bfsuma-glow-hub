@@ -86,11 +86,13 @@ const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalP
       <div className="overflow-y-auto max-h-[calc(85vh-56px)] md:max-h-[90vh]">
         <div className="grid md:grid-cols-2 gap-0">
           {/* Product Image */}
-          <div className="relative h-56 md:h-full min-h-[250px] md:min-h-[300px] overflow-hidden">
+          <div className="relative aspect-square overflow-hidden bg-muted/30 md:self-start">
             <img 
               src={product.image || productGeneric}
               alt={generateProductAltText(product.name)}
-              className="w-full h-full object-cover animate-modal-image-focus"
+              width={600}
+              height={600}
+              className="w-full h-full object-contain p-4 md:p-6 animate-modal-image-focus"
               style={{ animationDelay: '100ms' }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-secondary/40 to-transparent" />

@@ -746,7 +746,9 @@ const Checkout = () => {
                     <img
                       src={item.image || productGeneric}
                       alt={generateProductAltText(item.name)}
-                      className="w-16 h-16 object-cover rounded-lg"
+                      width={64}
+                      height={64}
+                      className="w-16 h-16 object-contain bg-muted/30 p-1 rounded-lg"
                     />
                     <div className="flex-1 min-w-0">
                       <h4 className="font-medium truncate">{item.name}</h4>

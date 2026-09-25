@@ -91,11 +91,12 @@ const ProductCard = ({
     >
       {/* Product Image */}
       <div 
-        className="relative overflow-hidden cursor-pointer"
+        className="relative aspect-square overflow-hidden bg-muted/30 cursor-pointer"
         onClick={goToProduct}
       >
         <div
           className={`
+            h-full
             ${isInView ? 'animate-product-image-enter' : 'opacity-0'}
             ${isHovering ? 'animate-product-image-spin' : ''}
           `}
@@ -107,8 +108,8 @@ const ProductCard = ({
             loading="lazy"
             decoding="async"
             width={400}
-            height={224}
-            className="w-full h-56 object-cover"
+            height={400}
+            className="w-full h-full object-contain p-3"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           />
         </div>

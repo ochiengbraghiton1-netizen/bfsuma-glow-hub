@@ -243,7 +243,7 @@ const WellnessHubPage = () => {
                     <div key={p.id} className="group bg-card border border-border rounded-2xl overflow-hidden hover:shadow-elegant transition-all flex flex-col">
                       <Link to={`/product/${p.slug}`} className="block">
                         {p.image_url ? (
-                          <img src={p.image_url} srcSet={storageSrcSet(p.image_url)} sizes={SIZES_CARD} width={400} height={400} alt={generateProductAltText(p.name)} className="w-full aspect-square object-cover group-hover:scale-105 transition-transform" loading="lazy" decoding="async" />
+                          <img src={p.image_url} srcSet={storageSrcSet(p.image_url)} sizes={SIZES_CARD} width={400} height={400} alt={generateProductAltText(p.name)} className="w-full aspect-square object-contain bg-muted/30 p-3" loading="lazy" decoding="async" />
                         ) : (
                           <div className="w-full aspect-square bg-muted flex items-center justify-center text-muted-foreground">
                             <ShoppingBag className="w-12 h-12 opacity-40" />

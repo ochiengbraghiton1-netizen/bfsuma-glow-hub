@@ -293,7 +293,7 @@ const ProductPage = () => {
             {/* Product Detail Grid */}
             <div className="grid md:grid-cols-2 gap-8 lg:gap-12 mb-12">
               {/* Image */}
-              <div className="relative rounded-2xl overflow-hidden bg-card border">
+              <div className="relative aspect-square rounded-2xl overflow-hidden bg-muted/30 border">
                 {product.image_url ? (
                   <img
                     src={storageImageUrl(product.image_url, 768)}
@@ -302,7 +302,7 @@ const ProductPage = () => {
                     width={768}
                     height={768}
                     alt={generateProductAltText(product.name)}
-                    className="w-full aspect-square object-cover"
+                    className="w-full h-full object-contain p-4 md:p-8"
                     loading="eager"
                     decoding="async"
                   />

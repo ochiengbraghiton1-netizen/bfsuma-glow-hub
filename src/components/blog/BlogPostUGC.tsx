@@ -104,9 +104,11 @@ const BlogPostUGC = ({ post, relatedProducts }: UGCPostProps) => {
                   <img
                     src={product.image_url}
                     alt={generateProductAltText(product.name)}
+                    width={64}
+                    height={64}
                     loading="lazy"
                     decoding="async"
-                    className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                    className="w-16 h-16 rounded-lg object-contain bg-muted/30 p-1 flex-shrink-0"
                   />
                 )}
                 <div className="min-w-0">
