@@ -290,7 +290,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
                   <div key={product.slug} className="group bg-card rounded-2xl overflow-hidden border border-border hover:shadow-glow transition-all duration-300 flex flex-col">
                     <Link to={`/product/${product.slug}`} className="block">
                       {db?.image_url ? (
-                        <img src={db.image_url} alt={generateLocationAltText(city, product.name)} className="w-full aspect-square object-cover group-hover:scale-105 transition-transform" loading="lazy" />
+                        <img src={db.image_url} alt={generateLocationAltText(city, product.name)} width={400} height={400} className="w-full aspect-square object-contain bg-muted/30 p-3" loading="lazy" decoding="async" />
                       ) : (
                         <div className="w-full aspect-square bg-muted flex items-center justify-center text-muted-foreground">
                           <ShoppingBag className="w-12 h-12 opacity-40" />

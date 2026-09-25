@@ -286,7 +286,9 @@ const ProductAffiliate = () => {
               <img
                 src={product.image_url || productGeneric}
                 alt={generateProductAltText(product.name)}
-                className="w-full h-full object-cover"
+                width={600}
+                height={600}
+                className="w-full h-full object-contain p-4 md:p-8"
               />
               <button
                 onClick={() => toggleFavorite(product.id)}
