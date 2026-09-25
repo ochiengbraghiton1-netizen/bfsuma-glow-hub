@@ -109,7 +109,7 @@ const ProductCard = ({
             decoding="async"
             width={400}
             height={400}
-            className="w-full h-full object-contain p-3"
+            className="w-full aspect-square object-cover"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           />
         </div>
