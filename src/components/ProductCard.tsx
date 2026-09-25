@@ -96,7 +96,7 @@ const ProductCard = ({
       >
         <div
           className={`
-            h-full
+            h-full [&>div]:h-full
             ${isInView ? 'animate-product-image-enter' : 'opacity-0'}
             ${isHovering ? 'animate-product-image-spin' : ''}
           `}
