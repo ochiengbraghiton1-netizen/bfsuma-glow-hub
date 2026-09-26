@@ -13,6 +13,7 @@ interface ResponsiveImageProps {
   onLoad?: () => void;
   onError?: () => void;
   fallbackSrc?: string;
+  srcSet?: string;
   /** Show a skeleton placeholder until the image loads (default: true) */
   showSkeleton?: boolean;
 }
@@ -33,6 +34,7 @@ const ResponsiveImage = ({
   onLoad,
   onError,
   fallbackSrc,
+  srcSet,
   showSkeleton = true,
 }: ResponsiveImageProps) => {
   const [hasError, setHasError] = useState(false);
@@ -75,7 +77,7 @@ const ResponsiveImage = ({
       )}
       <img
         src={imageSrc}
-        srcSet={storageSrcSet(imageSrc)}
+        srcSet={srcSet ?? storageSrcSet(imageSrc)}
         alt={alt}
         width={width}
         height={height}

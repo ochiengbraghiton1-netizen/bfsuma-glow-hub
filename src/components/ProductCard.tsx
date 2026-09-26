@@ -9,6 +9,7 @@ import { getStockStatus } from "@/hooks/use-products";
 import ResponsiveImage from "@/components/ui/responsive-image";
 
 import { generateProductAltText } from "@/lib/image-seo";
+import { storageFittedSrcSet } from "@/lib/image-url";
 
 interface ProductCardProps {
   id: string;
@@ -104,6 +105,7 @@ const ProductCard = ({
         >
           <ResponsiveImage 
             src={image || ""}
+            srcSet={storageFittedSrcSet(image)}
             alt={generateProductAltText(name, category)}
             loading="lazy"
             decoding="async"

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ContentMediaItem } from "@/lib/content-media";
-import { storageSrcSet, SIZES_CARD_WIDE } from "@/lib/image-url";
+import { storageFittedSrcSet, SIZES_CARD_WIDE } from "@/lib/image-url";
 import { useInView } from "@/hooks/use-in-view";
 
 interface Props {
@@ -29,21 +29,21 @@ const ContentMediaBlock = ({ item, className = "", rounded = "rounded-2xl", show
         <div className={`relative aspect-[4/3] overflow-hidden ${rounded} border border-border/40 bg-muted focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2`}>
           <img
             src={item.media_url}
-            srcSet={storageSrcSet(item.media_url, [480, 768, 1024, 1280])}
+            srcSet={storageFittedSrcSet(item.media_url, [480, 768, 1024, 1280], 4, 3)}
             sizes={SIZES_CARD_WIDE}
             alt={item.alt_text}
             loading="lazy"
             decoding="async"
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-contain p-3"
           />
           <img
             src={item.before_media_url || ''}
-            srcSet={storageSrcSet(item.before_media_url, [480, 768, 1024, 1280])}
+            srcSet={storageFittedSrcSet(item.before_media_url, [480, 768, 1024, 1280], 4, 3)}
             sizes={SIZES_CARD_WIDE}
             alt={item.before_alt_text || 'Before comparison'}
             loading="lazy"
             decoding="async"
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-contain p-3"
             style={{ clipPath: `inset(0 ${100 - comparison}% 0 0)` }}
           />
           <span className="absolute left-3 top-3 rounded bg-background/90 px-2 py-1 text-xs font-semibold text-foreground shadow-sm">Before</span>
@@ -70,15 +70,17 @@ const ContentMediaBlock = ({ item, className = "", rounded = "rounded-2xl", show
           className={`w-full ${rounded} border border-border/40`}
         />
       ) : (
-        <img
-          src={item.media_url}
-          srcSet={storageSrcSet(item.media_url, [480, 768, 1024, 1280])}
-          sizes={SIZES_CARD_WIDE}
-          alt={item.alt_text}
-          loading="lazy"
-          decoding="async"
-          className={`w-full object-cover ${rounded}`}
-        />
+        <div className={`aspect-[4/3] overflow-hidden bg-muted/30 ${rounded} border border-border/40`}>
+          <img
+            src={item.media_url}
+            srcSet={storageFittedSrcSet(item.media_url, [480, 768, 1024, 1280], 4, 3)}
+            sizes={SIZES_CARD_WIDE}
+            alt={item.alt_text}
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-contain p-3"
+          />
+        </div>
       )}
       {item.caption && <figcaption className="text-sm text-muted-foreground mt-2">{item.caption}</figcaption>}
     </figure>

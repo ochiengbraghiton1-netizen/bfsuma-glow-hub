@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Helmet } from 'react-helmet-async';
 import categoryPlaceholder from '@/assets/category-placeholder.jpg';
 import { generateCategoryAltText } from "@/lib/image-seo";
-import { storageSrcSet, SIZES_CARD } from "@/lib/image-url";
+import { storageFittedSrcSet, SIZES_CARD } from "@/lib/image-url";
 import ContentMediaBlock from '@/components/ContentMediaBlock';
 import { fetchContentMedia, type MediaMap } from '@/lib/content-media';
 
@@ -174,27 +174,27 @@ const CategoryPage = () => {
                     <Link
                       key={cat.id}
                       to={`/category/${cat.slug}`}
-                      className="group block rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
+                      className="group block rounded-xl overflow-hidden border border-border/50 bg-card shadow-md hover:shadow-xl transition-all duration-300"
                     >
-                      <div className="relative h-52 overflow-hidden">
+                      <div className="relative aspect-square overflow-hidden bg-muted/30">
                         <img
                           src={cat.image_url || categoryPlaceholder}
-                          srcSet={storageSrcSet(cat.image_url)}
+                          srcSet={storageFittedSrcSet(cat.image_url)}
                           sizes={SIZES_CARD}
                           width={400}
                           height={400}
                           decoding="async"
                           alt={generateCategoryAltText(cat.name)}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          className="w-full h-full object-contain p-3"
                           loading="lazy"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 via-secondary/10 to-transparent" />
                         <div className="absolute bottom-0 left-0 right-0 p-4">
-                          <h2 className="font-bold text-lg text-white drop-shadow-md">
+                          <h2 className="font-bold text-lg text-primary-foreground drop-shadow-md">
                             {cat.name}
                           </h2>
                           {cat.description && (
-                            <p className="text-sm text-white/80 mt-0.5 line-clamp-2 drop-shadow-sm">
+                            <p className="text-sm text-primary-foreground/80 mt-0.5 line-clamp-2 drop-shadow-sm">
                               {cat.description}
                             </p>
                           )}

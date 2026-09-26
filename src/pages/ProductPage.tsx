@@ -17,7 +17,7 @@ import Footer from "@/components/Footer";
 import { stripHtmlTags, truncateText } from "@/lib/html-utils";
 import { trackWhatsAppClick, trackViewItem } from "@/lib/analytics";
 import { generateProductAltText } from "@/lib/image-seo";
-import { storageSrcSet, storageImageUrl } from "@/lib/image-url";
+import { storageFittedImageUrl, storageFittedSrcSet } from "@/lib/image-url";
 
 const trustSignals = [
   { icon: Shield, label: "Quality Assured" },
@@ -296,8 +296,8 @@ const ProductPage = () => {
               <div className="relative aspect-square rounded-2xl overflow-hidden bg-muted/30 border">
                 {product.image_url ? (
                   <img
-                    src={storageImageUrl(product.image_url, 768)}
-                    srcSet={storageSrcSet(product.image_url, [480, 768, 1024])}
+                    src={storageFittedImageUrl(product.image_url, 768, 768)}
+                    srcSet={storageFittedSrcSet(product.image_url, [480, 768, 1024])}
                     sizes="(max-width: 1024px) 100vw, 600px"
                     width={768}
                     height={768}

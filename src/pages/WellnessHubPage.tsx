@@ -10,7 +10,7 @@ import { autoLinkProducts } from "@/lib/auto-link-products";
 import { trackWhatsAppClick } from "@/lib/analytics";
 import { generateProductAltText, generateBlogAltText } from "@/lib/image-seo";
 import { fetchContentMedia, MediaMap } from "@/lib/content-media";
-import { storageSrcSet, SIZES_CARD, SIZES_CARD_WIDE } from "@/lib/image-url";
+import { storageFittedSrcSet, storageSrcSet, SIZES_CARD, SIZES_CARD_WIDE } from "@/lib/image-url";
 import ContentMediaBlock from "@/components/ContentMediaBlock";
 
 interface Hub {
@@ -243,7 +243,7 @@ const WellnessHubPage = () => {
                     <div key={p.id} className="group bg-card border border-border rounded-2xl overflow-hidden hover:shadow-elegant transition-all flex flex-col">
                       <Link to={`/product/${p.slug}`} className="block">
                         {p.image_url ? (
-                          <img src={p.image_url} srcSet={storageSrcSet(p.image_url)} sizes={SIZES_CARD} width={400} height={400} alt={generateProductAltText(p.name)} className="w-full aspect-square object-contain bg-muted/30 p-3" loading="lazy" decoding="async" />
+                          <img src={p.image_url} srcSet={storageFittedSrcSet(p.image_url)} sizes={SIZES_CARD} width={400} height={400} alt={generateProductAltText(p.name)} className="w-full aspect-square object-contain bg-muted/30 p-3" loading="lazy" decoding="async" />
                         ) : (
                           <div className="w-full aspect-square bg-muted flex items-center justify-center text-muted-foreground">
                             <ShoppingBag className="w-12 h-12 opacity-40" />
