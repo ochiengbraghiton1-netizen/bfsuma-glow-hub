@@ -10,7 +10,7 @@
     },
 
     {
-      "source": "/:path*",
+      "source": "/((?!assets/|images/).*)",
       "destination": "/index.html"
     }
   ],
