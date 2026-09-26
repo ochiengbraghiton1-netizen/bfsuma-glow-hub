@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Helmet } from 'react-helmet-async';
 import categoryPlaceholder from '@/assets/category-placeholder.jpg';
 import { generateCategoryAltText } from "@/lib/image-seo";
-import { storageFittedSrcSet, SIZES_CARD } from "@/lib/image-url";
+import { storageSrcSet, SIZES_CARD_WIDE } from "@/lib/image-url";
 import ContentMediaBlock from '@/components/ContentMediaBlock';
 import { fetchContentMedia, type MediaMap } from '@/lib/content-media';
 
@@ -174,18 +174,18 @@ const CategoryPage = () => {
                     <Link
                       key={cat.id}
                       to={`/category/${cat.slug}`}
-                      className="group block rounded-xl overflow-hidden border border-border/50 bg-card shadow-md hover:shadow-xl transition-all duration-300"
+                      className="group block rounded-xl overflow-hidden border border-border/50 bg-card shadow-md hover:shadow-xl transition-shadow duration-300"
                     >
-                      <div className="relative aspect-square overflow-hidden bg-muted/30">
+                      <div className="relative aspect-[3/2] overflow-hidden rounded-xl bg-muted/30">
                         <img
                           src={cat.image_url || categoryPlaceholder}
-                          srcSet={storageFittedSrcSet(cat.image_url)}
-                          sizes={SIZES_CARD}
-                          width={400}
+                          srcSet={storageSrcSet(cat.image_url)}
+                          sizes={SIZES_CARD_WIDE}
+                          width={600}
                           height={400}
                           decoding="async"
                           alt={generateCategoryAltText(cat.name)}
-                          className="w-full h-full object-contain p-3"
+                          className="w-full h-full object-cover rounded-xl transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.015]"
                           loading="lazy"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 via-secondary/10 to-transparent" />
