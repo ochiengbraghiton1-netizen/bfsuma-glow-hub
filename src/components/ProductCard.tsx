@@ -92,16 +92,14 @@ const ProductCard = ({
     >
       {/* Product Image */}
       <div 
-        className="relative aspect-square overflow-hidden bg-muted/30 cursor-pointer rounded-t-2xl"
+        className="relative aspect-square overflow-hidden bg-muted/30 cursor-pointer rounded-xl mx-2 mt-2"
         onClick={goToProduct}
       >
         <div
           className={`
             h-full [&>div]:h-full
             ${isInView ? 'animate-product-image-enter' : 'opacity-0'}
-            ${isHovering ? 'animate-product-image-spin' : ''}
           `}
-          style={{ transformStyle: 'preserve-3d' }}
         >
           <ResponsiveImage 
             src={image || ""}
@@ -111,7 +109,7 @@ const ProductCard = ({
             decoding="async"
             width={400}
             height={400}
-            className="w-full h-full object-contain p-3 transition-transform duration-500 ease-out group-hover:scale-105"
+            className="w-full h-full object-contain p-1 rounded-xl transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.015]"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           />
         </div>
