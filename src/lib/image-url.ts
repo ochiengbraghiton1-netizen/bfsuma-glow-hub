@@ -29,6 +29,39 @@ export const storageImageUrl = (
 };
 
 /**
+ * A fixed-ratio storage variant for UI frames that must preserve the complete
+ * source image. Supplying both dimensions prevents the image service from
+ * stretching square uploads when it creates width-only variants.
+ */
+export const storageFittedImageUrl = (
+  url: string,
+  width: number,
+  height: number,
+  quality = 70
+): string => {
+  if (!isStorageImageUrl(url)) return url;
+  const base = url.replace(PUBLIC_OBJECT_PATH, RENDER_PATH);
+  const sep = base.includes("?") ? "&" : "?";
+  return `${base}${sep}width=${width}&height=${height}&resize=contain&quality=${quality}`;
+};
+
+export const storageFittedSrcSet = (
+  url?: string | null,
+  widths: number[] = [320, 480, 768, 1024],
+  aspectWidth = 1,
+  aspectHeight = 1,
+  quality = 70
+): string | undefined => {
+  if (!url || !isStorageImageUrl(url)) return undefined;
+  return widths
+    .map((width) => {
+      const height = Math.max(1, Math.round((width * aspectHeight) / aspectWidth));
+      return `${storageFittedImageUrl(url, width, height, quality)} ${width}w`;
+    })
+    .join(", ");
+};
+
+/**
  * srcSet string for a storage image, or undefined when the URL is not a
  * storage object (in which case the caller should just use src).
  */
