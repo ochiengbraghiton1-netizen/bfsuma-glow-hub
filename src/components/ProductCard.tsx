@@ -92,7 +92,7 @@ const ProductCard = ({
     >
       {/* Product Image */}
       <div 
-        className="relative aspect-square overflow-hidden bg-muted/30 cursor-pointer"
+        className="relative aspect-square overflow-hidden bg-muted/30 cursor-pointer rounded-t-2xl"
         onClick={goToProduct}
       >
         <div
@@ -111,7 +111,7 @@ const ProductCard = ({
             decoding="async"
             width={400}
             height={400}
-            className="w-full h-full object-contain p-3"
+            className="w-full h-full object-contain p-3 transition-transform duration-500 ease-out group-hover:scale-105"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           />
         </div>
