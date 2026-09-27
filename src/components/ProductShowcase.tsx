@@ -97,7 +97,7 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
     }`;
 
   return (
-    <div className="mb-4">
+    <div className="mb-6">
       <div
         ref={scrollRef}
         className="flex gap-3 md:gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-1"
@@ -340,7 +340,7 @@ const ProductShowcase = () => {
         {/* Sticky Search Bar & Category Filters */}
         <div className="sticky top-16 z-40 bg-background/95 backdrop-blur-md py-4 mb-8 border-b border-border/20 -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 md:rounded-xl">
           {/* Search Bar */}
-          <div className="max-w-xl mx-auto mb-4">
+          <div className="max-w-xl mx-auto mb-6">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
