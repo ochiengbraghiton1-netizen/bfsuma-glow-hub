@@ -52,10 +52,35 @@ const productImageMap: Record<string, string> = {
 const MAX_VISIBLE_CATEGORIES = 6;
 
 interface CategoryPillsProps {
-  categories: { id: string; slug: string; name: string }[];
+  categories: { id: string; slug: string; name: string; imageUrl?: string | null }[];
   activeCategory: string;
   onSelect: (slug: string) => void;
 }
+
+/** Circular category avatar — image when available, otherwise the initial letter. */
+const CategoryAvatar = ({ name, imageUrl }: { name: string; imageUrl?: string | null }) => {
+  if (imageUrl) {
+    return (
+      <ResponsiveImage
+        src={imageUrl}
+        alt={`${name} category`}
+        className="w-full h-full object-cover"
+        width={112}
+        height={112}
+        sizes="64px"
+        fallbackSrc={categoryPlaceholder}
+        showSkeleton={false}
+      />
+    );
+  }
+  return (
+    <div className="w-full h-full bg-muted flex items-center justify-center">
+      <span className="text-lg font-semibold text-muted-foreground select-none">
+        {name.charAt(0).toUpperCase()}
+      </span>
+    </div>
+  );
+};
 
 const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -64,51 +89,89 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
   const visibleCategories = showAll ? categories : categories.slice(0, MAX_VISIBLE_CATEGORIES);
   const hasMore = categories.length > MAX_VISIBLE_CATEGORIES;
 
+  const circleClasses = (active: boolean) =>
+    `w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden shrink-0 transition-all duration-200 ${
+      active
+        ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
+        : "ring-1 ring-border/60 group-hover:ring-primary/40"
+    }`;
+
   return (
     <div className="mb-4">
       <div
         ref={scrollRef}
-        className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1"
+        className="flex gap-3 md:gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-1"
         style={{ WebkitOverflowScrolling: "touch" }}
       >
+        {/* All — icon circle, not a real category */}
         <button
           onClick={() => onSelect("all")}
-          className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap ${
-            activeCategory === "all"
-              ? "bg-primary text-primary-foreground shadow-sm"
-              : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40"
-          }`}
+          className="group flex flex-col items-center gap-1.5 shrink-0 w-16 md:w-[72px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl"
+          aria-pressed={activeCategory === "all"}
         >
-          All
-        </button>
-        {visibleCategories.map((cat) => (
-          <button
-            key={cat.id}
-            onClick={() => onSelect(cat.slug)}
-            className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap ${
-              activeCategory === cat.slug
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40"
+          <span
+            className={`${circleClasses(activeCategory === "all")} flex items-center justify-center ${
+              activeCategory === "all" ? "bg-primary text-primary-foreground" : "bg-muted/60 text-muted-foreground"
             }`}
           >
-            {cat.name}
-          </button>
-        ))}
+            <LayoutGrid className="h-5 w-5" />
+          </span>
+          <span
+            className={`text-xs leading-tight text-center ${
+              activeCategory === "all" ? "text-foreground font-semibold" : "text-muted-foreground"
+            }`}
+          >
+            All
+          </span>
+        </button>
+
+        {visibleCategories.map((cat) => {
+          const active = activeCategory === cat.slug;
+          return (
+            <button
+              key={cat.id}
+              onClick={() => onSelect(cat.slug)}
+              className="group flex flex-col items-center gap-1.5 shrink-0 w-16 md:w-[72px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl"
+              aria-pressed={active}
+            >
+              <span className={circleClasses(active)}>
+                <CategoryAvatar name={cat.name} imageUrl={cat.imageUrl} />
+              </span>
+              <span
+                className={`text-xs leading-tight text-center line-clamp-2 ${
+                  active ? "text-foreground font-semibold" : "text-muted-foreground"
+                }`}
+              >
+                {cat.name}
+              </span>
+            </button>
+          );
+        })}
+
         {hasMore && !showAll && (
           <button
             onClick={() => setShowAll(true)}
-            className="shrink-0 px-4 py-1.5 rounded-full text-sm font-medium bg-muted/60 text-primary hover:bg-muted border border-border/40 whitespace-nowrap flex items-center gap-1"
+            className="group flex flex-col items-center gap-1.5 shrink-0 w-16 md:w-[72px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl"
+            aria-label={`Show ${categories.length - MAX_VISIBLE_CATEGORIES} more categories`}
           >
-            +{categories.length - MAX_VISIBLE_CATEGORIES} More
-            <ChevronRight className="h-3.5 w-3.5" />
+            <span className="w-14 h-14 md:w-16 md:h-16 rounded-full shrink-0 bg-muted/60 border border-border/40 flex items-center justify-center text-primary transition-colors duration-200 group-hover:bg-muted">
+              <span className="text-sm font-semibold">
+                +{categories.length - MAX_VISIBLE_CATEGORIES}
+              </span>
+            </span>
+            <span className="text-xs leading-tight text-center text-muted-foreground">More</span>
           </button>
         )}
         {showAll && hasMore && (
           <button
             onClick={() => setShowAll(false)}
-            className="shrink-0 px-4 py-1.5 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground whitespace-nowrap"
+            className="group flex flex-col items-center gap-1.5 shrink-0 w-16 md:w-[72px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl"
+            aria-label="Show fewer categories"
           >
-            Show Less
+            <span className="w-14 h-14 md:w-16 md:h-16 rounded-full shrink-0 bg-muted/60 border border-border/40 flex items-center justify-center text-muted-foreground transition-colors duration-200 group-hover:bg-muted">
+              <ChevronUp className="h-5 w-5" />
+            </span>
+            <span className="text-xs leading-tight text-center text-muted-foreground">Less</span>
           </button>
         )}
       </div>
