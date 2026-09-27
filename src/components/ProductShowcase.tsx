@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Search, X, ChevronRight, ChevronUp, LayoutGrid } from "lucide-react";
+import { Search, X, ChevronUp, LayoutGrid } from "lucide-react";
 import ResponsiveImage from "@/components/ui/responsive-image";
 import categoryPlaceholder from "@/assets/category-placeholder.jpg";
 import { Input } from "@/components/ui/input";
@@ -355,7 +355,12 @@ const ProductShowcase = () => {
 
           {/* Category Filters — horizontal scroll */}
           <CategoryPills
-            categories={categories}
+            categories={categories.map((cat) => ({
+              id: cat.id,
+              slug: cat.slug,
+              name: cat.name,
+              imageUrl: cat.image_url,
+            }))}
             activeCategory={activeCategory}
             onSelect={setActiveCategory}
           />
