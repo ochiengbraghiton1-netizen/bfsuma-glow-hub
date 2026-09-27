@@ -2,9 +2,13 @@ import { MessageCircle, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { trackWhatsAppClick } from "@/lib/analytics";
 
+import ContentMediaBlock from '@/components/ContentMediaBlock';
+import { useBusinessMedia } from '@/hooks/use-business-media';
+
 const WHATSAPP_URL = 'https://wa.me/254795454053?text=Hi%20BF%20SUMA%20team%20%F0%9F%91%8B%20I%20want%20to%20join%20the%20business.';
 
 const CTABanner = () => {
+  const { closing } = useBusinessMedia();
   return (
     <section className="py-16 bg-gradient-to-r from-secondary via-primary to-accent text-primary-foreground">
       <div className="container mx-auto px-4 text-center max-w-3xl">
@@ -36,6 +40,11 @@ const CTABanner = () => {
             </a>
           </Button>
         </div>
+        {closing && (
+          <div className="mt-10">
+            <ContentMediaBlock item={closing} showHeading={false} />
+          </div>
+        )}
       </div>
     </section>
   );

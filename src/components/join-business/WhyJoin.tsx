@@ -1,5 +1,8 @@
 import { Briefcase, Clock, Heart, Globe, ShieldCheck, TrendingUp } from 'lucide-react';
 
+import ContentMediaBlock from '@/components/ContentMediaBlock';
+import { useBusinessMedia } from '@/hooks/use-business-media';
+
 const reasons = [
   { icon: Briefcase, title: 'Extra Income', description: 'Earn commissions, retail profit, and performance bonuses alongside your current job or as a full-time business.' },
   { icon: Clock, title: 'Flexible Work', description: 'Work on your own schedule. Sell products and build your team when it suits you, from anywhere.' },
@@ -10,6 +13,7 @@ const reasons = [
 ];
 
 const WhyJoin = () => {
+  const { trust } = useBusinessMedia();
   return (
     <section className="py-16 md:py-24 bg-muted/30">
       <div className="container mx-auto px-4 max-w-5xl">
@@ -33,6 +37,11 @@ const WhyJoin = () => {
             </div>
           ))}
         </div>
+        {trust && (
+          <div className="mt-12 max-w-3xl mx-auto">
+            <ContentMediaBlock item={trust} />
+          </div>
+        )}
       </div>
     </section>
   );

@@ -39,6 +39,7 @@ const navItems = [
   { to: '/admin/business-registrations', icon: Users, label: 'Business Registrations' },
   { to: '/admin/consultations', icon: Calendar, label: 'Consultations' },
   { to: '/admin/team', icon: Users, label: 'Team Members' },
+  { to: '/admin/team-profiles', icon: Users, label: 'Join Business Page' },
   { to: '/admin/content', icon: FileEdit, label: 'Site Content' },
   { to: '/admin/blog', icon: BookOpen, label: 'Blog Posts' },
   { to: '/admin/admins', icon: Shield, label: 'Manage Admins' },
