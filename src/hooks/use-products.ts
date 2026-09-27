@@ -32,6 +32,7 @@ export interface DatabaseCategory {
   slug: string;
   description: string | null;
   display_order: number | null;
+  image_url: string | null;
 }
 
 export const useProducts = () => {
@@ -104,7 +105,7 @@ export const useProducts = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
-        .select("id, name, slug, description, display_order")
+        .select("id, name, slug, description, display_order, image_url")
         .eq("is_active", true)
         .order("display_order");
 
