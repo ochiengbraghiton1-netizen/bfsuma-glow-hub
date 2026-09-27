@@ -1,5 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Search, X, ChevronRight } from "lucide-react";
+import { Search, X, ChevronRight, ChevronUp, LayoutGrid } from "lucide-react";
+import ResponsiveImage from "@/components/ui/responsive-image";
+import categoryPlaceholder from "@/assets/category-placeholder.jpg";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
