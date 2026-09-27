@@ -1,5 +1,8 @@
 import { UserPlus, ShoppingBag, DollarSign, Users, Gift } from 'lucide-react';
 
+import ContentMediaBlock from '@/components/ContentMediaBlock';
+import { useBusinessMedia } from '@/hooks/use-business-media';
+
 const steps = [
   {
     icon: UserPlus,
@@ -29,6 +32,7 @@ const steps = [
 ];
 
 const HowItWorks = () => {
+  const { education } = useBusinessMedia();
   return (
     <section id="how-it-works" className="py-16 md:py-24 bg-background">
       <div className="container mx-auto px-4 max-w-5xl">
@@ -53,6 +57,11 @@ const HowItWorks = () => {
             </div>
           ))}
         </div>
+        {education && (
+          <div className="mt-12 max-w-3xl mx-auto">
+            <ContentMediaBlock item={education} />
+          </div>
+        )}
       </div>
     </section>
   );

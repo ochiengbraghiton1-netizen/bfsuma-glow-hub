@@ -2,20 +2,30 @@ import { MessageCircle, ArrowDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import heroImage from '@/assets/join-business-hero.webp';
 import { trackWhatsAppClick } from "@/lib/analytics";
+import { useBusinessMedia } from "@/hooks/use-business-media";
 
 const WHATSAPP_URL = 'https://wa.me/254795454053?text=Hi%20BF%20SUMA%20team%20%F0%9F%91%8B%20I%20want%20to%20learn%20more%20about%20joining%20the%20business.';
 
 const HeroSection = () => {
+  const { hero } = useBusinessMedia();
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-secondary via-primary to-accent/80 text-primary-foreground">
       <div className="absolute inset-0 bg-black/40 z-10" />
-      <img
-        src={heroImage}
-        alt="Successful BF Suma Royal business professional in Kenya"
-        className="absolute inset-0 w-full h-full object-cover"
-        width={1280}
-        height={720}
-      />
+      {hero?.media_type === 'video' ? (
+        <video
+          src={hero.media_url}
+          className="absolute inset-0 w-full h-full object-cover"
+          autoPlay muted loop playsInline aria-label={hero.alt_text}
+        />
+      ) : (
+        <img
+          src={hero?.media_url || heroImage}
+          alt={hero?.alt_text || "Successful BF Suma Royal business professional in Kenya"}
+          className="absolute inset-0 w-full h-full object-cover"
+          width={1280}
+          height={720}
+        />
+      )}
       <div className="relative z-20 container mx-auto px-4 py-20 md:py-32 text-center">
         <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight drop-shadow-lg">
           Start Your Own Health &amp; Wellness Business in Kenya
