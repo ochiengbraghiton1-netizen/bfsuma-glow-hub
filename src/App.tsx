@@ -45,6 +45,7 @@ const Affiliates = lazy(() => import("./pages/admin/Affiliates"));
 const AffiliateLinks = lazy(() => import("./pages/admin/AffiliateLinks"));
 const Consultations = lazy(() => import("./pages/admin/Consultations"));
 const Team = lazy(() => import("./pages/admin/Team"));
+const TeamProfiles = lazy(() => import("./pages/admin/TeamProfiles"));
 const Content = lazy(() => import("./pages/admin/Content"));
 const Admins = lazy(() => import("./pages/admin/Admins"));
 const BusinessRegistrations = lazy(() => import("./pages/admin/BusinessRegistrations"));
@@ -131,6 +132,7 @@ const App = () => (
                     <Route path="affiliate-links" element={<AffiliateLinks />} />
                     <Route path="consultations" element={<Consultations />} />
                     <Route path="team" element={<Team />} />
+                    <Route path="team-profiles" element={<TeamProfiles />} />
                     <Route path="content" element={<Content />} />
                     <Route path="blog" element={<Blog />} />
                     <Route path="admins" element={<Admins />} />
