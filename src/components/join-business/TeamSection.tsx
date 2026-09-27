@@ -31,7 +31,7 @@ const TeamSection = () => {
   const cols = profiles.length === 1 ? 'sm:grid-cols-1 max-w-sm' : profiles.length === 2 ? 'sm:grid-cols-2 max-w-3xl' : 'sm:grid-cols-2 lg:grid-cols-3 max-w-5xl';
 
   return (
-    <div className={`grid grid-cols-1 ${cols} mx-auto gap-x-6 gap-y-20 pt-14`}>
+    <div className={`grid grid-cols-1 ${cols} mx-auto gap-x-6 gap-y-20 pt-24`}>
       {profiles.map((p) => (
         <article key={p.id} className="relative rounded-2xl bg-card border border-border shadow-sm px-6 pt-20 pb-6 text-center">
           <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 h-28 w-28 rounded-full border-4 border-background bg-muted shadow-md overflow-hidden flex items-center justify-center">
