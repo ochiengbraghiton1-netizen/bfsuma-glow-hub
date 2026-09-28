@@ -41,20 +41,24 @@ const RewardsIncentives = () => {
                 <li className="flex items-start gap-2">
                   <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
                   <span className="text-muted-foreground">
-                    <strong className="text-foreground">Intercontinental Trip (US$2,000):</strong> For Star 1–7 distributors with 3+ active 7-Star team members and yearly group sales of 40,000+ PV
+                    <strong className="text-foreground">Intercontinental Trip (US$2,000, about KES 260,000):</strong> Star 1 to 7 distributors with 3 or more active 7 Star members in different first-generation legs and yearly group sales of 40,000 PV or more
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
                   <span className="text-muted-foreground">
-                    <strong className="text-foreground">International Trip (US$4,000):</strong> For Diamond Leaders and above with 3+ active 7-Star team members and yearly group sales of 80,000+ PV
+                    <strong className="text-foreground">International Trip (US$4,000, about KES 520,000):</strong> Diamond Leaders and above with 3 or more active 7 Star members in different first-generation legs and yearly group sales of 80,000 PV or more
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
                   <span className="text-muted-foreground">
-                    <strong className="text-foreground">Senior Leader Trips:</strong> Star 8–12 distributors also qualify for intercontinental (US$2,000) and international (US$4,000) trips based on performance
+                    <strong className="text-foreground">Star 8 to 12 distributors:</strong> also qualify for the intercontinental and international trips on their own performance track
                   </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-muted-foreground">You must stay active every month of the value year to qualify</span>
                 </li>
               </ul>
             </CardContent>
