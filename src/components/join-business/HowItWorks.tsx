@@ -62,6 +62,33 @@ const HowItWorks = () => {
             </div>
           ))}
         </div>
+
+        {/* What the KES 7,000 covers */}
+        <div className="mt-14 grid gap-6 md:grid-cols-2">
+          <div className="p-6 rounded-2xl bg-muted/40 border border-border">
+            <h3 className="font-bold text-foreground mb-4">What the KES 7,000 covers</h3>
+            <ul className="space-y-4">
+              {feeBreakdown.map((item) => (
+                <li key={item.label}>
+                  <div className="flex items-center justify-between gap-3 mb-1">
+                    <span className="font-semibold text-foreground text-sm">{item.label}</span>
+                    <span className="text-sm font-bold text-accent tabular-nums">{item.amount}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{item.detail}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="p-6 rounded-2xl bg-accent/5 border border-accent/20">
+            <h3 className="font-bold text-foreground mb-3">Your Day-One Advantage</h3>
+            <p className="text-sm text-muted-foreground mb-3">
+              Because your KES 4,000 activation carries about 20 PV, you land at 2 Star from day one. That means you start earning a 5% performance bonus immediately, not months later.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              The first cash milestone most new members aim for is the 4 Star Special Support award of US$50, typically within the first 60 to 90 days of consistent selling and team building.
+            </p>
+          </div>
+        </div>
         {education && (
           <div className="mt-12 max-w-3xl mx-auto">
             <ContentMediaBlock item={education} />
