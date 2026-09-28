@@ -4,21 +4,28 @@ import RankProgressionGraphic from './RankProgressionGraphic';
 import NetworkTreeGraphic from './NetworkTreeGraphic';
 
 const beginnerLevels = [
-  { rank: '1 Star', condition: 'Purchase starter kit (US$200)', bonus: '0%', description: 'You just joined, welcome! Start by buying and selling products.' },
-  { rank: '2 Star', condition: '3 pax, ≥20 PV each', bonus: '5%', description: 'You begin earning performance bonuses as your personal sales grow.' },
-  { rank: '3 Star', condition: '≥300 PV, ≥20 PV personal', bonus: '9%', description: 'Your network is building. Enjoy higher bonuses on team performance.' },
-  { rank: '4 Star', condition: '≥1,000 PV, ≥30 PV personal', bonus: '13%', description: 'You\'re leading a team. Your earnings increase with your team\'s success.' },
-  { rank: '5 Star', condition: '≥3,000 PV, ≥40 PV personal', bonus: '17%', description: 'You\'re a proven leader. Your team generates serious income for you.' },
-  { rank: '6 Star', condition: '≥8,000 PV, ≥50 PV personal', bonus: '22%', description: 'Strong team performance unlocks major bonuses and recognition.' },
+  { rank: '1 Star', condition: 'Starter Kit (KES 3,000)', bonus: '0%', description: 'You just joined, welcome! Start by buying and selling products.' },
+  { rank: '2 Star', condition: 'CGV 0+, personal 20 PV+', bonus: '5%', description: 'Activate with 20 PV of product and you begin earning performance bonuses right away.' },
+  { rank: '3 Star', condition: 'CGV 300+, personal 20 PV+', bonus: '9%', description: 'Your network is building. Enjoy higher bonuses on team performance.' },
+  { rank: '4 Star', condition: 'CGV 1,000+, personal 30 PV+', bonus: '13%', description: 'You\'re leading a team. Your earnings increase with your team\'s success.' },
+  { rank: '5 Star', condition: 'CGV 5,000+, personal 40 PV+', bonus: '17%', description: 'You\'re a proven leader. Your team generates serious income for you.' },
+  { rank: '6 Star', condition: 'CGV 8,000+, personal 50 PV+', bonus: '22%', description: 'Strong team performance unlocks major bonuses and recognition.' },
 ];
 
 const leaderLevels = [
-  { rank: '7 Star (Leader)', condition: '≥10,000 PV, ≥50 PV personal', bonus: '28% OPB', icon: Award },
-  { rank: 'Senior Leader (SL)', condition: '1 qualified leader, ≥100 PV', bonus: '5% LDB', icon: Award },
-  { rank: 'Diamond Leader (DL)', condition: '2 qualified leaders, ≥100 PV', bonus: '8–10% LDB', icon: Award },
-  { rank: 'Senior Diamond (SDL)', condition: '3 qualified leaders, ≥100 PV', bonus: '15% LDB', icon: Crown },
-  { rank: 'Crown Leader (CL)', condition: '4 qualified leaders, ≥100 PV', bonus: '20% LDB', icon: Crown },
-  { rank: 'Senior Crown Leader (SCL)', condition: '5 qualified leaders, ≥265 PV', bonus: '25% LDB', icon: Crown },
+  { rank: '7 Star (Leader)', condition: 'CGV 12,000+, personal 50 PV+', bonus: '28% OPB', icon: Award },
+  { rank: 'Senior Leader (SL)', condition: '1 qualified leader, PPV 100+', bonus: '5% LDB', icon: Award },
+  { rank: 'Diamond Leader (DL)', condition: '2 qualified leaders, PPV 100+', bonus: '8–10% LDB', icon: Award },
+  { rank: 'Senior Diamond (SDL)', condition: '3 qualified leaders, PPV 100+', bonus: '15% LDB', icon: Crown },
+  { rank: 'Crown Leader (CL)', condition: '4 qualified leaders, PPV 100+', bonus: '20% LDB', icon: Crown },
+  { rank: 'Senior Crown Leader (SCL)', condition: '5 qualified leaders, PPV 300+, PGV 5,000+', bonus: '25% LDB', icon: Crown },
+];
+
+const glossary = [
+  { term: 'PV', meaning: 'Point Value, the sales points attached to each product' },
+  { term: 'PPV', meaning: 'Personal Point Value, points from your own monthly purchases and sales' },
+  { term: 'CGV', meaning: 'Cumulative Group Value, all the points your group has generated, used for moving up ranks' },
+  { term: 'PGV', meaning: 'Personal Group Value, points your group generates in one month, used for monthly qualification' },
 ];
 
 const StarLevels = () => {
