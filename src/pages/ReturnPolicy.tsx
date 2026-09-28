@@ -60,16 +60,16 @@ const ReturnPolicy = () => {
                   Eligible for Exchange
                 </h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">•</span>
+                  <li className="leading-relaxed">
+                    <span className="text-primary mr-2">•</span>
                     <strong className="text-foreground">Defective product</strong>: manufacturing defects or quality issues.
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">•</span>
+                  <li className="leading-relaxed">
+                    <span className="text-primary mr-2">•</span>
                     <strong className="text-foreground">Wrong product received</strong>: item does not match your order.
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">•</span>
+                  <li className="leading-relaxed">
+                    <span className="text-primary mr-2">•</span>
                     <strong className="text-foreground">Expired product</strong>: product delivered past its expiry date.
                   </li>
                 </ul>
@@ -78,20 +78,20 @@ const ReturnPolicy = () => {
               <div>
                 <h3 className="text-base font-bold text-foreground mb-3">Exchange Conditions</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">•</span>
+                  <li className="leading-relaxed">
+                    <span className="text-primary mr-2">•</span>
                     Request an exchange within <strong className="text-foreground">72 hours</strong> of delivery by contacting us on WhatsApp (<a href="https://wa.me/254795454053" className="text-primary hover:underline">+254 795 454053</a>) or email (<a href="mailto:bfsumaroyal@gmail.com" className="text-primary hover:underline">bfsumaroyal@gmail.com</a>).
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">•</span>
+                  <li className="leading-relaxed">
+                    <span className="text-primary mr-2">•</span>
                     Products must be <strong className="text-foreground">unopened, untampered, unused, and in original packaging</strong>.
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">•</span>
+                  <li className="leading-relaxed">
+                    <span className="text-primary mr-2">•</span>
                     The <strong className="text-foreground">original invoice or receipt</strong> must be produced during the exchange.
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">•</span>
+                  <li className="leading-relaxed">
+                    <span className="text-primary mr-2">•</span>
                     For wrongly delivered products, <strong className="text-foreground">do not open or tamper</strong> with the product.
                   </li>
                 </ul>
@@ -103,20 +103,20 @@ const ReturnPolicy = () => {
                   NOT Eligible for Exchange
                 </h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <span className="text-destructive mt-0.5">✕</span>
+                  <li className="leading-relaxed">
+                    <span className="text-destructive mr-2">✕</span>
                     Products opened or tampered with
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-destructive mt-0.5">✕</span>
+                  <li className="leading-relaxed">
+                    <span className="text-destructive mr-2">✕</span>
                     Buyer's remorse or change of mind
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-destructive mt-0.5">✕</span>
+                  <li className="leading-relaxed">
+                    <span className="text-destructive mr-2">✕</span>
                     Products ordered incorrectly by the customer
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-destructive mt-0.5">✕</span>
+                  <li className="leading-relaxed">
+                    <span className="text-destructive mr-2">✕</span>
                     Products damaged due to improper storage, handling, heat, water, smoke, or fire
                   </li>
                 </ul>
@@ -128,20 +128,20 @@ const ReturnPolicy = () => {
                   Exchange Process
                 </h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">1.</span>
+                  <li className="leading-relaxed">
+                    <span className="text-primary mr-2">1.</span>
                     Contact us within 72 hours of delivery via WhatsApp or email with your order number and reason.
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">2.</span>
+                  <li className="leading-relaxed">
+                    <span className="text-primary mr-2">2.</span>
                     Our team will review your request and arrange pickup of the original product.
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">3.</span>
+                  <li className="leading-relaxed">
+                    <span className="text-primary mr-2">3.</span>
                     Exchange delivery will be completed within <strong className="text-foreground">7 days</strong> after pickup.
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">4.</span>
+                  <li className="leading-relaxed">
+                    <span className="text-primary mr-2">4.</span>
                     If exchange is not possible, a <strong className="text-foreground">refund will be processed via your original payment method</strong> (M-Pesa or card) within 24 hours.
                   </li>
                 </ul>
@@ -150,12 +150,12 @@ const ReturnPolicy = () => {
               <div>
                 <h3 className="text-base font-bold text-foreground mb-3">Transport Charges</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">•</span>
+                  <li className="leading-relaxed">
+                    <span className="text-primary mr-2">•</span>
                     <strong className="text-foreground">Incorrect deliveries (our error):</strong> No transport charges apply for pickup and re-delivery.
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">•</span>
+                  <li className="leading-relaxed">
+                    <span className="text-primary mr-2">•</span>
                     <strong className="text-foreground">Customer order errors:</strong> Transport charges apply for pickup and re-delivery.
                   </li>
                 </ul>
@@ -169,20 +169,20 @@ const ReturnPolicy = () => {
                 International Orders
               </h2>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">•</span>
+                <li className="leading-relaxed">
+                  <span className="text-primary mr-2">•</span>
                   International exchange requests must be made within <strong className="text-foreground">72 hours</strong> of delivery.
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">•</span>
+                <li className="leading-relaxed">
+                  <span className="text-primary mr-2">•</span>
                   Return shipping costs for international orders are the responsibility of the buyer, unless the error is on our part.
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">•</span>
+                <li className="leading-relaxed">
+                  <span className="text-primary mr-2">•</span>
                   Refunds for international orders are processed via the original payment method within <strong className="text-foreground">3–5 business days</strong>.
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">•</span>
+                <li className="leading-relaxed">
+                  <span className="text-primary mr-2">•</span>
                   Products must meet the same condition requirements as domestic orders.
                 </li>
               </ul>
@@ -195,16 +195,16 @@ const ReturnPolicy = () => {
                 Refund Policy
               </h2>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">•</span>
+                <li className="leading-relaxed">
+                  <span className="text-primary mr-2">•</span>
                   We do <strong className="text-foreground">not</strong> offer cash refunds.
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">•</span>
+                <li className="leading-relaxed">
+                  <span className="text-primary mr-2">•</span>
                   Refunds are processed via <strong className="text-foreground">M-Pesa or credit/debit card reversal</strong>, depending on the original payment method, within 24 hours.
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">•</span>
+                <li className="leading-relaxed">
+                  <span className="text-primary mr-2">•</span>
                   The value of the exchanged goods must be equal to or greater than the original purchase. If greater, the difference will be charged.
                 </li>
               </ul>
