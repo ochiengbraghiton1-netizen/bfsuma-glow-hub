@@ -8,3 +8,5 @@
 - [x] Add editable per-slot headings across hubs, locations, and categories.
 - [x] Add the optional desired-outcome before/after comparison editor and viewer.
 - [x] Consolidate wellness hubs onto the shared media block and verify all three surfaces.
+- [ ] Show every category icon on desktop while preserving mobile overflow controls.
+- [ ] Verify desktop sticky spacing and mobile category behavior across requested widths.
