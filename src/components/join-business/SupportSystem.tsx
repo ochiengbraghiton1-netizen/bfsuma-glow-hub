@@ -1,5 +1,6 @@
 import { GraduationCap, HeartHandshake, BookOpen, Headphones } from 'lucide-react';
 import mentorshipImage from '@/assets/support-mentorship.webp';
+import { useBusinessMedia } from '@/hooks/use-business-media';
 
 const supports = [
   {
@@ -25,6 +26,7 @@ const supports = [
 ];
 
 const SupportSystem = () => {
+  const { recognition: support } = useBusinessMedia();
   return (
     <section className="py-16 md:py-24 bg-background">
       <div className="container mx-auto px-4 max-w-5xl">
@@ -51,14 +53,18 @@ const SupportSystem = () => {
             </div>
           </div>
           <div className="relative">
+            {support?.media_type === 'video' ? (
+              <video src={support.media_url} controls preload="metadata" playsInline aria-label={support.alt_text} className="rounded-2xl shadow-xl w-full" />
+            ) : (
             <img
-              src={mentorshipImage}
-              alt="BF Suma Royal team training and mentorship session in Kenya"
+              src={support?.media_url || mentorshipImage}
+              alt={support?.alt_text || "BF Suma Royal team training and mentorship session in Kenya"}
               className="rounded-2xl shadow-xl w-full"
               loading="lazy"
               width={800}
               height={544}
             />
+            )}
             <div className="absolute -bottom-4 -left-4 bg-accent text-accent-foreground px-6 py-3 rounded-xl shadow-lg font-semibold">
               Special support for Star 1–7
             </div>

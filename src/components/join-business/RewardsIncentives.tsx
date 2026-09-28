@@ -4,8 +4,10 @@ import travelImage from '@/assets/travel-reward.webp';
 import carImage from '@/assets/car-reward.webp';
 import recognitionImage from '@/assets/recognition-event.webp';
 import carFleetImage from '@/assets/car-award-fleet.webp';
+import { useBusinessMedia } from '@/hooks/use-business-media';
 
 const RewardsIncentives = () => {
+  const { desired_outcome: travel, product_context: car } = useBusinessMedia();
   return (
     <section className="py-16 md:py-24 bg-gradient-to-br from-secondary/5 via-background to-accent/5">
       <div className="container mx-auto px-4 max-w-5xl">
@@ -22,8 +24,8 @@ const RewardsIncentives = () => {
           {/* Travel Rewards */}
           <Card className="overflow-hidden border-0 shadow-lg">
             <img
-              src={travelImage}
-              alt="International travel rewards for BF Suma top performers"
+              src={travel?.media_type === 'image' ? travel.media_url : travelImage}
+              alt={travel?.media_type === 'image' ? travel.alt_text : "International travel rewards for BF Suma top performers"}
               className="w-full h-52 object-cover"
               loading="lazy"
               width={800}
@@ -67,8 +69,8 @@ const RewardsIncentives = () => {
           {/* Car Awards */}
           <Card className="overflow-hidden border-0 shadow-lg">
             <img
-              src={carImage}
-              alt="Car awards for BF Suma qualified leaders"
+              src={car?.media_type === 'image' ? car.media_url : carImage}
+              alt={car?.media_type === 'image' ? car.alt_text : "Car awards for BF Suma qualified leaders"}
               className="w-full h-52 object-cover"
               loading="lazy"
               width={800}
