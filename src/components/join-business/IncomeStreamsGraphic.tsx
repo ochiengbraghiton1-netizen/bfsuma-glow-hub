@@ -51,8 +51,8 @@ const IncomeStreamsGraphic = () => {
           ))}
         </div>
 
-        <p className="text-center text-sm text-muted-foreground mt-6 max-w-md mx-auto">
-          Everyone starts with Retail Profit. As you grow your team and rank up, you unlock OPB, LDB, and more.
+        <p className="text-center text-sm text-muted-foreground mt-6 max-w-xl mx-auto">
+          Everyone starts with Retail Profit. As you grow your team and rank up, you unlock OPB, LDB, and more. Percentages show the maximum share available at the top ranks, not a promised income. What you actually earn depends on your own sales and your team's performance.
         </p>
       </div>
     </section>
