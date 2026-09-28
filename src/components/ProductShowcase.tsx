@@ -86,7 +86,6 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showAll, setShowAll] = useState(false);
 
-  const visibleCategories = showAll ? categories : categories.slice(0, MAX_VISIBLE_CATEGORIES);
   const hasMore = categories.length > MAX_VISIBLE_CATEGORIES;
 
   const circleClasses = (active: boolean) =>
@@ -100,7 +99,7 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
     <div className="mb-6">
       <div
         ref={scrollRef}
-        className="flex gap-3 md:gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-1"
+        className="flex gap-3 md:gap-4 overflow-x-auto md:overflow-visible scrollbar-hide pb-2 -mx-1 px-1 md:flex-wrap md:justify-center"
         style={{ WebkitOverflowScrolling: "touch" }}
       >
         {/* All — icon circle, not a real category */}
@@ -125,13 +124,16 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
           </span>
         </button>
 
-        {visibleCategories.map((cat) => {
+        {categories.map((cat, index) => {
           const active = activeCategory === cat.slug;
+          const hiddenOnMobile = index >= MAX_VISIBLE_CATEGORIES && !showAll;
           return (
             <button
               key={cat.id}
               onClick={() => onSelect(cat.slug)}
-              className="group flex flex-col items-center gap-1.5 shrink-0 w-16 md:w-[72px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl"
+              className={`group flex-col items-center gap-1.5 shrink-0 w-16 md:w-[72px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl ${
+                hiddenOnMobile ? "hidden md:flex" : "flex"
+              }`}
               aria-pressed={active}
             >
               <span className={circleClasses(active)}>
@@ -151,7 +153,7 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
         {hasMore && !showAll && (
           <button
             onClick={() => setShowAll(true)}
-            className="group flex flex-col items-center gap-1.5 shrink-0 w-16 md:w-[72px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl"
+            className="group flex flex-col md:hidden items-center gap-1.5 shrink-0 w-16 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl"
             aria-label={`Show ${categories.length - MAX_VISIBLE_CATEGORIES} more categories`}
           >
             <span className="w-14 h-14 md:w-16 md:h-16 rounded-full shrink-0 bg-muted/60 border border-border/40 flex items-center justify-center text-primary transition-colors duration-200 group-hover:bg-muted">
@@ -165,7 +167,7 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
         {showAll && hasMore && (
           <button
             onClick={() => setShowAll(false)}
-            className="group flex flex-col items-center gap-1.5 shrink-0 w-16 md:w-[72px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl"
+            className="group flex flex-col md:hidden items-center gap-1.5 shrink-0 w-16 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl"
             aria-label="Show fewer categories"
           >
             <span className="w-14 h-14 md:w-16 md:h-16 rounded-full shrink-0 bg-muted/60 border border-border/40 flex items-center justify-center text-muted-foreground transition-colors duration-200 group-hover:bg-muted">
