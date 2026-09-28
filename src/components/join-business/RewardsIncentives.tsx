@@ -211,6 +211,10 @@ const RewardsIncentives = () => {
             <p className="text-sm text-muted-foreground">Lead your own organisation, mentor new members, and build a legacy</p>
           </div>
         </div>
+
+        <p className="mt-10 text-xs text-muted-foreground text-center max-w-3xl mx-auto">
+          All award values are the official BF Suma figures in US dollars, with KES amounts shown as approximate guides only. Awards and bonuses are earned by meeting the published monthly and yearly qualifications. They are not guaranteed income, and individual results vary.
+        </p>
       </div>
     </section>
   );
