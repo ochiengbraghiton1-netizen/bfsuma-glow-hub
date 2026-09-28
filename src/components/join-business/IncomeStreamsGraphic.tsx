@@ -1,13 +1,15 @@
-import { ShoppingBag, Users, Award, Star, Globe, Crown } from 'lucide-react';
+import { ShoppingBag, Users, Award, Globe, Crown, Gift, Store, Plane } from 'lucide-react';
 import { useInView } from '@/hooks/use-in-view';
 
 const streams = [
   { icon: ShoppingBag, label: 'Retail Profit', pct: '20%', desc: 'Markup on every product you sell', color: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-600 dark:text-emerald-400' },
-  { icon: Users, label: 'OPB', pct: '28%', desc: 'Bonus on your team\'s total sales', color: 'bg-primary/15 border-primary/30 text-primary' },
-  { icon: Award, label: 'LDB', pct: '25%', desc: 'Leadership bonus from qualified leaders', color: 'bg-accent/15 border-accent/30 text-accent' },
-  { icon: Star, label: '7-Star Support', pct: '3%', desc: 'Cash reward at 7-Star rank', color: 'bg-amber-500/15 border-amber-500/30 text-amber-600 dark:text-amber-400' },
-  { icon: Crown, label: 'LSB', pct: '6.5%', desc: 'Bonus from leaders you\'ve mentored', color: 'bg-purple-500/15 border-purple-500/30 text-purple-600 dark:text-purple-400' },
-  { icon: Globe, label: 'LGB', pct: '3%', desc: 'Share of global company profits', color: 'bg-sky-500/15 border-sky-500/30 text-sky-600 dark:text-sky-400' },
+  { icon: Users, label: 'OPB', pct: '28%', desc: 'Organisation Performance Bonus on your group sales', color: 'bg-primary/15 border-primary/30 text-primary' },
+  { icon: Award, label: 'LDB', pct: '25%', desc: 'Leadership Development Bonus from qualified leaders', color: 'bg-accent/15 border-accent/30 text-accent' },
+  { icon: Crown, label: 'LSB', pct: '6.5%', desc: 'Leader Sponsoring Bonus from leaders you mentored', color: 'bg-purple-500/15 border-purple-500/30 text-purple-600 dark:text-purple-400' },
+  { icon: Globe, label: 'LGB', pct: '3%', desc: 'Leader Global Bonus, a share of worldwide sales', color: 'bg-sky-500/15 border-sky-500/30 text-sky-600 dark:text-sky-400' },
+  { icon: Gift, label: 'NPF', pct: '7.5%', desc: 'New Product Fund, includes the 4 Star and 7 Star Special Support awards', color: 'bg-rose-500/15 border-rose-500/30 text-rose-600 dark:text-rose-400' },
+  { icon: Store, label: 'SSSB', pct: 'up to 6%', desc: 'Special Store Service Bonus for approved store operators', color: 'bg-teal-500/15 border-teal-500/30 text-teal-600 dark:text-teal-400' },
+  { icon: Plane, label: 'Trip & Car', pct: 'Awards', desc: 'Travel and car awards for consistent top performers', color: 'bg-amber-500/15 border-amber-500/30 text-amber-600 dark:text-amber-400' },
 ];
 
 const IncomeStreamsGraphic = () => {
