@@ -2,13 +2,13 @@ import { Star, Award, Crown, Car, Plane } from 'lucide-react';
 import { useInView } from '@/hooks/use-in-view';
 
 const ranks = [
-  { rank: '1★', label: 'Start Here', bonus: '0%', type: 'star', reward: 'KES 7,000 entry' },
-  { rank: '2★', label: '2 Star', bonus: '5%', type: 'star' },
+  { rank: '1★', label: 'Start Here', bonus: '0%', type: 'star', reward: 'KES 3,000 kit' },
+  { rank: '2★', label: '2 Star', bonus: '5%', type: 'star', reward: 'Day one with 20 PV' },
   { rank: '3★', label: '3 Star', bonus: '9%', type: 'star' },
-  { rank: '4★', label: '4 Star', bonus: '13%', type: 'star' },
+  { rank: '4★', label: '4 Star', bonus: '13%', type: 'star', reward: 'US$50 Award' },
   { rank: '5★', label: '5 Star', bonus: '17%', type: 'star' },
   { rank: '6★', label: '6 Star', bonus: '22%', type: 'star' },
-  { rank: '7★', label: '7 Star Leader', bonus: '28% OPB', type: 'leader', reward: '3% Cash Bonus' },
+  { rank: '7★', label: '7 Star Leader', bonus: '28% OPB', type: 'leader', reward: 'Up to 3% Support' },
   { rank: 'SL', label: 'Senior Leader', bonus: '5% LDB', type: 'leader' },
   { rank: 'DL', label: 'Diamond Leader', bonus: '8–10% LDB', type: 'leader' },
   { rank: 'SDL', label: 'Senior Diamond', bonus: '15% LDB', type: 'crown' },

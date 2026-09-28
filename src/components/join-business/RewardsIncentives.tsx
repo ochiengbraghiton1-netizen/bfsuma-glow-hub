@@ -41,20 +41,24 @@ const RewardsIncentives = () => {
                 <li className="flex items-start gap-2">
                   <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
                   <span className="text-muted-foreground">
-                    <strong className="text-foreground">Intercontinental Trip (US$2,000):</strong> For Star 1–7 distributors with 3+ active 7-Star team members and yearly group sales of 40,000+ PV
+                    <strong className="text-foreground">Intercontinental Trip (US$2,000, about KES 260,000):</strong> Star 1 to 7 distributors with 3 or more active 7 Star members in different first-generation legs and yearly group sales of 40,000 PV or more
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
                   <span className="text-muted-foreground">
-                    <strong className="text-foreground">International Trip (US$4,000):</strong> For Diamond Leaders and above with 3+ active 7-Star team members and yearly group sales of 80,000+ PV
+                    <strong className="text-foreground">International Trip (US$4,000, about KES 520,000):</strong> Diamond Leaders and above with 3 or more active 7 Star members in different first-generation legs and yearly group sales of 80,000 PV or more
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
                   <span className="text-muted-foreground">
-                    <strong className="text-foreground">Senior Leader Trips:</strong> Star 8–12 distributors also qualify for intercontinental (US$2,000) and international (US$4,000) trips based on performance
+                    <strong className="text-foreground">Star 8 to 12 distributors:</strong> also qualify for the intercontinental and international trips on their own performance track
                   </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-muted-foreground">You must stay active every month of the value year to qualify</span>
                 </li>
               </ul>
             </CardContent>
@@ -82,18 +86,24 @@ const RewardsIncentives = () => {
                 <li className="flex items-start gap-2">
                   <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
                   <span className="text-muted-foreground">
-                    <strong className="text-foreground">Normal Car Award (US$12,500):</strong> For Senior Diamond Leaders with 10-Star+ rank, 3+ active 7-Star downlines, and yearly PGV of 120,000+ PV
+                    <strong className="text-foreground">Normal Car Award, Group A (US$12,500, about KES 1.6M):</strong> Star 1 to 7 distributors with yearly group sales of 120,000 PV or more, who have reached Senior Diamond Leader at least once and have 3 active 7 Star members in different first-generation legs
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
                   <span className="text-muted-foreground">
-                    <strong className="text-foreground">Luxury Car Award (US$25,000):</strong> For Crown Leaders and above with 11-Star+ rank, 3+ active 7-Star downlines, and yearly PGV of 120,000+ PV
+                    <strong className="text-foreground">Normal Car Award, Group B (US$12,500 plus a US$4,000 trip):</strong> Star 8 to 12 distributors who reach 10 Star or above ten times and record yearly personal group sales of 60,000 PV or more
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-muted-foreground">Must stay active every month, assessed once per BF Suma Value Year</span>
+                  <span className="text-muted-foreground">
+                    <strong className="text-foreground">Luxury Car Award (US$25,000, about KES 3.25M, plus a US$4,000 trip):</strong> Hold 11 Star or above every month of the year, with 3 or more active member downlines and yearly personal group sales of 120,000 PV or more
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-muted-foreground">You must stay active every month, and qualification is assessed once per BF Suma value year</span>
                 </li>
               </ul>
             </CardContent>
@@ -121,18 +131,40 @@ const RewardsIncentives = () => {
         </div>
 
 
-        <div className="mb-12 p-6 rounded-2xl bg-accent/5 border border-accent/20">
-          <div className="flex items-start gap-3">
-            <Sparkles className="h-6 w-6 text-accent mt-1 flex-shrink-0" />
-            <div>
-              <h3 className="text-lg font-bold text-foreground mb-2">7-Star Special Support: 3% Cash Bonus</h3>
-              <p className="text-sm text-muted-foreground mb-3">
-                When you reach 7-Star status and have at least two 7-Star team members, you qualify for a special monthly cash bonus of 3% of your team's group sales volume. This is BF Suma's way of supporting top distributors who are building strong teams.
-              </p>
-              <div className="flex flex-wrap gap-4 text-sm">
-                <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">7-Star rank required</span>
-                <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">2+ 7-Star downlines</span>
-                <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">1,500+ PV minimum</span>
+        {/* New Product Fund special support awards */}
+        <div className="mb-12 grid gap-6 md:grid-cols-2">
+          <div className="p-6 rounded-2xl bg-primary/5 border border-primary/20">
+            <div className="flex items-start gap-3">
+              <Sparkles className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
+              <div>
+                <h3 className="text-lg font-bold text-foreground mb-2">4 Star Special Support: US$50 Cash Award</h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Your first cash milestone, and the most reachable one. Paid from the New Product Fund when you hold 4 Star with at least two downlines at 3 Star and group sales of 1,500 PV or more.
+                </p>
+                <div className="flex flex-wrap gap-2 text-sm">
+                  <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">4 Star rank</span>
+                  <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">2 downlines at 3 Star</span>
+                  <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">1,500 PV group sales</span>
+                  <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">Maximum 3 awards</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-accent/5 border border-accent/20">
+            <div className="flex items-start gap-3">
+              <Sparkles className="h-6 w-6 text-accent mt-1 flex-shrink-0" />
+              <div>
+                <h3 className="text-lg font-bold text-foreground mb-2">7 Star Special Support: Up to 3%</h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Also paid from the New Product Fund, not as a separate bonus. At 7 Star with at least two 7 Star team members, you receive up to 3% of your qualifying group sales, counting only the legs not headed by a downline Leader.
+                </p>
+                <div className="flex flex-wrap gap-2 text-sm">
+                  <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">7 Star rank</span>
+                  <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">2 or more 7 Star downlines</span>
+                  <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">1,500 PV minimum</span>
+                  <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">Maximum 6 awards</span>
+                </div>
               </div>
             </div>
           </div>
@@ -179,6 +211,10 @@ const RewardsIncentives = () => {
             <p className="text-sm text-muted-foreground">Lead your own organisation, mentor new members, and build a legacy</p>
           </div>
         </div>
+
+        <p className="mt-10 text-xs text-muted-foreground text-center max-w-3xl mx-auto">
+          All award values are the official BF Suma figures in US dollars, with KES amounts shown as approximate guides only. Awards and bonuses are earned by meeting the published monthly and yearly qualifications. They are not guaranteed income, and individual results vary.
+        </p>
       </div>
     </section>
   );

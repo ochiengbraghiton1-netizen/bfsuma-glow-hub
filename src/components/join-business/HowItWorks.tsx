@@ -7,7 +7,7 @@ const steps = [
   {
     icon: UserPlus,
     title: 'Join the Program',
-    description: 'Register with a one-time entry fee of KES 7,000. You get a starter kit and access to the full product range at distributor prices.',
+    description: 'Register with a one-time KES 7,000: KES 3,000 for your starter kit and KES 4,000 of product to activate your account (about 20 PV).',
   },
   {
     icon: ShoppingBag,
@@ -27,8 +27,13 @@ const steps = [
   {
     icon: Gift,
     title: 'Unlock Rewards',
-    description: 'Top performers unlock incredible rewards including international trips, car awards, and leadership bonuses worth thousands of dollars.',
+    description: 'Consistent top performers can qualify for international trips, car awards, and leadership bonuses. Qualification depends on your monthly and yearly performance.',
   },
+];
+
+const feeBreakdown = [
+  { label: 'Starter Kit', amount: 'KES 3,000', detail: 'Wellness guide covering every formulation and the conditions it supports, a product overview, a branded bag, and a starter product.' },
+  { label: 'Product Activation', amount: 'KES 4,000', detail: 'Products of your choice, worth about 20 PV. This is stock you can use yourself or sell on, not a fee.' },
 ];
 
 const HowItWorks = () => {
@@ -56,6 +61,33 @@ const HowItWorks = () => {
               <p className="text-sm text-muted-foreground">{step.description}</p>
             </div>
           ))}
+        </div>
+
+        {/* What the KES 7,000 covers */}
+        <div className="mt-14 grid gap-6 md:grid-cols-2">
+          <div className="p-6 rounded-2xl bg-muted/40 border border-border">
+            <h3 className="font-bold text-foreground mb-4">What the KES 7,000 covers</h3>
+            <ul className="space-y-4">
+              {feeBreakdown.map((item) => (
+                <li key={item.label}>
+                  <div className="flex items-center justify-between gap-3 mb-1">
+                    <span className="font-semibold text-foreground text-sm">{item.label}</span>
+                    <span className="text-sm font-bold text-accent tabular-nums">{item.amount}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{item.detail}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="p-6 rounded-2xl bg-accent/5 border border-accent/20">
+            <h3 className="font-bold text-foreground mb-3">Your Day-One Advantage</h3>
+            <p className="text-sm text-muted-foreground mb-3">
+              Because your KES 4,000 activation carries about 20 PV, you land at 2 Star from day one. That means you start earning a 5% performance bonus immediately, not months later.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              The first cash milestone most new members aim for is the 4 Star Special Support award of US$50, typically within the first 60 to 90 days of consistent selling and team building.
+            </p>
+          </div>
         </div>
         {education && (
           <div className="mt-12 max-w-3xl mx-auto">

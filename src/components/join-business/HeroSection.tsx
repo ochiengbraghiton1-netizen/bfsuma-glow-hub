@@ -30,28 +30,31 @@ const HeroSection = () => {
         <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight drop-shadow-lg">
           Start Your Own Health &amp; Wellness Business in Kenya
         </h1>
-        <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8 text-white/90">
+        <p className="text-lg md:text-xl max-w-2xl mx-auto mb-4 text-white/90">
           Build income, grow your network, and access exclusive rewards, all with the support of BF Suma Royal.
+        </p>
+        <p className="text-base md:text-lg max-w-2xl mx-auto mb-8 text-white/80">
+          One-time KES 7,000 to start: KES 3,000 starter kit plus KES 4,000 of product that puts you at 2 Star, earning a 5% bonus from day one.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Button
             size="lg"
-            asChild
             className="bg-accent text-accent-foreground hover:bg-accent/90 h-14 px-8 text-lg shadow-lg"
+            onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
           >
-            <a href={WHATSAPP_URL} onClick={() => trackWhatsAppClick(undefined, "join_business_hero")} target="_blank" rel="noopener noreferrer">
-              <MessageCircle className="mr-2 h-5 w-5" />
-              Join via WhatsApp
-            </a>
+            See How It Works
+            <ArrowDown className="ml-2 h-5 w-5" />
           </Button>
           <Button
             size="lg"
             variant="outline"
+            asChild
             className="border-white text-white hover:bg-white/20 h-14 px-8 text-lg"
-            onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
           >
-            Learn More
-            <ArrowDown className="ml-2 h-5 w-5" />
+            <a href={WHATSAPP_URL} onClick={() => trackWhatsAppClick(undefined, "join_business_hero")} target="_blank" rel="noopener noreferrer">
+              <MessageCircle className="mr-2 h-5 w-5" />
+              Chat on WhatsApp
+            </a>
           </Button>
         </div>
       </div>
