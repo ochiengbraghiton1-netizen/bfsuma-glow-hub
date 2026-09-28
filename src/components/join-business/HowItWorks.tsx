@@ -7,7 +7,7 @@ const steps = [
   {
     icon: UserPlus,
     title: 'Join the Program',
-    description: 'Register with a one-time entry fee of KES 7,000. You get a starter kit and access to the full product range at distributor prices.',
+    description: 'Register with a one-time KES 7,000: KES 3,000 for your starter kit and KES 4,000 of product to activate your account (about 20 PV).',
   },
   {
     icon: ShoppingBag,
@@ -27,8 +27,13 @@ const steps = [
   {
     icon: Gift,
     title: 'Unlock Rewards',
-    description: 'Top performers unlock incredible rewards including international trips, car awards, and leadership bonuses worth thousands of dollars.',
+    description: 'Consistent top performers can qualify for international trips, car awards, and leadership bonuses. Qualification depends on your monthly and yearly performance.',
   },
+];
+
+const feeBreakdown = [
+  { label: 'Starter Kit', amount: 'KES 3,000', detail: 'Wellness guide covering every formulation and the conditions it supports, a product overview, a branded bag, and a starter product.' },
+  { label: 'Product Activation', amount: 'KES 4,000', detail: 'Products of your choice, worth about 20 PV. This is stock you can use yourself or sell on, not a fee.' },
 ];
 
 const HowItWorks = () => {

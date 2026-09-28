@@ -9,7 +9,7 @@ const reasons = [
   { icon: Heart, title: 'Personal Growth', description: 'Develop leadership, communication, and business skills through real experience and mentorship.' },
   { icon: Globe, title: 'Global Rewards', description: 'Unlock travel, car awards, and bonuses as you advance through the ranks.' },
   { icon: ShieldCheck, title: 'Trusted Brand', description: 'BF Suma is a globally recognised health and wellness company with products sold across Africa and beyond.' },
-  { icon: TrendingUp, title: 'Unlimited Potential', description: 'There\'s no cap on how much you can earn. Your income grows as your team and performance grow.' },
+  { icon: TrendingUp, title: 'Room to Grow', description: 'Your earnings are tied to your own sales and your team\'s performance. Results vary from person to person, and there is no guaranteed income.' },
 ];
 
 const WhyJoin = () => {
@@ -22,7 +22,7 @@ const WhyJoin = () => {
             Why Join BF Suma Royal?
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Thousands of people across Kenya are building their future with BF Suma. Here's why.
+            People across Kenya are building something of their own with BF Suma. Here's why.
           </p>
         </div>
 
