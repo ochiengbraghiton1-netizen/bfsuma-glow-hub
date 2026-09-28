@@ -99,7 +99,11 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
     <div className="mb-6">
       <div
         ref={scrollRef}
-        className="flex gap-3 md:gap-4 overflow-x-auto md:overflow-visible scrollbar-hide pb-2 -mx-1 px-1 md:flex-wrap md:justify-center"
+        className={`flex gap-3 md:gap-4 scrollbar-hide pb-2 -mx-1 px-1 ${
+          showAll
+            ? "flex-wrap overflow-x-auto md:overflow-visible md:justify-center"
+            : "overflow-x-auto md:flex-nowrap md:overflow-hidden"
+        }`}
         style={{ WebkitOverflowScrolling: "touch" }}
       >
         {/* All — icon circle, not a real category */}
