@@ -86,18 +86,24 @@ const RewardsIncentives = () => {
                 <li className="flex items-start gap-2">
                   <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
                   <span className="text-muted-foreground">
-                    <strong className="text-foreground">Normal Car Award (US$12,500):</strong> For Senior Diamond Leaders with 10-Star+ rank, 3+ active 7-Star downlines, and yearly PGV of 120,000+ PV
+                    <strong className="text-foreground">Normal Car Award, Group A (US$12,500, about KES 1.6M):</strong> Star 1 to 7 distributors with yearly group sales of 120,000 PV or more, who have reached Senior Diamond Leader at least once and have 3 active 7 Star members in different first-generation legs
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
                   <span className="text-muted-foreground">
-                    <strong className="text-foreground">Luxury Car Award (US$25,000):</strong> For Crown Leaders and above with 11-Star+ rank, 3+ active 7-Star downlines, and yearly PGV of 120,000+ PV
+                    <strong className="text-foreground">Normal Car Award, Group B (US$12,500 plus a US$4,000 trip):</strong> Star 8 to 12 distributors who reach 10 Star or above ten times and record yearly personal group sales of 60,000 PV or more
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-muted-foreground">Must stay active every month, assessed once per BF Suma Value Year</span>
+                  <span className="text-muted-foreground">
+                    <strong className="text-foreground">Luxury Car Award (US$25,000, about KES 3.25M, plus a US$4,000 trip):</strong> Hold 11 Star or above every month of the year, with 3 or more active member downlines and yearly personal group sales of 120,000 PV or more
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Star className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-muted-foreground">You must stay active every month, and qualification is assessed once per BF Suma value year</span>
                 </li>
               </ul>
             </CardContent>
