@@ -20,7 +20,7 @@ const IncomeStreamsGraphic = () => {
       <div className="container mx-auto px-4 max-w-5xl">
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            6 Ways You Earn
+            8 Ways You Earn
           </h2>
           <p className="text-muted-foreground text-lg max-w-xl mx-auto">
             BF Suma rewards you through multiple income streams, the higher you rise, the more streams you unlock.
