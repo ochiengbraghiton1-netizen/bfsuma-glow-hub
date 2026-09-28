@@ -44,6 +44,19 @@ const StarLevels = () => {
         {/* Visual Rank Progression Ladder */}
         <RankProgressionGraphic />
 
+        {/* Plain-language glossary */}
+        <div className="mb-12 p-6 rounded-2xl bg-background border border-border">
+          <h3 className="font-semibold text-foreground mb-4">What the short forms mean</h3>
+          <dl className="grid gap-3 sm:grid-cols-2">
+            {glossary.map((g) => (
+              <div key={g.term} className="text-sm">
+                <dt className="font-bold text-foreground inline">{g.term}: </dt>
+                <dd className="text-muted-foreground inline">{g.meaning}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
         {/* Beginner to Intermediate */}
         <div className="mb-12">
           <div className="flex items-center gap-3 mb-6">
@@ -63,7 +76,8 @@ const StarLevels = () => {
                       Up to {level.bonus}
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground">{level.description}</p>
+                  <p className="text-sm text-muted-foreground mb-3">{level.description}</p>
+                  <p className="text-xs font-medium text-foreground/80">Requires: {level.condition}</p>
                 </CardContent>
               </Card>
             ))}
