@@ -131,18 +131,40 @@ const RewardsIncentives = () => {
         </div>
 
 
-        <div className="mb-12 p-6 rounded-2xl bg-accent/5 border border-accent/20">
-          <div className="flex items-start gap-3">
-            <Sparkles className="h-6 w-6 text-accent mt-1 flex-shrink-0" />
-            <div>
-              <h3 className="text-lg font-bold text-foreground mb-2">7-Star Special Support: 3% Cash Bonus</h3>
-              <p className="text-sm text-muted-foreground mb-3">
-                When you reach 7-Star status and have at least two 7-Star team members, you qualify for a special monthly cash bonus of 3% of your team's group sales volume. This is BF Suma's way of supporting top distributors who are building strong teams.
-              </p>
-              <div className="flex flex-wrap gap-4 text-sm">
-                <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">7-Star rank required</span>
-                <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">2+ 7-Star downlines</span>
-                <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">1,500+ PV minimum</span>
+        {/* New Product Fund special support awards */}
+        <div className="mb-12 grid gap-6 md:grid-cols-2">
+          <div className="p-6 rounded-2xl bg-primary/5 border border-primary/20">
+            <div className="flex items-start gap-3">
+              <Sparkles className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
+              <div>
+                <h3 className="text-lg font-bold text-foreground mb-2">4 Star Special Support: US$50 Cash Award</h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Your first cash milestone, and the most reachable one. Paid from the New Product Fund when you hold 4 Star with at least two downlines at 3 Star and group sales of 1,500 PV or more.
+                </p>
+                <div className="flex flex-wrap gap-2 text-sm">
+                  <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">4 Star rank</span>
+                  <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">2 downlines at 3 Star</span>
+                  <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">1,500 PV group sales</span>
+                  <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">Maximum 3 awards</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-accent/5 border border-accent/20">
+            <div className="flex items-start gap-3">
+              <Sparkles className="h-6 w-6 text-accent mt-1 flex-shrink-0" />
+              <div>
+                <h3 className="text-lg font-bold text-foreground mb-2">7 Star Special Support: Up to 3%</h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Also paid from the New Product Fund, not as a separate bonus. At 7 Star with at least two 7 Star team members, you receive up to 3% of your qualifying group sales, counting only the legs not headed by a downline Leader.
+                </p>
+                <div className="flex flex-wrap gap-2 text-sm">
+                  <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">7 Star rank</span>
+                  <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">2 or more 7 Star downlines</span>
+                  <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">1,500 PV minimum</span>
+                  <span className="px-3 py-1 rounded-full bg-background border text-muted-foreground">Maximum 6 awards</span>
+                </div>
               </div>
             </div>
           </div>
