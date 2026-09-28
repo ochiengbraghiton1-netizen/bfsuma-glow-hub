@@ -130,7 +130,7 @@ const TeamProfiles = () => {
 
       <section className="space-y-4 pt-6 border-t">
         <ContentMediaEditor contentType={BUSINESS_CONTENT_TYPE} contentId={JOIN_BUSINESS_CONTENT_ID} media={media} onChange={setMedia} />
-        <p className="text-xs text-muted-foreground">Used on the page: Hero, Education (How it works), Trust (Why join), Closing (final banner). Other slots are not shown.</p>
+        <p className="text-xs text-muted-foreground">Where each slot appears on the Join Business page: Hero (top banner), Recognition (Support / mentorship photo), Desired outcome (Travel rewards card), Education (How it works), Product in context (Car awards card), Trust (Why join), Closing (final banner). Until you upload, the starter images show.</p>
         <Button onClick={saveMedia} disabled={savingMedia}>
           {savingMedia && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}Save visuals
         </Button>
