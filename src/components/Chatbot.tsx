@@ -29,12 +29,14 @@ function getWhatsAppUrl(message: string) {
 async function streamChat({
   messages,
   action,
+  pageContext,
   onDelta,
   onDone,
   onError,
 }: {
   messages: Message[];
   action?: string;
+  pageContext?: string;
   onDelta: (text: string) => void;
   onDone: () => void;
   onError: (err: string) => void;
@@ -46,7 +48,7 @@ async function streamChat({
         "Content-Type": "application/json",
         Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
       },
-      body: JSON.stringify({ messages, action }),
+      body: JSON.stringify({ messages, action, pageContext }),
     });
 
     if (!resp.ok) {
