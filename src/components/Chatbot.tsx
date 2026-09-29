@@ -292,12 +292,22 @@ const Chatbot = () => {
           {/* Header */}
           <div className="bg-gradient-to-r from-primary to-primary/80 p-4 rounded-t-2xl text-primary-foreground">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+              <div className="relative w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
                 <Sparkles className="w-5 h-5" />
+                <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center">
+                  <span className="absolute h-3.5 w-3.5 rounded-full bg-emerald-400/70 animate-ping" />
+                  <span className="relative h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-primary" />
+                </span>
               </div>
               <div className="flex-1">
                 <h3 className="font-bold text-sm">BF SUMA Royal Assistant</h3>
-                <p className="text-xs text-primary-foreground/70">Need help? Chat with us or get a free consultation</p>
+                <p className="text-xs text-primary-foreground/80 flex items-center gap-1.5">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+                  </span>
+                  Online now, instant replies
+                </p>
               </div>
             </div>
           </div>
