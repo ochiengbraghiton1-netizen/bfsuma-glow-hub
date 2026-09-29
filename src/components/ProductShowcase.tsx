@@ -50,6 +50,8 @@ const productImageMap: Record<string, string> = {
 };
 
 const MAX_VISIBLE_CATEGORIES = 6;
+/** Collapsed desktop row shows this many categories before the "+N More" tile (must keep the row within md/lg widths). */
+const DESKTOP_MAX_VISIBLE_CATEGORIES = 8;
 
 interface CategoryPillsProps {
   categories: { id: string; slug: string; name: string; imageUrl?: string | null }[];
@@ -130,14 +132,19 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
 
         {categories.map((cat, index) => {
           const active = activeCategory === cat.slug;
-          const hiddenOnMobile = index >= MAX_VISIBLE_CATEGORIES && !showAll;
+          // Collapsed row: show 6 on mobile, 8 on lg+, all at xl+ (everything fits there).
+          // Never rely on overflow clipping on desktop — extras stay hidden until expanded.
+          const collapsedExtra = !showAll && index >= MAX_VISIBLE_CATEGORIES;
+          const visibility = !showAll && index >= DESKTOP_MAX_VISIBLE_CATEGORIES
+            ? "hidden xl:flex"
+            : collapsedExtra
+              ? "hidden lg:flex"
+              : "flex";
           return (
             <button
               key={cat.id}
               onClick={() => onSelect(cat.slug)}
-              className={`group flex-col items-center gap-1.5 shrink-0 w-16 md:w-[72px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl ${
-                hiddenOnMobile ? "hidden md:flex" : "flex"
-              }`}
+              className={`group flex-col items-center gap-1.5 shrink-0 w-16 md:w-[72px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl ${visibility}`}
               aria-pressed={active}
             >
               <span className={circleClasses(active)}>
@@ -157,12 +164,14 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
         {hasMore && !showAll && (
           <button
             onClick={() => setShowAll(true)}
-            className="group flex flex-col items-center gap-1.5 shrink-0 w-16 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl"
-            aria-label={`Show ${categories.length - MAX_VISIBLE_CATEGORIES} more categories`}
+            className="group flex flex-col items-center gap-1.5 shrink-0 w-16 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl xl:hidden"
+            aria-label="Show more categories"
           >
             <span className="w-14 h-14 md:w-16 md:h-16 rounded-full shrink-0 bg-muted/60 border border-border/40 flex items-center justify-center text-primary transition-colors duration-200 group-hover:bg-muted">
               <span className="text-sm font-semibold">
-                +{categories.length - MAX_VISIBLE_CATEGORIES}
+                {/* Count differs per breakpoint: 6 visible on mobile, 8 on lg+ */}
+                <span className="lg:hidden">+{categories.length - MAX_VISIBLE_CATEGORIES}</span>
+                <span className="hidden lg:inline">+{categories.length - DESKTOP_MAX_VISIBLE_CATEGORIES}</span>
               </span>
             </span>
             <span className="text-xs leading-tight text-center text-muted-foreground">More</span>
