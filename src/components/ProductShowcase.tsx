@@ -168,14 +168,19 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
         {hasMore && !showAll && (
           <button
             onClick={() => setShowAll(true)}
-            className="group flex flex-col items-center gap-1.5 shrink-0 w-16 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl xl:hidden"
+            className={`group flex flex-col items-center gap-1.5 shrink-0 w-16 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl ${
+              categories.length <= DESKTOP_XL_FIT_CATEGORIES ? "xl:hidden" : ""
+            }`}
             aria-label="Show more categories"
           >
             <span className="w-14 h-14 md:w-16 md:h-16 rounded-full shrink-0 bg-muted/60 border border-border/40 flex items-center justify-center text-primary transition-colors duration-200 group-hover:bg-muted">
               <span className="text-sm font-semibold">
-                {/* Count differs per breakpoint: 6 visible on mobile, 8 on lg+ */}
+                {/* Count differs per breakpoint: 6 visible on mobile, 8 on lg, 12 on xl */}
                 <span className="lg:hidden">+{categories.length - MAX_VISIBLE_CATEGORIES}</span>
-                <span className="hidden lg:inline">+{categories.length - DESKTOP_MAX_VISIBLE_CATEGORIES}</span>
+                <span className="hidden lg:inline xl:hidden">
+                  +{categories.length - DESKTOP_MAX_VISIBLE_CATEGORIES}
+                </span>
+                <span className="hidden xl:inline">+{categories.length - DESKTOP_XL_FIT_CATEGORIES}</span>
               </span>
             </span>
             <span className="text-xs leading-tight text-center text-muted-foreground">More</span>
