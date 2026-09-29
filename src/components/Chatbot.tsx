@@ -29,12 +29,14 @@ function getWhatsAppUrl(message: string) {
 async function streamChat({
   messages,
   action,
+  pageContext,
   onDelta,
   onDone,
   onError,
 }: {
   messages: Message[];
   action?: string;
+  pageContext?: string;
   onDelta: (text: string) => void;
   onDone: () => void;
   onError: (err: string) => void;
@@ -46,7 +48,7 @@ async function streamChat({
         "Content-Type": "application/json",
         Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
       },
-      body: JSON.stringify({ messages, action }),
+      body: JSON.stringify({ messages, action, pageContext }),
     });
 
     if (!resp.ok) {
@@ -234,6 +236,9 @@ const Chatbot = () => {
     streamChat({
       messages: [...messages, userMsg],
       action,
+      pageContext: pageContext.type === "product"
+        ? `Product page: ${pageContext.name} (${location.pathname})`
+        : `${pageContext.type} page: ${location.pathname}`,
       onDelta: upsertAssistant,
       onDone: () => setIsLoading(false),
       onError: (err) => {
@@ -272,17 +277,26 @@ const Chatbot = () => {
     <>
       {/* Floating button — subtle, non-distracting */}
       {showButton && (
-        <Button
-          onClick={() => {
-            setIsOpen(!isOpen);
-            if (!isOpen) trackEvent("chatbot_opened", { page: location.pathname });
-          }}
-          size="icon"
-          className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full shadow-md hover:shadow-lg bg-primary/85 hover:bg-primary text-primary-foreground transition-all duration-300 opacity-80 hover:opacity-100 animate-fade-in"
-          aria-label={isOpen ? "Close assistant" : "Open assistant"}
-        >
-          {isOpen ? <X className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
-        </Button>
+        <div className="fixed bottom-6 right-6 z-50 animate-fade-in">
+          <Button
+            onClick={() => {
+              setIsOpen(!isOpen);
+              if (!isOpen) trackEvent("chatbot_opened", { page: location.pathname });
+            }}
+            size="icon"
+            className="w-12 h-12 rounded-full shadow-md hover:shadow-lg bg-primary/85 hover:bg-primary text-primary-foreground transition-all duration-300 opacity-80 hover:opacity-100"
+            aria-label={isOpen ? "Close assistant" : "Open assistant"}
+          >
+            {isOpen ? <X className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
+          </Button>
+          {!isOpen && (
+            <span className="pointer-events-none absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center">
+              <span className="absolute h-3.5 w-3.5 rounded-full bg-emerald-400/70 animate-ping" />
+              <span className="relative h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-background" />
+              <span className="sr-only">We are online</span>
+            </span>
+          )}
+        </div>
       )}
 
       {isOpen && (
@@ -290,12 +304,22 @@ const Chatbot = () => {
           {/* Header */}
           <div className="bg-gradient-to-r from-primary to-primary/80 p-4 rounded-t-2xl text-primary-foreground">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+              <div className="relative w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
                 <Sparkles className="w-5 h-5" />
+                <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center">
+                  <span className="absolute h-3.5 w-3.5 rounded-full bg-emerald-400/70 animate-ping" />
+                  <span className="relative h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-primary" />
+                </span>
               </div>
               <div className="flex-1">
                 <h3 className="font-bold text-sm">BF SUMA Royal Assistant</h3>
-                <p className="text-xs text-primary-foreground/70">Need help? Chat with us or get a free consultation</p>
+                <p className="text-xs text-primary-foreground/80 flex items-center gap-1.5">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+                  </span>
+                  Online now, instant replies
+                </p>
               </div>
             </div>
           </div>
