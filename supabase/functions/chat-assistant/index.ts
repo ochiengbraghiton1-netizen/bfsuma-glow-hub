@@ -77,28 +77,95 @@ serve(async (req) => {
       .select("section_key, title, content")
       .limit(20);
 
+    // Live promotions
+    const nowIso = new Date().toISOString();
+    const { data: promotions } = await supabase
+      .from("promotions")
+      .select("code, name, description, discount_type, discount_value, min_order_amount, start_date, end_date")
+      .eq("is_active", true)
+      .limit(10);
+
+    // Live leadership / team profiles
+    const { data: team } = await supabase
+      .from("team_profiles")
+      .select("name, role, bio")
+      .eq("is_active", true)
+      .order("display_order")
+      .limit(10);
+
     const productList = (products || []).map(p => `- ${p.name}: KSh ${Number(p.price).toLocaleString()} — ${p.benefit || 'Premium wellness supplement'}`).join("\n");
     const categoryList = (categories || []).map(c => c.name).join(", ");
+
+    const activePromos = (promotions || []).filter(p => {
+      const startsOk = !p.start_date || p.start_date <= nowIso;
+      const endsOk = !p.end_date || p.end_date >= nowIso;
+      return startsOk && endsOk;
+    });
+    const promoList = activePromos.length
+      ? activePromos.map(p => {
+          const value = p.discount_type === "percentage"
+            ? `${Number(p.discount_value)}% off`
+            : `KSh ${Number(p.discount_value).toLocaleString()} off`;
+          const min = p.min_order_amount ? ` (minimum order KSh ${Number(p.min_order_amount).toLocaleString()})` : "";
+          return `- Code ${p.code}: ${p.name} — ${value}${min}`;
+        }).join("\n")
+      : "No active promotions right now.";
+
+    const teamList = (team || []).length
+      ? (team || []).map(t => `- ${t.name}, ${t.role}${t.bio ? `: ${t.bio}` : ""}`).join("\n")
+      : "Local mentorship team based in Kakamega, Kenya.";
+
+    const siteContentList = (siteContent || [])
+      .map(s => `- ${s.title || s.section_key}: ${(s.content || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().slice(0, 400)}`)
+      .join("\n");
+
+    const contextLine = typeof pageContext === "string" && pageContext.trim().length > 0
+      ? `\nVISITOR IS CURRENTLY ON THIS PAGE: ${pageContext.trim().slice(0, 200)}\nTailor your answer to that page when it is relevant.\n`
+      : "";
 
     const systemPrompt = `You are the BF SUMA Royal website assistant. You help visitors learn about wellness products, pricing, and the BF SUMA business opportunity.
 
 BUSINESS INFO:
 - Name: BF SUMA Royal
-- Location: Kakamega, Kenya
+- Location: Kakamega, Kenya (serving all 47 counties)
 - Phone/WhatsApp: +254 795 454053
 - Email: bfsumaroyal@gmail.com
 - Website: bfsumaroyal.com
-
+${contextLine}
 PRODUCT CATALOG (current prices in KSh):
 ${productList}
 
 CATEGORIES: ${categoryList}
 
+ACTIVE PROMOTIONS:
+${promoList}
+
+LEADERSHIP AND MENTORSHIP TEAM:
+${teamList}
+
+SITE CONTENT:
+${siteContentList}
+
+BUSINESS OPPORTUNITY (accurate official details):
+- Joining costs KES 7,000 in total: a KES 3,000 Starter Kit (wellness guide, product overview, branded bag, starter product) plus KES 4,000 Product Activation, which is about 20 PV of real stock you can use yourself or sell. The KES 4,000 is stock, not a fee.
+- Day-One advantage: because activation gives about 20 PV, a new member starts at 2 Star with a 5% Overriding Performance Bonus.
+- Star progression: 1 Star (starter kit), 2 Star (CGV 0+, personal 20 PV+, 5%), 3 Star (CGV 300+, 20 PV+, 9%), 4 Star (1,000+, 30 PV+, 13%), 5 Star (5,000+, 40 PV+, 17%), 6 Star (8,000+, 50 PV+, 22%), 7 Star (12,000+, 50 PV+, 28%). Leader ranks run Silver Leader through Senior Crown Leader with Leader Development Bonus from 5% up to 25%.
+- Eight earning routes: retail profit (about 20%), Overriding Performance Bonus (up to 28%), Leader Development Bonus (up to 25%), Leadership Status Bonus (6.5%), Leader Growth Bonus (3%), National Performance Fund (7.5%, includes the 4 Star and 7 Star Special Support), Senior Special Status Bonus (up to 6%), plus Trip and Car Awards.
+- First cash milestone: the US$50 4 Star Special Support Award, typically reached in about 60 to 90 days with consistent activity.
+- Glossary: PV is Point Value, PPV is personal point value, CGV is cumulative group volume, PGV is personal group volume.
+- Members must stay active each month to qualify for bonuses. Results vary by effort; never promise guaranteed income.
+- Mentorship and onboarding happen locally in Kakamega and over WhatsApp.
+
+ORDERS, DELIVERY AND RETURNS:
+- Orders are completed over WhatsApp (+254 795 454053) with M-Pesa, or by card through the secure PayPal option on the site.
+- Delivery: same day in Kakamega and Nairobi where possible, typically 24 to 48 hours to other counties. Shipping fees depend on the delivery location and are shown at checkout.
+- Returns: unopened, sealed products in original packaging can be exchanged or credited within 72 hours of delivery. Opened supplements cannot be returned for hygiene and safety reasons.
+
 GUIDELINES:
 - Be professional, warm, and helpful.
-- Always reference actual products and prices from the catalog above.
-- For business opportunity inquiries, explain that BF SUMA Royal offers a distributor program where members earn PV (Point Value), commissions, bonuses, and rewards by selling health supplements.
-- Direct users to WhatsApp (+254 795 454053) for personalized assistance.
+- Always reference actual products, prices, and promotions from the live data above.
+- Use the business opportunity, delivery, and returns details above exactly; never invent figures.
+- Direct users to WhatsApp (+254 795 454053) for personalized assistance or to place an order.
 - Keep responses concise (2-4 sentences) unless the user asks for detail.
 - Never mention competitor products or make medical claims.
 - Do NOT include any medical disclaimers in your responses. Focus on benefits and helping the customer.
