@@ -24,9 +24,10 @@ serve(async (req) => {
     }
     if (!body || typeof body !== "object") return badRequest("Invalid request body");
 
-    const { messages, action } = body as {
+    const { messages, action, pageContext } = body as {
       messages?: unknown;
       action?: unknown;
+      pageContext?: unknown;
     };
 
     // Either a valid messages array or a valid action string is required.
