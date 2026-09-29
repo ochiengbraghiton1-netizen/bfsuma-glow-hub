@@ -52,6 +52,8 @@ const productImageMap: Record<string, string> = {
 const MAX_VISIBLE_CATEGORIES = 6;
 /** Collapsed desktop row shows this many categories before the "+N More" tile (must keep the row within md/lg widths). */
 const DESKTOP_MAX_VISIBLE_CATEGORIES = 8;
+/** Categories that fit on one collapsed line at xl (1280px+): 12 categories + "All". */
+const DESKTOP_XL_FIT_CATEGORIES = 12;
 
 interface CategoryPillsProps {
   categories: { id: string; slug: string; name: string; imageUrl?: string | null }[];
@@ -136,7 +138,9 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
           // Never rely on overflow clipping on desktop — extras stay hidden until expanded.
           const collapsedExtra = !showAll && index >= MAX_VISIBLE_CATEGORIES;
           const visibility = !showAll && index >= DESKTOP_MAX_VISIBLE_CATEGORIES
-            ? "hidden xl:flex"
+            ? index < DESKTOP_XL_FIT_CATEGORIES
+              ? "hidden xl:flex"
+              : "hidden"
             : collapsedExtra
               ? "hidden lg:flex"
               : "flex";
