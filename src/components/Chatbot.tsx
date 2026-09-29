@@ -274,17 +274,26 @@ const Chatbot = () => {
     <>
       {/* Floating button — subtle, non-distracting */}
       {showButton && (
-        <Button
-          onClick={() => {
-            setIsOpen(!isOpen);
-            if (!isOpen) trackEvent("chatbot_opened", { page: location.pathname });
-          }}
-          size="icon"
-          className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full shadow-md hover:shadow-lg bg-primary/85 hover:bg-primary text-primary-foreground transition-all duration-300 opacity-80 hover:opacity-100 animate-fade-in"
-          aria-label={isOpen ? "Close assistant" : "Open assistant"}
-        >
-          {isOpen ? <X className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
-        </Button>
+        <div className="fixed bottom-6 right-6 z-50 animate-fade-in">
+          <Button
+            onClick={() => {
+              setIsOpen(!isOpen);
+              if (!isOpen) trackEvent("chatbot_opened", { page: location.pathname });
+            }}
+            size="icon"
+            className="w-12 h-12 rounded-full shadow-md hover:shadow-lg bg-primary/85 hover:bg-primary text-primary-foreground transition-all duration-300 opacity-80 hover:opacity-100"
+            aria-label={isOpen ? "Close assistant" : "Open assistant"}
+          >
+            {isOpen ? <X className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
+          </Button>
+          {!isOpen && (
+            <span className="pointer-events-none absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center">
+              <span className="absolute h-3.5 w-3.5 rounded-full bg-emerald-400/70 animate-ping" />
+              <span className="relative h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-background" />
+              <span className="sr-only">We are online</span>
+            </span>
+          )}
+        </div>
       )}
 
       {isOpen && (
