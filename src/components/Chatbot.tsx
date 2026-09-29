@@ -236,6 +236,9 @@ const Chatbot = () => {
     streamChat({
       messages: [...messages, userMsg],
       action,
+      pageContext: pageContext.type === "product"
+        ? `Product page: ${pageContext.name} (${location.pathname})`
+        : `${pageContext.type} page: ${location.pathname}`,
       onDelta: upsertAssistant,
       onDone: () => setIsLoading(false),
       onError: (err) => {
