@@ -169,7 +169,11 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
           <button
             onClick={() => setShowAll(true)}
             className={`group flex flex-col items-center gap-1.5 shrink-0 w-16 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl ${
-              categories.length <= DESKTOP_XL_FIT_CATEGORIES ? "xl:hidden" : ""
+              categories.length <= DESKTOP_MAX_VISIBLE_CATEGORIES
+                ? "lg:hidden"
+                : categories.length <= DESKTOP_XL_FIT_CATEGORIES
+                  ? "xl:hidden"
+                  : ""
             }`}
             aria-label="Show more categories"
           >
