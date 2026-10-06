@@ -10,3 +10,5 @@
 - [x] Consolidate wellness hubs onto the shared media block and verify all three surfaces.
 - [x] Show every category icon on desktop while preserving mobile overflow controls.
 - [x] Verify desktop sticky spacing and mobile category behavior across requested widths.
+- [x] Hide the desktop "+N More" category tile whenever every category already fits at that width.
+- [x] Measure the sticky toolbar height against the sidebar sticky offset at 1024/1280/1440.
