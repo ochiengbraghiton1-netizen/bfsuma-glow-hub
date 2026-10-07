@@ -159,7 +159,8 @@ All colors MUST be HSL.
 }
 
 html, body {
-  overflow-x: hidden;
+  /* Clip horizontal bleed without creating a scroll container that traps sticky descendants. */
+  overflow-x: clip;
   width: 100%;
 }
 

@@ -12,3 +12,5 @@
 - [x] Verify desktop sticky spacing and mobile category behavior across requested widths.
 - [x] Hide the desktop "+N More" category tile whenever every category already fits at that width.
 - [x] Measure the sticky toolbar height against the sidebar sticky offset at 1024/1280/1440.
+- [x] Restore document sticky positioning and derive shop sidebar clearance from the live toolbar height.
+- [x] Verify pinned shop controls at desktop/mobile widths and horizontal clipping on home, shop, wellness, and the mobile menu.

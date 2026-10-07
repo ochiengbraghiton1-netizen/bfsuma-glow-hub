@@ -223,6 +223,22 @@ const ProductShowcase = () => {
   const [sortOption, setSortOption] = useState<SortOption>(savedState?.sortOption ?? "featured");
   const [filters, setFilters] = useState<FilterState>(() => normalizeFilters(savedState?.filters));
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
+
+  // Include the fixed header and the live toolbar height, including expanded categories.
+  useEffect(() => {
+    const section = sectionRef.current;
+    const toolbar = toolbarRef.current;
+    if (!section || !toolbar) return;
+    const updateToolbarHeight = () => {
+      section.style.setProperty("--shop-toolbar-height", `${toolbar.getBoundingClientRect().height}px`);
+    };
+    updateToolbarHeight();
+    const observer = new ResizeObserver(updateToolbarHeight);
+    observer.observe(toolbar);
+    return () => observer.disconnect();
+  }, [error]);
 
   // Persist catalog state so returning from a product page restores filters
   useEffect(() => {
@@ -351,7 +367,7 @@ const ProductShowcase = () => {
   }
 
   return (
-    <section id="products" className="py-24 bg-background">
+    <section ref={sectionRef} id="products" className="py-24 bg-background">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-12 animate-fade-in">
@@ -366,7 +382,7 @@ const ProductShowcase = () => {
         </div>
 
         {/* Sticky Search Bar & Category Filters */}
-        <div className="sticky top-16 z-40 bg-background/95 backdrop-blur-md py-4 mb-8 border-b border-border/20 -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 md:rounded-xl">
+        <div ref={toolbarRef} className="sticky top-[var(--header-height)] z-40 bg-background/95 backdrop-blur-md py-4 mb-8 border-b border-border/20 -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 md:rounded-xl">
           {/* Search Bar */}
           <div className="max-w-xl mx-auto mb-6">
             <div className="relative">
@@ -422,7 +438,7 @@ const ProductShowcase = () => {
         <div className="flex gap-8">
           {/* Desktop Filter Sidebar */}
           <aside className="hidden lg:block w-64 shrink-0">
-            <div className="sticky top-52 bg-card border border-border/50 rounded-2xl p-5">
+            <div className="lg:sticky lg:top-[calc(var(--header-height)+var(--shop-toolbar-height,279px)+1rem)] bg-card border border-border/50 rounded-2xl p-5">
               <h3 className="font-semibold text-foreground mb-4 text-sm uppercase tracking-wider">
                 Filters
               </h3>
