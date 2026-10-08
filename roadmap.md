@@ -1,5 +1,8 @@
 # Roadmap
 
+- [x] Compact phone shop search/categories and place the single Filters/Sort row outside the phone sticky area.
+- [x] Verify phone card visibility, working controls, and unchanged desktop sticky geometry.
+
 - [x] Add category visual-story editing for existing categories.
 - [x] Render all seven optional visual-story slots on category detail pages.
 - [x] Verify zero-media and temporary seven-slot states on desktop and mobile.

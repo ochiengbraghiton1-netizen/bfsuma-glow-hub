@@ -17,6 +17,7 @@ import ProductFilters, {
   MobileFilterButton,
 } from "./products/ProductFilters";
 import { useProducts, formatPrice, DatabaseProduct, getStockStatus } from "@/hooks/use-products";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Product image imports
 import nmnCapsules from "@/assets/products/nmn-capsules.webp";
@@ -93,17 +94,17 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
   const hasMore = categories.length > MAX_VISIBLE_CATEGORIES;
 
   const circleClasses = (active: boolean) =>
-    `w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden shrink-0 transition-all duration-200 ${
+    `w-10 h-10 md:w-16 md:h-16 rounded-full overflow-hidden shrink-0 transition-all duration-200 ${
       active
         ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
         : "ring-1 ring-border/60 group-hover:ring-primary/40"
     }`;
 
   return (
-    <div className="mb-6">
+    <div className="mb-0 md:mb-6">
       <div
         ref={scrollRef}
-        className={`flex gap-3 md:gap-4 scrollbar-hide pb-2 -mx-1 px-1 ${
+        className={`flex gap-2 md:gap-4 scrollbar-hide py-1 md:pt-0 md:pb-2 -mx-1 px-1 ${
           showAll
             ? "flex-wrap overflow-x-auto md:overflow-visible md:justify-center"
             : "overflow-x-auto md:flex-nowrap md:overflow-hidden"
@@ -113,7 +114,7 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
         {/* All — icon circle, not a real category */}
         <button
           onClick={() => onSelect("all")}
-          className="group flex flex-col items-center gap-1.5 shrink-0 w-16 md:w-[72px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl"
+          className="group flex flex-col items-center gap-0.5 md:gap-1.5 shrink-0 w-11 md:w-[72px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl"
           aria-pressed={activeCategory === "all"}
         >
           <span
@@ -124,7 +125,7 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
             <LayoutGrid className="h-5 w-5" />
           </span>
           <span
-            className={`text-xs leading-tight text-center ${
+            className={`text-[10px] md:text-xs leading-tight md:leading-tight text-center ${
               activeCategory === "all" ? "text-foreground font-semibold" : "text-muted-foreground"
             }`}
           >
@@ -148,14 +149,14 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
             <button
               key={cat.id}
               onClick={() => onSelect(cat.slug)}
-              className={`group flex-col items-center gap-1.5 shrink-0 w-16 md:w-[72px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl ${visibility}`}
+              className={`group flex-col items-center gap-0.5 md:gap-1.5 shrink-0 w-11 md:w-[72px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl ${visibility}`}
               aria-pressed={active}
             >
               <span className={circleClasses(active)}>
                 <CategoryAvatar name={cat.name} imageUrl={cat.imageUrl} />
               </span>
               <span
-                className={`text-xs leading-tight text-center line-clamp-2 ${
+                className={`w-full truncate md:w-auto md:whitespace-normal md:line-clamp-2 text-[10px] md:text-xs leading-tight md:leading-tight text-center ${
                   active ? "text-foreground font-semibold" : "text-muted-foreground"
                 }`}
               >
@@ -168,7 +169,7 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
         {hasMore && !showAll && (
           <button
             onClick={() => setShowAll(true)}
-            className={`group flex flex-col items-center gap-1.5 shrink-0 w-16 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl ${
+            className={`group flex flex-col items-center gap-0.5 md:gap-1.5 shrink-0 w-11 md:w-16 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl ${
               categories.length <= DESKTOP_MAX_VISIBLE_CATEGORIES
                 ? "lg:hidden"
                 : categories.length <= DESKTOP_XL_FIT_CATEGORIES
@@ -177,7 +178,7 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
             }`}
             aria-label="Show more categories"
           >
-            <span className="w-14 h-14 md:w-16 md:h-16 rounded-full shrink-0 bg-muted/60 border border-border/40 flex items-center justify-center text-primary transition-colors duration-200 group-hover:bg-muted">
+            <span className="w-10 h-10 md:w-16 md:h-16 rounded-full shrink-0 bg-muted/60 border border-border/40 flex items-center justify-center text-primary transition-colors duration-200 group-hover:bg-muted">
               <span className="text-sm font-semibold">
                 {/* Count differs per breakpoint: 6 visible on mobile, 8 on lg, 12 on xl */}
                 <span className="lg:hidden">+{categories.length - MAX_VISIBLE_CATEGORIES}</span>
@@ -187,19 +188,19 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
                 <span className="hidden xl:inline">+{categories.length - DESKTOP_XL_FIT_CATEGORIES}</span>
               </span>
             </span>
-            <span className="text-xs leading-tight text-center text-muted-foreground">More</span>
+            <span className="text-[10px] md:text-xs leading-tight md:leading-tight text-center text-muted-foreground">More</span>
           </button>
         )}
         {showAll && hasMore && (
           <button
             onClick={() => setShowAll(false)}
-            className="group flex flex-col items-center gap-1.5 shrink-0 w-16 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl"
+            className="group flex flex-col items-center gap-0.5 md:gap-1.5 shrink-0 w-11 md:w-16 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl"
             aria-label="Show fewer categories"
           >
-            <span className="w-14 h-14 md:w-16 md:h-16 rounded-full shrink-0 bg-muted/60 border border-border/40 flex items-center justify-center text-muted-foreground transition-colors duration-200 group-hover:bg-muted">
+            <span className="w-10 h-10 md:w-16 md:h-16 rounded-full shrink-0 bg-muted/60 border border-border/40 flex items-center justify-center text-muted-foreground transition-colors duration-200 group-hover:bg-muted">
               <ChevronUp className="h-5 w-5" />
             </span>
-            <span className="text-xs leading-tight text-center text-muted-foreground">Less</span>
+            <span className="text-[10px] md:text-xs leading-tight md:leading-tight text-center text-muted-foreground">Less</span>
           </button>
         )}
       </div>
@@ -209,6 +210,7 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
 
 const ProductShowcase = () => {
   const { products, categories, isLoading, error } = useProducts();
+  const isMobile = useIsMobile();
   const [selectedProduct, setSelectedProduct] = useState<DatabaseProduct | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const savedState = (() => {
@@ -356,6 +358,29 @@ const ProductShowcase = () => {
     return productImageMap[product.name] || undefined;
   };
 
+  // One controls row, placed in scrolling content on phones and inside the toolbar otherwise.
+  const sortAndFilterControls = (
+    <div className="flex items-center justify-between gap-3 max-md:flex-wrap" data-shop-controls>
+      <div className="flex items-center gap-2 max-md:flex-wrap">
+        <MobileFilterButton
+          activeCount={activeFilterCount}
+          onClick={() => setMobileFiltersOpen(true)}
+        />
+        {activeFilterCount > 0 && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span className="bg-primary/10 text-primary px-2.5 py-1 rounded-full text-xs font-medium">
+              {activeFilterCount} filter{activeFilterCount !== 1 ? "s" : ""} applied
+            </span>
+            <button onClick={clearFilters} className="text-destructive hover:underline text-xs">
+              Clear all
+            </button>
+          </div>
+        )}
+      </div>
+      <ProductSortDropdown value={sortOption} onChange={setSortOption} />
+    </div>
+  );
+
   if (error) {
     return (
       <section id="products" className="py-20 bg-background">
@@ -382,9 +407,9 @@ const ProductShowcase = () => {
         </div>
 
         {/* Sticky Search Bar & Category Filters */}
-        <div ref={toolbarRef} className="sticky top-[var(--header-height)] z-40 bg-background/95 backdrop-blur-md py-4 mb-8 border-b border-border/20 -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 md:rounded-xl">
+        <div ref={toolbarRef} className="sticky top-[var(--header-height)] z-40 bg-background/95 backdrop-blur-md py-2 md:py-4 mb-2 md:mb-8 border-b border-border/20 -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 md:rounded-xl">
           {/* Search Bar */}
-          <div className="max-w-xl mx-auto mb-6">
+          <div className="max-w-xl mx-auto mb-2 md:mb-6">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
@@ -392,7 +417,7 @@ const ProductShowcase = () => {
                 placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 pr-4 py-6 rounded-full border-border/50 bg-card focus:ring-2 focus:ring-primary/20"
+                className="pl-12 pr-4 h-10 py-2 md:py-6 rounded-full border-border/50 bg-card focus:ring-2 focus:ring-primary/20"
               />
             </div>
           </div>
@@ -410,29 +435,10 @@ const ProductShowcase = () => {
           />
 
           {/* Sort + Filter Controls */}
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <MobileFilterButton
-                activeCount={activeFilterCount}
-                onClick={() => setMobileFiltersOpen(true)}
-              />
-              {activeFilterCount > 0 && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <span className="bg-primary/10 text-primary px-2.5 py-1 rounded-full text-xs font-medium">
-                    {activeFilterCount} filter{activeFilterCount !== 1 ? "s" : ""} applied
-                  </span>
-                  <button
-                    onClick={clearFilters}
-                    className="text-destructive hover:underline text-xs"
-                  >
-                    Clear all
-                  </button>
-                </div>
-              )}
-            </div>
-            <ProductSortDropdown value={sortOption} onChange={setSortOption} />
-          </div>
+          {!isMobile && sortAndFilterControls}
         </div>
+
+        {isMobile && <div className="mb-8">{sortAndFilterControls}</div>}
 
         {/* Main Content: Sidebar + Grid */}
         <div className="flex gap-8">
