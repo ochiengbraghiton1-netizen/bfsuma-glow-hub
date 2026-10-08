@@ -125,7 +125,7 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
             <LayoutGrid className="h-5 w-5" />
           </span>
           <span
-            className={`text-[10px] md:text-xs leading-tight text-center ${
+            className={`text-[10px] md:text-xs leading-tight md:leading-tight text-center ${
               activeCategory === "all" ? "text-foreground font-semibold" : "text-muted-foreground"
             }`}
           >
@@ -156,7 +156,7 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
                 <CategoryAvatar name={cat.name} imageUrl={cat.imageUrl} />
               </span>
               <span
-                className={`w-full truncate md:w-auto md:whitespace-normal md:line-clamp-2 text-[10px] md:text-xs leading-tight text-center ${
+                className={`w-full truncate md:w-auto md:whitespace-normal md:line-clamp-2 text-[10px] md:text-xs leading-tight md:leading-tight text-center ${
                   active ? "text-foreground font-semibold" : "text-muted-foreground"
                 }`}
               >
@@ -188,7 +188,7 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
                 <span className="hidden xl:inline">+{categories.length - DESKTOP_XL_FIT_CATEGORIES}</span>
               </span>
             </span>
-            <span className="text-[10px] md:text-xs leading-tight text-center text-muted-foreground">More</span>
+            <span className="text-[10px] md:text-xs leading-tight md:leading-tight text-center text-muted-foreground">More</span>
           </button>
         )}
         {showAll && hasMore && (
@@ -200,7 +200,7 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
             <span className="w-10 h-10 md:w-16 md:h-16 rounded-full shrink-0 bg-muted/60 border border-border/40 flex items-center justify-center text-muted-foreground transition-colors duration-200 group-hover:bg-muted">
               <ChevronUp className="h-5 w-5" />
             </span>
-            <span className="text-[10px] md:text-xs leading-tight text-center text-muted-foreground">Less</span>
+            <span className="text-[10px] md:text-xs leading-tight md:leading-tight text-center text-muted-foreground">Less</span>
           </button>
         )}
       </div>
