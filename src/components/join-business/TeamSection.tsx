@@ -9,22 +9,24 @@ export interface TeamProfile {
   bio: string | null;
   display_order: number;
   is_active: boolean;
+  profile_group: 'leadership' | 'champion';
 }
 
 const initials = (name: string) =>
   name.split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0]?.toUpperCase()).join('');
 
-const TeamSection = () => {
+const TeamSection = ({ group = 'leadership' }: { group?: 'leadership' | 'champion' }) => {
   const [profiles, setProfiles] = useState<TeamProfile[]>([]);
 
   useEffect(() => {
     (supabase as any)
       .from('team_profiles')
-      .select('id,name,role,photo_url,bio,display_order,is_active')
+      .select('id,name,role,photo_url,bio,display_order,is_active,profile_group')
       .eq('is_active', true)
+      .eq('profile_group', group)
       .order('display_order', { ascending: true })
       .then(({ data }: { data: TeamProfile[] | null }) => setProfiles(data || []));
-  }, []);
+  }, [group]);
 
   if (!profiles.length) return null;
 

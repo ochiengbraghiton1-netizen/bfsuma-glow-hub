@@ -15,7 +15,7 @@ import { BUSINESS_CONTENT_TYPE, JOIN_BUSINESS_CONTENT_ID } from '@/hooks/use-bus
 import type { TeamProfile } from '@/components/join-business/TeamSection';
 
 type FormState = Omit<TeamProfile, 'id'>;
-const empty: FormState = { name: '', role: '', photo_url: null, bio: '', display_order: 0, is_active: true };
+const empty: FormState = { name: '', role: '', photo_url: null, bio: '', display_order: 0, is_active: true, profile_group: 'leadership' };
 
 const TeamProfiles = () => {
   const { toast } = useToast();
@@ -119,6 +119,7 @@ const TeamProfiles = () => {
                   <p className="font-medium truncate">{p.name} {!p.is_active && <span className="text-xs text-muted-foreground">(hidden)</span>}</p>
                   <p className="text-sm text-muted-foreground truncate">{p.role}</p>
                 </div>
+                <span className={`text-xs px-2 py-0.5 rounded-full border ${p.profile_group === 'champion' ? 'border-primary text-primary' : 'border-border text-muted-foreground'}`}>{p.profile_group === 'champion' ? 'Champion' : 'Leadership'}</span>
                 <span className="text-xs text-muted-foreground">#{p.display_order}</span>
                 <Button size="icon" variant="ghost" onClick={() => openEdit(p)} aria-label={`Edit ${p.name}`}><Pencil className="h-4 w-4" /></Button>
                 <Button size="icon" variant="ghost" onClick={() => remove(p)} aria-label={`Delete ${p.name}`}><Trash2 className="h-4 w-4" /></Button>
@@ -155,6 +156,19 @@ const TeamProfiles = () => {
                 </Button>
                 {form.photo_url && <Button type="button" variant="ghost" size="icon" onClick={() => setForm({ ...form, photo_url: null })} aria-label="Remove photo"><X className="h-4 w-4" /></Button>}
               </div>
+            </div>
+            <div>
+              <Label htmlFor="tp-group">Group</Label>
+              <select
+                id="tp-group"
+                required
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={form.profile_group}
+                onChange={(e) => setForm({ ...form, profile_group: e.target.value as 'leadership' | 'champion' })}
+              >
+                <option value="leadership">Leadership</option>
+                <option value="champion">Champion</option>
+              </select>
             </div>
             <div><Label htmlFor="tp-order">Display order</Label><Input id="tp-order" type="number" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: Number(e.target.value) || 0 })} /></div>
             <div className="flex items-center justify-between"><Label htmlFor="tp-active">Active (shown on site)</Label><Switch id="tp-active" checked={form.is_active} onCheckedChange={(v) => setForm({ ...form, is_active: v })} /></div>

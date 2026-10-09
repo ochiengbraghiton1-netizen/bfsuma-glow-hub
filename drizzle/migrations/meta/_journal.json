@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791534701049,
+      "tag": "0000_add_profile_group_to_team_profiles",
+      "breakpoints": true
+    }
+  ]
+}
