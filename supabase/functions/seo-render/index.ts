@@ -1,4 +1,4 @@
-// Last deployed: 2026-09-22
+// Last deployed: 2026-10-09
 // SEO renderer: fetches the static SPA shell (index.html) and rewrites
 // per-route <title>, meta, canonical, OG/Twitter, JSON-LD and the visible
 // SEO fallback block so crawlers receive unique signals on the first byte.
@@ -80,11 +80,11 @@ const staticMeta: Record<string, Omit<Meta, "canonical">> = {
     body: `<p>Helping Kenyans feel better naturally with supplements for joint pain, low energy, bloating, hormonal balance and sleep. GMP, ISO 22000 and Halal certified, with free WhatsApp guidance and delivery across Kenya.</p>`,
   },
   "/about": {
-    title: "About BF SUMA Royal Kenya | Our Journey Since 2006",
+    title: "About BF SUMA Royal Kenya | Authorized BF Suma Distributor",
     description:
-      "Discover BF SUMA Royal's journey from Los Angeles (2006) to a global wellness brand in 15+ countries. GMP, ISO, and Halal certified supplements.",
+      "Learn about BF SUMA ROYAL Kenya, an authorized BF Suma distributor based in Kakamega since 2018, offering certified products and wellness guidance.",
     h1: "About BF SUMA Royal Kenya",
-    body: `<p>Founded in Los Angeles in 2006, BF SUMA Royal is a global wellness brand serving 15+ countries. Our supplements are GMP, ISO 22000, Halal and FDA certified.</p>`,
+    body: `<p>BF SUMA Royal is an authorized independent distributor of BF Suma, a global health and wellness company founded in 2006 in Los Angeles. Based in Kakamega since 2018, we bring Kenyan families GMP, ISO 22000, Halal and FDA certified supplements, with free WhatsApp guidance.</p>`,
   },
   "/join-business": {
     title: "Join BF SUMA Royal Business Kenya | Earn with Wellness",
@@ -126,7 +126,7 @@ const staticMeta: Record<string, Omit<Meta, "canonical">> = {
     description:
       "Real testimonials and success stories from BF SUMA Royal users in Kenya. See how our supplements transform health and build businesses.",
     h1: "BF SUMA Royal Community Stories",
-    body: `<p>Real wellness and business success stories from BF SUMA Royal members across Kenya — from Nairobi to Mombasa, Kakamega and beyond.</p>`,
+    body: `<p>Real wellness and business success stories from BF SUMA Royal members across Kenya, from Nairobi to Mombasa, Kakamega and beyond.</p>`,
   },
   "/products": {
     title: "Health Supplements Kenya | Shop by Category & Price | BF Suma Royal",
@@ -182,7 +182,7 @@ const cityMeta: Record<string, { title: string; description: string }> = {
   kakamega: {
     title: "Health Supplements in Kakamega Kenya | BF Suma Royal",
     description:
-      "Buy health supplements in Kakamega, Kenya — our home base. Same-day delivery! Boost energy & wellness naturally. Order via WhatsApp today!",
+      "Buy health supplements in Kakamega, Kenya, our home base. Same-day delivery! Boost energy & wellness naturally. Order via WhatsApp today!",
   },
   eldoret: {
     title: "Health Supplements in Eldoret Kenya | BF Suma Royal",
@@ -278,7 +278,7 @@ async function buildMeta(pathname: string, supabase: ReturnType<typeof createCli
     );
     const isOOS = data.track_inventory && (data.stock_quantity ?? 0) <= 0;
     const title = data.slug === "arthroxtra"
-      ? "ArthroXtra Tablets — Joint Support Supplement Kenya | BF SUMA Royal"
+      ? "ArthroXtra Tablets: Joint Support Supplement Kenya | BF SUMA Royal"
       : truncate(`Buy ${displayName} in Kenya | BF SUMA Royal`, 60);
     const whatsappUrl = buildWhatsAppUrl(`Hi BF SUMA Royal, I want to order ${displayName} from ${canonical}`);
 
@@ -549,16 +549,31 @@ async function buildMeta(pathname: string, supabase: ReturnType<typeof createCli
 
   // City pages (single-segment slug)
   const cityMatch = pathname.match(/^\/([a-z][a-z-]+)$/);
-  if (cityMatch && cityMeta[cityMatch[1]]) {
-    const c = cityMeta[cityMatch[1]];
-    const cityName = cityMatch[1].charAt(0).toUpperCase() + cityMatch[1].slice(1);
-    return {
-      title: c.title,
-      description: c.description,
-      canonical,
-      h1: `Health Supplements in ${cityName}, Kenya`,
-      body: `<p>BF SUMA Royal delivers premium natural supplements to ${escapeHtml(cityName)} and surrounding areas. Fast delivery, GMP-certified products, and dedicated local support.</p>`,
-    };
+  if (cityMatch && !staticMeta[pathname]) {
+    const slug = cityMatch[1];
+    const { data: lp } = await supabase
+      .from("location_pages")
+      .select("city_slug,hero_title,hero_description,meta_title,meta_description")
+      .eq("city_slug", slug)
+      .eq("is_published", true)
+      .maybeSingle();
+
+    const c = cityMeta[slug];
+    if (lp || c) {
+      const cityName = slug.charAt(0).toUpperCase() + slug.slice(1);
+      return {
+        title: lp?.meta_title || c?.title || `Health Supplements in ${cityName} Kenya | BF Suma Royal`,
+        description:
+          lp?.meta_description ||
+          c?.description ||
+          `Buy health supplements in ${cityName}, Kenya. Fast delivery. Order via WhatsApp!`,
+        canonical,
+        h1: lp?.hero_title || `Health Supplements in ${cityName}, Kenya`,
+        body: lp?.hero_description
+          ? `<p>${escapeHtml(lp.hero_description)}</p>`
+          : `<p>BF SUMA Royal delivers premium natural supplements to ${escapeHtml(cityName)} and surrounding areas. Fast delivery, GMP-certified products, and dedicated local support.</p>`,
+      };
+    }
   }
 
   // Static
