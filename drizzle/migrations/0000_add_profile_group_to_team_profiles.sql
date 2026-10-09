@@ -1,0 +1,2 @@
+ALTER TABLE public.team_profiles ADD COLUMN profile_group text NOT NULL DEFAULT 'leadership';
+ALTER TABLE public.team_profiles ADD CONSTRAINT team_profiles_profile_group_check CHECK (profile_group IN ('leadership','champion'));
