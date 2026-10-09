@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Search, X, ChevronUp, LayoutGrid } from "lucide-react";
+import { Search, X, ChevronUp, LayoutGrid, Check } from "lucide-react";
 import ResponsiveImage from "@/components/ui/responsive-image";
 import categoryPlaceholder from "@/assets/category-placeholder.jpg";
 import { Input } from "@/components/ui/input";
@@ -96,9 +96,19 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
   const circleClasses = (active: boolean) =>
     `w-10 h-10 md:w-16 md:h-16 rounded-full overflow-hidden shrink-0 transition-all duration-200 ${
       active
-        ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
+        ? "ring-2 ring-primary ring-offset-2 ring-offset-background scale-105"
         : "ring-1 ring-border/60 group-hover:ring-primary/40"
     }`;
+
+  /** Filled tick pinned to the circle edge — the "you are here" marker for the selected category. */
+  const ActiveTick = () => (
+    <span
+      aria-hidden="true"
+      className="absolute -bottom-0.5 -right-0.5 h-4 w-4 md:h-5 md:w-5 rounded-full bg-primary text-primary-foreground ring-2 ring-background flex items-center justify-center"
+    >
+      <Check className="h-2.5 w-2.5 md:h-3 md:w-3" strokeWidth={3} />
+    </span>
+  );
 
   return (
     <div className="mb-0 md:mb-6">
@@ -117,16 +127,23 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
           className="group flex flex-col items-center gap-0.5 md:gap-1.5 shrink-0 w-11 md:w-[72px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl"
           aria-pressed={activeCategory === "all"}
         >
-          <span
-            className={`${circleClasses(activeCategory === "all")} flex items-center justify-center ${
-              activeCategory === "all" ? "bg-primary text-primary-foreground" : "bg-muted/60 text-muted-foreground"
-            }`}
-          >
-            <LayoutGrid className="h-5 w-5" />
+          <span className="relative block w-fit mx-auto">
+            <span
+              className={`${circleClasses(activeCategory === "all")} flex items-center justify-center ${
+                activeCategory === "all"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted/60 text-muted-foreground"
+              }`}
+            >
+              <LayoutGrid className="h-5 w-5" />
+            </span>
+            {activeCategory === "all" && <ActiveTick />}
           </span>
           <span
             className={`text-[10px] md:text-xs leading-tight md:leading-tight text-center ${
-              activeCategory === "all" ? "text-foreground font-semibold" : "text-muted-foreground"
+              activeCategory === "all"
+                ? "text-primary font-semibold bg-primary/10 rounded-full px-1.5 py-0.5"
+                : "text-muted-foreground"
             }`}
           >
             All
@@ -152,12 +169,17 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
               className={`group flex-col items-center gap-0.5 md:gap-1.5 shrink-0 w-11 md:w-[72px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl ${visibility}`}
               aria-pressed={active}
             >
-              <span className={circleClasses(active)}>
-                <CategoryAvatar name={cat.name} imageUrl={cat.imageUrl} />
+              <span className="relative block w-fit mx-auto">
+                <span className={circleClasses(active)}>
+                  <CategoryAvatar name={cat.name} imageUrl={cat.imageUrl} />
+                </span>
+                {active && <ActiveTick />}
               </span>
               <span
                 className={`w-full truncate md:w-auto md:whitespace-normal md:line-clamp-2 text-[10px] md:text-xs leading-tight md:leading-tight text-center ${
-                  active ? "text-foreground font-semibold" : "text-muted-foreground"
+                  active
+                    ? "text-primary font-semibold bg-primary/10 rounded-full px-1.5 py-0.5"
+                    : "text-muted-foreground"
                 }`}
               >
                 {cat.name}
