@@ -9,6 +9,7 @@ import IncomeStreamsGraphic from '@/components/join-business/IncomeStreamsGraphi
 import SupportSystem from '@/components/join-business/SupportSystem';
 import RewardsIncentives from '@/components/join-business/RewardsIncentives';
 import LeadershipSection from '@/components/join-business/LeadershipSection';
+import ChampionsSection from '@/components/join-business/ChampionsSection';
 import WhyJoin from '@/components/join-business/WhyJoin';
 import EarningsCalculator from '@/components/join-business/EarningsCalculator';
 import JoinFAQ from '@/components/join-business/JoinFAQ';
@@ -145,6 +146,7 @@ const JoinBusiness = () => {
       <RewardsIncentives />
       <EarningsCalculator />
       <WhyJoin />
+      <ChampionsSection />
       <CTABanner />
       <JoinFAQ />
       <RegistrationFormSection onSuccess={handleRegistrationSuccess} />
