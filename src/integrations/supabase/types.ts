@@ -791,6 +791,8 @@ export type Database = {
       }
       orders: {
         Row: {
+          affiliate_id: string | null
+          agent_code: string | null
           confirmation_email_sent_at: string | null
           created_at: string
           currency: string
@@ -805,6 +807,7 @@ export type Database = {
           payment_status: string
           paypal_transaction_id: string | null
           promotion_code: string | null
+          referral_source: string | null
           shipping_address: string | null
           shipping_fee: number
           status: string
@@ -814,6 +817,8 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          affiliate_id?: string | null
+          agent_code?: string | null
           confirmation_email_sent_at?: string | null
           created_at?: string
           currency?: string
@@ -828,6 +833,7 @@ export type Database = {
           payment_status?: string
           paypal_transaction_id?: string | null
           promotion_code?: string | null
+          referral_source?: string | null
           shipping_address?: string | null
           shipping_fee?: number
           status?: string
@@ -837,6 +843,8 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          affiliate_id?: string | null
+          agent_code?: string | null
           confirmation_email_sent_at?: string | null
           created_at?: string
           currency?: string
@@ -851,6 +859,7 @@ export type Database = {
           payment_status?: string
           paypal_transaction_id?: string | null
           promotion_code?: string | null
+          referral_source?: string | null
           shipping_address?: string | null
           shipping_fee?: number
           status?: string
@@ -859,7 +868,15 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "orders_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       product_affiliate_links: {
         Row: {

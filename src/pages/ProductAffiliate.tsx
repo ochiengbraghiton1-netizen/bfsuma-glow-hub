@@ -256,7 +256,7 @@ const ProductAffiliate = () => {
               seller: { "@type": "Organization", name: "BF SUMA Royal Kenya" },
               shippingDetails: {
                 "@type": "OfferShippingDetails",
-                shippingRate: { "@type": "MonetaryAmount", value: "300", currency: "KES" },
+                shippingRate: { "@type": "MonetaryAmount", value: "200", currency: "KES" },
                 shippingDestination: { "@type": "DefinedRegion", addressCountry: "KE" },
                 deliveryTime: {
                   "@type": "ShippingDeliveryTime",
@@ -374,7 +374,7 @@ const ProductAffiliate = () => {
                   <ShoppingCart className="w-5 h-5 mr-2" />
                   {isOutOfStock ? "Out of Stock" : "Add to Cart"}
                 </Button>
-                <p className="text-xs text-muted-foreground text-center">Free shipping on orders over KSh 10,000</p>
+                <p className="text-xs text-muted-foreground text-center">Delivery: KSh 200 in Nairobi, KSh 350 outside Nairobi</p>
               </div>
             </div>
           </div>

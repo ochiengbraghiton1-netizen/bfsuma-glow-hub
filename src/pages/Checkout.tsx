@@ -1,3 +1,4 @@
+import { getAttribution } from "@/lib/attribution";
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
@@ -221,6 +222,7 @@ const Checkout = () => {
           product_id: item.id,
           quantity: item.quantity,
         })),
+        ...getAttribution(),
       },
     });
 
@@ -228,21 +230,7 @@ const Checkout = () => {
     if (data?.error) throw new Error(data.error);
 
     const newOrderId = data.order_id;
-
-    // Track affiliate conversion client-side (uses localStorage)
-    const storedRef = localStorage.getItem('bf_referral_code');
-    const refExpiry = localStorage.getItem('bf_referral_expiry');
-    if (storedRef && (!refExpiry || new Date(refExpiry) > new Date())) {
-      try {
-        await supabase.rpc('record_affiliate_conversion', {
-          p_referral_code: storedRef,
-          p_order_id: newOrderId,
-          p_order_total: data.total_amount,
-        });
-      } catch (err) {
-        console.error('Affiliate conversion tracking error:', err);
-      }
-    }
+    // Conversion + PV are recorded server-side in create-order.
 
     return newOrderId;
   };
