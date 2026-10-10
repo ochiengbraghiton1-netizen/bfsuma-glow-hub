@@ -1,3 +1,4 @@
+import { getAttribution } from "@/lib/attribution";
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
