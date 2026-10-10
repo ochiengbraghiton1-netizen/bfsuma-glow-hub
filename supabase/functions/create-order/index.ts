@@ -31,6 +31,8 @@ interface CreateOrderBody {
   payment_method: string;
   currency: string;
   items: OrderItem[];
+  affiliate_slug?: string;
+  referral_code?: string;
 }
 
 Deno.serve(async (req) => {
@@ -121,7 +123,7 @@ Deno.serve(async (req) => {
     const productIds = body.items.map((i) => i.product_id.trim());
     const { data: products, error: productsError } = await supabase
       .from("products")
-      .select("id, price, name, is_active, track_inventory, stock_quantity")
+      .select("id, price, name, is_active, track_inventory, stock_quantity, pv_value")
       .in("id", productIds);
 
     if (productsError || !products) {
@@ -263,6 +265,39 @@ Deno.serve(async (req) => {
       reserved.push({ product_id: item.product_id, quantity: item.quantity });
     }
 
+    // --- Resolve attribution server-side (never trust client IDs) ---
+    let attrAffiliateId: string | null = null;
+    let attrAgentCode: string | null = null;
+    let attrSource: "product_link" | "ref_code" | null = null;
+    const affSlug = typeof body.affiliate_slug === "string" ? body.affiliate_slug.trim().slice(0, 120) : "";
+    const refCodeIn = typeof body.referral_code === "string" ? body.referral_code.trim().slice(0, 40) : "";
+    if (affSlug) {
+      const { data: link } = await supabase
+        .from("product_affiliate_links")
+        .select("affiliate_id, agent_code")
+        .eq("slug", affSlug)
+        .eq("is_active", true)
+        .maybeSingle();
+      if (link) {
+        attrAgentCode = link.agent_code;
+        attrAffiliateId = link.affiliate_id ?? null;
+        attrSource = "product_link";
+      }
+    }
+    if (!attrSource && refCodeIn) {
+      const { data: aff } = await supabase
+        .from("affiliates")
+        .select("id")
+        .eq("referral_code", refCodeIn)
+        .eq("status", "active")
+        .maybeSingle();
+      if (aff) {
+        attrAffiliateId = aff.id;
+        attrAgentCode = refCodeIn;
+        attrSource = "ref_code";
+      }
+    }
+
     // --- Insert order ---
     const orderId = crypto.randomUUID();
     const { error: orderError } = await supabase.from("orders").insert({
@@ -283,6 +318,9 @@ Deno.serve(async (req) => {
       payment_method: paymentMethod,
       payment_status: paymentStatus,
       user_id: userId,
+      affiliate_id: attrAffiliateId,
+      agent_code: attrAgentCode,
+      referral_source: attrSource,
     });
 
     if (orderError) {
