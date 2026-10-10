@@ -313,6 +313,41 @@ Deno.serve(async (req) => {
       });
     }
 
+    // --- Distributor attribution: conversion + PV log (server-validated) ---
+    if (attrAffiliateId) {
+      try {
+        const { data: aff } = await supabase
+          .from("affiliates")
+          .select("referral_code, user_id")
+          .eq("id", attrAffiliateId)
+          .maybeSingle();
+        if (aff?.referral_code) {
+          await supabase.rpc("record_affiliate_conversion", {
+            p_referral_code: aff.referral_code,
+            p_order_id: orderId,
+            p_order_total: totalAmount,
+          });
+        }
+        if (aff?.user_id) {
+          for (const item of body.items) {
+            const pv = Number(productMap.get(item.product_id)?.pv_value ?? 0) * item.quantity;
+            if (pv > 0) {
+              await supabase.rpc("record_distributor_pv", {
+                p_distributor_user_id: aff.user_id,
+                p_product_id: item.product_id,
+                p_pv_value: pv,
+                p_order_id: orderId,
+                p_referral_type: attrSource === "product_link" ? "product_link" : "purchase",
+              });
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Attribution recording error:", e);
+      }
+    }
+
+
     // --- Consume promotion usage only after the order is fully persisted.
     // Optimistic lock on usage_count so concurrent orders cannot exceed usage_limit.
     if (promoToConsume) {
