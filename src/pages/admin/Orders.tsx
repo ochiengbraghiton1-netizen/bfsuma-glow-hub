@@ -53,7 +53,23 @@ interface Order {
   paypal_transaction_id: string | null;
   delivery_location: string | null;
   shipping_fee: number;
+  agent_code?: string | null;
+  referral_source?: string | null;
+  affiliates?: { name: string | null } | null;
 }
+
+const getAttributionBadge = (order: Order) => {
+  if (!order.agent_code) {
+    return <Badge variant="outline" className="text-xs text-muted-foreground">Direct</Badge>;
+  }
+  const name = order.affiliates?.name?.trim();
+  const label = name ? `Via ${name} (${order.agent_code})` : `Via ${order.agent_code}`;
+  return (
+    <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20 whitespace-nowrap">
+      {label}
+    </Badge>
+  );
+};
 
 const filterOptions = [
   { value: 'all', label: 'All Orders' },
@@ -115,7 +131,7 @@ const Orders = () => {
   const fetchOrders = async () => {
     let query = supabase
       .from('orders')
-      .select('*')
+      .select('*, affiliates(name)')
       .order('created_at', { ascending: false });
 
     if (activeFilter === 'paid_paypal') {
