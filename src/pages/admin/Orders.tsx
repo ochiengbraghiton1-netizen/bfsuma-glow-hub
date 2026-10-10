@@ -246,6 +246,7 @@ const Orders = () => {
                 <TableHead>Shipping</TableHead>
                 <TableHead>Total</TableHead>
                 <TableHead>Delivery</TableHead>
+                <TableHead>Source</TableHead>
                 <TableHead>Payment</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Date</TableHead>
@@ -271,6 +272,7 @@ const Orders = () => {
                       </Badge>
                     ) : '—'}
                   </TableCell>
+                  <TableCell>{getAttributionBadge(order)}</TableCell>
                   <TableCell>{getPaymentBadge(order)}</TableCell>
                   <TableCell>
                     <Badge className={statusColors[order.status] || ''} variant="outline">
