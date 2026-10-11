@@ -76,6 +76,7 @@ const DistributorDashboard = () => {
   const [selectedProduct, setSelectedProduct] = useState('');
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [onHold, setOnHold] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -128,9 +129,11 @@ const DistributorDashboard = () => {
       // Fetch affiliate links for this distributor
       const { data: affData } = await supabase
         .from('affiliates')
-        .select('id')
+        .select('id, status')
         .eq('user_id', user.id)
         .maybeSingle();
+
+      setOnHold(!!affData && affData.status !== 'active');
 
       if (affData) {
         const { data: links } = await supabase
@@ -180,7 +183,7 @@ const DistributorDashboard = () => {
   };
 
   const generateLink = async () => {
-    if (!user || !selectedProduct) return;
+    if (!user || !selectedProduct || onHold) return;
     setGenerating(true);
     try {
       // Check if affiliate record exists, create if not
@@ -337,6 +340,13 @@ const DistributorDashboard = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8 space-y-6">
+        {onHold ? (
+          <Card>
+            <CardContent className="py-12 text-center">
+              <p className="text-lg font-medium">Your distributor account is on hold. Please contact BF SUMA ROYAL support.</p>
+            </CardContent>
+          </Card>
+        ) : (<>
         {/* Welcome */}
         <div>
           <h1 className="text-3xl font-bold">Welcome, Distributor!</h1>
@@ -520,6 +530,7 @@ const DistributorDashboard = () => {
             </ul>
           </CardContent>
         </Card>
+        </>)}
       </main>
     </div>
   );

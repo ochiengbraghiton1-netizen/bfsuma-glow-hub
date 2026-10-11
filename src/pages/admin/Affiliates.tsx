@@ -28,6 +28,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { 
   Users, 
   Search, 
@@ -38,9 +48,8 @@ import {
   XCircle,
   Link as LinkIcon,
   MousePointer,
-  UserPlus,
   ShoppingCart,
-  DollarSign,
+  Zap,
   Copy,
   TrendingUp,
   Loader2,
@@ -64,6 +73,23 @@ interface Affiliate {
   created_at: string;
 }
 
+interface AttributedOrder {
+  id: string;
+  affiliate_id: string;
+  status: string;
+  payment_status: string;
+  total_amount: number;
+  created_at: string;
+  order_items?: { quantity: number; products: { pv_value: number } | null }[];
+}
+
+const NOT_CONFIRMED = ['pending', 'pending_payment', 'pending_whatsapp', 'whatsapp_initiated', 'cancelled', 'failed', 'refunded'];
+const isConfirmed = (o: AttributedOrder) => o.payment_status === 'paid' || !NOT_CONFIRMED.includes(o.status);
+const orderPV = (o: AttributedOrder) =>
+  (o.order_items || []).reduce((s, i) => s + (i.quantity || 0) * Number(i.products?.pv_value || 0), 0);
+
+const STATUS_LABEL: Record<string, string> = { active: 'Active', suspended: 'Frozen', revoked: 'Terminated' };
+
 const Affiliates = () => {
   const [affiliates, setAffiliates] = useState<Affiliate[]>([]);
   const [loading, setLoading] = useState(true);
@@ -74,7 +100,8 @@ const Affiliates = () => {
   const [createOpen, setCreateOpen] = useState(false);
   const [newName, setNewName] = useState('');
   const [newEmail, setNewEmail] = useState('');
-  const [newCommissionRate, setNewCommissionRate] = useState('10');
+  const [orders, setOrders] = useState<AttributedOrder[]>([]);
+  const [confirmAction, setConfirmAction] = useState<{ affiliate: Affiliate; status: 'suspended' | 'revoked' } | null>(null);
   const [creating, setCreating] = useState(false);
   const { toast } = useToast();
 
@@ -92,6 +119,14 @@ const Affiliates = () => {
 
       if (error) throw error;
       setAffiliates((data || []) as unknown as Affiliate[]);
+
+      const { data: ords, error: ordErr } = await supabase
+        .from('orders')
+        .select('id, affiliate_id, status, payment_status, total_amount, created_at, order_items(quantity, products(pv_value))')
+        .not('affiliate_id', 'is', null)
+        .order('created_at', { ascending: false });
+      if (ordErr) console.error('Error fetching attributed orders:', ordErr);
+      setOrders((ords || []) as unknown as AttributedOrder[]);
     } catch (error) {
       console.error('Error fetching affiliates:', error);
       toast({
@@ -124,7 +159,6 @@ const Affiliates = () => {
         email: newEmail.trim() || null,
         referral_code: code,
         referral_url: referralUrl,
-        commission_rate: parseFloat(newCommissionRate) || 10,
         status: 'active',
         user_id: null as any,
       } as any);
@@ -135,7 +169,6 @@ const Affiliates = () => {
       setCreateOpen(false);
       setNewName('');
       setNewEmail('');
-      setNewCommissionRate('10');
       fetchAffiliates();
     } catch (error) {
       console.error('Error creating affiliate:', error);
@@ -145,18 +178,33 @@ const Affiliates = () => {
     }
   };
 
-  const updateStatus = async (affiliateId: string, newStatus: string) => {
+  const updateStatus = async (affiliate: Affiliate, newStatus: string) => {
     try {
       const { error } = await supabase
         .from('affiliates')
         .update({ status: newStatus } as any)
-        .eq('id', affiliateId);
+        .eq('id', affiliate.id);
 
       if (error) throw error;
 
+      let roleNote = '';
+      if (newStatus === 'revoked' && affiliate.user_id) {
+        const { error: roleErr, count } = await supabase
+          .from('user_roles')
+          .delete({ count: 'exact' })
+          .eq('user_id', affiliate.user_id)
+          .eq('role', 'distributor');
+        if (roleErr) {
+          console.error('Error removing distributor role:', roleErr);
+          roleNote = ' Login access could not be removed.';
+        } else {
+          roleNote = count ? ' Distributor login access removed.' : ' No distributor login role was found.';
+        }
+      }
+
       toast({
         title: 'Status Updated',
-        description: `Affiliate ${newStatus === 'active' ? 'activated' : newStatus === 'suspended' ? 'suspended' : 'revoked'}`,
+        description: `Distributor ${newStatus === 'active' ? 'unfrozen' : newStatus === 'suspended' ? 'frozen' : 'terminated'}.${roleNote}`,
       });
 
       fetchAffiliates();
@@ -180,9 +228,9 @@ const Affiliates = () => {
       case 'active':
         return <Badge className="bg-green-500/20 text-green-400 border-green-500/30">Active</Badge>;
       case 'suspended':
-        return <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">Suspended</Badge>;
+        return <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">Frozen</Badge>;
       case 'revoked':
-        return <Badge className="bg-red-500/20 text-red-400 border-red-500/30">Revoked</Badge>;
+        return <Badge className="bg-red-500/20 text-red-400 border-red-500/30">Terminated</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -199,15 +247,35 @@ const Affiliates = () => {
     return matchesSearch && matchesStatus;
   });
 
-  const totals = affiliates.reduce(
-    (acc, aff) => ({
-      clicks: acc.clicks + (aff.total_clicks || 0),
-      signups: acc.signups + (aff.total_signups || 0),
-      conversions: acc.conversions + (aff.total_conversions || 0),
-      sales: acc.sales + Number(aff.total_sales || 0),
-      commission: acc.commission + Number(aff.total_commission || 0),
-    }),
-    { clicks: 0, signups: 0, conversions: 0, sales: 0, commission: 0 }
+  const statsFor = (affId: string) => {
+    const list = orders.filter((o) => o.affiliate_id === affId);
+    const conf = list.filter(isConfirmed);
+    return {
+      placed: list.length,
+      confirmed: conf.length,
+      sales: conf.reduce((s, o) => s + Number(o.total_amount || 0), 0),
+      pv: conf.reduce((s, o) => s + orderPV(o), 0),
+      recent: list.slice(0, 10),
+    };
+  };
+
+  const confirmedAll = orders.filter(isConfirmed);
+  const totals = {
+    clicks: affiliates.reduce((s, a) => s + (a.total_clicks || 0), 0),
+    activeCount: affiliates.filter((a) => a.status === 'active').length,
+    placed: orders.length,
+    confirmed: confirmedAll.length,
+    pv: confirmedAll.reduce((s, o) => s + orderPV(o), 0),
+  };
+
+  const card = (icon: React.ReactNode, label: string, value: string) => (
+    <div className="bg-[hsl(var(--admin-card))] border border-[hsl(var(--admin-border))] rounded-xl p-4">
+      <div className="flex items-center gap-2 text-[hsl(var(--admin-text-muted))] mb-2">
+        {icon}
+        <span className="text-sm">{label}</span>
+      </div>
+      <p className="text-2xl font-bold text-[hsl(var(--admin-text))]">{value}</p>
+    </div>
   );
 
   return (
@@ -225,41 +293,11 @@ const Affiliates = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <div className="bg-[hsl(var(--admin-card))] border border-[hsl(var(--admin-border))] rounded-xl p-4">
-          <div className="flex items-center gap-2 text-[hsl(var(--admin-text-muted))] mb-2">
-            <MousePointer className="h-4 w-4" />
-            <span className="text-sm">Total Clicks</span>
-          </div>
-          <p className="text-2xl font-bold text-[hsl(var(--admin-text))]">{totals.clicks.toLocaleString()}</p>
-        </div>
-        <div className="bg-[hsl(var(--admin-card))] border border-[hsl(var(--admin-border))] rounded-xl p-4">
-          <div className="flex items-center gap-2 text-[hsl(var(--admin-text-muted))] mb-2">
-            <UserPlus className="h-4 w-4" />
-            <span className="text-sm">Sign-ups</span>
-          </div>
-          <p className="text-2xl font-bold text-[hsl(var(--admin-text))]">{totals.signups.toLocaleString()}</p>
-        </div>
-        <div className="bg-[hsl(var(--admin-card))] border border-[hsl(var(--admin-border))] rounded-xl p-4">
-          <div className="flex items-center gap-2 text-[hsl(var(--admin-text-muted))] mb-2">
-            <ShoppingCart className="h-4 w-4" />
-            <span className="text-sm">Conversions</span>
-          </div>
-          <p className="text-2xl font-bold text-[hsl(var(--admin-text))]">{totals.conversions.toLocaleString()}</p>
-        </div>
-        <div className="bg-[hsl(var(--admin-card))] border border-[hsl(var(--admin-border))] rounded-xl p-4">
-          <div className="flex items-center gap-2 text-[hsl(var(--admin-text-muted))] mb-2">
-            <TrendingUp className="h-4 w-4" />
-            <span className="text-sm">Total Sales</span>
-          </div>
-          <p className="text-2xl font-bold text-[hsl(var(--admin-text))]">KES {totals.sales.toLocaleString()}</p>
-        </div>
-        <div className="bg-[hsl(var(--admin-card))] border border-[hsl(var(--admin-border))] rounded-xl p-4">
-          <div className="flex items-center gap-2 text-[hsl(var(--admin-text-muted))] mb-2">
-            <DollarSign className="h-4 w-4" />
-            <span className="text-sm">Commissions</span>
-          </div>
-          <p className="text-2xl font-bold text-[hsl(var(--admin-text))]">KES {totals.commission.toLocaleString()}</p>
-        </div>
+        {card(<Users className="h-4 w-4" />, 'Distributors (active)', totals.activeCount.toLocaleString())}
+        {card(<ShoppingCart className="h-4 w-4" />, 'Orders placed', totals.placed.toLocaleString())}
+        {card(<CheckCircle className="h-4 w-4" />, 'Confirmed orders', totals.confirmed.toLocaleString())}
+        {card(<Zap className="h-4 w-4" />, 'Confirmed PV', totals.pv.toLocaleString())}
+        {card(<MousePointer className="h-4 w-4" />, 'Clicks', totals.clicks.toLocaleString())}
       </div>
 
       {/* Filters */}
@@ -282,7 +320,7 @@ const Affiliates = () => {
               onClick={() => setStatusFilter(status)}
               className={statusFilter === status ? '' : 'bg-transparent border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text-muted))]'}
             >
-              {status.charAt(0).toUpperCase() + status.slice(1)}
+              {status === 'all' ? 'All' : STATUS_LABEL[status]}
             </Button>
           ))}
         </div>
@@ -310,14 +348,16 @@ const Affiliates = () => {
                 <TableHead className="text-[hsl(var(--admin-text-muted))]">Code</TableHead>
                 <TableHead className="text-[hsl(var(--admin-text-muted))]">Status</TableHead>
                 <TableHead className="text-[hsl(var(--admin-text-muted))] text-right">Clicks</TableHead>
-                <TableHead className="text-[hsl(var(--admin-text-muted))] text-right">Sign-ups</TableHead>
-                <TableHead className="text-[hsl(var(--admin-text-muted))] text-right">Sales</TableHead>
-                <TableHead className="text-[hsl(var(--admin-text-muted))] text-right">Commission</TableHead>
+                <TableHead className="text-[hsl(var(--admin-text-muted))] text-right">Orders placed</TableHead>
+                <TableHead className="text-[hsl(var(--admin-text-muted))] text-right">Confirmed</TableHead>
+                <TableHead className="text-[hsl(var(--admin-text-muted))] text-right">Confirmed sales</TableHead>
+                <TableHead className="text-[hsl(var(--admin-text-muted))] text-right">Confirmed PV</TableHead>
+                <TableHead className="text-[hsl(var(--admin-text-muted))]">Has login</TableHead>
                 <TableHead className="text-[hsl(var(--admin-text-muted))]"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredAffiliates.map((affiliate) => (
+              {filteredAffiliates.map((affiliate) => { const st = statsFor(affiliate.id); return (
                 <TableRow key={affiliate.id} className="border-[hsl(var(--admin-border))] hover:bg-[hsl(var(--admin-card-hover))]">
                   <TableCell>
                     <div>
@@ -345,12 +385,12 @@ const Affiliates = () => {
                   </TableCell>
                   <TableCell>{getStatusBadge(affiliate.status)}</TableCell>
                   <TableCell className="text-right text-[hsl(var(--admin-text))]">{affiliate.total_clicks || 0}</TableCell>
-                  <TableCell className="text-right text-[hsl(var(--admin-text))]">{affiliate.total_signups || 0}</TableCell>
-                  <TableCell className="text-right text-[hsl(var(--admin-text))]">
-                    KES {Number(affiliate.total_sales || 0).toLocaleString()}
-                  </TableCell>
-                  <TableCell className="text-right text-[hsl(var(--admin-text))]">
-                    KES {Number(affiliate.total_commission || 0).toLocaleString()}
+                  <TableCell className="text-right text-[hsl(var(--admin-text))]">{st.placed}</TableCell>
+                  <TableCell className="text-right text-[hsl(var(--admin-text))]">{st.confirmed}</TableCell>
+                  <TableCell className="text-right text-[hsl(var(--admin-text))]">KES {st.sales.toLocaleString()}</TableCell>
+                  <TableCell className="text-right text-[hsl(var(--admin-text))]">{st.pv.toLocaleString()}</TableCell>
+                  <TableCell>
+                    <Badge variant={affiliate.user_id ? 'default' : 'secondary'}>{affiliate.user_id ? 'Yes' : 'No'}</Badge>
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
@@ -377,33 +417,33 @@ const Affiliates = () => {
                         </DropdownMenuItem>
                         {affiliate.status !== 'active' && (
                           <DropdownMenuItem
-                            onClick={() => updateStatus(affiliate.id, 'active')}
+                            onClick={() => updateStatus(affiliate, 'active')}
                             className="cursor-pointer text-green-400"
                           >
-                            <CheckCircle className="h-4 w-4 mr-2" /> Activate
+                            <CheckCircle className="h-4 w-4 mr-2" /> {affiliate.status === 'revoked' ? 'Reactivate' : 'Unfreeze'}
                           </DropdownMenuItem>
                         )}
                         {affiliate.status === 'active' && (
                           <DropdownMenuItem
-                            onClick={() => updateStatus(affiliate.id, 'suspended')}
+                            onClick={() => setConfirmAction({ affiliate, status: 'suspended' })}
                             className="cursor-pointer text-yellow-400"
                           >
-                            <Ban className="h-4 w-4 mr-2" /> Suspend
+                            <Ban className="h-4 w-4 mr-2" /> Freeze
                           </DropdownMenuItem>
                         )}
                         {affiliate.status !== 'revoked' && (
                           <DropdownMenuItem
-                            onClick={() => updateStatus(affiliate.id, 'revoked')}
+                            onClick={() => setConfirmAction({ affiliate, status: 'revoked' })}
                             className="cursor-pointer text-red-400"
                           >
-                            <XCircle className="h-4 w-4 mr-2" /> Revoke
+                            <XCircle className="h-4 w-4 mr-2" /> Terminate
                           </DropdownMenuItem>
                         )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
                 </TableRow>
-              ))}
+              ); })}
             </TableBody>
           </Table>
         )}
@@ -435,18 +475,6 @@ const Affiliates = () => {
                 placeholder="Enter email address"
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
-                className="bg-[hsl(var(--admin-bg))] border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text))]"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-[hsl(var(--admin-text))]">Commission Rate (%)</Label>
-              <Input
-                type="number"
-                min="0"
-                max="100"
-                placeholder="10"
-                value={newCommissionRate}
-                onChange={(e) => setNewCommissionRate(e.target.value)}
                 className="bg-[hsl(var(--admin-bg))] border-[hsl(var(--admin-border))] text-[hsl(var(--admin-text))]"
               />
             </div>
@@ -492,8 +520,8 @@ const Affiliates = () => {
                   {getStatusBadge(selectedAffiliate.status)}
                 </div>
                 <div>
-                  <p className="text-sm text-[hsl(var(--admin-text-muted))]">Commission Rate</p>
-                  <p className="font-medium">{selectedAffiliate.commission_rate}%</p>
+                  <p className="text-sm text-[hsl(var(--admin-text-muted))]">Has login</p>
+                  <p className="font-medium">{selectedAffiliate.user_id ? 'Yes' : 'No'}</p>
                 </div>
                 <div>
                   <p className="text-sm text-[hsl(var(--admin-text-muted))]">Created</p>
@@ -509,30 +537,38 @@ const Affiliates = () => {
                   </Button>
                 </div>
               </div>
+              {(() => { const st = statsFor(selectedAffiliate.id); return (<>
               <div className="grid grid-cols-2 gap-4 border-t border-[hsl(var(--admin-border))] pt-4">
-                <div className="text-center p-3 bg-[hsl(var(--admin-bg))] rounded-lg">
-                  <p className="text-2xl font-bold">{selectedAffiliate.total_clicks || 0}</p>
-                  <p className="text-sm text-[hsl(var(--admin-text-muted))]">Clicks</p>
-                </div>
-                <div className="text-center p-3 bg-[hsl(var(--admin-bg))] rounded-lg">
-                  <p className="text-2xl font-bold">{selectedAffiliate.total_signups || 0}</p>
-                  <p className="text-sm text-[hsl(var(--admin-text-muted))]">Sign-ups</p>
-                </div>
-                <div className="text-center p-3 bg-[hsl(var(--admin-bg))] rounded-lg">
-                  <p className="text-2xl font-bold">{selectedAffiliate.total_conversions || 0}</p>
-                  <p className="text-sm text-[hsl(var(--admin-text-muted))]">Conversions</p>
-                </div>
-                <div className="text-center p-3 bg-[hsl(var(--admin-bg))] rounded-lg">
-                  <p className="text-2xl font-bold">KES {Number(selectedAffiliate.total_sales || 0).toLocaleString()}</p>
-                  <p className="text-sm text-[hsl(var(--admin-text-muted))]">Total Sales</p>
-                </div>
+                {[
+                  ['Clicks', String(selectedAffiliate.total_clicks || 0)],
+                  ['Orders placed', String(st.placed)],
+                  ['Confirmed orders', String(st.confirmed)],
+                  ['Confirmed sales', `KES ${st.sales.toLocaleString()}`],
+                  ['Confirmed PV', st.pv.toLocaleString()],
+                ].map(([l, v]) => (
+                  <div key={l} className="text-center p-3 bg-[hsl(var(--admin-bg))] rounded-lg">
+                    <p className="text-2xl font-bold">{v}</p>
+                    <p className="text-sm text-[hsl(var(--admin-text-muted))]">{l}</p>
+                  </div>
+                ))}
               </div>
-              <div className="text-center p-4 bg-gradient-to-r from-[hsl(var(--admin-accent))]/20 to-[hsl(var(--admin-accent-glow))]/20 rounded-lg border border-[hsl(var(--admin-accent))]/30">
-                <p className="text-3xl font-bold text-[hsl(var(--admin-accent))]">
-                  KES {Number(selectedAffiliate.total_commission || 0).toLocaleString()}
-                </p>
-                <p className="text-sm text-[hsl(var(--admin-text-muted))]">Total Commission Earned</p>
+              <div className="border-t border-[hsl(var(--admin-border))] pt-4">
+                <p className="text-sm text-[hsl(var(--admin-text-muted))] mb-2">Recent orders</p>
+                {st.recent.length === 0 ? (
+                  <p className="text-sm text-[hsl(var(--admin-text-muted))]">No orders yet.</p>
+                ) : (
+                  <ul className="space-y-1 text-sm max-h-48 overflow-y-auto">
+                    {st.recent.map((o) => (
+                      <li key={o.id} className="flex justify-between gap-2">
+                        <span>{new Date(o.created_at).toLocaleDateString()}</span>
+                        <span className="text-[hsl(var(--admin-text-muted))]">{o.status}</span>
+                        <span>KES {Number(o.total_amount || 0).toLocaleString()}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
+              </>); })()}
             </div>
           )}
           <DialogFooter>
@@ -542,6 +578,32 @@ const Affiliates = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={!!confirmAction} onOpenChange={(o) => !o && setConfirmAction(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {confirmAction?.status === 'revoked' ? 'Terminate' : 'Freeze'} {confirmAction?.affiliate.name || 'this distributor'}?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirmAction?.status === 'revoked'
+                ? 'Their links stop crediting permanently and their distributor login access is removed. Past orders keep their history.'
+                : "New orders from this distributor's links will count as the shop's own until you unfreeze."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (confirmAction) updateStatus(confirmAction.affiliate, confirmAction.status);
+                setConfirmAction(null);
+              }}
+            >
+              {confirmAction?.status === 'revoked' ? 'Terminate' : 'Freeze'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
