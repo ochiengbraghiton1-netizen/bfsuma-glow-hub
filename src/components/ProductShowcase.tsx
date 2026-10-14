@@ -94,7 +94,7 @@ const CategoryPills = ({ categories, activeCategory, onSelect }: CategoryPillsPr
   const hasMore = categories.length > MAX_VISIBLE_CATEGORIES;
 
   const circleClasses = (active: boolean) =>
-    `w-10 h-10 md:w-16 md:h-16 rounded-full overflow-hidden shrink-0 transition-all duration-200 ${
+    `block w-10 h-10 md:w-16 md:h-16 rounded-full overflow-hidden shrink-0 transition-all duration-200 ${
       active
         ? "ring-2 ring-primary ring-offset-2 ring-offset-background scale-105"
         : "ring-1 ring-border/60 group-hover:ring-primary/40"
