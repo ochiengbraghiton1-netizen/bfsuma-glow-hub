@@ -53,6 +53,37 @@ export function trackPurchase(payload: {
   gtag("event", "purchase", payload);
 }
 
+export function trackAddToCart(item: {
+  item_id: string;
+  item_name: string;
+  price: number;
+  quantity?: number;
+  currency?: string;
+}) {
+  const quantity = item.quantity || 1;
+  const currency = item.currency || "KES";
+  gtag("event", "add_to_cart", {
+    currency,
+    value: item.price * quantity,
+    items: [
+      {
+        item_id: item.item_id,
+        item_name: item.item_name,
+        price: item.price,
+        quantity,
+        currency,
+      },
+    ],
+  });
+}
+
+export function trackBeginCheckout(payload: { value: number; currency?: string }) {
+  gtag("event", "begin_checkout", {
+    currency: payload.currency || "KES",
+    value: payload.value,
+  });
+}
+
 export function trackLead(source: string) {
   gtag("event", "generate_lead", {
     lead_source: source,
@@ -71,3 +102,4 @@ export function trackPageView(path: string) {
 export function trackEvent(name: string, params?: Record<string, unknown>) {
   gtag("event", name, params || {});
 }
+
