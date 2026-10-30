@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import WishlistCapturePopup from "@/components/WishlistCapturePopup";
+import { trackAddToCart } from "@/lib/analytics";
 
 const CART_STORAGE_KEY = "bf_cart_items";
 const FAVORITES_STORAGE_KEY = "bf_favorites";
@@ -80,6 +81,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         );
       }
       return [...prev, { ...item, quantity: 1 }];
+    });
+    // GA4 add_to_cart event — single choke point covering every Add to Cart button
+    trackAddToCart({
+      item_id: item.id,
+      item_name: item.name,
+      price: item.price,
+      quantity: 1,
+      currency: "KES",
     });
   };
 
@@ -176,3 +185,4 @@ export const useCart = () => {
   }
   return context;
 };
+

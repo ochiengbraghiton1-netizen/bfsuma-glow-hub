@@ -23,7 +23,7 @@ import ReturnPolicySummary from '@/components/ReturnPolicySummary';
 import TrustBadgesInline from '@/components/TrustBadgesInline';
 
 import { useCurrency } from '@/hooks/use-currency';
-import { trackWhatsAppClick, trackPurchase } from "@/lib/analytics";
+import { trackWhatsAppClick, trackPurchase, trackBeginCheckout } from "@/lib/analytics";
 import { generateProductAltText } from "@/lib/image-seo";
 
 const WHATSAPP_NUMBER = "254795454053";
@@ -95,6 +95,16 @@ const Checkout = () => {
   useEffect(() => {
     sessionStorage.setItem(CHECKOUT_STORAGE_KEY, JSON.stringify(formData));
   }, [formData]);
+
+  // GA4 begin_checkout — fires once when landing on checkout with a non-empty cart
+  const beginCheckoutFired = useRef(false);
+  useEffect(() => {
+    if (!beginCheckoutFired.current && items.length > 0) {
+      beginCheckoutFired.current = true;
+      trackBeginCheckout({ value: convert(finalTotal), currency });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items.length]);
 
   const subtotal = totalPrice;
   const discount = promoApplied?.discount || 0;
@@ -414,6 +424,19 @@ const Checkout = () => {
     setIsSubmitting(true);
     try {
       const newOrderId = await saveOrderToDb('pending_whatsapp');
+
+      // GA4 purchase event for WhatsApp orders (previously only fired for PayPal)
+      trackPurchase({
+        transaction_id: newOrderId,
+        value: convert(finalTotal),
+        currency: currency,
+        items: items.map(item => ({
+          item_id: item.id,
+          item_name: item.name,
+          price: convert(item.price),
+          quantity: item.quantity,
+        })),
+      });
       
       // Pass order data via navigation state so confirmation page works without DB fetch
       const orderState = {
@@ -809,3 +832,4 @@ const Checkout = () => {
 };
 
 export default Checkout;
+
