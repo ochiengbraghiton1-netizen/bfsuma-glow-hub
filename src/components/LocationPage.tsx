@@ -193,9 +193,23 @@ const LocationPage = ({ location }: { location: LocationData }) => {
       <main className="pt-16">
         {/* ── HERO ── */}
         <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-secondary via-secondary/90 to-primary/80">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsl(var(--accent)/0.3),transparent_60%)]" />
-          </div>
+          {heroImage ? (
+            <>
+              <img
+                src={heroImage.media_url}
+                alt={heroImage.alt_text}
+                loading="eager"
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover object-center"
+              />
+              <div className="absolute inset-0 bg-black/45 md:bg-black/25" aria-hidden="true" />
+              <div className="absolute inset-0 bg-gradient-to-r from-secondary/85 via-secondary/70 to-primary/60" aria-hidden="true" />
+            </>
+          ) : (
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsl(var(--accent)/0.3),transparent_60%)]" />
+            </div>
+          )}
 
           <div className={`relative z-10 container mx-auto px-4 py-16 animate-fade-in ${heroImage ? "text-center lg:text-left" : "text-center"}`}>
             <div className={heroImage ? "max-w-2xl" : ""}>
