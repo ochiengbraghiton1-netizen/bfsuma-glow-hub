@@ -176,6 +176,9 @@ const LocationPage = ({ location }: { location: LocationData }) => {
     ],
   };
 
+  const heroImage = media.hero?.media_type === "image" ? media.hero : null;
+  const heroVideo = media.hero?.media_type === "video" ? media.hero : null;
+
   return (
     <div className="min-h-screen">
       <PageSEO title={title} description={description} path={`/${slug}`} />
