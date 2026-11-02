@@ -70,17 +70,13 @@ const ContentMediaBlock = ({ item, className = "", rounded = "rounded-2xl", show
           className={`w-full ${rounded} border border-border/40`}
         />
       ) : (
-        <div className={`aspect-[4/3] overflow-hidden bg-muted/30 ${rounded} border border-border/40`}>
-          <img
-            src={item.media_url}
-            srcSet={storageFittedSrcSet(item.media_url, [480, 768, 1024, 1280], 4, 3)}
-            sizes={SIZES_CARD_WIDE}
-            alt={item.alt_text}
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full object-contain p-3"
-          />
-        </div>
+        <img
+          src={item.media_url}
+          alt={item.alt_text}
+          loading={item.slot_key === "hero" ? "eager" : "lazy"}
+          decoding="async"
+          className={`block h-auto w-full ${rounded} border border-border/40`}
+        />
       )}
       {item.caption && <figcaption className="text-sm text-muted-foreground mt-2">{item.caption}</figcaption>}
     </figure>
