@@ -226,9 +226,12 @@ const LocationPage = ({ location }: { location: LocationData }) => {
               </a>
             </div>
 
-            {media.hero && (
+            {heroImage?.caption && <p className="mt-6 text-sm text-white/80">{heroImage.caption}</p>}
+            </div>
+
+            {heroVideo && (
               <ContentMediaBlock
-                item={media.hero}
+                item={heroVideo}
                 className="mt-10 max-w-3xl mx-auto [&_h2]:text-white [&_figcaption]:text-white/80"
                 rounded="rounded-3xl shadow-elegant"
               />
