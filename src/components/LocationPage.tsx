@@ -197,8 +197,9 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsl(var(--accent)/0.3),transparent_60%)]" />
           </div>
 
-          <div className="relative z-10 container mx-auto px-4 text-center py-16 animate-fade-in">
-            <div className="flex items-center justify-center gap-2 mb-6">
+          <div className={`relative z-10 container mx-auto px-4 py-16 animate-fade-in ${heroImage ? "text-center lg:text-left" : "text-center"}`}>
+            <div className={heroImage ? "max-w-2xl" : ""}>
+            <div className={`flex items-center gap-2 mb-6 ${heroImage ? "justify-center lg:justify-start" : "justify-center"}`}>
               <Sparkles className="w-5 h-5 text-accent animate-glow" />
               <span className="text-accent font-semibold uppercase tracking-wider text-xs">{city}, Kenya</span>
               <Sparkles className="w-5 h-5 text-accent animate-glow" />
@@ -208,11 +209,11 @@ const LocationPage = ({ location }: { location: LocationData }) => {
               {heroTitleText}
             </h1>
 
-            <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed">{heroDescriptionText}</p>
+            <p className={`text-lg md:text-xl text-white/90 mb-10 max-w-2xl leading-relaxed ${heroImage ? "mx-auto lg:mx-0" : "mx-auto"}`}>{heroDescriptionText}</p>
 
 
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-lg mx-auto">
+            <div className={`flex flex-col sm:flex-row gap-4 items-center max-w-lg ${heroImage ? "justify-center lg:justify-start mx-auto lg:mx-0" : "justify-center mx-auto"}`}>
               <a href={buildWa(`Hi, I'd like to order supplements. I'm in ${city}.`, pageUrl)} onClick={() => trackWhatsAppClick(undefined, "location_page")} target="_blank" rel="noopener noreferrer"
                 className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 h-14 px-10 text-lg font-bold rounded-2xl bg-accent text-accent-foreground shadow-[0_0_40px_hsl(43_96%_56%/0.5)] hover:shadow-[0_0_60px_hsl(43_96%_56%/0.7)] hover:scale-[1.04] active:scale-[0.98] transition-all duration-300">
                 <Phone className="w-5 h-5" />
