@@ -143,6 +143,9 @@ const WellnessHubPage = () => {
     })),
   } : null;
 
+  const heroImage = media.hero?.media_type === "image" ? media.hero : null;
+  const heroVideo = media.hero?.media_type === "video" ? media.hero : null;
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Helmet>
@@ -160,9 +163,22 @@ const WellnessHubPage = () => {
       <Header />
       <main className="flex-1 pt-20">
         {/* Hero */}
-        <section className="bg-gradient-to-br from-secondary via-secondary/90 to-primary/80 text-white py-16">
-          <div className={`container mx-auto px-4 ${media.hero ? "max-w-6xl grid lg:grid-cols-2 gap-10 items-center" : "max-w-4xl text-center"}`}>
-            <div className={media.hero ? "text-center lg:text-left" : ""}>
+        <section className="relative overflow-hidden bg-gradient-to-br from-secondary via-secondary/90 to-primary/80 text-white py-16">
+          {heroImage && (
+            <>
+              <img
+                src={heroImage.media_url}
+                alt={heroImage.alt_text}
+                loading="eager"
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover object-center"
+              />
+              <div className="absolute inset-0 bg-black/45 md:bg-black/25" aria-hidden="true" />
+              <div className="absolute inset-0 bg-gradient-to-r from-secondary/85 via-secondary/70 to-primary/60" aria-hidden="true" />
+            </>
+          )}
+          <div className={`relative z-10 container mx-auto px-4 ${media.hero ? "max-w-6xl" : "max-w-4xl text-center"} ${heroVideo ? "grid lg:grid-cols-2 gap-10 items-center" : ""}`}>
+            <div className={media.hero ? "max-w-2xl text-center lg:text-left" : ""}>
               <div className="inline-flex items-center gap-2 mb-4 text-accent">
                 <Sparkles className="w-5 h-5" />
                 <span className="uppercase tracking-wider text-xs font-semibold">Wellness Hub</span>
@@ -184,9 +200,10 @@ const WellnessHubPage = () => {
                   </Link>
                 )}
               </div>
+              {heroImage?.caption && <p className="mt-6 text-sm text-white/80">{heroImage.caption}</p>}
             </div>
-            {media.hero && (
-              <ContentMediaBlock item={media.hero} className="lg:justify-self-end w-full [&_h2]:text-white [&_figcaption]:text-white/80" rounded="rounded-3xl shadow-elegant" />
+            {heroVideo && (
+              <ContentMediaBlock item={heroVideo} className="lg:justify-self-end w-full [&_h2]:text-white [&_figcaption]:text-white/80" rounded="rounded-3xl shadow-elegant" />
             )}
           </div>
         </section>
