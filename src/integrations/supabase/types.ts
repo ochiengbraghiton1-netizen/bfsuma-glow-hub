@@ -509,6 +509,7 @@ export type Database = {
           content_type: string
           created_at: string
           display_order: number
+          focal_position: string
           heading: string | null
           id: string
           media_type: string
@@ -525,6 +526,7 @@ export type Database = {
           content_type: string
           created_at?: string
           display_order?: number
+          focal_position?: string
           heading?: string | null
           id?: string
           media_type: string
@@ -541,6 +543,7 @@ export type Database = {
           content_type?: string
           created_at?: string
           display_order?: number
+          focal_position?: string
           heading?: string | null
           id?: string
           media_type?: string
