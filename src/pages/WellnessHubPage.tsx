@@ -9,7 +9,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { autoLinkProducts } from "@/lib/auto-link-products";
 import { trackWhatsAppClick } from "@/lib/analytics";
 import { generateProductAltText, generateBlogAltText } from "@/lib/image-seo";
-import { fetchContentMedia, MediaMap } from "@/lib/content-media";
+import { fetchContentMedia, MediaMap, focalObjectPosition } from "@/lib/content-media";
 import { storageFittedSrcSet, storageSrcSet, SIZES_CARD, SIZES_CARD_WIDE } from "@/lib/image-url";
 import ContentMediaBlock from "@/components/ContentMediaBlock";
 
