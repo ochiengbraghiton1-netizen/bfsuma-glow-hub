@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Loader2, Upload, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
-  MEDIA_SLOTS, MediaMap, SlotKey, detectMediaType, maxBytesFor,
+  MEDIA_SLOTS, MediaMap, SlotKey, FOCAL_POSITIONS, detectMediaType, maxBytesFor,
   uploadContentMedia,
 } from '@/lib/content-media';
 import { formatFileSize } from '@/lib/image-compression';
