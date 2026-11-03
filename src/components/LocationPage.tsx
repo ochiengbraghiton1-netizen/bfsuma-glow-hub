@@ -13,7 +13,7 @@ import type { LocationData, LocationProduct } from "@/config/locations";
 import { trackWhatsAppClick } from "@/lib/analytics";
 import { generateLocationAltText } from "@/lib/image-seo";
 import ContentMediaBlock from "@/components/ContentMediaBlock";
-import { fetchContentMedia, type MediaMap } from "@/lib/content-media";
+import { fetchContentMedia, focalObjectPosition, type MediaMap } from "@/lib/content-media";
 
 const WHATSAPP_URL = "https://wa.me/254795454053";
 const SITE_URL = "https://bfsumaroyal.com";
