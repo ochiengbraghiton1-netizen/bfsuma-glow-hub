@@ -199,7 +199,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             </div>
           )}
 
-          <div className={`relative z-10 container mx-auto px-4 py-16 animate-fade-in ${heroImage ? "text-center lg:text-left" : "text-center"}`}>
+          <div className={`relative z-10 container mx-auto px-4 py-16 animate-fade-in ${heroImage ? "text-center lg:text-left grid md:grid-cols-2 gap-8 lg:gap-10 items-center max-w-6xl" : "text-center"}`}>
             <div className={heroImage ? "max-w-2xl" : ""}>
             <div className={`flex items-center gap-2 mb-6 ${heroImage ? "justify-center lg:justify-start" : "justify-center"}`}>
               <Sparkles className="w-5 h-5 text-accent animate-glow" />
@@ -228,8 +228,20 @@ const LocationPage = ({ location }: { location: LocationData }) => {
               </a>
             </div>
 
-            {heroImage?.caption && <p className="mt-6 text-sm text-white/80">{heroImage.caption}</p>}
             </div>
+            {heroImage && (
+              <figure className="w-full md:justify-self-end">
+                <img
+                  src={heroImage.media_url}
+                  alt={heroImage.alt_text}
+                  loading="eager"
+                  decoding="async"
+                  className="w-full aspect-[4/5] max-h-[520px] object-cover rounded-3xl shadow-elegant"
+                  style={{ objectPosition: focalObjectPosition(heroImage.focal_position) }}
+                />
+                {heroImage.caption && <figcaption className="mt-3 text-sm text-white/80">{heroImage.caption}</figcaption>}
+              </figure>
+            )}
 
             {heroVideo && (
               <ContentMediaBlock
