@@ -64,6 +64,7 @@ const ContentMediaEditor = ({ contentType, contentId, media, onChange }: Props) 
           heading: media[slot]?.heading || null,
           caption: media[slot]?.caption || null,
           display_order: MEDIA_SLOTS.findIndex((s) => s.key === slot),
+          focal_position: media[slot]?.focal_position || 'center',
         },
       });
       toast({ title: 'Media uploaded' });

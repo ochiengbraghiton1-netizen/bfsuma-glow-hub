@@ -155,6 +155,7 @@ export const saveContentMedia = async (
       heading: item.heading?.trim() || null,
       caption: item.caption || null,
       display_order: i,
+      focal_position: isFocalPosition(item.focal_position) ? item.focal_position : 'center',
     }];
   });
 
