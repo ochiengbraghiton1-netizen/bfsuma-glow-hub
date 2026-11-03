@@ -164,15 +164,15 @@ const WellnessHubPage = () => {
       <main className="flex-1 pt-20">
         {/* Hero */}
         <section className="relative overflow-hidden bg-gradient-to-br from-secondary via-secondary/90 to-primary/80 text-white py-16">
-          <div className={`relative z-10 container mx-auto px-4 ${media.hero ? "max-w-6xl grid md:grid-cols-2 gap-8 lg:gap-10 items-center" : "max-w-4xl text-center"}`}>
-            <div className={media.hero ? "max-w-2xl text-center lg:text-left" : ""}>
+          <div className={`relative z-10 container mx-auto px-4 text-left ${media.hero ? "max-w-6xl grid md:grid-cols-2 gap-8 lg:gap-10 items-center" : "max-w-4xl"}`}>
+            <div className={media.hero ? "max-w-2xl text-left" : "text-left"}>
               <div className="inline-flex items-center gap-2 mb-4 text-accent">
                 <Sparkles className="w-5 h-5" />
                 <span className="uppercase tracking-wider text-xs font-semibold">Wellness Hub</span>
               </div>
               <h1 className="text-3xl md:text-5xl font-bold mb-4">{hub.hero_title}</h1>
-              <p className={`text-lg text-white/90 mb-8 max-w-2xl ${media.hero ? "" : "mx-auto"}`}>{hub.hero_description}</p>
-              <div className={`flex flex-wrap gap-3 ${media.hero ? "justify-center lg:justify-start" : "justify-center"}`}>
+              <p className="text-lg text-white/90 mb-8 max-w-2xl">{hub.hero_description}</p>
+              <div className="flex flex-wrap gap-3 justify-start">
                 <a href={`${WHATSAPP}?text=Hi, I'd like guidance on ${encodeURIComponent(hub.name)}.`} onClick={() => trackWhatsAppClick(hub.name, "wellness_hub")} target="_blank" rel="noopener noreferrer"
                    className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-accent text-accent-foreground font-bold hover:scale-105 transition-transform">
                   <Phone className="w-4 h-4" /> Free WhatsApp Consultation
