@@ -19,6 +19,34 @@ export type SlotKey =
   | 'trust'
   | 'closing';
 
+/** Where the important part of an image sits, so full-bleed crops keep it visible. */
+export type FocalPosition =
+  | 'top-left' | 'top' | 'top-right'
+  | 'left' | 'center' | 'right'
+  | 'bottom-left' | 'bottom' | 'bottom-right';
+
+export const isFocalPosition = (value: unknown): value is FocalPosition =>
+  typeof value === 'string' && FOCAL_POSITIONS.some((p) => p.value === value);
+
+export const FOCAL_POSITIONS: { value: FocalPosition; label: string; x: number; y: number }[] = [
+  { value: 'top-left', label: 'Top left', x: 0, y: 0 },
+  { value: 'top', label: 'Top', x: 50, y: 0 },
+  { value: 'top-right', label: 'Top right', x: 100, y: 0 },
+  { value: 'left', label: 'Left', x: 0, y: 50 },
+  { value: 'center', label: 'Center', x: 50, y: 50 },
+  { value: 'right', label: 'Right', x: 100, y: 50 },
+  { value: 'bottom-left', label: 'Bottom left', x: 0, y: 100 },
+  { value: 'bottom', label: 'Bottom', x: 50, y: 100 },
+  { value: 'bottom-right', label: 'Bottom right', x: 100, y: 100 },
+];
+
+/** CSS object-position for a stored focal position; anything unknown falls back to center. */
+export const focalObjectPosition = (value: string | null | undefined): string => {
+  const fallback = FOCAL_POSITIONS.find((item) => item.value === 'center')!;
+  const p = FOCAL_POSITIONS.find((item) => item.value === value) || fallback;
+  return `${p.x}% ${p.y}%`;
+};
+
 export const MEDIA_SLOTS: { key: SlotKey; label: string; hint: string }[] = [
   { key: 'hero', label: 'Hero image/video', hint: 'Sets the tone at the very top of the page.' },
   { key: 'recognition', label: 'Recognition, does this sound familiar?', hint: 'Shows the everyday moment a visitor recognises.' },
@@ -42,6 +70,7 @@ export interface ContentMediaItem {
   heading: string | null;
   caption: string | null;
   display_order: number;
+  focal_position: FocalPosition;
 }
 
 export type MediaMap = Partial<Record<SlotKey, ContentMediaItem>>;
@@ -129,6 +158,7 @@ export const saveContentMedia = async (
       heading: item.heading?.trim() || null,
       caption: item.caption || null,
       display_order: i,
+      focal_position: isFocalPosition(item.focal_position) ? item.focal_position : 'center',
     }];
   });
 

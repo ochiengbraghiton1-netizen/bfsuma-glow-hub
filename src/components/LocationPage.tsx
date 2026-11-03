@@ -13,7 +13,7 @@ import type { LocationData, LocationProduct } from "@/config/locations";
 import { trackWhatsAppClick } from "@/lib/analytics";
 import { generateLocationAltText } from "@/lib/image-seo";
 import ContentMediaBlock from "@/components/ContentMediaBlock";
-import { fetchContentMedia, type MediaMap } from "@/lib/content-media";
+import { fetchContentMedia, focalObjectPosition, type MediaMap } from "@/lib/content-media";
 
 const WHATSAPP_URL = "https://wa.me/254795454053";
 const SITE_URL = "https://bfsumaroyal.com";
@@ -200,7 +200,8 @@ const LocationPage = ({ location }: { location: LocationData }) => {
                 alt={heroImage.alt_text}
                 loading="eager"
                 decoding="async"
-                className="absolute inset-0 h-full w-full object-cover object-center"
+                className="absolute inset-0 h-full w-full object-cover"
+                style={{ objectPosition: focalObjectPosition(heroImage.focal_position) }}
               />
               <div className="absolute inset-0 bg-black/45 md:bg-black/25" aria-hidden="true" />
               <div className="absolute inset-0 bg-gradient-to-r from-secondary/85 via-secondary/70 to-primary/60" aria-hidden="true" />

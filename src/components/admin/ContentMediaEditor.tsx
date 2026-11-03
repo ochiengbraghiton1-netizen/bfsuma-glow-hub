@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Loader2, Upload, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
-  MEDIA_SLOTS, MediaMap, SlotKey, detectMediaType, maxBytesFor,
+  MEDIA_SLOTS, MediaMap, SlotKey, FOCAL_POSITIONS, detectMediaType, maxBytesFor,
   uploadContentMedia,
 } from '@/lib/content-media';
 import { formatFileSize } from '@/lib/image-compression';
@@ -64,6 +64,7 @@ const ContentMediaEditor = ({ contentType, contentId, media, onChange }: Props) 
           heading: media[slot]?.heading || null,
           caption: media[slot]?.caption || null,
           display_order: MEDIA_SLOTS.findIndex((s) => s.key === slot),
+          focal_position: media[slot]?.focal_position || 'center',
         },
       });
       toast({ title: 'Media uploaded' });
@@ -176,6 +177,44 @@ const ContentMediaEditor = ({ contentType, contentId, media, onChange }: Props) 
 
             {item?.media_url && (
               <div className="grid gap-2 sm:grid-cols-2">
+                {slot.key === 'hero' && item.media_type === 'image' && (
+                  <div className="sm:col-span-2 border-t border-border pt-3">
+                    <Label className="text-xs">Focus point</Label>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Tap the part of the photo that must stay visible when the hero crops it on phones.
+                    </p>
+                    <div
+                      role="radiogroup"
+                      aria-label="Focus point"
+                      className="mt-2 inline-grid grid-cols-3 gap-1 p-1 rounded-lg border bg-background"
+                    >
+                      {FOCAL_POSITIONS.map((pos) => {
+                        const selected = (item.focal_position || 'center') === pos.value;
+                        return (
+                          <button
+                            key={pos.value}
+                            type="button"
+                            role="radio"
+                            aria-checked={selected}
+                            title={pos.label}
+                            onClick={() => patch(slot.key, { focal_position: pos.value })}
+                            className={`relative h-7 w-9 rounded border transition-colors ${
+                              selected ? 'border-primary bg-primary/15' : 'border-border hover:bg-muted'
+                            }`}
+                          >
+                            <span
+                              className={`absolute h-1.5 w-1.5 rounded-full -translate-x-1/2 -translate-y-1/2 ${
+                                selected ? 'bg-primary' : 'bg-muted-foreground/50'
+                              }`}
+                              style={{ left: `${25 + pos.x / 2}%`, top: `${25 + pos.y / 2}%` }}
+                            />
+                            <span className="sr-only">{pos.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
                 <div className="sm:col-span-2">
                   <Label className="text-xs">Heading (optional)</Label>
                   <Input

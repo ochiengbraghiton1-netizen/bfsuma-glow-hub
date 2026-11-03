@@ -9,7 +9,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { autoLinkProducts } from "@/lib/auto-link-products";
 import { trackWhatsAppClick } from "@/lib/analytics";
 import { generateProductAltText, generateBlogAltText } from "@/lib/image-seo";
-import { fetchContentMedia, MediaMap } from "@/lib/content-media";
+import { fetchContentMedia, MediaMap, focalObjectPosition } from "@/lib/content-media";
 import { storageFittedSrcSet, storageSrcSet, SIZES_CARD, SIZES_CARD_WIDE } from "@/lib/image-url";
 import ContentMediaBlock from "@/components/ContentMediaBlock";
 
@@ -171,7 +171,8 @@ const WellnessHubPage = () => {
                 alt={heroImage.alt_text}
                 loading="eager"
                 decoding="async"
-                className="absolute inset-0 h-full w-full object-cover object-center"
+                className="absolute inset-0 h-full w-full object-cover"
+                style={{ objectPosition: focalObjectPosition(heroImage.focal_position) }}
               />
               <div className="absolute inset-0 bg-black/45 md:bg-black/25" aria-hidden="true" />
               <div className="absolute inset-0 bg-gradient-to-r from-secondary/85 via-secondary/70 to-primary/60" aria-hidden="true" />
