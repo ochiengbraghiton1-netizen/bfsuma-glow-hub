@@ -164,21 +164,7 @@ const WellnessHubPage = () => {
       <main className="flex-1 pt-20">
         {/* Hero */}
         <section className="relative overflow-hidden bg-gradient-to-br from-secondary via-secondary/90 to-primary/80 text-white py-16">
-          {heroImage && (
-            <>
-              <img
-                src={heroImage.media_url}
-                alt={heroImage.alt_text}
-                loading="eager"
-                decoding="async"
-                className="absolute inset-0 h-full w-full object-cover"
-                style={{ objectPosition: focalObjectPosition(heroImage.focal_position) }}
-              />
-              <div className="absolute inset-0 bg-black/45 md:bg-black/25" aria-hidden="true" />
-              <div className="absolute inset-0 bg-gradient-to-r from-secondary/85 via-secondary/70 to-primary/60" aria-hidden="true" />
-            </>
-          )}
-          <div className={`relative z-10 container mx-auto px-4 ${media.hero ? "max-w-6xl" : "max-w-4xl text-center"} ${heroVideo ? "grid lg:grid-cols-2 gap-10 items-center" : ""}`}>
+          <div className={`relative z-10 container mx-auto px-4 ${media.hero ? "max-w-6xl grid md:grid-cols-2 gap-8 lg:gap-10 items-center" : "max-w-4xl text-center"}`}>
             <div className={media.hero ? "max-w-2xl text-center lg:text-left" : ""}>
               <div className="inline-flex items-center gap-2 mb-4 text-accent">
                 <Sparkles className="w-5 h-5" />
@@ -201,8 +187,20 @@ const WellnessHubPage = () => {
                   </Link>
                 )}
               </div>
-              {heroImage?.caption && <p className="mt-6 text-sm text-white/80">{heroImage.caption}</p>}
             </div>
+            {heroImage && (
+              <figure className="w-full md:justify-self-end">
+                <img
+                  src={heroImage.media_url}
+                  alt={heroImage.alt_text}
+                  loading="eager"
+                  decoding="async"
+                  className="w-full aspect-[4/5] md:aspect-[4/5] max-h-[520px] object-cover rounded-3xl shadow-elegant"
+                  style={{ objectPosition: focalObjectPosition(heroImage.focal_position) }}
+                />
+                {heroImage.caption && <figcaption className="mt-3 text-sm text-white/80">{heroImage.caption}</figcaption>}
+              </figure>
+            )}
             {heroVideo && (
               <ContentMediaBlock item={heroVideo} className="lg:justify-self-end w-full [&_h2]:text-white [&_figcaption]:text-white/80" rounded="rounded-3xl shadow-elegant" />
             )}
