@@ -25,6 +25,9 @@ export type FocalPosition =
   | 'left' | 'center' | 'right'
   | 'bottom-left' | 'bottom' | 'bottom-right';
 
+export const isFocalPosition = (value: unknown): value is FocalPosition =>
+  typeof value === 'string' && FOCAL_POSITIONS.some((p) => p.value === value);
+
 export const FOCAL_POSITIONS: { value: FocalPosition; label: string; x: number; y: number }[] = [
   { value: 'top-left', label: 'Top left', x: 0, y: 0 },
   { value: 'top', label: 'Top', x: 50, y: 0 },
