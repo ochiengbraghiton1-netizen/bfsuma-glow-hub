@@ -187,8 +187,20 @@ const WellnessHubPage = () => {
                   </Link>
                 )}
               </div>
-              {heroImage?.caption && <p className="mt-6 text-sm text-white/80">{heroImage.caption}</p>}
             </div>
+            {heroImage && (
+              <figure className="w-full md:justify-self-end">
+                <img
+                  src={heroImage.media_url}
+                  alt={heroImage.alt_text}
+                  loading="eager"
+                  decoding="async"
+                  className="w-full aspect-[4/5] md:aspect-[4/5] max-h-[520px] object-cover rounded-3xl shadow-elegant"
+                  style={{ objectPosition: focalObjectPosition(heroImage.focal_position) }}
+                />
+                {heroImage.caption && <figcaption className="mt-3 text-sm text-white/80">{heroImage.caption}</figcaption>}
+              </figure>
+            )}
             {heroVideo && (
               <ContentMediaBlock item={heroVideo} className="lg:justify-self-end w-full [&_h2]:text-white [&_figcaption]:text-white/80" rounded="rounded-3xl shadow-elegant" />
             )}
