@@ -86,8 +86,6 @@ export default defineConfig(({ mode }) => ({
           if (/node_modules\/(clsx|tailwind-merge|class-variance-authority|tslib|@babel\/runtime)\//.test(id)) return "vendor-utils";
           if (/node_modules\/(react|react-dom|react-router|react-router-dom|scheduler)\//.test(id)) return "vendor-react";
           if (id.includes("@tanstack/react-query")) return "vendor-query";
-          if (id.includes("@supabase/")) return "vendor-supabase";
-          if (/node_modules\/(recharts|d3-|victory-vendor)/.test(id)) return "vendor-charts";
           return undefined;
         },
       },
