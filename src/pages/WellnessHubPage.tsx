@@ -9,7 +9,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { autoLinkProducts } from "@/lib/auto-link-products";
 import { trackWhatsAppClick } from "@/lib/analytics";
 import { generateProductAltText, generateBlogAltText } from "@/lib/image-seo";
-import { fetchContentMedia, MediaMap, focalObjectPosition } from "@/lib/content-media";
+import { fetchContentMedia, MediaMap, focalObjectPosition, heroOverlayClass, heroTextPanelClass, HERO_TEXT_SHADOW } from "@/lib/content-media";
 import { storageFittedSrcSet, storageSrcSet, SIZES_CARD, SIZES_CARD_WIDE } from "@/lib/image-url";
 import ContentMediaBlock from "@/components/ContentMediaBlock";
 
@@ -165,13 +165,13 @@ const WellnessHubPage = () => {
         {/* Hero */}
         <section className="relative overflow-hidden bg-gradient-to-br from-secondary via-secondary/90 to-primary/80 text-white py-16">
           <div className={`relative z-10 container mx-auto px-4 text-left ${media.hero ? "max-w-6xl grid md:grid-cols-2 gap-8 lg:gap-10 items-center" : "max-w-4xl"}`}>
-            <div className={media.hero ? "max-w-2xl text-left" : "text-left"}>
+            <div className={heroImage ? `max-w-2xl text-left ${heroTextPanelClass(heroImage.overlay_level)}` : media.hero ? "max-w-2xl text-left" : "text-left"}>
               <div className="inline-flex items-center gap-2 mb-4 text-accent">
                 <Sparkles className="w-5 h-5" />
                 <span className="uppercase tracking-wider text-xs font-semibold">Wellness Hub</span>
               </div>
-              <h1 className="text-3xl md:text-5xl font-bold mb-4">{hub.hero_title}</h1>
-              <p className="text-lg text-white/90 mb-8 max-w-2xl">{hub.hero_description}</p>
+              <h1 className={`text-3xl md:text-5xl font-bold mb-4 ${heroImage ? HERO_TEXT_SHADOW : ""}`}>{hub.hero_title}</h1>
+              <p className={`text-lg text-white/90 mb-8 max-w-2xl ${heroImage ? HERO_TEXT_SHADOW : ""}`}>{hub.hero_description}</p>
               <div className="flex flex-wrap gap-3 justify-start">
                 <a href={`${WHATSAPP}?text=Hi, I'd like guidance on ${encodeURIComponent(hub.name)}.`} onClick={() => trackWhatsAppClick(hub.name, "wellness_hub")} target="_blank" rel="noopener noreferrer"
                    className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-accent text-accent-foreground font-bold hover:scale-105 transition-transform">
@@ -190,6 +190,7 @@ const WellnessHubPage = () => {
             </div>
             {heroImage && (
               <figure className="w-full md:justify-self-end">
+                <div className="relative">
                 <img
                   src={heroImage.media_url}
                   alt={heroImage.alt_text}
@@ -198,6 +199,10 @@ const WellnessHubPage = () => {
                   className="w-full aspect-[4/5] md:aspect-[4/5] max-h-[520px] object-cover rounded-3xl shadow-elegant"
                   style={{ objectPosition: focalObjectPosition(heroImage.focal_position) }}
                 />
+                {heroOverlayClass(heroImage.overlay_level) && (
+                  <div aria-hidden="true" className={`absolute inset-0 rounded-3xl ${heroOverlayClass(heroImage.overlay_level)}`} />
+                )}
+                </div>
                 {heroImage.caption && <figcaption className="mt-3 text-sm text-white/80">{heroImage.caption}</figcaption>}
               </figure>
             )}

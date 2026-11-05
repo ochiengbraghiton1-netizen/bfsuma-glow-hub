@@ -13,7 +13,7 @@ import type { LocationData, LocationProduct } from "@/config/locations";
 import { trackWhatsAppClick } from "@/lib/analytics";
 import { generateLocationAltText } from "@/lib/image-seo";
 import ContentMediaBlock from "@/components/ContentMediaBlock";
-import { fetchContentMedia, focalObjectPosition, type MediaMap } from "@/lib/content-media";
+import { fetchContentMedia, focalObjectPosition, heroOverlayClass, heroTextPanelClass, HERO_TEXT_SHADOW, type MediaMap } from "@/lib/content-media";
 
 const WHATSAPP_URL = "https://wa.me/254795454053";
 const SITE_URL = "https://bfsumaroyal.com";
@@ -200,18 +200,18 @@ const LocationPage = ({ location }: { location: LocationData }) => {
           )}
 
           <div className={`relative z-10 container mx-auto px-4 py-16 animate-fade-in text-left ${heroImage ? "grid md:grid-cols-2 gap-8 lg:gap-10 items-center max-w-6xl" : ""}`}>
-            <div className="max-w-2xl">
+            <div className={`max-w-2xl ${heroImage ? heroTextPanelClass(heroImage.overlay_level) : ""}`}>
             <div className="flex items-center gap-2 mb-6 justify-start">
               <Sparkles className="w-5 h-5 text-accent animate-glow" />
               <span className="text-accent font-semibold uppercase tracking-wider text-xs">{city}, Kenya</span>
               <Sparkles className="w-5 h-5 text-accent animate-glow" />
             </div>
 
-            <h1 className="text-3xl md:text-6xl font-bold text-white mb-6 leading-tight">
+            <h1 className={`text-3xl md:text-6xl font-bold text-white mb-6 leading-tight ${heroImage ? HERO_TEXT_SHADOW : ""}`}>
               {heroTitleText}
             </h1>
 
-            <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl leading-relaxed">{heroDescriptionText}</p>
+            <p className={`text-lg md:text-xl text-white/90 mb-10 max-w-2xl leading-relaxed ${heroImage ? HERO_TEXT_SHADOW : ""}`}>{heroDescriptionText}</p>
 
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center max-w-lg justify-start">
               <a href={buildWa(`Hi, I'd like to order supplements. I'm in ${city}.`, pageUrl)} onClick={() => trackWhatsAppClick(undefined, "location_page")} target="_blank" rel="noopener noreferrer"
@@ -229,6 +229,7 @@ const LocationPage = ({ location }: { location: LocationData }) => {
             </div>
             {heroImage && (
               <figure className="w-full md:justify-self-end">
+                <div className="relative">
                 <img
                   src={heroImage.media_url}
                   alt={heroImage.alt_text}
@@ -237,6 +238,10 @@ const LocationPage = ({ location }: { location: LocationData }) => {
                   className="w-full aspect-[4/5] max-h-[520px] object-cover rounded-3xl shadow-elegant"
                   style={{ objectPosition: focalObjectPosition(heroImage.focal_position) }}
                 />
+                {heroOverlayClass(heroImage.overlay_level) && (
+                  <div aria-hidden="true" className={`absolute inset-0 rounded-3xl ${heroOverlayClass(heroImage.overlay_level)}`} />
+                )}
+                </div>
                 {heroImage.caption && <figcaption className="mt-3 text-sm text-white/80">{heroImage.caption}</figcaption>}
               </figure>
             )}

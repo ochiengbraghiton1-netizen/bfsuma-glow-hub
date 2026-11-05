@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Loader2, Upload, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
-  MEDIA_SLOTS, MediaMap, SlotKey, FOCAL_POSITIONS, detectMediaType, maxBytesFor,
+  MEDIA_SLOTS, MediaMap, SlotKey, FOCAL_POSITIONS, OVERLAY_LEVELS, detectMediaType, maxBytesFor,
   uploadContentMedia,
 } from '@/lib/content-media';
 import { formatFileSize } from '@/lib/image-compression';
@@ -65,6 +65,7 @@ const ContentMediaEditor = ({ contentType, contentId, media, onChange }: Props) 
           caption: media[slot]?.caption || null,
           display_order: MEDIA_SLOTS.findIndex((s) => s.key === slot),
           focal_position: media[slot]?.focal_position || 'center',
+          overlay_level: media[slot]?.overlay_level || 'light',
         },
       });
       toast({ title: 'Media uploaded' });
@@ -209,6 +210,29 @@ const ContentMediaEditor = ({ contentType, contentId, media, onChange }: Props) 
                               style={{ left: `${25 + pos.x / 2}%`, top: `${25 + pos.y / 2}%` }}
                             />
                             <span className="sr-only">{pos.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <Label className="text-xs block mt-4">Photo tint</Label>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Clear keeps the photo untinted and puts the headline in a soft panel. Use Light or Medium if the photo is very bright.
+                    </p>
+                    <div role="radiogroup" aria-label="Photo tint" className="mt-2 flex flex-wrap gap-2">
+                      {OVERLAY_LEVELS.map((lvl) => {
+                        const selected = (item.overlay_level || 'light') === lvl.value;
+                        return (
+                          <button
+                            key={lvl.value}
+                            type="button"
+                            role="radio"
+                            aria-checked={selected}
+                            onClick={() => patch(slot.key, { overlay_level: lvl.value })}
+                            className={`h-8 px-3 rounded-md border text-xs transition-colors ${
+                              selected ? 'border-primary bg-primary/15 text-foreground' : 'border-border hover:bg-muted'
+                            }`}
+                          >
+                            {lvl.label}
                           </button>
                         );
                       })}
