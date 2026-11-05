@@ -81,8 +81,9 @@ export default defineConfig(({ mode }) => ({
         // hoisted into a heavy chunk like recharts and drag it onto the
         // homepage critical path.
         manualChunks(id: string) {
+          if (id.includes("commonjsHelpers")) return "vendor-utils";
           if (!id.includes("node_modules")) return undefined;
-          if (/node_modules\/(clsx|tailwind-merge|class-variance-authority)\//.test(id)) return "vendor-utils";
+          if (/node_modules\/(clsx|tailwind-merge|class-variance-authority|tslib|@babel\/runtime)\//.test(id)) return "vendor-utils";
           if (/node_modules\/(react|react-dom|react-router|react-router-dom|scheduler)\//.test(id)) return "vendor-react";
           if (id.includes("@tanstack/react-query")) return "vendor-query";
           if (id.includes("@supabase/")) return "vendor-supabase";
