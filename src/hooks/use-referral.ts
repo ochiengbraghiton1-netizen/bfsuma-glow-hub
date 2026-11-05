@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 
 const REFERRAL_KEY = 'bf_referral_code';
 const REFERRAL_EXPIRY_KEY = 'bf_referral_expiry';
@@ -54,6 +53,7 @@ export const useReferral = () => {
 
   const trackClick = async (code: string) => {
     try {
+      const { supabase } = await import('@/integrations/supabase/client');
       await supabase.rpc('track_affiliate_click', {
         p_code: code,
         p_user_agent: navigator.userAgent,

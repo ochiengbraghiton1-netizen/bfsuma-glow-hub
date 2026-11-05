@@ -77,14 +77,17 @@ export default defineConfig(({ mode }) => ({
     // Chunk splitting for better caching
     rollupOptions: {
       output: {
-        manualChunks: {
-          "vendor-react": ["react", "react-dom", "react-router-dom"],
-          "vendor-query": ["@tanstack/react-query"],
-          "vendor-supabase": ["@supabase/supabase-js"],
-          "vendor-charts": ["recharts"],
-          "vendor-ui-core": ["@radix-ui/react-tooltip", "@radix-ui/react-slot"],
-          "vendor-ui-overlay": ["@radix-ui/react-dialog", "@radix-ui/react-popover", "@radix-ui/react-dropdown-menu", "@radix-ui/react-toast"],
-          "vendor-ui-tabs": ["@radix-ui/react-tabs", "@radix-ui/react-accordion", "@radix-ui/react-select"],
+        // Function form so shared tiny utils (clsx, tailwind-merge) never get
+        // hoisted into a heavy chunk like recharts and drag it onto the
+        // homepage critical path.
+        manualChunks(id: string) {
+          if (!id.includes("node_modules")) return undefined;
+          if (/node_modules\/(clsx|tailwind-merge|class-variance-authority)\//.test(id)) return "vendor-utils";
+          if (/node_modules\/(react|react-dom|react-router|react-router-dom|scheduler)\//.test(id)) return "vendor-react";
+          if (id.includes("@tanstack/react-query")) return "vendor-query";
+          if (id.includes("@supabase/")) return "vendor-supabase";
+          if (/node_modules\/(recharts|d3-|victory-vendor)/.test(id)) return "vendor-charts";
+          return undefined;
         },
       },
     },
