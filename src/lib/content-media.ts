@@ -47,6 +47,35 @@ export const focalObjectPosition = (value: string | null | undefined): string =>
   return `${p.x}% ${p.y}%`;
 };
 
+/** How much a hero photo is darkened. */
+export type OverlayLevel = 'none' | 'light' | 'medium';
+
+export const OVERLAY_LEVELS: { value: OverlayLevel; label: string }[] = [
+  { value: 'none', label: 'Clear photo (text in a soft panel)' },
+  { value: 'light', label: 'Light' },
+  { value: 'medium', label: 'Medium' },
+];
+
+export const isOverlayLevel = (value: unknown): value is OverlayLevel =>
+  typeof value === 'string' && OVERLAY_LEVELS.some((o) => o.value === value);
+
+/** Neutral overlay classes for a hero photo; null means no overlay. Unknown falls back to light. */
+export const heroOverlayClass = (value: string | null | undefined): string | null => {
+  const level = isOverlayLevel(value) ? value : 'light';
+  if (level === 'none') return null;
+  return level === 'medium'
+    ? 'bg-black/55 md:bg-transparent md:bg-gradient-to-r md:from-black/70 md:via-black/45 md:to-black/15'
+    : 'bg-black/35 md:bg-transparent md:bg-gradient-to-r md:from-black/55 md:via-black/25 md:to-transparent';
+};
+
+/** Soft panel around hero text when the photo is left clear. */
+export const heroTextPanelClass = (value: string | null | undefined): string =>
+  value === 'none'
+    ? 'rounded-3xl bg-black/35 backdrop-blur-sm ring-1 ring-white/15 p-6 md:p-8 w-full md:w-fit max-w-2xl'
+    : '';
+
+export const HERO_TEXT_SHADOW = 'drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]';
+
 export const MEDIA_SLOTS: { key: SlotKey; label: string; hint: string }[] = [
   { key: 'hero', label: 'Hero image/video', hint: 'Sets the tone at the very top of the page.' },
   { key: 'recognition', label: 'Recognition, does this sound familiar?', hint: 'Shows the everyday moment a visitor recognises.' },
@@ -71,6 +100,7 @@ export interface ContentMediaItem {
   caption: string | null;
   display_order: number;
   focal_position: FocalPosition;
+  overlay_level: OverlayLevel;
 }
 
 export type MediaMap = Partial<Record<SlotKey, ContentMediaItem>>;
@@ -159,6 +189,7 @@ export const saveContentMedia = async (
       caption: item.caption || null,
       display_order: i,
       focal_position: isFocalPosition(item.focal_position) ? item.focal_position : 'center',
+      overlay_level: isOverlayLevel(item.overlay_level) ? item.overlay_level : 'light',
     }];
   });
 
