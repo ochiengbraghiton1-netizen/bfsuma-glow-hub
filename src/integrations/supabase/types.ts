@@ -514,6 +514,7 @@ export type Database = {
           id: string
           media_type: string
           media_url: string
+          overlay_level: string
           slot_key: string
           updated_at: string
         }
@@ -531,6 +532,7 @@ export type Database = {
           id?: string
           media_type: string
           media_url: string
+          overlay_level?: string
           slot_key: string
           updated_at?: string
         }
@@ -548,6 +550,7 @@ export type Database = {
           id?: string
           media_type?: string
           media_url?: string
+          overlay_level?: string
           slot_key?: string
           updated_at?: string
         }

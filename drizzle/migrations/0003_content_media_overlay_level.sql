@@ -1,0 +1,2 @@
+ALTER TABLE public.content_media ADD COLUMN IF NOT EXISTS overlay_level text NOT NULL DEFAULT 'light';
+ALTER TABLE public.content_media ADD CONSTRAINT content_media_overlay_level_check CHECK (overlay_level IN ('none','light','medium')) NOT VALID;
