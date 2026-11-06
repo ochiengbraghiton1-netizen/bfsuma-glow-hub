@@ -29,6 +29,13 @@
       "when": 1793891552169,
       "tag": "0003_content_media_overlay_level",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793997013008,
+      "tag": "0004_content_media_overlay_default_none",
+      "breakpoints": true
     }
   ]
 }
