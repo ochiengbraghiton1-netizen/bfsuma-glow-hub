@@ -51,7 +51,7 @@ export const focalObjectPosition = (value: string | null | undefined): string =>
 export type OverlayLevel = 'none' | 'light' | 'medium';
 
 export const OVERLAY_LEVELS: { value: OverlayLevel; label: string }[] = [
-  { value: 'none', label: 'Clear photo (text in a soft panel)' },
+  { value: 'none', label: 'Clear photo (recommended)' },
   { value: 'light', label: 'Light' },
   { value: 'medium', label: 'Medium' },
 ];
@@ -59,20 +59,17 @@ export const OVERLAY_LEVELS: { value: OverlayLevel; label: string }[] = [
 export const isOverlayLevel = (value: unknown): value is OverlayLevel =>
   typeof value === 'string' && OVERLAY_LEVELS.some((o) => o.value === value);
 
-/** Neutral overlay classes for a hero photo; null means no overlay. Unknown falls back to light. */
+/** Neutral overlay classes for a hero photo; null means no overlay. Unknown falls back to none. */
 export const heroOverlayClass = (value: string | null | undefined): string | null => {
-  const level = isOverlayLevel(value) ? value : 'light';
+  const level = isOverlayLevel(value) ? value : 'none';
   if (level === 'none') return null;
   return level === 'medium'
     ? 'bg-black/55 md:bg-transparent md:bg-gradient-to-r md:from-black/70 md:via-black/45 md:to-black/15'
     : 'bg-black/35 md:bg-transparent md:bg-gradient-to-r md:from-black/55 md:via-black/25 md:to-transparent';
 };
 
-/** Soft panel around hero text when the photo is left clear. */
-export const heroTextPanelClass = (value: string | null | undefined): string =>
-  value === 'none'
-    ? 'rounded-3xl bg-black/35 backdrop-blur-sm ring-1 ring-white/15 p-6 md:p-8 w-full md:w-fit max-w-2xl'
-    : '';
+/** No text panel: hero text sits on the page, not over the photo. */
+export const heroTextPanelClass = (_value: string | null | undefined): string => '';
 
 export const HERO_TEXT_SHADOW = 'drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]';
 
@@ -189,7 +186,7 @@ export const saveContentMedia = async (
       caption: item.caption || null,
       display_order: i,
       focal_position: isFocalPosition(item.focal_position) ? item.focal_position : 'center',
-      overlay_level: isOverlayLevel(item.overlay_level) ? item.overlay_level : 'light',
+      overlay_level: isOverlayLevel(item.overlay_level) ? item.overlay_level : 'none',
     }];
   });
 

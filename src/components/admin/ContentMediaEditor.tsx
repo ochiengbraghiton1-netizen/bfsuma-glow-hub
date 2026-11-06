@@ -65,7 +65,7 @@ const ContentMediaEditor = ({ contentType, contentId, media, onChange }: Props) 
           caption: media[slot]?.caption || null,
           display_order: MEDIA_SLOTS.findIndex((s) => s.key === slot),
           focal_position: media[slot]?.focal_position || 'center',
-          overlay_level: media[slot]?.overlay_level || 'light',
+          overlay_level: media[slot]?.overlay_level || 'none',
         },
       });
       toast({ title: 'Media uploaded' });
@@ -216,11 +216,11 @@ const ContentMediaEditor = ({ contentType, contentId, media, onChange }: Props) 
                     </div>
                     <Label className="text-xs block mt-4">Photo tint</Label>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Clear keeps the photo untinted and puts the headline in a soft panel. Use Light or Medium if the photo is very bright.
+                      Clear shows the photo exactly as uploaded. Light and Medium add a dark layer over the photo, only useful for very bright photos.
                     </p>
                     <div role="radiogroup" aria-label="Photo tint" className="mt-2 flex flex-wrap gap-2">
                       {OVERLAY_LEVELS.map((lvl) => {
-                        const selected = (item.overlay_level || 'light') === lvl.value;
+                        const selected = (item.overlay_level || 'none') === lvl.value;
                         return (
                           <button
                             key={lvl.value}
