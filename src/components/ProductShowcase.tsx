@@ -403,6 +403,32 @@ const ProductShowcase = () => {
     </div>
   );
 
+  const searchInput = (
+    <div className="relative">
+      <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+      <Input
+        type="text"
+        placeholder="Search products..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="pl-12 pr-4 h-10 py-2 md:py-6 rounded-full border-border/50 bg-card focus:ring-2 focus:ring-primary/20"
+      />
+    </div>
+  );
+
+  const categoryPills = (
+    <CategoryPills
+      categories={categories.map((cat) => ({
+        id: cat.id,
+        slug: cat.slug,
+        name: cat.name,
+        imageUrl: cat.image_url,
+      }))}
+      activeCategory={activeCategory}
+      onSelect={setActiveCategory}
+    />
+  );
+
   if (error) {
     return (
       <section id="products" className="py-20 bg-background">
@@ -430,43 +456,35 @@ const ProductShowcase = () => {
 
         {/* Sticky Search Bar & Category Filters */}
         <div ref={toolbarRef} className="sticky top-[var(--header-height)] z-40 bg-background/95 backdrop-blur-md py-2 md:py-4 mb-2 md:mb-8 border-b border-border/20 -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 md:rounded-xl">
-          {/* Search Bar */}
-          <div className="max-w-xl mx-auto mb-2 md:mb-6">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 pr-4 h-10 py-2 md:py-6 rounded-full border-border/50 bg-card focus:ring-2 focus:ring-primary/20"
-              />
+          {isMobile ? (
+            <>
+              {/* Search Bar */}
+              <div className="max-w-xl mx-auto mb-2">{searchInput}</div>
+
+              {/* Category Filters — horizontal scroll */}
+              {categoryPills}
+            </>
+          ) : (
+            /* Desktop: one compact row — search on the left, sort/filter controls on the right */
+            <div className="flex items-center gap-4">
+              <div className="flex-1 max-w-xl">{searchInput}</div>
+              <div className="shrink-0">{sortAndFilterControls}</div>
             </div>
-          </div>
-
-          {/* Category Filters — horizontal scroll */}
-          <CategoryPills
-            categories={categories.map((cat) => ({
-              id: cat.id,
-              slug: cat.slug,
-              name: cat.name,
-              imageUrl: cat.image_url,
-            }))}
-            activeCategory={activeCategory}
-            onSelect={setActiveCategory}
-          />
-
-          {/* Sort + Filter Controls */}
-          {!isMobile && sortAndFilterControls}
+          )}
         </div>
 
-        {isMobile && <div className="mb-8">{sortAndFilterControls}</div>}
+        {isMobile ? (
+          <div className="mb-8">{sortAndFilterControls}</div>
+        ) : (
+          /* Desktop: category pills scroll away with the page (the sidebar lists the same categories) */
+          categoryPills
+        )}
 
         {/* Main Content: Sidebar + Grid */}
         <div className="flex gap-8">
           {/* Desktop Filter Sidebar */}
           <aside className="hidden lg:block w-64 shrink-0">
-            <div className="lg:sticky lg:top-[calc(var(--header-height)+var(--shop-toolbar-height,279px)+1rem)] bg-card border border-border/50 rounded-2xl p-5">
+            <div className="lg:sticky lg:top-[calc(var(--header-height)+var(--shop-toolbar-height,80px)+1rem)] lg:max-h-[calc(100vh-var(--header-height)-var(--shop-toolbar-height,80px)-2rem)] lg:overflow-y-auto overscroll-contain [scrollbar-width:thin] bg-card border border-border/50 rounded-2xl p-5">
               <h3 className="font-semibold text-foreground mb-4 text-sm uppercase tracking-wider">
                 Filters
               </h3>
