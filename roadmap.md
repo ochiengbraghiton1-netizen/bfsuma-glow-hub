@@ -17,3 +17,7 @@
 - [x] Measure the sticky toolbar height against the sidebar sticky offset at 1024/1280/1440.
 - [x] Restore document sticky positioning and derive shop sidebar clearance from the live toolbar height.
 - [x] Verify pinned shop controls at desktop/mobile widths and horizontal clipping on home, shop, wellness, and the mobile menu.
+- [x] Combine wellness recognition and desired-outcome stories into a compact toggle card.
+- [x] Put education imagery before long text on phones while preserving desktop side-by-side layouts.
+- [x] Limit city-page visuals to hero, product context, and trust; move category stories below products.
+- [x] Run the requested typecheck and verify the preview build.

@@ -12,6 +12,7 @@ import { generateProductAltText, generateBlogAltText } from "@/lib/image-seo";
 import { fetchContentMedia, MediaMap, focalObjectPosition, heroOverlayClass, heroTextPanelClass, HERO_TEXT_SHADOW } from "@/lib/content-media";
 import { storageFittedSrcSet, storageSrcSet, SIZES_CARD, SIZES_CARD_WIDE } from "@/lib/image-url";
 import ContentMediaBlock from "@/components/ContentMediaBlock";
+import WellnessStorySwitcher from "@/components/WellnessStorySwitcher";
 
 interface Hub {
   id: string;
@@ -212,28 +213,29 @@ const WellnessHubPage = () => {
           </div>
         </section>
 
-        {/* Recognition */}
-        {media.recognition && (
+        {/* Recognition and desired outcome share one compact switcher. */}
+        {media.recognition && media.desired_outcome ? (
+          <section className="py-8 bg-background">
+            <div className="container mx-auto px-4 max-w-5xl">
+              <WellnessStorySwitcher
+                key={`${media.recognition.media_url}-${media.desired_outcome.media_url}`}
+                recognition={media.recognition}
+                desiredOutcome={media.desired_outcome}
+              />
+            </div>
+          </section>
+        ) : (media.recognition || media.desired_outcome) && (
           <section className="py-12 bg-background">
             <div className="container mx-auto px-4 max-w-5xl grid md:grid-cols-2 gap-8 items-center">
               <div>
-                <h2 className="text-2xl md:text-3xl font-bold mb-3">{media.recognition.heading || "Does this sound familiar?"}</h2>
-                {media.recognition.caption && <p className="text-muted-foreground">{media.recognition.caption}</p>}
+                <h2 className="text-2xl md:text-3xl font-bold mb-3">
+                  {media.recognition?.heading || media.desired_outcome?.heading || "Wellness story"}
+                </h2>
+                {(media.recognition?.caption || media.desired_outcome?.caption) && (
+                  <p className="text-muted-foreground">{media.recognition?.caption || media.desired_outcome?.caption}</p>
+                )}
               </div>
-              <ContentMediaBlock item={{ ...media.recognition, caption: null }} className="w-full" showHeading={false} />
-            </div>
-          </section>
-        )}
-
-        {/* Desired outcome */}
-        {media.desired_outcome && (
-          <section className="py-12 bg-muted/30">
-            <div className="container mx-auto px-4 max-w-5xl grid md:grid-cols-2 gap-8 items-center">
-              <ContentMediaBlock item={{ ...media.desired_outcome, caption: null }} className="w-full md:order-1" showHeading={false} />
-              <div className="md:order-2">
-                <h2 className="text-2xl md:text-3xl font-bold mb-3">{media.desired_outcome.heading || "What better days can look like"}</h2>
-                {media.desired_outcome.caption && <p className="text-muted-foreground">{media.desired_outcome.caption}</p>}
-              </div>
+              <ContentMediaBlock item={media.recognition || media.desired_outcome} className="w-full" showHeading={false} />
             </div>
           </section>
         )}
@@ -316,8 +318,8 @@ const WellnessHubPage = () => {
           <section className="py-12 bg-background">
             {media.education ? (
               <div className="container mx-auto px-4 max-w-6xl grid lg:grid-cols-2 gap-10 items-start">
-                {linkedIntro && <div className="prose dark:prose-invert" dangerouslySetInnerHTML={{ __html: linkedIntro }} />}
-                <div className="w-full lg:sticky lg:top-24">
+                {linkedIntro && <div className="order-2 prose dark:prose-invert lg:order-1" dangerouslySetInnerHTML={{ __html: linkedIntro }} />}
+                <div className={`order-1 w-full lg:sticky lg:top-24 ${linkedIntro ? "lg:order-2" : ""}`}>
                   {media.education.heading && <h2 className="text-2xl font-bold mb-4">{media.education.heading}</h2>}
                   <ContentMediaBlock item={media.education} showHeading={false} />
                 </div>

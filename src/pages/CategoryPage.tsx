@@ -11,6 +11,7 @@ import categoryPlaceholder from '@/assets/category-placeholder.jpg';
 import { generateCategoryAltText } from "@/lib/image-seo";
 import { storageSrcSet, SIZES_CARD_WIDE } from "@/lib/image-url";
 import ContentMediaBlock from '@/components/ContentMediaBlock';
+import WellnessStorySwitcher from '@/components/WellnessStorySwitcher';
 import { fetchContentMedia, type MediaMap } from '@/lib/content-media';
 
 interface Category {
@@ -272,38 +273,6 @@ const CategoryPage = () => {
               )}
             </div>
 
-            {media.recognition && (
-              <section className="mb-8 grid gap-5 md:grid-cols-2 md:items-center">
-                <ContentMediaBlock item={media.recognition} rounded="rounded-lg" showHeading={false} />
-                <div>
-                  <h2 className="text-xl font-semibold">{media.recognition.heading || 'Does this sound familiar?'}</h2>
-                  <p className="mt-2 text-muted-foreground">Explore options selected for this everyday wellness goal.</p>
-                </div>
-              </section>
-            )}
-
-            {media.desired_outcome && (
-              <section className="mb-8 grid gap-5 md:grid-cols-2 md:items-center">
-                <div className="md:order-2">
-                  <ContentMediaBlock item={media.desired_outcome} rounded="rounded-lg" showHeading={false} />
-                </div>
-                <div className="md:order-1">
-                  <h2 className="text-xl font-semibold">{media.desired_outcome.heading || 'Support your wellness routine'}</h2>
-                  <p className="mt-2 text-muted-foreground">Compare genuine options and choose what fits your goals and daily routine.</p>
-                </div>
-              </section>
-            )}
-
-            {media.education && (
-              <section className="mb-8 grid gap-5 md:grid-cols-2 md:items-center">
-                <ContentMediaBlock item={media.education} rounded="rounded-lg" showHeading={false} />
-                <div>
-                  <h2 className="text-xl font-semibold">{media.education.heading || 'Understand your options'}</h2>
-                  <p className="mt-2 text-muted-foreground">Review each product's details and ingredients before deciding what may suit you.</p>
-                </div>
-              </section>
-            )}
-
             {products.length === 0 ? (
               <div className="text-center py-12 bg-card border rounded-lg">
                 <Tag className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
@@ -312,12 +281,6 @@ const CategoryPage = () => {
               </div>
             ) : (
               <>
-                {media.product_context && (
-                  <div className="mb-8">
-                    {media.product_context.heading && <h2 className="text-xl font-semibold mb-4">{media.product_context.heading}</h2>}
-                    <ContentMediaBlock item={media.product_context} rounded="rounded-lg" showHeading={false} />
-                  </div>
-                )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {products.map((product) => (
                     <ProductCard
@@ -337,6 +300,47 @@ const CategoryPage = () => {
                   ))}
                 </div>
               </>
+            )}
+
+            {media.product_context && (
+              <section className="mt-10 mb-8">
+                {media.product_context.heading && <h2 className="text-xl font-semibold mb-4">{media.product_context.heading}</h2>}
+                <ContentMediaBlock item={media.product_context} rounded="rounded-lg" showHeading={false} />
+              </section>
+            )}
+
+            {media.recognition && media.desired_outcome ? (
+              <section className="my-10">
+                <WellnessStorySwitcher
+                  key={`${media.recognition.media_url}-${media.desired_outcome.media_url}`}
+                  recognition={media.recognition}
+                  desiredOutcome={media.desired_outcome}
+                  recognitionDescription="Explore options selected for this everyday wellness goal."
+                  desiredOutcomeDescription="Compare genuine options and choose what fits your goals and daily routine."
+                />
+              </section>
+            ) : (media.recognition || media.desired_outcome) && (
+              <section className="my-10 grid gap-5 md:grid-cols-2 md:items-center">
+                <ContentMediaBlock item={media.recognition || media.desired_outcome} rounded="rounded-lg" showHeading={false} />
+                <div>
+                  <h2 className="text-xl font-semibold">
+                    {media.recognition?.heading || media.desired_outcome?.heading || 'Wellness story'}
+                  </h2>
+                  {(media.recognition?.caption || media.desired_outcome?.caption) && (
+                    <p className="mt-2 text-muted-foreground">{media.recognition?.caption || media.desired_outcome?.caption}</p>
+                  )}
+                </div>
+              </section>
+            )}
+
+            {media.education && (
+              <section className="my-10 grid gap-5 md:grid-cols-2 md:items-center">
+                <ContentMediaBlock item={media.education} rounded="rounded-lg" showHeading={false} />
+                <div>
+                  <h2 className="text-xl font-semibold">{media.education.heading || 'Understand your options'}</h2>
+                  <p className="mt-2 text-muted-foreground">Review each product's details and ingredients before deciding what may suit you.</p>
+                </div>
+              </section>
             )}
 
             {media.trust && (

@@ -4,3 +4,4 @@
 - Use overflow-x: clip on the document, not hidden, because horizontal clipping must not create a scroll container that prevents sticky positioning.
 - Measure the shop toolbar with ResizeObserver and derive the sidebar offset from its height plus the shared header height and a gap, because responsive and expanded category rows change its height.
 - Render a single shared shop Filters/Sort row outside the sticky toolbar below md and inside it from md upward, because phone shoppers need more product space without duplicated control state.
+- Use one shared wellness-story switcher for recognition and desired-outcome media, because phone visitors should compare both without scrolling through two full image sections.
